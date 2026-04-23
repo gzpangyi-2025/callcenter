@@ -64,6 +64,10 @@ There is a fundamental difference between the local and production Elasticsearch
 - The `sync.sh` script only syncs the source code.
 - If you modify frontend files (`frontend/src/*`), you **MUST** SSH into the production server, navigate to `/var/www/callcenter/frontend`, and **run `npm run build` (NEVER `npm run dev`)** to compile the changes for production. The production environment relies strictly on the compiled static files in the `dist` directory.
 
+### 3.3 Git Workflow & Code Commits
+- **Always Commit Before Deploying:** Once a bug fix or feature is completed and tested locally, the AI Assistant MUST execute `git add .`, `git commit -m "..."`, and `git push` to save the work to the remote GitHub repository BEFORE running the `sync.sh` deployment script.
+- **Rollbacks:** If a modification causes system failure, utilize `git restore .` (for uncommitted changes) or `git revert <commit_hash>` to safely roll back.
+
 ---
 
 ## 4. Known Architectural Behaviors
@@ -73,3 +77,23 @@ There is a fundamental difference between the local and production Elasticsearch
 - **Signaling:** Handled via NestJS WebSockets (`chat.gateway.ts`).
 - **Glare Condition Prevention:** In `useVoiceChat.ts`, only the *newly joined user* initiates the SDP Offer. Existing users in the room wait for the Offer to generate an Answer. Do not make "early arrivals" send Offers, as this causes a Glare condition (Offer collision) and breaks audio.
 - **Screen Share Bandwidth:** Because it is a Mesh topology, the Sharer must upload the stream `N` times. If >4 users watch a screen share, the Sharer's uplink bandwidth or the TURN server bandwidth will likely become a severe bottleneck.
+
+---
+
+## 5. Development & Codebase Rules
+
+### 5.1 TypeORM EventSubscriber Warning
+- **DO NOT** use TypeORM `@EventSubscriber` (like `@AfterInsert`) to synchronize critical data to external systems (e.g., syncing new messages to Elasticsearch). 
+- **Reason:** We experienced bugs where TypeORM subscribers caused silent failures or transaction deadlocks. Always use explicit service calls (e.g., `SearchService.indexMessage`) within the primary transaction/service method.
+
+### 5.2 Large Payload Limits
+- **Rule:** The NestJS backend payload limit has been manually increased to **20MB** to support large Base64 images embedded in BBS Markdown posts.
+- **Action:** If developing new upload features that fail with a 413 "Payload Too Large" error, check and adjust the `json` and `urlencoded` limits in `main.ts`.
+
+### 5.3 Frontend UI Standards
+- **Rule:** The frontend interface strictly uses **React + Ant Design (`antd`)**. 
+- **Warning:** Do NOT introduce `TailwindCSS` or other conflicting UI libraries unless explicitly requested by the user, to ensure a cohesive and premium visual style.
+
+### 5.4 Ticket Room Authorization (Lock Mechanism)
+- **Rule:** Ticket chat rooms feature a dynamic locking mechanism (`isRoomLocked` and `isExternalLinkDisabled`).
+- **Action:** When modifying `chat.gateway.ts` (WebSocket Gateway), ensure any new event handlers or message broadcasts strictly respect the `isAuthorizedForRoom()` permission checks to prevent internal data leaks to unauthorized external URLs.
