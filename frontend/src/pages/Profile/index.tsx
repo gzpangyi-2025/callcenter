@@ -75,14 +75,8 @@ const ProfilePage: React.FC = () => {
     }).catch(() => {});
   }, []);
 
-  // 切换到对应 tab 时，清除该 tab 下所有新工单标记
-  useEffect(() => {
-    const ticketsInTab = tab === 'created' ? createdTickets : tab === 'assigned' ? assignedTickets : participatedTickets;
-    ticketsInTab.forEach((t: any) => {
-      if (newTicketIds.includes(t.id)) clearNewTicket(t.id);
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab]);
+  // NEW 标记在用户点击卡片进入工单时清除（renderTicketCard 的 onClick 中已处理）
+  // 不再在切换 tab 时自动清除，让用户能看到哪些卡片是新到达的
 
   const handleAssign = async (id: number) => {
     try {

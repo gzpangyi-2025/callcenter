@@ -294,7 +294,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
 
     // ── 工单事件：追踪新分配/邀请的工单，同步更新 profileBadge ─────────────
-    socket.on('ticketEvent', (event: { action: string; data: any }) => {
+    socket.on('ticketEvent', (event: { action: string; operatorId: number | null; data: any }) => {
       const currentUserId = useAuthStore.getState().user?.id;
       if (!currentUserId) return;
       const t = event.data;
@@ -302,7 +302,26 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
       const state = get();
 
-      // 自己创建的不算"新到达"
+      // 删除事件 → 清理本地残留状态
+      if (event.action === 'deleted') {
+        const newMyIds = state.myTicketIds.filter(id => id !== t.id);
+        const newIds = state.newTicketIds.filter(id => id !== t.id);
+        const newMap = { ...state.unreadMap };
+        delete newMap[t.id];
+        const newBadge = calcBadge(newMap, newIds, newMyIds, state.bbsUnreadMap);
+        set({
+          myTicketIds: newMyIds,
+          newTicketIds: newIds,
+          unreadMap: newMap,
+          profileBadge: newBadge,
+        });
+        startTitleFlash(newBadge);
+        return;
+      }
+
+      // 自己触发的操作，不标记 NEW（但仍需更新 myTicketIds）
+      const isSelfAction = event.operatorId === currentUserId;
+
       const isMyCreation = t.creatorId === currentUserId;
       const isAssignedToMe = t.assigneeId === currentUserId;
       const isParticipant = Array.isArray(t.participants) && t.participants.some((p: any) => p.id === currentUserId);
@@ -313,9 +332,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         newMyIds = [...newMyIds, t.id];
       }
 
-      // 记录"新到达"（非自己创建、分配给我或被邀请）
+      // 仅对这些 action 标记"新到达"，且排除自己触发的操作和自己创建的工单
+      const newTaskActions = ['created', 'assigned', 'participantAdded'];
       let newTicketIds = state.newTicketIds;
-      if (!isMyCreation && (isAssignedToMe || isParticipant) && !newTicketIds.includes(t.id)) {
+      if (!isSelfAction && !isMyCreation && newTaskActions.includes(event.action)
+          && (isAssignedToMe || isParticipant) && !newTicketIds.includes(t.id)) {
         newTicketIds = [...newTicketIds, t.id];
       }
 

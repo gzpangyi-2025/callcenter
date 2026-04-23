@@ -29,7 +29,7 @@ const MainLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, clearAuth } = useAuthStore();
-  const { profileBadge, socket, setMyTicketIds, unreadMap, newTicketIds, bbsUnreadMap } = useSocketStore();
+  const { profileBadge, socket, setMyTicketIds, unreadMap, newTicketIds, bbsUnreadMap, clearNewTicket, clearUnread } = useSocketStore();
 
   const [notifications, setNotifications] = useState<any[]>([]);
   const [bbsNotifications, setBbsNotifications] = useState<any[]>([]);
@@ -275,6 +275,8 @@ const MainLayout: React.FC = () => {
             onClick={() => {
               setNotificationOpen(false);
               if (item.type === 'ticket') {
+                clearNewTicket(item.id);
+                clearUnread(item.id);
                 navigate(`/tickets/${item.id}`);
               } else {
                 navigate(`/bbs/${item.id}`);
@@ -292,7 +294,7 @@ const MainLayout: React.FC = () => {
               title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Typography.Text ellipsis style={{ flex: 1, maxWidth: 160 }}>{item.title}</Typography.Text>
-                  {item.type === 'ticket' && item.isNew && <Tag color="green" style={{ margin: 0 }}>新任务</Tag>}
+                  {item.type === 'ticket' && item.isNew && <Tag color="green" style={{ margin: 0 }}>新到达</Tag>}
                 </div>
               }
               description={

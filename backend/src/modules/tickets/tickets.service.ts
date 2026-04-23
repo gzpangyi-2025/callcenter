@@ -41,11 +41,12 @@ export class TicketsService {
   /**
    * 通过 ChatGateway 的 WebSocket server 向所有在线客户端广播工单事件
    */
-  private broadcastTicketEvent(action: string, ticket: Partial<Ticket> & { id: number }) {
+  private broadcastTicketEvent(action: string, ticket: Partial<Ticket> & { id: number }, operatorId?: number) {
     try {
       // 使用 /chat namespace 的 server 实例全局广播
       this.chatGateway.server.emit('ticketEvent', {
         action,
+        operatorId: operatorId || null,
         data: {
           id: ticket.id,
           ticketNo: ticket.ticketNo,
@@ -93,7 +94,7 @@ export class TicketsService {
 
     const saved = await this.ticketRepository.save(ticket);
     const fullTicket = await this.findOne((saved as any).id || (saved as any)[0]?.id);
-    this.broadcastTicketEvent('created', fullTicket);
+    this.broadcastTicketEvent('created', fullTicket, userId);
 
     // 审计：工单创建
     this.auditService.log({
@@ -233,7 +234,7 @@ export class TicketsService {
     Object.assign(ticket, updateDto);
     const saved = await this.ticketRepository.save(ticket);
     const fullTicket = await this.findOne(saved.id);
-    this.broadcastTicketEvent('updated', fullTicket);
+    this.broadcastTicketEvent('updated', fullTicket, user.id);
     return fullTicket;
   }
 
@@ -247,7 +248,7 @@ export class TicketsService {
     ticket.assignedAt = new Date();
     const saved = await this.ticketRepository.save(ticket);
     const fullTicket = await this.findOne(saved.id);
-    this.broadcastTicketEvent('assigned', fullTicket);
+    this.broadcastTicketEvent('assigned', fullTicket, userId);
 
     // 审计：工单接单
     this.auditService.log({
@@ -273,7 +274,7 @@ export class TicketsService {
     ticket.status = TicketStatus.CLOSING;
     const saved = await this.ticketRepository.save(ticket);
     const fullTicket = await this.findOne(saved.id);
-    this.broadcastTicketEvent('requestClose', fullTicket);
+    this.broadcastTicketEvent('requestClose', fullTicket, userId);
 
     // 审计：申请关单
     this.auditService.log({
@@ -301,7 +302,7 @@ export class TicketsService {
     ticket.confirmedAt = new Date();
     const saved = await this.ticketRepository.save(ticket);
     const fullTicket = await this.findOne(saved.id);
-    this.broadcastTicketEvent('closed', fullTicket);
+    this.broadcastTicketEvent('closed', fullTicket, userId);
 
     // 审计：确认关单
     this.auditService.log({
@@ -351,7 +352,7 @@ export class TicketsService {
     const ticketId = ticket.id;
 
     await this.ticketRepository.remove(ticket);
-    this.broadcastTicketEvent('deleted', { id: ticketId });
+    this.broadcastTicketEvent('deleted', { id: ticketId }, user.id);
 
     // 审计：工单删除
     this.auditService.log({
@@ -383,7 +384,7 @@ export class TicketsService {
     for (const ticket of tickets) {
       deletedNames.push(`${ticket.ticketNo}(${ticket.title})`);
       await this.ticketRepository.remove(ticket);
-      this.broadcastTicketEvent('deleted', { id: ticket.id });
+      this.broadcastTicketEvent('deleted', { id: ticket.id }, user.id);
     }
 
     // 审计：批量删除
@@ -441,7 +442,7 @@ export class TicketsService {
     const fullTicket = await this.findOne(saved.id);
 
     // Broadcast ticket change so UI updates
-    this.broadcastTicketEvent('updated', fullTicket);
+    this.broadcastTicketEvent('participantAdded', fullTicket, inviterId);
 
     // Send a system message to the chat
     if (inviter) {
@@ -488,7 +489,7 @@ export class TicketsService {
     const fullTicket = await this.findOne(saved.id);
 
     // Broadcast ticket change
-    this.broadcastTicketEvent('updated', fullTicket);
+    this.broadcastTicketEvent('participantRemoved', fullTicket, operatorId);
 
     const operatorName = operator.realName || operator.displayName || operator.username;
     const targetName = targetUser.realName || targetUser.displayName || targetUser.username;

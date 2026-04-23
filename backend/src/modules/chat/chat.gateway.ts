@@ -444,6 +444,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
           ticketId: data.ticketId,
           messageId: message.id,
           senderId: userId,
+          messageType: message.type,
         });
       });
     }
