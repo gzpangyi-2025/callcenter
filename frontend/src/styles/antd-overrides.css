@@ -1,0 +1,20 @@
+/* Ant Design 暗色主题覆写 */
+.ant-layout {
+  background: var(--bg-primary) !important;
+}
+.ant-layout-sider {
+  background: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border) !important;
+}
+.ant-menu-dark {
+  background: transparent !important;
+}
+.ant-menu-dark .ant-menu-item-selected {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(129, 140, 248, 0.15)) !important;
+  border-right: 3px solid var(--primary) !important;
+}
+.ant-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+}

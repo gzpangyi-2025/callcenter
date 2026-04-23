@@ -16,6 +16,7 @@ import { AuditService } from '../audit/audit.service';
 import { AuditType } from '../../entities/audit-log.entity';
 import { TicketReadState } from '../../entities/ticket-read-state.entity';
 import { Message } from '../../entities/message.entity';
+import { AuthenticatedUser } from '../../common/types/auth.types';
 
 @Injectable()
 export class TicketsService {
@@ -40,7 +41,7 @@ export class TicketsService {
   /**
    * 通过 ChatGateway 的 WebSocket server 向所有在线客户端广播工单事件
    */
-  private broadcastTicketEvent(action: string, ticket: any) {
+  private broadcastTicketEvent(action: string, ticket: Partial<Ticket> & { id: number }) {
     try {
       // 使用 /chat namespace 的 server 实例全局广播
       this.chatGateway.server.emit('ticketEvent', {
@@ -66,7 +67,7 @@ export class TicketsService {
             ? { id: ticket.assignee.id, username: ticket.assignee.username, displayName: ticket.assignee.displayName, realName: ticket.assignee.realName }
             : null,
           participants: Array.isArray(ticket.participants)
-            ? ticket.participants.map((p: any) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
+            ? ticket.participants.map((p: User) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
             : [],
         },
       });
@@ -179,7 +180,7 @@ export class TicketsService {
           ? { id: item.assignee.id, username: item.assignee.username, displayName: item.assignee.displayName, realName: item.assignee.realName }
           : null,
         participants: Array.isArray(item.participants)
-          ? item.participants.map((p: any) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
+          ? item.participants.map((p: User) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
           : [],
       })),
       total,
@@ -211,14 +212,14 @@ export class TicketsService {
     return ticket;
   }
 
-  async update(id: number, updateDto: UpdateTicketDto, user: any): Promise<Ticket> {
+  async update(id: number, updateDto: UpdateTicketDto, user: AuthenticatedUser): Promise<Ticket> {
     const ticket = await this.findOne(id);
 
     // 权限判断：创建人可以编辑，或拥有 tickets:edit 权限的用户可以编辑
-    const isCreator = ticket.creatorId === (user.id || user.sub);
+    const isCreator = ticket.creatorId === user.id;
     const roleName = user.role?.name || '';
     const userPermissions = user.role?.permissions || [];
-    const hasEditPerm = roleName === 'admin' || userPermissions.some((p: any) => {
+    const hasEditPerm = roleName === 'admin' || userPermissions.some((p: { code?: string; resource?: string; action?: string }) => {
       const code = p.code || `${p.resource}:${p.action}`;
       return code === 'tickets:edit';
     });
@@ -335,7 +336,7 @@ export class TicketsService {
     });
   }
 
-  async deleteTicket(id: number, user: any): Promise<void> {
+  async deleteTicket(id: number, user: AuthenticatedUser): Promise<void> {
     const ticket = await this.findOne(id);
     
     // 如果是 user 角色，只能删除自己创建的，其它高级角色 (admin, tech, director) 可以删除全部
@@ -364,7 +365,7 @@ export class TicketsService {
     });
   }
 
-  async batchDelete(ids: number[], user: any): Promise<void> {
+  async batchDelete(ids: number[], user: AuthenticatedUser): Promise<void> {
     const roleName = user.role?.name || '';
     
     // 一次性查询所有工单，避免 N+1 查询

@@ -12,6 +12,7 @@ import { Repository, In } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { Ticket } from '../../entities/ticket.entity';
 import { SettingsService } from '../settings/settings.service';
+import { AuthenticatedSocket } from '../../common/types/auth.types';
 
 @WebSocketGateway({
   cors: {
@@ -60,16 +61,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         secret: this.configService.get('JWT_SECRET'),
       });
 
-      (client as any).userId = payload.sub;
-      (client as any).username = payload.username;
-      (client as any).role = payload.role;
+      const authClient = client as AuthenticatedSocket;
+      authClient.userId = payload.sub;
+      authClient.username = payload.username;
+      authClient.role = payload.role;
       if (payload.role === 'external') {
-        (client as any).allowedTicketId = payload.ticketId;
+        authClient.allowedTicketId = payload.ticketId;
       } else {
         const user = await this.userRepository.findOne({ where: { id: payload.sub } });
         if (user) {
-          (client as any).realName = user.realName;
-          (client as any).displayName = user.displayName;
+          authClient.realName = user.realName;
+          authClient.displayName = user.displayName;
         }
       }
 
