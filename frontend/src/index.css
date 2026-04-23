@@ -1,0 +1,1321 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root, [data-theme="dark"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border: #334155;
+  --border-light: #475569;
+
+  --markdown-code-bg: rgba(240, 246, 252, 0.15);
+  --markdown-code-text: #ff7b72;
+  --markdown-code-border: rgba(240, 246, 252, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.15);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Header高度 */
+  --header-height: 56px;
+}
+
+[data-theme="light"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-hover: #e2e8f0;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+
+  --markdown-code-bg: rgba(27, 31, 35, 0.05);
+  --markdown-code-text: #d73a49; /* Github/Yuque red-pink */
+  --markdown-code-border: rgba(27, 31, 35, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.1);
+}
+
+[data-theme="trustfar"] {
+  /* 基于银信科技Logo的蓝白风格：深海蓝与浅蓝 */
+  --primary: #0056b3; 
+  --primary-light: #33aadd; 
+  --primary-dark: #003d80;
+  --success: #0d9488;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #0ea5e9;
+
+  --bg-primary: #f0f4f8; /* 偏浅蓝灰的背景 */
+  --bg-secondary: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-hover: #e0f2fe;
+
+  --text-primary: #1e293b; /* 极深的蓝灰色作为主要文字 */
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --border: #cbd5e1;
+  --border-light: #94a3b8;
+
+  --markdown-code-bg: rgba(27, 31, 35, 0.05);
+  --markdown-code-text: #c2255c; /* Slightly deeper pink for silver style */
+  --markdown-code-border: rgba(27, 31, 35, 0.06);
+
+  --shadow-sm: 0 1px 2px rgba(0, 86, 179, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 86, 179, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 86, 179, 0.08);
+  --shadow-glow: 0 0 20px rgba(0, 86, 179, 0.15);
+}
+
+:root {
+  /* 安全区域 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  /* 防止 iOS 键盘弹出时页面弹跳 */
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+#root {
+  overflow: auto;
+  position: relative;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+/* ==================== Markdown 内容区域防溢出 ==================== */
+.markdown-body {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.markdown-body a {
+  word-break: break-all;
+}
+.markdown-body table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  word-break: normal;
+}
+.markdown-body table th,
+.markdown-body table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border, #e2e8f0);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 80px;
+  max-width: 320px;
+}
+.markdown-body pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.markdown-body code {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+.markdown-body ul {
+  list-style-type: disc;
+}
+.markdown-body ol {
+  list-style-type: decimal;
+}
+.markdown-body li {
+  margin-bottom: 0.25em;
+}
+.markdown-body .markdown-inline-code {
+  background: var(--markdown-code-bg);
+  color: var(--markdown-code-text);
+  border: 1px solid var(--markdown-code-border);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.9em;
+  word-break: break-all;
+}
+
+/* Ant Design 暗色主题覆写 */
+.ant-layout {
+  background: var(--bg-primary) !important;
+}
+.ant-layout-sider {
+  background: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border) !important;
+}
+.ant-menu-dark {
+  background: transparent !important;
+}
+.ant-menu-dark .ant-menu-item-selected {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(129, 140, 248, 0.15)) !important;
+  border-right: 3px solid var(--primary) !important;
+}
+.ant-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* ==================== 聊天界面 ==================== */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.chat-header {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+.chat-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+  padding: 0 !important;
+}
+.chat-message {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.chat-message.self {
+  flex-direction: row-reverse;
+}
+/* 气泡包裹容器 — 自适应宽度 */
+.chat-message .chat-bubble-wrap {
+  flex: 1;
+  min-width: 0;
+  max-width: 70%;
+}
+.chat-message.self .chat-bubble-wrap {
+  text-align: right;
+}
+.chat-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+/* 气泡本体 — inline-block 让宽度由内容撑开 */
+.chat-bubble {
+  display: inline-block;
+  text-align: left;
+  padding: 10px 16px;
+  border-radius: 12px 12px 12px 4px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+.chat-message.self .chat-bubble {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  border-radius: 12px 12px 4px 12px;
+}
+/* 图片或文件消息的透明包裹器 */
+.chat-bubble.transparent-bubble {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ==================== 新消息悬浮提示 FAB ==================== */
+.new-msg-fab {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 110px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+  animation: fab-slide-up 0.25s ease-out;
+  user-select: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.new-msg-fab:hover {
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.55);
+}
+@keyframes fab-slide-up {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.chat-input-area {
+  padding: 0 16px 8px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+}
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 8px;
+}
+.chat-input-actions-left {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 2px;
+}
+
+/* ==================== 待上传附件 ==================== */
+.pending-uploads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+.pending-file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-hover);
+  padding: 4px 8px 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 200px;
+}
+.pending-img-preview {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.pending-file-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.pending-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pending-file-remove {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 18px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.pending-file-remove:hover {
+  color: #ef4444;
+}
+
+.chat-input-area textarea {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  min-height: 100px;
+  max-height: 250px;
+  font-family: inherit;
+}
+.chat-input-area textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* ==================== 发送按钮 ==================== */
+.chat-send-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+.chat-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.5);
+  transform: scale(1.08);
+}
+.chat-send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.chat-send-btn:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.chat-input-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ==================== 聊天文件卡片 ==================== */
+.chat-file-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px 12px 12px 4px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  min-width: 200px;
+  max-width: 320px;
+}
+.chat-message.self .chat-file-card {
+  border-radius: 12px 12px 4px 12px;
+}
+.chat-file-card:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary-light);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.chat-file-card .file-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.chat-file-card .file-info {
+  flex: 1;
+  min-width: 0;
+}
+.chat-file-card .file-name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.chat-file-card .file-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.chat-file-card .file-type-badge {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 图片消息 */
+.chat-image-wrap {
+  display: inline-block;
+}
+.chat-image-wrap img {
+  display: block;
+}
+
+/* ==================== 聊天 Minimap ==================== */
+.chat-minimap {
+  width: 44px;
+  flex-shrink: 0;
+  position: relative;
+  background: rgba(15, 23, 42, 0.5);
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.minimap-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 4px 6px;
+  gap: 1px;
+}
+.minimap-block {
+  flex: 1;
+  min-height: 1px;
+  border-radius: 2px;
+  transition: opacity 0.1s;
+}
+.minimap-block.self {
+  background: rgba(79, 70, 229, 0.6);
+  margin-left: auto;
+  width: 65%;
+}
+.minimap-block.other {
+  background: rgba(100, 116, 139, 0.5);
+  margin-right: auto;
+  width: 65%;
+}
+.minimap-viewport {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: rgba(129, 140, 248, 0.15);
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  border-radius: 3px;
+  cursor: grab;
+  pointer-events: none;
+  z-index: 2;
+}
+.chat-minimap:active .minimap-viewport {
+  cursor: grabbing;
+}
+
+/* ==================== 聊天内容包裹器 ==================== */
+.chat-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+
+/* ==================== 屏幕共享面板 ==================== */
+.screen-share-panel {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border);
+  background: #000;
+  position: relative;
+  transition: height 0.3s ease;
+}
+
+.screen-share-panel.expanded {
+  height: 45vh;
+  min-height: 200px;
+  max-height: 60vh;
+}
+
+.screen-share-panel.collapsed {
+  height: 48px;
+}
+
+.screen-share-panel.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  height: 100vh !important;
+  max-height: none !important;
+  border: none;
+  border-radius: 0;
+}
+
+/* 工具栏 */
+.screen-share-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(79, 70, 229, 0.1));
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.screen-share-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.screen-share-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.screen-share-toolbar-btn {
+  color: var(--text-secondary) !important;
+  font-size: 15px !important;
+}
+
+.screen-share-toolbar-btn:hover {
+  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.screen-share-status-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 视频容器 */
+.screen-share-video-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0a0a0a;
+  min-height: 0;
+}
+
+.screen-share-panel.collapsed .screen-share-video-container {
+  display: none;
+}
+
+.screen-share-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* 连接中 / 失败状态 */
+.screen-share-connecting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* 分享方本地预览小窗 */
+.screen-share-local-preview {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 20px;
+}
+
+.screen-share-video-mini {
+  max-width: 80%;
+  max-height: 100%;
+  border-radius: 12px;
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+}
+
+.screen-share-preview-label {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #10b981;
+  font-size: 11px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* 全屏模式提示 */
+.screen-share-fullscreen-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  z-index: 20;
+  animation: fadeInUp 0.3s ease;
+  pointer-events: none;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 0 transparent); }
+  50% { opacity: 0.6; filter: drop-shadow(0 0 6px #10b981); }
+}
+
+/* ==================== 支援模式 ==================== */
+.chat-container.support-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  flex-direction: row;
+  border-radius: 0;
+  border: none;
+  animation: supportModeIn 0.3s ease-out;
+}
+
+@keyframes supportModeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 支援模式下的视频面板 — 左侧 */
+.chat-container.support-mode .screen-share-panel {
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border-bottom: none;
+  border-right: none;
+}
+
+.chat-container.support-mode .screen-share-panel.support-mode-video {
+  height: 100% !important;
+}
+
+/* 拖拽分割线 */
+.support-mode-divider {
+  width: 6px;
+  cursor: col-resize;
+  background: var(--border);
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: background 0.15s;
+}
+
+.support-mode-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 40px;
+  background: var(--text-muted);
+  border-radius: 2px;
+  opacity: 0.5;
+  transition: opacity 0.15s, height 0.15s;
+}
+
+.support-mode-divider:hover {
+  background: var(--primary-light);
+}
+
+.support-mode-divider:hover::after {
+  opacity: 1;
+  height: 60px;
+  background: var(--primary);
+}
+
+/* 支援模式下的聊天面板 — 右侧 */
+.chat-container.support-mode .chat-content-wrapper.support-mode-chat {
+  min-width: 250px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-secondary);
+}
+
+/* 支援模式下聊天头部简化 */
+.chat-container.support-mode .chat-header {
+  padding: 6px 12px;
+  min-height: 32px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+/* 支援模式下聊天消息区域 */
+.chat-container.support-mode .chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* 支援模式下输入区域 */
+.chat-container.support-mode .chat-input-area {
+  padding: 4px 10px 6px;
+  background: var(--bg-secondary);
+}
+
+.chat-container.support-mode .chat-input-area textarea {
+  min-height: 60px;
+  max-height: 120px;
+  font-size: 13px;
+}
+
+/* 支援模式下隐藏不必要的元素 */
+.chat-container.support-mode .chat-minimap {
+  display: none;
+}
+
+/* 支援模式下新消息 FAB 位置调整 */
+.chat-container.support-mode .new-msg-fab {
+  bottom: 80px;
+}
+
+/* 手机端屏幕共享适配 */
+@media (max-width: 768px) {
+  .screen-share-panel.expanded {
+    height: 35vh;
+    min-height: 150px;
+    max-height: 50vh;
+  }
+
+  .screen-share-toolbar {
+    padding: 4px 8px;
+  }
+
+  .screen-share-toolbar-left {
+    font-size: 12px;
+  }
+
+  .screen-share-video-mini {
+    max-width: 90%;
+  }
+
+  /* 手机端支援模式 — 上下布局 */
+  .chat-container.support-mode {
+    flex-direction: column;
+  }
+
+  .chat-container.support-mode .screen-share-panel {
+    flex: none;
+    height: 50vh !important;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chat-container.support-mode .chat-content-wrapper.support-mode-chat {
+    flex: 1;
+    max-width: none;
+    min-width: 0;
+    border-left: none;
+  }
+}
+
+
+/* ==================== 登录页面 ==================== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  position: relative;
+  overflow: hidden;
+}
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 40%, rgba(79, 70, 229, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(129, 140, 248, 0.06) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(2%, -2%) rotate(1deg); }
+  66% { transform: translate(-1%, 1%) rotate(-1deg); }
+}
+.login-card {
+  width: 420px;
+  padding: 48px 40px;
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  position: relative;
+  z-index: 1;
+}
+.login-card h1 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.login-card .subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 36px;
+  font-size: 14px;
+}
+
+/* 银信科技主题 - 登录页覆写 */
+[data-theme="trustfar"] .login-container {
+  background: linear-gradient(135deg, #003d80 0%, #0056b3 40%, #33aadd 100%);
+}
+[data-theme="trustfar"] .login-container::before {
+  background: radial-gradient(circle at 30% 40%, rgba(51, 170, 221, 0.15) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(0, 86, 179, 0.1) 0%, transparent 50%);
+}
+[data-theme="trustfar"] .login-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 86, 179, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 61, 128, 0.25), 0 0 30px rgba(51, 170, 221, 0.1);
+}
+[data-theme="trustfar"] .login-card h1 {
+  background: linear-gradient(135deg, #0056b3, #33aadd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+[data-theme="trustfar"] .login-card .subtitle {
+  color: #64748b;
+}
+
+/* 浅色主题 - 登录页覆写 */
+[data-theme="light"] .login-container {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 50%, #dbeafe 100%);
+}
+[data-theme="light"] .login-container::before {
+  background: radial-gradient(circle at 30% 40%, rgba(79, 70, 229, 0.06) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(129, 140, 248, 0.04) 0%, transparent 50%);
+}
+[data-theme="light"] .login-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .login-card h1 {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+[data-theme="light"] .login-card .subtitle {
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  /* --- 登录页 --- */
+  .login-container {
+    padding: 20px;
+    align-items: flex-start;
+    padding-top: 15vh;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 24px;
+  }
+  .login-card h1 {
+    font-size: 24px;
+  }
+  .login-card .subtitle {
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 375px) {
+  .login-card {
+    padding: 24px 20px;
+  }
+  .content-area {}
+}
+
+/* ==================== 工单卡片 ==================== */
+.ticket-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.ticket-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+/* 状态标签 */
+.status-pending { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+.status-in_progress { color: var(--info); background: rgba(59, 130, 246, 0.1); }
+.status-closing { color: #f97316; background: rgba(249, 115, 22, 0.1); }
+.status-closed { color: var(--success); background: rgba(16, 185, 129, 0.1); }
+
+/* ==================== 工单工作台布局 ==================== */
+.ticket-workspace {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--header-height) - 32px);
+}
+.ticket-main-content {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  overflow: hidden;
+  min-height: 0;
+}
+.ticket-sidebar {
+  width: 360px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.ticket-chat-area {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ==================== 工单标签页 ==================== */
+.ticket-tabs-bar {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.ticket-tabs-bar::-webkit-scrollbar { display: none; }
+.ticket-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+  max-width: 200px;
+}
+.ticket-tab:hover {
+  border-color: var(--primary-light);
+  color: var(--text-primary);
+}
+.ticket-tab.active {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(129, 140, 248, 0.1));
+  border-color: var(--primary);
+  color: var(--primary-light);
+  font-weight: 500;
+}
+.tab-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  /* --- 仪表盘 --- */
+  .fade-in h2 {
+    font-size: 18px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* --- 工单卡片 --- */
+  .ticket-card {
+    padding: 14px;
+  }
+  .ticket-card:hover {
+    transform: none; /* 手机端去掉hover浮起效果 */
+  }
+
+  /* --- 工单管理筛选栏 --- */
+  .ant-space {
+    flex-wrap: wrap;
+  }
+  /* --- 聊天界面 (手机端全屏模式) --- */
+  .ticket-workspace.mobile {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    height: auto;
+    padding: 0;
+  }
+  .ticket-workspace.mobile .ticket-tabs-bar {
+    padding: 4px 10px;
+    gap: 4px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+  .ticket-workspace.mobile .ticket-main-content {
+    flex: 1;
+    min-height: 0;
+  }
+  .ticket-workspace.mobile .ticket-chat-area {
+    height: 100%;
+  }
+  .ticket-workspace.mobile .chat-container {
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  .ticket-workspace.mobile .chat-header {
+    padding: 6px 12px;
+    min-height: 32px;
+    background: var(--bg-secondary);
+  }
+  .ticket-workspace.mobile .chat-messages {
+    padding: 0 !important;
+  }
+  .ticket-workspace.mobile .chat-message .chat-bubble-wrap {
+    max-width: 85%;
+  }
+  .ticket-workspace.mobile .chat-bubble {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .ticket-workspace.mobile .chat-input-area {
+    padding: 4px 10px;
+    padding-bottom: calc(4px + var(--safe-bottom));
+    gap: 2px;
+  }
+  .ticket-workspace.mobile .chat-input-row {
+    align-items: flex-end;
+  }
+  .ticket-workspace.mobile .chat-input-area textarea {
+    min-height: 36px;
+    max-height: 96px;
+    padding: 6px 10px;
+    font-size: max(16px, 1em);
+  }
+  .chat-minimap {}
+}
+@media (max-width: 375px) {
+  .ticket-workspace.mobile .chat-input-area textarea {
+    min-height: 36px;
+    font-size: 15px;
+  }
+  .ticket-card {
+    padding: 12px;
+  }
+}
+
+
+/* 以下样式可以考虑继续拆分或保留 */
+/* ==================== 主布局 ==================== */
+.main-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+.main-layout .logo-area {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+.main-layout .logo-area h2 {
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  white-space: nowrap;
+}
+.content-area {
+  padding: 24px;
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+/* ==================== 动画 ==================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  /* --- 主布局 --- */
+  .content-area {
+    padding: 12px;
+    height: calc(100vh - var(--header-height));
+    /* 确保手机端内容区域不会因为输入法弹出而偏移 */
+    -webkit-overflow-scrolling: touch;
+  }
+  /* --- Ant Design 组件手机端覆写 --- */
+  .ant-table-wrapper {
+    overflow-x: auto !important;
+  }
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 16px auto !important;
+  }
+  .ant-modal .ant-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .ant-descriptions-item-label {
+    font-size: 12px !important;
+  }
+  .ant-descriptions-item-content {
+    font-size: 13px !important;
+  }
+
+  /* Drawer 美化 */
+  .ant-drawer-header-title {
+    color: var(--text-primary);
+  }
+  .ant-drawer .ant-drawer-body {
+    background: var(--bg-primary);
+  }
+}
+@media (max-width: 375px) {
+  .content-area {
+    padding: 8px;
+  }
+}
+/* ==================== 全局搜索高亮 ==================== */
+.search-highlight em {
+  font-style: normal;
+  color: var(--primary);
+  background: rgba(79, 70, 229, 0.15);
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
