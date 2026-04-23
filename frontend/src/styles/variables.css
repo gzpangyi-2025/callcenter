@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root, [data-theme="dark"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border: #334155;
+  --border-light: #475569;
+
+  --markdown-code-bg: rgba(240, 246, 252, 0.15);
+  --markdown-code-text: #ff7b72;
+  --markdown-code-border: rgba(240, 246, 252, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.15);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Header高度 */
+  --header-height: 56px;
+}
+
+[data-theme="light"] {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-hover: #e2e8f0;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border: #e2e8f0;
+  --border-light: #cbd5e1;
+
+  --markdown-code-bg: rgba(27, 31, 35, 0.05);
+  --markdown-code-text: #d73a49; /* Github/Yuque red-pink */
+  --markdown-code-border: rgba(27, 31, 35, 0.05);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.1);
+}
+
+[data-theme="trustfar"] {
+  /* 基于银信科技Logo的蓝白风格：深海蓝与浅蓝 */
+  --primary: #0056b3; 
+  --primary-light: #33aadd; 
+  --primary-dark: #003d80;
+  --success: #0d9488;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #0ea5e9;
+
+  --bg-primary: #f0f4f8; /* 偏浅蓝灰的背景 */
+  --bg-secondary: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-hover: #e0f2fe;
+
+  --text-primary: #1e293b; /* 极深的蓝灰色作为主要文字 */
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --border: #cbd5e1;
+  --border-light: #94a3b8;
+
+  --markdown-code-bg: rgba(27, 31, 35, 0.05);
+  --markdown-code-text: #c2255c; /* Slightly deeper pink for silver style */
+  --markdown-code-border: rgba(27, 31, 35, 0.06);
+
+  --shadow-sm: 0 1px 2px rgba(0, 86, 179, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 86, 179, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 86, 179, 0.08);
+  --shadow-glow: 0 0 20px rgba(0, 86, 179, 0.15);
+}
+
+:root {
+  /* 安全区域 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  /* 防止 iOS 键盘弹出时页面弹跳 */
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+#root {
+  overflow: auto;
+  position: relative;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+

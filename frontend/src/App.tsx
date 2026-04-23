@@ -21,7 +21,13 @@ import { useAuthStore } from './stores/authStore';
 import { useSocketStore } from './stores/socketStore';
 import { authAPI } from './services/api';
 import { RequirePermission } from './components/RequirePermission';
-import './index.css';
+import './styles/variables.css';
+import './styles/markdown.css';
+import './styles/antd-overrides.css';
+import './styles/chat.css';
+import './styles/screen-share.css';
+import './styles/login.css';
+import './styles/layout.css';
 
 
 
