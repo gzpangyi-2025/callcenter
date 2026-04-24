@@ -111,6 +111,7 @@ const KnowledgePage: React.FC = () => {
         prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
         value={searchText}
         onChange={handleSearchChange}
+        onFocus={(e) => e.target.select()}
         style={{ marginBottom: 24, borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: 'none' }}
         allowClear
       />

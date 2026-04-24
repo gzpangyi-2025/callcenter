@@ -248,6 +248,7 @@ export default function BbsList() {
               setPage(1);
             }, 300);
           }}
+          onFocus={(e) => e.target.select()}
           style={{ width: isMobile ? 120 : 200 }}
           prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
         />

@@ -473,6 +473,7 @@ const TicketList: React.FC = () => {
               <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
                 value={keyword} onChange={(e) => setKeyword(e.target.value)}
                 onPressEnter={handleSearch}
+                onFocus={(e) => e.target.select()}
                 style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
               <div style={{ display: 'flex', gap: 8 }}>
                 <Select placeholder="状态筛选" allowClear style={{ flex: 1 }}
@@ -502,6 +503,7 @@ const TicketList: React.FC = () => {
                   <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
                     value={keyword} onChange={(e) => setKeyword(e.target.value)}
                     onPressEnter={handleSearch}
+                    onFocus={(e) => e.target.select()}
                     style={{ width: 240, background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
                   <Select placeholder="状态筛选" allowClear style={{ width: 130 }}
                     value={statusFilter} onChange={(v) => { setStatusFilter(v); setPage(1); }}>
