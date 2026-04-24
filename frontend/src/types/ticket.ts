@@ -25,6 +25,7 @@ export interface Ticket {
   closedAt?: string;
   isRoomLocked?: boolean;
   disableExternal?: boolean;
+  hasActiveScreenShare?: boolean;
 }
 
 export interface CreateTicketDto {

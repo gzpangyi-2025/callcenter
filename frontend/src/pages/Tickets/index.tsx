@@ -6,7 +6,7 @@ import {
 import {
   PlusOutlined, SearchOutlined, AppstoreOutlined,
   UnorderedListOutlined, CheckOutlined,
-  FilterOutlined, DeleteOutlined, LockOutlined
+  FilterOutlined, DeleteOutlined, LockOutlined, DesktopOutlined
 } from '@ant-design/icons';
 import { RequirePermission } from '../../components/RequirePermission';
 import { ticketsAPI, usersAPI, categoryAPI } from '../../services/api';
@@ -285,7 +285,11 @@ const TicketList: React.FC = () => {
       title: '标题', dataIndex: 'title', width: colWidths.title, ellipsis: { showTitle: false },
       render: (text: string, record: any) => (
         <Tooltip placement="topLeft" title={text}>
-          <span>{record.isRoomLocked && <LockOutlined style={{ color: '#ef4444', marginRight: 6, fontSize: 12 }} />}{text}</span>
+          <span>
+            {record.isRoomLocked && <LockOutlined style={{ color: '#ef4444', marginRight: 6, fontSize: 12 }} />}
+            {record.hasActiveScreenShare && <DesktopOutlined style={{ color: '#10b981', marginRight: 6, fontSize: 12 }} />}
+            {text}
+          </span>
         </Tooltip>
       )
     },
@@ -598,6 +602,11 @@ const TicketList: React.FC = () => {
                     {isLocked && (
                       <Tooltip title="房间已锁定">
                         <LockOutlined style={{ position: 'absolute', top: 12, right: 12, color: '#ef4444', fontSize: 14 }} />
+                      </Tooltip>
+                    )}
+                    {ticket.hasActiveScreenShare && (
+                      <Tooltip title="正在屏幕共享">
+                        <DesktopOutlined style={{ position: 'absolute', top: 12, right: isLocked ? 32 : 12, color: '#10b981', fontSize: 14 }} />
                       </Tooltip>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>

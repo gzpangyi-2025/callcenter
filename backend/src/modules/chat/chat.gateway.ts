@@ -47,6 +47,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
+  public hasActiveScreenShare(ticketId: number): boolean {
+    return this.activeSharers.has(`ticket_${ticketId}`);
+  }
+
+  public hasActiveVoice(ticketId: number): boolean {
+    const participants = this.activeVoiceRooms.get(`ticket_${ticketId}`);
+    return !!participants && participants.size > 0;
+  }
+
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.auth?.token

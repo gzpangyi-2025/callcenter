@@ -185,6 +185,7 @@ export class TicketsService {
         participants: Array.isArray(item.participants)
           ? item.participants.map((p: User) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
           : [],
+        hasActiveScreenShare: this.chatGateway.hasActiveScreenShare(item.id),
       })),
       total,
       page,
