@@ -56,6 +56,7 @@ export class SearchService implements OnModuleInit {
           content: textMapping, // description mapped as content
           type: { type: 'keyword' },
           ticketNo: { type: 'keyword' },
+          serviceNo: { type: 'keyword' },
           customerName: { type: 'keyword' },
           status: { type: 'keyword' },
           category: { type: 'keyword' },
@@ -139,6 +140,7 @@ export class SearchService implements OnModuleInit {
           title: ticket.title,
           content: ticket.description,
           ticketNo: ticket.ticketNo,
+          serviceNo: ticket.serviceNo || '',
           customerName: ticket.customerName,
           status: ticket.status,
           category: ticket.category1 || ticket.type || '未分类',
@@ -228,7 +230,7 @@ export class SearchService implements OnModuleInit {
       query: {
         multi_match: {
           query,
-          fields: ['title^3', 'content', 'aiSummary', 'customerName', 'ticketNo'],
+          fields: ['title^3', 'content', 'aiSummary', 'customerName', 'ticketNo', 'serviceNo'],
         },
       },
       highlight: {
