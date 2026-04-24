@@ -79,6 +79,28 @@
   color: var(--primary-light);
   font-weight: 500;
 }
+
+/* 区分三种参与类型的标签页颜色 */
+.ticket-tab.tab-type-created { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.2); }
+.ticket-tab.tab-type-assigned { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); }
+.ticket-tab.tab-type-participated { background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); }
+
+.ticket-tab.tab-type-created:hover { border-color: rgba(59, 130, 246, 0.5); }
+.ticket-tab.tab-type-assigned:hover { border-color: rgba(16, 185, 129, 0.5); }
+.ticket-tab.tab-type-participated:hover { border-color: rgba(245, 158, 11, 0.5); }
+
+.ticket-tab.active.tab-type-created {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+  border-color: #3b82f6; color: #3b82f6;
+}
+.ticket-tab.active.tab-type-assigned {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border-color: #10b981; color: #10b981;
+}
+.ticket-tab.active.tab-type-participated {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+  border-color: #f59e0b; color: #f59e0b;
+}
 .tab-status-dot {
   width: 7px;
   height: 7px;

@@ -170,14 +170,19 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
   const loadMyTickets = useCallback(async () => {
     if (!user) return;
     try {
-      const res: any = await ticketsAPI.getAll({ pageSize: 100 });
-      if (res.code === 0) {
-        const items = (res.data.items || []).filter((t: any) =>
-          (t.creator?.id === user.id || t.assignee?.id === user.id) &&
-          t.status !== 'closed'
-        );
-        setMyTickets(items);
-      }
+      const [createdRes, assignedRes, participatedRes] = await Promise.all([
+        ticketsAPI.myCreated(),
+        ticketsAPI.myAssigned(),
+        ticketsAPI.myParticipated(),
+      ]);
+      let items: any[] = [];
+      if ((createdRes as any).code === 0) items = items.concat((createdRes as any).data || []);
+      if ((assignedRes as any).code === 0) items = items.concat((assignedRes as any).data || []);
+      if ((participatedRes as any).code === 0) items = items.concat((participatedRes as any).data || []);
+      
+      const uniqueItems = Array.from(new Map(items.map(item => [item.id, item])).values());
+      const activeItems = uniqueItems.filter((t: any) => t.status !== 'closed');
+      setMyTickets(activeItems);
     } catch { /* ignore */ }
   }, [user]);
 
@@ -526,10 +531,18 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
       {myTickets.map((t: any) => {
         const isActive = t.id === currentTicketId;
         const unread = unreadMap[t.id] || 0;
+        
+        let relationType = 'participated';
+        if (t.creator?.id === user?.id || t.creatorId === user?.id) {
+          relationType = 'created';
+        } else if (t.assignee?.id === user?.id || t.assigneeId === user?.id) {
+          relationType = 'assigned';
+        }
+
         return (
           <div
             key={t.id}
-            className={`ticket-tab ${isActive ? 'active' : ''}`}
+            className={`ticket-tab ${isActive ? 'active' : ''} tab-type-${relationType}`}
             onClick={() => !isActive && navigate(`/tickets/${t.id}`)}
           >
             <span
