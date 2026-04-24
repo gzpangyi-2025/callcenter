@@ -490,8 +490,8 @@ export default function BbsList() {
                             ))}
                           </div>
                           <div className="bbs-row-m-right">
-                            <span className="bbs-stat"><EyeOutlined /> {String(item.viewCount || 0).padStart(3, '0')}</span>
-                            <span className="bbs-stat"><MessageOutlined /> {String(item.commentCount || 0).padStart(3, '0')}</span>
+                            <span className="bbs-stat"><EyeOutlined /><span className="bbs-stat-num">{item.viewCount || 0}</span></span>
+                            <span className="bbs-stat"><MessageOutlined /><span className="bbs-stat-num">{item.commentCount || 0}</span></span>
                             {actionEl}
                           </div>
                         </div>
