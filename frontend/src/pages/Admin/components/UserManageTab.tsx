@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Select, message, Tag, Button, Modal, Form, Input, Popconfirm, Space, Tooltip, Pagination } from 'antd';
-import { EditOutlined, KeyOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, KeyOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { usersAPI, rolesAPI } from '../../../services/api';
 import type { User, Role } from '../../../types/user';
 
@@ -232,12 +232,20 @@ export const UserManageTab: React.FC = () => {
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <Input.Search 
-            placeholder="搜索用户名或姓名..." 
-            allowClear 
-            onChange={e => setSearchText(e.target.value)}
-            style={{ width: 280 }} 
-          />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <Input.Search 
+              placeholder="搜索用户名或姓名..." 
+              allowClear 
+              onChange={e => setSearchText(e.target.value)}
+              style={{ width: 280 }} 
+            />
+            <Button 
+              icon={<ReloadOutlined />} 
+              onClick={fetchData} 
+              loading={loading}
+              title="刷新数据"
+            />
+          </div>
           <Pagination 
             current={currentPage} 
             pageSize={pageSize} 
