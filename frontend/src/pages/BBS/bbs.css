@@ -459,32 +459,45 @@
 
   .bbs-layout { flex-direction: column; gap: 8px; }
   .bbs-row { 
-    padding: 12px 12px 38px 12px; 
-    gap: 10px; 
-    position: relative;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: auto auto;
+    gap: 2px 8px;
+    padding: 10px 12px;
+    align-items: center;
   }
   .bbs-row-icon { display: none; }
-  .bbs-row-main { width: 100%; }
+  .bbs-row-checkbox { grid-column: 1 / -1; }
+  .bbs-row-main { 
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-width: 0;
+  }
   .bbs-row-title {
     white-space: normal;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    line-height: 1.5;
+    line-height: 1.4;
+    font-size: 14px;
+    margin-bottom: 2px;
   }
-  .bbs-row-meta { flex-wrap: wrap; }
+  .bbs-row-meta { 
+    flex-wrap: wrap; 
+    gap: 6px;
+    font-size: 11px;
+  }
   .bbs-row-stats { 
-    position: absolute;
-    bottom: 12px;
-    right: 48px;
-    gap: 10px; 
-    font-size: 12px; 
+    grid-column: 2;
+    grid-row: 2;
+    gap: 8px; 
+    font-size: 11px;
   }
   .bbs-row-action {
-    position: absolute;
-    bottom: 6px;
-    right: 12px;
+    grid-column: 3;
+    grid-row: 2;
+    width: 24px;
+    height: 24px;
   }
   .bbs-card-grid { grid-template-columns: 1fr; }
 }
