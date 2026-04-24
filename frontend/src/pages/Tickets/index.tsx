@@ -470,7 +470,7 @@ const TicketList: React.FC = () => {
           {isMobile ? (
             /* 手机端筛选：垂直堆叠 */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Input placeholder="搜索工单号/标题/描述" prefix={<SearchOutlined />}
+              <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
                 value={keyword} onChange={(e) => setKeyword(e.target.value)}
                 onPressEnter={handleSearch}
                 style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
@@ -499,7 +499,7 @@ const TicketList: React.FC = () => {
             <Row gutter={12} align="middle">
               <Col flex="auto">
                 <Space>
-                  <Input placeholder="搜索工单号/标题/描述" prefix={<SearchOutlined />}
+                  <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
                     value={keyword} onChange={(e) => setKeyword(e.target.value)}
                     onPressEnter={handleSearch}
                     style={{ width: 240, background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />

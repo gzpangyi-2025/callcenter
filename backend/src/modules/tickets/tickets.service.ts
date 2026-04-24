@@ -162,7 +162,7 @@ export class TicketsService {
     }
     if (keyword) {
       qb.andWhere(
-        '(ticket.title LIKE :keyword OR ticket.description LIKE :keyword OR ticket.ticketNo LIKE :keyword)',
+        '(ticket.title LIKE :keyword OR ticket.description LIKE :keyword OR ticket.ticketNo LIKE :keyword OR ticket.serviceNo LIKE :keyword)',
         { keyword: `%${keyword}%` },
       );
     }
