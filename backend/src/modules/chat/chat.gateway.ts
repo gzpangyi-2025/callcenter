@@ -113,6 +113,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             ticketId: parseInt(roomName.replace('ticket_', '')),
             from: userId,
           });
+          this.server.emit('ticketEvent', { action: 'screenShareChanged' });
         }
       }
 
@@ -518,6 +519,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       from: userId,
       fromName: userName,
     });
+    // 通知全局刷新大厅状态
+    this.server.emit('ticketEvent', { action: 'screenShareChanged' });
   }
 
   @SubscribeMessage('screenShare:stop')
@@ -537,6 +540,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       ticketId: data.ticketId,
       from: userId,
     });
+    // 通知全局刷新大厅状态
+    this.server.emit('ticketEvent', { action: 'screenShareChanged' });
   }
 
   @SubscribeMessage('screenShare:offer')
