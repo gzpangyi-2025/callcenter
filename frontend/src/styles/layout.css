@@ -233,6 +233,35 @@
   background: var(--bg-primary);
 }
 
+/* ==================== 页面布局通配类 (桌面端适用) ==================== */
+@media (min-width: 769px) {
+  .page-flex-layout {
+    height: calc(100% + 48px); /* 抵消 .content-area 的 24px top/bottom padding */
+    margin: -24px;             /* 抵消 .content-area 的 24px 四周 padding */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .page-sticky-header {
+    flex-shrink: 0;
+    z-index: 10;
+    padding: 24px 24px 0 24px; /* 将抵消的 padding 补回到 header 内部 */
+  }
+  .page-scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 24px 24px; /* 将抵消的 padding 补回到 scroll 内部 */
+  }
+  .page-scroll-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .page-scroll-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+}
+
+
 /* ==================== 动画 ==================== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

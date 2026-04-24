@@ -99,7 +99,8 @@ const KnowledgePage: React.FC = () => {
   };
 
   return (
-    <div className="fade-in" style={{ paddingBottom: 40, maxWidth: 1200, margin: '0 auto' }}>
+    <div className="fade-in page-flex-layout" style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+      <div className="page-sticky-header">
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, gap: 12 }}>
         <BookOutlined style={{ fontSize: 24, color: 'var(--primary)' }} />
         <Title level={2} style={{ margin: 0, fontSize: 24 }}>技术支持知识库</Title>
@@ -130,7 +131,9 @@ const KnowledgePage: React.FC = () => {
         ]}
         style={{ marginBottom: 16 }}
       />
+      </div>
 
+      <div className="page-scroll-content" style={{ paddingBottom: 40 }}>
       <List
         loading={loading}
         dataSource={docs}
@@ -195,6 +198,7 @@ const KnowledgePage: React.FC = () => {
           );
         }}
       />
+      </div>
 
       <Modal
         title={

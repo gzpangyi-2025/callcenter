@@ -411,16 +411,16 @@ const TicketList: React.FC = () => {
   }, [viewMode, isMobile]);
 
   return (
-    <div className="fade-in" ref={containerRef} onScrollCapture={handleScrollCapture}>
+    <div className={`fade-in ${!isMobile ? 'page-flex-layout' : ''}`} ref={containerRef} onScrollCapture={handleScrollCapture}>
       {/* 固定吸顶容器 */}
-      <div style={{
+      <div className={!isMobile ? 'page-sticky-header' : ''} style={isMobile ? {
         position: 'sticky',
-        top: isMobile ? -12 : -24,
+        top: -12,
         zIndex: 10,
         background: 'var(--bg-primary)',
-        margin: isMobile ? '-12px -12px 0 -12px' : '-24px -24px 0 -24px',
-        padding: isMobile ? '12px 12px 0 12px' : '16px 24px 0 24px',
-      }}>
+        margin: '-12px -12px 0 -12px',
+        padding: '12px 12px 0 12px',
+      } : { background: 'var(--bg-primary)' }}>
         {/* 顶部标题栏 */}
         <div style={{
         display: 'flex',
@@ -538,6 +538,7 @@ const TicketList: React.FC = () => {
       )}
       </div>
 
+      <div className={!isMobile ? 'page-scroll-content' : ''}>
       {/* 列表/卡片视图 */}
       {viewMode === 'list' && !isMobile ? (
         <Card style={{ borderRadius: 12 }}>
@@ -663,6 +664,7 @@ const TicketList: React.FC = () => {
           </div>
         </>
       )}
+      </div>
 
       {/* 创建工单弹窗 */}
       <Modal title="创建技术支持工单" open={createModalOpen}

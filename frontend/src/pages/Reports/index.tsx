@@ -281,8 +281,9 @@ const ReportsPage: React.FC = () => {
 
   // ================= MAIN RENDER =================
   return (
-    <div style={{ padding: '0 16px', maxWidth: 1600, margin: '0 auto' }}>
+    <div className="fade-in page-flex-layout" style={{ maxWidth: 1600, margin: '0 auto', width: '100%' }}>
       
+      <div className="page-sticky-header">
       {/* Dynamic Header Breadcrumb based on Level */}
       <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Breadcrumb separator=">" items={[
@@ -299,7 +300,9 @@ const ReportsPage: React.FC = () => {
           </Button>
           <Button icon={<SyncOutlined />} onClick={() => loadDashboard()}>刷新数据</Button>
         </div>
+        </div>
       </div>
+      <div className="page-scroll-content" style={{ padding: '0 16px 24px' }}>
 
       <Spin spinning={loading}>
 
@@ -429,6 +432,7 @@ const ReportsPage: React.FC = () => {
         )}
 
       </Spin>
+      </div>
 
       {/* Level 4: Drawer showing specific User Tickets */}
       <Drawer
