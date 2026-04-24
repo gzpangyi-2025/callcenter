@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Select, message, Tag, Button, Modal, Form, Input, Popconfirm, Space, Tooltip } from 'antd';
+import { Table, Select, message, Tag, Button, Modal, Form, Input, Popconfirm, Space, Tooltip, Pagination } from 'antd';
 import { EditOutlined, KeyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { usersAPI, rolesAPI } from '../../../services/api';
 import type { User, Role } from '../../../types/user';
@@ -15,6 +15,9 @@ export const UserManageTab: React.FC = () => {
   const [editForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [searchText, setSearchText] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -41,6 +44,19 @@ export const UserManageTab: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText]);
+
+  const filteredUsers = React.useMemo(() => {
+    if (!searchText) return users;
+    const lower = searchText.toLowerCase();
+    return users.filter(u => 
+      (u.username || '').toLowerCase().includes(lower) || 
+      (u.realName || '').toLowerCase().includes(lower)
+    );
+  }, [users, searchText]);
 
   const handleRoleChange = async (userId: number, roleId: number) => {
     try {
@@ -182,20 +198,38 @@ export const UserManageTab: React.FC = () => {
 
   return (
     <div style={{ padding: 16 }}>
-      <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>用户结构:</span>
-        <Tag color="blue" style={{ border: 'none' }}>总计: {users.length}</Tag>
-        {Object.entries(roleStats).map(([name, count]) => (
-          <Tag key={name} style={{ border: 'none', background: 'var(--bg-hover)' }}>{name}: {count}</Tag>
-        ))}
+      <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>用户结构:</span>
+          <Tag color="blue" style={{ border: 'none' }}>总计: {users.length}</Tag>
+          {Object.entries(roleStats).map(([name, count]) => (
+            <Tag key={name} style={{ border: 'none', background: 'var(--bg-hover)' }}>{name}: {count}</Tag>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <Input.Search 
+            placeholder="搜索用户名或姓名..." 
+            allowClear 
+            onChange={e => setSearchText(e.target.value)}
+            style={{ width: 220 }} 
+          />
+          <Pagination 
+            current={currentPage} 
+            pageSize={pageSize} 
+            total={filteredUsers.length} 
+            onChange={setCurrentPage} 
+            showSizeChanger={false}
+            size="small"
+          />
+        </div>
       </div>
       <Table
         columns={columns}
-        dataSource={users}
+        dataSource={filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
         rowKey="id"
         loading={loading}
         scroll={{ x: 800 }}
-        pagination={{ pageSize: 10, position: ['topRight'] }}
+        pagination={false}
         size="small"
       />
 
