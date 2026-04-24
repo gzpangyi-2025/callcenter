@@ -515,7 +515,7 @@ export default function BbsList() {
                         <div className="bbs-row-meta">
                           <span>{item.author?.realName || item.author?.username}</span>
                           <span>{new Date(item.createdAt).toLocaleString()}</span>
-                          {safeTags(item.tags).slice(0, 3).map((t: string) => (
+                          {safeTags(item.tags).map((t: string) => (
                             <Tag key={t} style={{ fontSize: 11, lineHeight: '18px', padding: '0 6px', borderRadius: 4 }}>{t}</Tag>
                           ))}
                         </div>
