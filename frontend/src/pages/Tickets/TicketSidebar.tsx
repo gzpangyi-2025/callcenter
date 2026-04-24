@@ -222,7 +222,7 @@ const TicketSidebar: React.FC = () => {
           )}
           {ticket.status === 'in_progress' && ticket.assigneeId === user?.id && (
             <Button block icon={<CloseOutlined />} onClick={handleRequestClose}
-              style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>请求关单</Button>
+              style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>申请关单</Button>
           )}
           {ticket.status === 'closing' && ticket.creatorId === user?.id && (
             <Button type="primary" block icon={<CheckOutlined />} onClick={handleConfirmClose}
