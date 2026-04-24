@@ -97,10 +97,12 @@ export class TicketsService {
     this.broadcastTicketEvent('created', fullTicket, userId);
 
     // 审计：工单创建
+    const operator = await this.userRepository.findOne({ where: { id: userId } });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'created',
       userId: userId,
+      username: operator?.username || null,
       targetId: fullTicket.id,
       targetName: fullTicket.ticketNo,
       detail: `创建工单「${fullTicket.title}」(${fullTicket.ticketNo})`,
@@ -251,10 +253,12 @@ export class TicketsService {
     this.broadcastTicketEvent('assigned', fullTicket, userId);
 
     // 审计：工单接单
+    const operator = await this.userRepository.findOne({ where: { id: userId } });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'assigned',
       userId: userId,
+      username: operator?.username || null,
       targetId: fullTicket.id,
       targetName: fullTicket.ticketNo,
       detail: `工单「${fullTicket.title}」被接单，状态: pending → in_progress`,
@@ -277,10 +281,12 @@ export class TicketsService {
     this.broadcastTicketEvent('requestClose', fullTicket, userId);
 
     // 审计：申请关单
+    const operator = await this.userRepository.findOne({ where: { id: userId } });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'requestClose',
       userId: userId,
+      username: operator?.username || null,
       targetId: fullTicket.id,
       targetName: fullTicket.ticketNo,
       detail: `工单「${fullTicket.title}」申请关单，状态: in_progress → closing`,
@@ -305,10 +311,12 @@ export class TicketsService {
     this.broadcastTicketEvent('closed', fullTicket, userId);
 
     // 审计：确认关单
+    const operator = await this.userRepository.findOne({ where: { id: userId } });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'closed',
       userId: userId,
+      username: operator?.username || null,
       targetId: fullTicket.id,
       targetName: fullTicket.ticketNo,
       detail: `工单「${fullTicket.title}」已确认关闭，状态: closing → closed`,
