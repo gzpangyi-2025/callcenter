@@ -198,7 +198,7 @@ export const UserManageTab: React.FC = () => {
 
   return (
     <div style={{ padding: 16 }}>
-      <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+      <div style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>用户结构:</span>
           <Tag color="blue" style={{ border: 'none' }}>总计: {users.length}</Tag>
@@ -206,12 +206,12 @@ export const UserManageTab: React.FC = () => {
             <Tag key={name} style={{ border: 'none', background: 'var(--bg-hover)' }}>{name}: {count}</Tag>
           ))}
         </div>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <Input.Search 
             placeholder="搜索用户名或姓名..." 
             allowClear 
             onChange={e => setSearchText(e.target.value)}
-            style={{ width: 220 }} 
+            style={{ width: 280 }} 
           />
           <Pagination 
             current={currentPage} 
