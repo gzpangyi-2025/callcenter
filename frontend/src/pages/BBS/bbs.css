@@ -459,46 +459,42 @@
 
   .bbs-layout { flex-direction: column; gap: 8px; }
   .bbs-row { 
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    grid-template-rows: auto auto;
-    gap: 2px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     padding: 10px 12px;
-    align-items: center;
   }
   .bbs-row-icon { display: none; }
-  .bbs-row-checkbox { grid-column: 1 / -1; }
-  .bbs-row-main { 
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-width: 0;
-  }
-  .bbs-row-title {
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+
+  /* 手机端专用垂直布局 */
+  .bbs-row-m-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
     line-height: 1.4;
-    font-size: 14px;
-    margin-bottom: 2px;
+    /* 不限制行数，让标题完整显示 */
   }
-  .bbs-row-meta { 
-    flex-wrap: wrap; 
-    gap: 6px;
+  .bbs-row:hover .bbs-row-m-title { color: var(--primary, #4f46e5); }
+  .bbs-row-m-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .bbs-row-m-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 11px;
+    color: var(--text-muted);
   }
-  .bbs-row-stats { 
-    grid-column: 2;
-    grid-row: 2;
-    gap: 8px; 
-    font-size: 11px;
+  .bbs-row-m-author { font-weight: 500; }
+  .bbs-row-m-spacer { flex: 1; }
+  .bbs-row-m-footer .bbs-stat { gap: 3px; min-width: auto; font-size: 11px; }
+  .bbs-row-m-footer .bbs-row-action { 
+    width: 22px; height: 22px; font-size: 12px;
+    margin-left: 2px;
   }
-  .bbs-row-action {
-    grid-column: 3;
-    grid-row: 2;
-    width: 24px;
-    height: 24px;
-  }
+
   .bbs-card-grid { grid-template-columns: 1fr; }
 }
 

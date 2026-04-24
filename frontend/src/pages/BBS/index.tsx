@@ -440,62 +440,95 @@ export default function BbsList() {
             ) : viewMode === 'list' ? (
               /* ========== 紧凑行模式 ========== */
               <div className="bbs-compact-list">
-                {posts.map(item => (
-                  <div
-                    key={item.id}
-                    className={`bbs-row ${item.isPinned ? 'pinned' : ''} ${selectedIds.includes(item.id) ? 'selected' : ''}`}
-                    onClick={() => {
-                      if (isManageMode) {
-                        setSelectedIds(prev => prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id]);
-                      } else {
-                        navigate(`/bbs/${item.id}`);
-                      }
-                    }}
-                  >
-                    {isManageMode && (
-                      <div className="bbs-row-checkbox" onClick={e => e.stopPropagation()}>
-                        <Checkbox checked={selectedIds.includes(item.id)} onChange={e => {
-                          if (e.target.checked) setSelectedIds(p => [...p, item.id]);
-                          else setSelectedIds(p => p.filter(id => id !== item.id));
-                        }} />
-                      </div>
-                    )}
-                    <div className="bbs-row-icon">
-                      <MessageFilled style={{ fontSize: 20, color: item.isPinned ? '#f59e0b' : 'var(--text-muted)' }} />
+                {posts.map(item => {
+                  const rowClass = `bbs-row ${item.isPinned ? 'pinned' : ''} ${selectedIds.includes(item.id) ? 'selected' : ''}`;
+                  const handleRowClick = () => {
+                    if (isManageMode) {
+                      setSelectedIds(prev => prev.includes(item.id) ? prev.filter(id => id !== item.id) : [...prev, item.id]);
+                    } else {
+                      navigate(`/bbs/${item.id}`);
+                    }
+                  };
+                  const checkboxEl = isManageMode && (
+                    <div className="bbs-row-checkbox" onClick={e => e.stopPropagation()}>
+                      <Checkbox checked={selectedIds.includes(item.id)} onChange={e => {
+                        if (e.target.checked) setSelectedIds(p => [...p, item.id]);
+                        else setSelectedIds(p => p.filter(id => id !== item.id));
+                      }} />
                     </div>
-                    <div className="bbs-row-main">
-                      <div className="bbs-row-title">
-                        {item.isPinned && <span className="bbs-pin-badge">置顶</span>}
-                        {item.section && <span className="bbs-section-badge">{item.section.name}</span>}
-                        {item.title}
+                  );
+                  const actionEl = !isManageMode && (canEdit || canDelete || user?.id === item.authorId) && (
+                    <Dropdown
+                      menu={{
+                        items: getMenuItems(item),
+                        onClick: (info) => handleMenuClick(info, item),
+                      }}
+                      trigger={['click']}
+                    >
+                      <span className="bbs-row-action" onClick={e => e.stopPropagation()}>
+                        <MoreOutlined />
+                      </span>
+                    </Dropdown>
+                  );
+
+                  if (isMobile) {
+                    // ========== 手机端：垂直紧凑布局 ==========
+                    return (
+                      <div key={item.id} className={rowClass} onClick={handleRowClick}>
+                        {checkboxEl}
+                        <div className="bbs-row-m-title">
+                          {item.isPinned && <span className="bbs-pin-badge">置顶</span>}
+                          {item.section && <span className="bbs-section-badge">{item.section.name}</span>}
+                          {item.title}
+                        </div>
+                        {safeTags(item.tags).length > 0 && (
+                          <div className="bbs-row-m-tags">
+                            {safeTags(item.tags).map((t: string) => (
+                              <Tag key={t} style={{ fontSize: 11, lineHeight: '18px', padding: '0 6px', borderRadius: 4, margin: 0 }}>{t}</Tag>
+                            ))}
+                          </div>
+                        )}
+                        <div className="bbs-row-m-footer">
+                          <span className="bbs-row-m-author">{item.author?.realName || item.author?.username}</span>
+                          <span className="bbs-row-m-date">{new Date(item.createdAt).toLocaleDateString('zh-CN')}</span>
+                          <span className="bbs-row-m-spacer" />
+                          <span className="bbs-stat"><EyeOutlined /> {item.viewCount || 0}</span>
+                          <span className="bbs-stat"><MessageOutlined /> {item.commentCount || 0}</span>
+                          {actionEl}
+                        </div>
                       </div>
-                      <div className="bbs-row-meta">
-                        <span>{item.author?.realName || item.author?.username}</span>
-                        <span>{new Date(item.createdAt).toLocaleString()}</span>
-                        {safeTags(item.tags).slice(0, 3).map((t: string) => (
-                          <Tag key={t} style={{ fontSize: 11, lineHeight: '18px', padding: '0 6px', borderRadius: 4 }}>{t}</Tag>
-                        ))}
+                    );
+                  }
+
+                  // ========== 桌面端：原始水平行布局 ==========
+                  return (
+                    <div key={item.id} className={rowClass} onClick={handleRowClick}>
+                      {checkboxEl}
+                      <div className="bbs-row-icon">
+                        <MessageFilled style={{ fontSize: 20, color: item.isPinned ? '#f59e0b' : 'var(--text-muted)' }} />
                       </div>
+                      <div className="bbs-row-main">
+                        <div className="bbs-row-title">
+                          {item.isPinned && <span className="bbs-pin-badge">置顶</span>}
+                          {item.section && <span className="bbs-section-badge">{item.section.name}</span>}
+                          {item.title}
+                        </div>
+                        <div className="bbs-row-meta">
+                          <span>{item.author?.realName || item.author?.username}</span>
+                          <span>{new Date(item.createdAt).toLocaleString()}</span>
+                          {safeTags(item.tags).slice(0, 3).map((t: string) => (
+                            <Tag key={t} style={{ fontSize: 11, lineHeight: '18px', padding: '0 6px', borderRadius: 4 }}>{t}</Tag>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="bbs-row-stats">
+                        <span className="bbs-stat"><EyeOutlined /> {item.viewCount || 0}</span>
+                        <span className="bbs-stat"><MessageOutlined /> {item.commentCount || 0}</span>
+                      </div>
+                      {actionEl}
                     </div>
-                    <div className="bbs-row-stats">
-                      <span className="bbs-stat"><EyeOutlined /> {item.viewCount || 0}</span>
-                      <span className="bbs-stat"><MessageOutlined /> {item.commentCount || 0}</span>
-                    </div>
-                    {!isManageMode && (canEdit || canDelete || user?.id === item.authorId) && (
-                      <Dropdown
-                        menu={{
-                          items: getMenuItems(item),
-                          onClick: (info) => handleMenuClick(info, item),
-                        }}
-                        trigger={['click']}
-                      >
-                        <span className="bbs-row-action" onClick={e => e.stopPropagation()}>
-                          <MoreOutlined />
-                        </span>
-                      </Dropdown>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               /* ========== 卡片模式 ========== */
