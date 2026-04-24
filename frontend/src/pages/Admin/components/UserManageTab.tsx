@@ -169,15 +169,33 @@ export const UserManageTab: React.FC = () => {
     },
   ];
 
+  const roleStats = React.useMemo(() => {
+    const stats: Record<string, number> = {};
+    users.forEach(u => {
+      const roleId = (u.role as any)?.id;
+      const role = roles.find(r => r.id === roleId);
+      const name = role ? (role.description || role.name) : '未分配';
+      stats[name] = (stats[name] || 0) + 1;
+    });
+    return stats;
+  }, [users, roles]);
+
   return (
     <div style={{ padding: 16 }}>
+      <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>用户结构:</span>
+        <Tag color="blue" style={{ border: 'none' }}>总计: {users.length}</Tag>
+        {Object.entries(roleStats).map(([name, count]) => (
+          <Tag key={name} style={{ border: 'none', background: 'var(--bg-hover)' }}>{name}: {count}</Tag>
+        ))}
+      </div>
       <Table
         columns={columns}
         dataSource={users}
         rowKey="id"
         loading={loading}
         scroll={{ x: 800 }}
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, position: ['topRight'] }}
         size="small"
       />
 
