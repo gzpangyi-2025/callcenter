@@ -499,7 +499,7 @@
     gap: 6px;
   }
   .bbs-row-m-right .bbs-stat { gap: 3px; min-width: auto; font-size: 11px; }
-  .bbs-row-m-right .bbs-stat-num { display: inline-block; min-width: 24px; text-align: right; }
+  .bbs-row-m-right .bbs-stat-num { display: inline-block; min-width: 24px; text-align: left; }
   .bbs-row-m-right .bbs-row-action { 
     width: 22px; height: 22px; font-size: 12px;
   }
