@@ -243,7 +243,7 @@ const ProfilePage: React.FC = () => {
               <Button size="small" type="primary" block icon={<RobotOutlined />}
                 onClick={(e) => { e.stopPropagation(); navigate(`/tickets/${ticket.id}`); }}
                 style={{ marginTop: 10, background: 'linear-gradient(90deg, #7c3aed, #4f46e5)', border: 'none', borderRadius: 6, fontSize: 12 }}>
-                📚 生成知识文档
+                📝 生成知识库
               </Button>
             )}
           </div>

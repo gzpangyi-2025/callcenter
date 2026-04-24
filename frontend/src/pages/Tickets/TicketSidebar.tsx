@@ -222,7 +222,7 @@ const TicketSidebar: React.FC = () => {
           )}
           {ticket.status === 'in_progress' && ticket.assigneeId === user?.id && (
             <Button block icon={<CloseOutlined />} onClick={handleRequestClose}
-              style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>申请关单</Button>
+              style={{ borderColor: 'var(--warning)', color: 'var(--warning)' }}>请求关单</Button>
           )}
           {ticket.status === 'closing' && ticket.creatorId === user?.id && (
             <Button type="primary" block icon={<CheckOutlined />} onClick={handleConfirmClose}
@@ -233,7 +233,7 @@ const TicketSidebar: React.FC = () => {
               <RequirePermission permissions={['knowledge:generate']}>
                 <Button block type="primary" icon={<RobotOutlined />} onClick={handleGenerateKnowledge} loading={knowledgeGenerating}
                   style={{ background: 'linear-gradient(90deg, #7c3aed, #4f46e5)', border: 'none', fontWeight: 600 }}>
-                  {knowledgeGenerating ? 'AI 分析生成中...' : '✨ AI 生成知识文档'}
+                  {knowledgeGenerating ? 'AI 分析生成中...' : '📝 生成知识库'}
                 </Button>
               </RequirePermission>
               <RequirePermission permissions={['knowledge:export_history']}>
