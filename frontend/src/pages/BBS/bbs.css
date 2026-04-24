@@ -458,8 +458,14 @@
   .bbs-sidebar-tag { flex-shrink: 0; }
 
   .bbs-layout { flex-direction: column; gap: 8px; }
-  .bbs-row { padding: 12px; gap: 10px; }
+  .bbs-row { 
+    padding: 12px 12px 38px 12px; 
+    gap: 10px; 
+    position: relative;
+    align-items: flex-start;
+  }
   .bbs-row-icon { display: none; }
+  .bbs-row-main { width: 100%; }
   .bbs-row-title {
     white-space: normal;
     display: -webkit-box;
@@ -467,7 +473,19 @@
     -webkit-box-orient: vertical;
     line-height: 1.5;
   }
-  .bbs-row-stats { gap: 10px; font-size: 12px; }
+  .bbs-row-meta { flex-wrap: wrap; }
+  .bbs-row-stats { 
+    position: absolute;
+    bottom: 12px;
+    right: 48px;
+    gap: 10px; 
+    font-size: 12px; 
+  }
+  .bbs-row-action {
+    position: absolute;
+    bottom: 6px;
+    right: 12px;
+  }
   .bbs-card-grid { grid-template-columns: 1fr; }
 }
 
