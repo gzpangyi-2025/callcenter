@@ -599,21 +599,23 @@ const TicketList: React.FC = () => {
                       if (!isAuthorized) { message.warning('该工单房间已锁定，您无权进入'); return; }
                       navigate(`/tickets/${ticket.id}`);
                     }}>
-                    {isLocked && (
-                      <Tooltip title="房间已锁定">
-                        <LockOutlined style={{ position: 'absolute', top: 12, right: 12, color: '#ef4444', fontSize: 14 }} />
-                      </Tooltip>
-                    )}
-                    {ticket.hasActiveScreenShare && (
-                      <Tooltip title="正在屏幕共享">
-                        <DesktopOutlined style={{ position: 'absolute', top: 12, right: isLocked ? 32 : 12, color: '#10b981', fontSize: 14 }} />
-                      </Tooltip>
-                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
                       <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ticket.ticketNo}</span>
-                      <Tag color={statusMap[ticket.status]?.color} style={{ margin: 0, flexShrink: 0 }}>
-                        {statusMap[ticket.status]?.text}
-                      </Tag>
+                      <Space size={6} style={{ flexShrink: 0 }}>
+                        {isLocked && (
+                          <Tooltip title="房间已锁定">
+                            <LockOutlined style={{ color: '#ef4444', fontSize: 14 }} />
+                          </Tooltip>
+                        )}
+                        {ticket.hasActiveScreenShare && (
+                          <Tooltip title="正在屏幕共享">
+                            <DesktopOutlined style={{ color: '#10b981', fontSize: 14 }} />
+                          </Tooltip>
+                        )}
+                        <Tag color={statusMap[ticket.status]?.color} style={{ margin: 0 }}>
+                          {statusMap[ticket.status]?.text}
+                        </Tag>
+                      </Space>
                     </div>
                     <h4 style={{ marginBottom: 8, fontSize: 15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ticket.title}</h4>
                     {ticket.category1 ? (
