@@ -279,7 +279,12 @@ const TicketList: React.FC = () => {
   const columns = [
     {
       title: '工单号', dataIndex: 'ticketNo', width: colWidths.ticketNo,
-      render: (text: string) => <span style={{ color: 'var(--primary-light)', fontWeight: 500 }}>{text}</span>,
+      render: (text: string, record: any) => (
+        <div>
+          <span style={{ color: 'var(--primary-light)', fontWeight: 500 }}>{text}</span>
+          {record.serviceNo && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{record.serviceNo}</div>}
+        </div>
+      ),
     },
     { 
       title: '标题', dataIndex: 'title', width: colWidths.title, ellipsis: { showTitle: false },
@@ -600,7 +605,9 @@ const TicketList: React.FC = () => {
                       navigate(`/tickets/${ticket.id}`);
                     }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ticket.ticketNo}</span>
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {ticket.ticketNo}{ticket.serviceNo && <span style={{ marginLeft: 8, opacity: 0.7 }}>{ticket.serviceNo}</span>}
+                      </span>
                       <Space size={6} style={{ flexShrink: 0 }}>
                         {isLocked && (
                           <Tooltip title="房间已锁定">
