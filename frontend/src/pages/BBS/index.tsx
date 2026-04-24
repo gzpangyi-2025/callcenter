@@ -481,20 +481,19 @@ export default function BbsList() {
                           {item.section && <span className="bbs-section-badge">{item.section.name}</span>}
                           {item.title}
                         </div>
-                        {safeTags(item.tags).length > 0 && (
-                          <div className="bbs-row-m-tags">
+                        <div className="bbs-row-m-footer">
+                          <div className="bbs-row-m-left">
+                            <span className="bbs-row-m-author">{item.author?.realName || item.author?.username}</span>
+                            <span className="bbs-row-m-date">{new Date(item.createdAt).toLocaleDateString('zh-CN')}</span>
                             {safeTags(item.tags).map((t: string) => (
                               <Tag key={t} style={{ fontSize: 11, lineHeight: '18px', padding: '0 6px', borderRadius: 4, margin: 0 }}>{t}</Tag>
                             ))}
                           </div>
-                        )}
-                        <div className="bbs-row-m-footer">
-                          <span className="bbs-row-m-author">{item.author?.realName || item.author?.username}</span>
-                          <span className="bbs-row-m-date">{new Date(item.createdAt).toLocaleDateString('zh-CN')}</span>
-                          <span className="bbs-row-m-spacer" />
-                          <span className="bbs-stat"><EyeOutlined /> {item.viewCount || 0}</span>
-                          <span className="bbs-stat"><MessageOutlined /> {item.commentCount || 0}</span>
-                          {actionEl}
+                          <div className="bbs-row-m-right">
+                            <span className="bbs-stat"><EyeOutlined /> {String(item.viewCount || 0).padStart(3, '0')}</span>
+                            <span className="bbs-stat"><MessageOutlined /> {String(item.commentCount || 0).padStart(3, '0')}</span>
+                            {actionEl}
+                          </div>
                         </div>
                       </div>
                     );

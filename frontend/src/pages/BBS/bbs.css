@@ -472,27 +472,34 @@
     font-weight: 500;
     color: var(--text-primary);
     line-height: 1.4;
-    /* 不限制行数，让标题完整显示 */
   }
   .bbs-row:hover .bbs-row-m-title { color: var(--primary, #4f46e5); }
-  .bbs-row-m-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
+
   .bbs-row-m-footer {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 6px;
     font-size: 11px;
     color: var(--text-muted);
   }
+  .bbs-row-m-left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+  }
   .bbs-row-m-author { font-weight: 500; }
-  .bbs-row-m-spacer { flex: 1; }
-  .bbs-row-m-footer .bbs-stat { gap: 3px; min-width: auto; font-size: 11px; }
-  .bbs-row-m-footer .bbs-row-action { 
+  .bbs-row-m-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bbs-row-m-right .bbs-stat { gap: 3px; min-width: auto; font-size: 11px; font-family: 'Courier New', monospace; }
+  .bbs-row-m-right .bbs-row-action { 
     width: 22px; height: 22px; font-size: 12px;
-    margin-left: 2px;
   }
 
   .bbs-card-grid { grid-template-columns: 1fr; }
