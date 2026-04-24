@@ -460,6 +460,13 @@
   .bbs-layout { flex-direction: column; gap: 8px; }
   .bbs-row { padding: 12px; gap: 10px; }
   .bbs-row-icon { display: none; }
+  .bbs-row-title {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.5;
+  }
   .bbs-row-stats { gap: 10px; font-size: 12px; }
   .bbs-card-grid { grid-template-columns: 1fr; }
 }
