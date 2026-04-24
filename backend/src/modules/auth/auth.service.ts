@@ -29,14 +29,14 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    // 获取默认用户角色 - 新注册用户默认为外部共享用户组
+    // 获取默认用户角色 - 新注册用户默认为普通用户组
     let defaultRole = await this.roleRepository.findOne({
-      where: { name: 'external' },
+      where: { name: 'user' },
       relations: ['permissions'],
     });
     if (!defaultRole) {
       defaultRole = await this.roleRepository.save(
-        this.roleRepository.create({ name: 'external', description: '外部共享用户' }),
+        this.roleRepository.create({ name: 'user', description: '普通用户' }),
       );
       defaultRole.permissions = [];
     }
