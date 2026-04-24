@@ -17,6 +17,7 @@ export const UserManageTab: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeRoleFilter, setActiveRoleFilter] = useState<string | null>(null);
   const pageSize = 8;
 
   useEffect(() => {
@@ -47,16 +48,27 @@ export const UserManageTab: React.FC = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchText]);
+  }, [searchText, activeRoleFilter]);
 
   const filteredUsers = React.useMemo(() => {
-    if (!searchText) return users;
-    const lower = searchText.toLowerCase();
-    return users.filter(u => 
-      (u.username || '').toLowerCase().includes(lower) || 
-      (u.realName || '').toLowerCase().includes(lower)
-    );
-  }, [users, searchText]);
+    let result = users;
+    if (activeRoleFilter) {
+      result = result.filter(u => {
+        const roleId = (u.role as any)?.id;
+        const role = roles.find(r => r.id === roleId);
+        const name = role ? (role.description || role.name) : '未分配';
+        return name === activeRoleFilter;
+      });
+    }
+    if (searchText) {
+      const lower = searchText.toLowerCase();
+      result = result.filter(u => 
+        (u.username || '').toLowerCase().includes(lower) || 
+        (u.realName || '').toLowerCase().includes(lower)
+      );
+    }
+    return result;
+  }, [users, searchText, activeRoleFilter, roles]);
 
   const handleRoleChange = async (userId: number, roleId: number) => {
     try {
@@ -201,9 +213,22 @@ export const UserManageTab: React.FC = () => {
       <div style={{ marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>用户结构:</span>
-          <Tag color="blue" style={{ border: 'none' }}>总计: {users.length}</Tag>
+          <Tag 
+            color={activeRoleFilter === null ? "blue" : "default"} 
+            style={{ border: 'none', cursor: 'pointer', background: activeRoleFilter === null ? undefined : 'var(--bg-hover)' }}
+            onClick={() => setActiveRoleFilter(null)}
+          >
+            总计: {users.length}
+          </Tag>
           {Object.entries(roleStats).map(([name, count]) => (
-            <Tag key={name} style={{ border: 'none', background: 'var(--bg-hover)' }}>{name}: {count}</Tag>
+            <Tag 
+              key={name} 
+              color={activeRoleFilter === name ? "blue" : "default"}
+              style={{ border: 'none', cursor: 'pointer', background: activeRoleFilter === name ? undefined : 'var(--bg-hover)' }}
+              onClick={() => setActiveRoleFilter(name === activeRoleFilter ? null : name)}
+            >
+              {name}: {count}
+            </Tag>
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
