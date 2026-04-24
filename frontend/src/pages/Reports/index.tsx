@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Card, Row, Col, Breadcrumb, Empty, Spin, Segmented, Drawer, Button, Typography, Table, Tag, Statistic } from 'antd';
+import { Card, Row, Col, Breadcrumb, Empty, Spin, Segmented, Drawer, Button, Typography, Table, Tag, Statistic, Modal, Radio, DatePicker, Space } from 'antd';
 import {
   BarChartOutlined, TeamOutlined, ArrowsAltOutlined, ArrowRightOutlined, SyncOutlined,
   FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, DownloadOutlined
@@ -41,6 +41,16 @@ const ReportsPage: React.FC = () => {
   // ================= User Tickets Data (Level 4 Drawer) =================
   const [userTickets, setUserTickets] = useState<any[]>([]);
   const [userTicketsLoading, setUserTicketsLoading] = useState(false);
+
+  // ================= Export Modal State =================
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+  const [selectedQuarter, setSelectedQuarter] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+  const [customDateRange, setCustomDateRange] = useState<any>(null);
+  
+  const currentYear = dayjs().year();
+  const recentYears = [currentYear, currentYear - 1, currentYear - 2];
 
   // Theme key to force chart re-render on theme switch
   const [themeKey, setThemeKey] = useState(0);
@@ -137,6 +147,70 @@ const ReportsPage: React.FC = () => {
     setUserTicketsLoading(false);
   };
 
+  const handleYearChange = (e: any) => {
+    setSelectedYear(e.target.value);
+    setSelectedQuarter('all');
+    setSelectedMonth('all');
+  };
+
+  const handleQuarterChange = (e: any) => {
+    setSelectedQuarter(e.target.value);
+    setSelectedMonth('all');
+  };
+
+  const executeExport = async () => {
+    let startDate = '';
+    let endDate = '';
+    let label = '全部';
+
+    if (selectedYear === 'custom') {
+      if (!customDateRange || customDateRange.length < 2) {
+        return message.warning('请选择自定义时间范围');
+      }
+      startDate = customDateRange[0].format('YYYY-MM-DD');
+      endDate = customDateRange[1].format('YYYY-MM-DD');
+      label = `${startDate}_至_${endDate}`;
+    } else if (selectedYear !== 'all') {
+      const yearStr = selectedYear;
+      if (selectedQuarter === 'all') {
+        startDate = `${yearStr}-01-01`;
+        endDate = `${yearStr}-12-31`;
+        label = `${yearStr}全年`;
+      } else {
+        const q = parseInt(selectedQuarter.replace('Q', ''));
+        if (selectedMonth === 'all') {
+          startDate = dayjs(`${yearStr}-${(q - 1) * 3 + 1}-01`).format('YYYY-MM-DD');
+          endDate = dayjs(startDate).add(2, 'month').endOf('month').format('YYYY-MM-DD');
+          label = `${yearStr}年Q${q}`;
+        } else {
+          const m = selectedMonth;
+          startDate = dayjs(`${yearStr}-${m}-01`).format('YYYY-MM-DD');
+          endDate = dayjs(startDate).endOf('month').format('YYYY-MM-DD');
+          label = `${yearStr}年${m}月`;
+        }
+      }
+    }
+
+    setExportLoading(true);
+    try {
+      const res = await reportAPI.exportXlsx({ startDate, endDate }) as any;
+      const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `工单数据导出_${label}_${dayjs().format('YYYYMMDD_HHmmss')}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      message.success('导出成功');
+      setExportModalOpen(false);
+    } catch {
+      message.error('导出失败，请重试');
+    }
+    setExportLoading(false);
+  };
+
   // ================= Theme-aware Chart Helpers =================
   const chartTextStyle = { color: themeColors.textSecondary };
 
@@ -219,28 +293,9 @@ const ReportsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: 8 }}>
           <Button 
             icon={<DownloadOutlined />} 
-            loading={exportLoading}
-            onClick={async () => {
-              setExportLoading(true);
-              try {
-                const res = await reportAPI.exportXlsx() as any;
-                const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `工单数据导出_${dayjs().format('YYYYMMDD_HHmmss')}.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                message.success('导出成功');
-              } catch {
-                message.error('导出失败，请重试');
-              }
-              setExportLoading(false);
-            }}
+            onClick={() => setExportModalOpen(true)}
           >
-            {exportLoading ? '导出中...' : '📥 导出 Excel'}
+            📥 导出工单数据
           </Button>
           <Button icon={<SyncOutlined />} onClick={() => loadDashboard()}>刷新数据</Button>
         </div>
@@ -401,6 +456,75 @@ const ReportsPage: React.FC = () => {
           ]}
         />
       </Drawer>
+
+      <Modal
+        title="导出工单数据"
+        open={exportModalOpen}
+        onCancel={() => setExportModalOpen(false)}
+        onOk={executeExport}
+        confirmLoading={exportLoading}
+        okText="确认导出"
+        width={500}
+      >
+        <div style={{ padding: '12px 0' }}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            
+            {/* 第一层：年份选择 */}
+            <div>
+              <Text strong style={{ display: 'block', marginBottom: 8, color: 'var(--text-secondary)' }}>1. 选择基础年份</Text>
+              <Radio.Group value={selectedYear} onChange={handleYearChange} optionType="button" buttonStyle="solid">
+                <Radio value="all">全部历史数据</Radio>
+                {recentYears.map(y => <Radio key={y} value={y.toString()}>{y}年</Radio>)}
+                <Radio value="custom">自定义跨度</Radio>
+              </Radio.Group>
+            </div>
+
+            {/* 第二层：季度选择 */}
+            {selectedYear !== 'all' && selectedYear !== 'custom' && (
+              <div>
+                <Text strong style={{ display: 'block', marginBottom: 8, color: 'var(--text-secondary)' }}>2. 选择目标季度</Text>
+                <Radio.Group value={selectedQuarter} onChange={handleQuarterChange} optionType="button" buttonStyle="solid">
+                  <Radio value="all">{selectedYear}全年</Radio>
+                  <Radio value="Q1">第一季度</Radio>
+                  <Radio value="Q2">第二季度</Radio>
+                  <Radio value="Q3">第三季度</Radio>
+                  <Radio value="Q4">第四季度</Radio>
+                </Radio.Group>
+              </div>
+            )}
+
+            {/* 第三层：月份选择 */}
+            {selectedYear !== 'all' && selectedYear !== 'custom' && selectedQuarter !== 'all' && (
+              <div>
+                <Text strong style={{ display: 'block', marginBottom: 8, color: 'var(--text-secondary)' }}>3. 选择具体月份</Text>
+                <Radio.Group value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} optionType="button" buttonStyle="solid">
+                  <Radio value="all">{selectedQuarter}全季</Radio>
+                  {(() => {
+                    const q = parseInt(selectedQuarter.replace('Q', ''));
+                    const startMonth = (q - 1) * 3 + 1;
+                    return [startMonth, startMonth + 1, startMonth + 2].map(m => (
+                      <Radio key={m} value={m.toString()}>{m}月</Radio>
+                    ));
+                  })()}
+                </Radio.Group>
+              </div>
+            )}
+
+            {/* 自定义日期选择器 */}
+            {selectedYear === 'custom' && (
+              <div>
+                <Text strong style={{ display: 'block', marginBottom: 8, color: 'var(--text-secondary)' }}>选择日期范围</Text>
+                <DatePicker.RangePicker 
+                  style={{ width: '100%' }}
+                  value={customDateRange}
+                  onChange={(dates) => setCustomDateRange(dates)}
+                />
+              </div>
+            )}
+
+          </Space>
+        </div>
+      </Modal>
     </div>
   );
 };
