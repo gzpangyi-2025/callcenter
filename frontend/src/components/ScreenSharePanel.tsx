@@ -47,7 +47,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   onRetry,
   onStopSharing,
   onStopViewing,
-  isMobile: _isMobile,
+  isMobile,
   supportMode,
   onToggleSupportMode,
   style,
@@ -163,18 +163,35 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   const toggleFullscreen = useCallback(() => {
     if (!panelRef.current) return;
 
-    if (!document.fullscreenElement) {
-      panelRef.current.requestFullscreen().then(() => {
+    if (isMobile) {
+      // 手机端使用 CSS 全屏 + 尝试锁定横屏
+      if (!isFullscreen) {
         setIsFullscreen(true);
-      }).catch(err => {
-        console.error('[屏幕共享] 全屏请求失败:', err);
-      });
-    } else {
-      document.exitFullscreen().then(() => {
+        // 尝试锁定横屏（部分浏览器支持）
+        try {
+          (screen.orientation as any)?.lock?.('landscape').catch(() => {});
+        } catch (e) { /* 静默忽略 */ }
+      } else {
         setIsFullscreen(false);
-      });
+        try {
+          (screen.orientation as any)?.unlock?.();
+        } catch (e) { /* 静默忽略 */ }
+      }
+    } else {
+      // PC端使用原生 Fullscreen API
+      if (!document.fullscreenElement) {
+        panelRef.current.requestFullscreen().then(() => {
+          setIsFullscreen(true);
+        }).catch(err => {
+          console.error('[屏幕共享] 全屏请求失败:', err);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          setIsFullscreen(false);
+        });
+      }
     }
-  }, []);
+  }, [isMobile, isFullscreen]);
 
   // 监听 ESC 退出全屏
   useEffect(() => {
@@ -312,8 +329,8 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
               />
             </Tooltip>
           )}
-          {/* 支援模式按钮 */}
-          {isViewing && (
+          {/* 支援模式按钮（手机端隐藏） */}
+          {isViewing && !isMobile && (
             <Tooltip title={supportMode ? '退出支援模式' : '支援模式 (大画面 + 聊天)'}>
               <Button
                 type="text"
@@ -443,11 +460,35 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
         )}
       </div>
 
-      {/* 全屏模式下的悬浮聊天提示 */}
+      {/* 全屏模式下的提示 / 返回按钮 */}
       {isFullscreen && (
-        <div className="screen-share-fullscreen-hint">
-          按 Esc 退出全屏 · 聊天区域在底部保留
-        </div>
+        isMobile ? (
+          <div style={{
+            position: 'absolute',
+            top: 16,
+            left: 16,
+            zIndex: 20,
+          }}>
+            <Button
+              type="primary"
+              size="small"
+              onClick={toggleFullscreen}
+              style={{
+                background: 'rgba(0,0,0,0.5)',
+                border: 'none',
+                borderRadius: 20,
+                padding: '4px 16px',
+                color: '#fff',
+                fontSize: 13,
+                backdropFilter: 'blur(8px)',
+              }}
+            >← 返回</Button>
+          </div>
+        ) : (
+          <div className="screen-share-fullscreen-hint">
+            按 Esc 退出全屏 · 聊天区域在底部保留
+          </div>
+        )
       )}
     </div>
   );
