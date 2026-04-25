@@ -4,7 +4,7 @@ import {
   CloudDownloadOutlined, DeleteOutlined, UploadOutlined,
   SaveOutlined, ReloadOutlined, ExclamationCircleFilled,
   DatabaseOutlined, PictureOutlined, FileOutlined, AuditOutlined,
-  CheckCircleOutlined,
+  CheckCircleOutlined, ClearOutlined,
 } from '@ant-design/icons';
 import { backupAPI } from '../../../services/api';
 
@@ -46,6 +46,13 @@ const BackupTab: React.FC = () => {
   const [restoring, setRestoring] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [restoreResult, setRestoreResult] = useState<any>(null);
+  const [cleaning, setCleaning] = useState(false);
+
+  // COS orphan state
+  const [cosOrphanCount, setCosOrphanCount] = useState<number | null>(null);
+  const [cosOrphanFiles, setCosOrphanFiles] = useState<string[]>([]);
+  const [cosOrphanLoading, setCosOrphanLoading] = useState(false);
+  const [cleaningCosOrphans, setCleaningCosOrphans] = useState(false);
 
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
@@ -100,6 +107,65 @@ const BackupTab: React.FC = () => {
       }
     } catch {
       message.error('删除失败');
+    }
+  };
+
+  const handleCleanOrphans = async () => {
+    setCleaning(true);
+    try {
+      const res: any = await backupAPI.cleanOrphans();
+      if (res.code === 0) {
+        message.success(res.message || '清理完成');
+        loadStats(); // 实时刷新数据概况
+      } else {
+        message.error(res.message || '清理失败');
+      }
+    } catch {
+      message.error('清理失败');
+    } finally {
+      setCleaning(false);
+    }
+  };
+
+  const handleScanCosOrphans = async () => {
+    setCosOrphanLoading(true);
+    try {
+      const res: any = await backupAPI.getCosOrphans();
+      if (res.code === 0) {
+        setCosOrphanCount(res.data.orphanCount);
+        setCosOrphanFiles(res.data.orphanFiles || []);
+        if (res.data.orphanCount === 0) {
+          message.success('扫描完成，COS 中无孤儿文件');
+        } else {
+          message.warning(`发现 ${res.data.orphanCount} 个云端孤儿文件`);
+        }
+      } else {
+        message.error('扫描失败：' + res.message);
+      }
+    } catch {
+      message.error('扫描失败');
+    } finally {
+      setCosOrphanLoading(false);
+    }
+  };
+
+  const handleCleanCosOrphans = async () => {
+    setCleaningCosOrphans(true);
+    try {
+      const res: any = await backupAPI.cleanCosOrphans();
+      if (res.code === 0) {
+        message.success(res.message);
+        // 清理后重置状态并重新扫描
+        setCosOrphanCount(null);
+        setCosOrphanFiles([]);
+        loadStats();
+      } else {
+        message.error(res.message || '清理失败');
+      }
+    } catch {
+      message.error('清理失败');
+    } finally {
+      setCleaningCosOrphans(false);
     }
   };
 
@@ -209,6 +275,12 @@ const BackupTab: React.FC = () => {
               <span><DatabaseOutlined style={{ color: '#1677ff' }} /> 数据库：{stats.tableCount} 张表，共 {stats.totalRecords.toLocaleString()} 条记录</span>
               <span><PictureOutlined style={{ color: '#52c41a' }} /> 图片：{stats.imageCount} 个 ({formatBytes(stats.imageSize)})</span>
               <span><FileOutlined style={{ color: '#fa8c16' }} /> 附件：{stats.fileCount} 个 ({formatBytes(stats.fileSize)})</span>
+              {stats.orphanCount > 0 && (
+                <span style={{ color: '#ff4d4f' }}><ClearOutlined style={{ color: '#ff4d4f' }} /> 孤儿文件：{stats.orphanCount} 个 ({formatBytes(stats.orphanSize)})</span>
+              )}
+              {stats.orphanCount === 0 && (
+                <span style={{ color: '#52c41a' }}><CheckCircleOutlined style={{ color: '#52c41a' }} /> 无孤儿文件</span>
+              )}
             </div>
           </div>
         ) : null}
@@ -277,7 +349,113 @@ const BackupTab: React.FC = () => {
         />
       </Card>
 
-      {/* Section 3: Restore */}
+      {/* Section 3: Clean OSS Space */}
+      <Card
+        size="small"
+        title={<span style={{ fontWeight: 600 }}>🗑️ 清理 OSS 空间</span>}
+        style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
+      >
+        <Alert
+          type="info"
+          showIcon
+          message="扫描并删除没有被任何帖子、工单聊天记录、知识库文档引用的孤儿文件，释放磁盘空间。"
+          style={{ marginBottom: 16 }}
+        />
+        {stats && stats.orphanCount > 0 ? (
+          <div style={{ marginBottom: 16, background: '#fff2e8', borderRadius: 8, padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>
+              <ClearOutlined style={{ color: '#fa541c', marginRight: 8 }} />
+              发现 <Text strong style={{ color: '#fa541c' }}>{stats.orphanCount}</Text> 个孤儿文件，
+              占用 <Text strong style={{ color: '#fa541c' }}>{formatBytes(stats.orphanSize)}</Text>
+            </span>
+          </div>
+        ) : stats ? (
+          <div style={{ marginBottom: 16, background: '#f6ffed', borderRadius: 8, padding: '10px 16px' }}>
+            <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+            OSS 空间干净，没有孤儿文件。
+          </div>
+        ) : null}
+        <Popconfirm
+          title="确定清理孤儿文件？"
+          description="此操作将永久删除未被引用的文件，不可恢复。建议先创建备份。"
+          onConfirm={handleCleanOrphans}
+          okText="确认清理"
+          cancelText="取消"
+          okButtonProps={{ danger: true }}
+        >
+          <Button
+            icon={<ClearOutlined />}
+            loading={cleaning}
+            disabled={!stats || stats.orphanCount === 0}
+          >
+            {cleaning ? '清理中...' : '清理孤儿文件'}
+          </Button>
+        </Popconfirm>
+      </Card>
+
+      {/* Section 4: COS Cloud Orphan Cleanup */}
+      {stats?.provider === 'cos' && (
+        <Card
+          size="small"
+          title={<span style={{ fontWeight: 600 }}>☁️ 清理对象存储 (COS) 孤儿文件</span>}
+          style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
+        >
+          <Alert
+            type="info"
+            showIcon
+            message="对比数据库引用与 COS 存储桶中的实际对象，找出未被任何帖子、工单、聊天记录引用的孤儿文件并彻底删除，节省云存储费用。"
+            style={{ marginBottom: 16 }}
+          />
+          {cosOrphanCount !== null && (
+            <div style={{ marginBottom: 16, background: cosOrphanCount > 0 ? '#fff2e8' : '#f6ffed', borderRadius: 8, padding: '10px 16px' }}>
+              {cosOrphanCount > 0 ? (
+                <>
+                  <ClearOutlined style={{ color: '#fa541c', marginRight: 8 }} />
+                  发现 <Text strong style={{ color: '#fa541c' }}>{cosOrphanCount}</Text> 个云端孤儿文件
+                  {cosOrphanFiles.length > 0 && (
+                    <details style={{ marginTop: 8 }}>
+                      <summary style={{ cursor: 'pointer', color: '#888', fontSize: 12 }}>查看文件列表</summary>
+                      <div style={{ maxHeight: 120, overflowY: 'auto', fontSize: 11, marginTop: 4 }}>
+                        {cosOrphanFiles.map(f => <div key={f} style={{ color: '#999' }}>{f}</div>)}
+                      </div>
+                    </details>
+                  )}
+                </>
+              ) : (
+                <>
+                  <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                  COS 存储桶干净，没有孤儿文件。
+                </>
+              )}
+            </div>
+          )}
+          <Space>
+            <Button icon={<ReloadOutlined />} loading={cosOrphanLoading} onClick={handleScanCosOrphans}>
+              扫描云端孤儿文件
+            </Button>
+            <Popconfirm
+              title="确定删除所有云端孤儿文件？"
+              description="此操作将永久从腾讯云 COS 中删除这些文件，不可恢复。"
+              onConfirm={handleCleanCosOrphans}
+              okText="确认删除"
+              cancelText="取消"
+              okButtonProps={{ danger: true }}
+              disabled={!cosOrphanCount || cosOrphanCount === 0}
+            >
+              <Button
+                danger
+                icon={<ClearOutlined />}
+                loading={cleaningCosOrphans}
+                disabled={!cosOrphanCount || cosOrphanCount === 0}
+              >
+                {cleaningCosOrphans ? '清理中...' : '删除云端孤儿文件'}
+              </Button>
+            </Popconfirm>
+          </Space>
+        </Card>
+      )}
+
+      {/* Section 5: Restore */}
       <Card
         size="small"
         title={<span style={{ fontWeight: 600 }}>⚠️ 恢复系统</span>}

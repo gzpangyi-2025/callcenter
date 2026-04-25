@@ -44,6 +44,7 @@ export class TicketsController {
     @Query('category1') category1?: string,
     @Query('category2') category2?: string,
     @Query('category3') category3?: string,
+    @Query('customerName') customerName?: string,
     @Query('creatorId') creatorId?: string,
     @Query('assigneeId') assigneeId?: string,
   ) {
@@ -56,6 +57,43 @@ export class TicketsController {
       category1,
       category2,
       category3,
+      customerName,
+      creatorId: creatorId ? parseInt(creatorId) : undefined,
+      assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
+      isDashboard: isDashboard === 'true',
+    });
+    return { code: 0, data: result };
+  }
+
+  @Get('test-reload')
+  async testReload() {
+    return { code: 0, message: 'PM2 Reload Successful!' };
+  }
+
+  @Get('aggregates')
+  @Permissions('tickets:read')
+  async getAggregates(
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('status') status?: TicketStatus,
+    @Query('type') type?: string,
+    @Query('keyword') keyword?: string,
+    @Query('isDashboard') isDashboard?: string,
+    @Query('category1') category1?: string,
+    @Query('category2') category2?: string,
+    @Query('category3') category3?: string,
+    @Query('customerName') customerName?: string,
+    @Query('creatorId') creatorId?: string,
+    @Query('assigneeId') assigneeId?: string,
+  ) {
+    const result = await this.ticketsService.getAggregates({
+      status,
+      type,
+      keyword,
+      category1,
+      category2,
+      category3,
+      customerName,
       creatorId: creatorId ? parseInt(creatorId) : undefined,
       assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
       isDashboard: isDashboard === 'true',

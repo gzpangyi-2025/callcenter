@@ -9,6 +9,7 @@
 ### 1.1 Local macOS Machine
 - **SSH User:** `root` (or local user)
 - **Root Password:** `matrox`
+- **Nginx Config:** `/opt/homebrew/etc/nginx/servers/callcenter.conf` (Reload with `sudo nginx -s reload`)
 
 ### 1.2 Remote Production Server (App & DB)
 - **IP Address:** `192.168.50.51`
@@ -38,6 +39,7 @@
 There is a fundamental difference between the local and production Elasticsearch setups.
 
 **Local Environment:**
+- **Startup:** Runs via Docker. Ensure the local ES Docker container (version `8.13.0`) is started before running the backend.
 - **URL:** `http://127.0.0.1:9200`
 - **Authentication:** None
 - **Analyzer:** `standard` (The local Docker image `8.13.0` does **NOT** have the IK Chinese analyzer plugin installed).
@@ -52,12 +54,18 @@ There is a fundamental difference between the local and production Elasticsearch
 > [!WARNING]
 > The backend `SearchService` dynamically checks `process.env.NODE_ENV`. If `production`, it uses `ik_max_word`. Otherwise, it uses `standard`. **Do not force the IK analyzer in local development, as it will crash the NestJS app during index initialization.**
 
+### 2.3 Tencent Cloud COS (Object Storage)
+- **Purpose:** The system utilizes Tencent Cloud COS for robust file storage, superseding local directory storage.
+- **Buckets (Region: ap-guangzhou):**
+  - **Local Environment:** `callcenter-local-1425043423`
+  - **Production Environment:** `callcenter-1425043423`
+- **Credentials:** Configured in the `.env` file via `COS_SECRET_ID`, `COS_SECRET_KEY`, and `COS_BUCKET`.
 ---
 
 ## 3. Deployment & Syncing Rules
 
 ### 3.1 The Sync Script (`sync.sh`)
-- Code is pushed to production using the `/Users/yipang/Documents/code/callcenter/sync.sh` script.
+- Code is pushed to production using the `/Users/yipang/Documents/Antigravity/callcenter/sync.sh` script.
 - **NEVER** remove the `--exclude '.env'` flag from this script. A past incident occurred where the local `.env` overwrote the production `.env`, bringing down the production Elasticsearch connection.
 
 ### 3.2 Frontend Compilation

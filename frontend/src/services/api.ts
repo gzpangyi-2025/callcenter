@@ -76,6 +76,7 @@ export const authAPI = {
 export const ticketsAPI = {
   create: (data: CreateTicketDto): Promise<ApiResponse<Ticket>> => api.post('/tickets', data),
   getAll: (params?: TicketQueryParams): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/tickets', { params }),
+  getAggregates: (params?: TicketQueryParams): Promise<ApiResponse<any>> => api.get('/tickets/aggregates', { params }),
   getById: (id: number): Promise<ApiResponse<Ticket>> => api.get(`/tickets/${id}`),
   getMyBadges: (): Promise<ApiResponse<TicketBadgeSummary>> => api.get('/tickets/my/badges'),
   getBatchSummary: (ids: number[]): Promise<ApiResponse<any[]>> => api.post('/tickets/batch/summary', { ids }),
@@ -140,6 +141,13 @@ export const settingsAPI = {
     companyEmail?: string; companyPhone?: string; sla?: string;
   }) => api.post('/settings/biz', data),
   saveSecurity: (data: { shareExpiration?: string }) => api.post('/settings/security', data),
+  saveStorage: (data: {
+    provider?: string; cosSecretId?: string; cosSecretKey?: string;
+    cosBucket?: string; cosRegion?: string;
+  }) => api.post('/settings/storage', data),
+  getMigrationStats: () => api.get('/files/migration-stats'),
+  migrateStorage: () => api.post('/files/migrate'),
+
   uploadLogo: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -256,6 +264,9 @@ export const backupAPI = {
     });
   },
   delete: (filename: string) => api.delete(`/backup/${encodeURIComponent(filename)}`),
+  cleanOrphans: () => api.post('/backup/clean-orphans', {}, { timeout: 120000 }),
+  getCosOrphans: () => api.get('/backup/cos-orphans', { timeout: 120000 }),
+  cleanCosOrphans: () => api.post('/backup/clean-cos-orphans', {}, { timeout: 120000 }),
 };
 
 // Infra API

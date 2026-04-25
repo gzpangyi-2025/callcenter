@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Upload, Tooltip, message } from 'antd';
 import { PaperClipOutlined, PictureOutlined, SendOutlined } from '@ant-design/icons';
 import { getFileIcon } from './ChatMessageList';
+import ImageEditorModal from '../../components/ImageEditorModal';
 
 interface ChatInputBarProps {
   inputValue: string;
@@ -34,6 +35,18 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
 }) => {
   const removePendingFile = (index: number) => {
     setPendingFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const [editingFileIndex, setEditingFileIndex] = React.useState<number | null>(null);
+
+  const handleSaveEditedFile = (newFile: File) => {
+    if (editingFileIndex !== null) {
+      setPendingFiles(prev => {
+        const newFiles = [...prev];
+        newFiles[editingFileIndex] = newFile;
+        return newFiles;
+      });
+    }
   };
 
   const enterNewlineBtn = (
@@ -78,7 +91,14 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           {pendingFiles.map((file, i) => (
             <div key={i} className="pending-file-item">
               {file.type.startsWith('image/') ? (
-                <img src={URL.createObjectURL(file)} alt={file.name} className="pending-img-preview" />
+                <img 
+                  src={URL.createObjectURL(file)} 
+                  alt={file.name} 
+                  className="pending-img-preview" 
+                  onClick={() => setEditingFileIndex(i)}
+                  style={{ cursor: 'pointer' }}
+                  title="点击批注图片"
+                />
               ) : (
                 <div className="pending-file-icon" style={{ color: getFileIcon(file.name).color }}>
                   {getFileIcon(file.name).icon}
@@ -136,6 +156,12 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           </button>
         )}
       </div>
+      <ImageEditorModal
+        open={editingFileIndex !== null}
+        file={editingFileIndex !== null ? pendingFiles[editingFileIndex] : null}
+        onCancel={() => setEditingFileIndex(null)}
+        onSaveFile={handleSaveEditedFile}
+      />
     </div>
   );
 };

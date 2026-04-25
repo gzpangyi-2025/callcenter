@@ -8,11 +8,14 @@ import archiver from 'archiver';
 import * as path from 'path';
 import * as fs from 'fs';
 
+import { FilesService } from '../files/files.service';
+
 @Injectable()
 export class TicketsExportService {
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    private readonly filesService: FilesService,
   ) {}
 
   async exportChatZip(ticketId: number, userId: number, userRole: string, res: any): Promise<void> {
@@ -63,7 +66,6 @@ export class TicketsExportService {
     archive.append(md, { name: `${safeName}.md` });
 
     // 2. 生成 DOCX 聊天记录
-    const ossDir = path.join(process.cwd(), 'oss');
     const docChildren: any[] = [
       new Paragraph({
         text: `工单 ${ticket.ticketNo} 聊天记录`,
@@ -119,31 +121,28 @@ export class TicketsExportService {
         const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
         if (urlMatch) {
           const filename = urlMatch[1];
-          const imgPath = path.join(ossDir, filename);
-          if (fs.existsSync(imgPath)) {
-            try {
-              const imgBuffer = fs.readFileSync(imgPath);
-              const dimensions = sizeOf(imgBuffer);
-              let w = dimensions.width || 400;
-              let h = dimensions.height || 300;
-              if (w > 500) {
-                h = Math.floor(h * (500 / w));
-                w = 500;
-              }
-              docChildren.push(new Paragraph({
-                children: [
-                  new ImageRun({
-                    data: imgBuffer,
-                    transformation: { width: w, height: h },
-                    type: 'png',
-                  }),
-                ],
-                alignment: align,
-              }));
-              imageEmbedded = true;
-            } catch {
-              // 图片嵌入失败，降级为文本
+          try {
+            const imgBuffer = await this.filesService.getFileBuffer(filename);
+            const dimensions = sizeOf(imgBuffer);
+            let w = dimensions.width || 400;
+            let h = dimensions.height || 300;
+            if (w > 500) {
+              h = Math.floor(h * (500 / w));
+              w = 500;
             }
+            docChildren.push(new Paragraph({
+              children: [
+                new ImageRun({
+                  data: imgBuffer,
+                  transformation: { width: w, height: h },
+                  type: 'png',
+                }),
+              ],
+              alignment: align,
+            }));
+            imageEmbedded = true;
+          } catch {
+            // 图片嵌入失败，降级为文本
           }
         }
       }
@@ -186,10 +185,10 @@ export class TicketsExportService {
         if (urlMatch) internalFilename = urlMatch[1];
       }
       if (internalFilename) {
-        const filePath = path.join(ossDir, internalFilename);
-        if (fs.existsSync(filePath)) {
-          archive.append(fs.createReadStream(filePath), { name: `attachments/${msg.fileName || internalFilename}` });
-        }
+        try {
+          const fileBuffer = await this.filesService.getFileBuffer(internalFilename);
+          archive.append(fileBuffer, { name: `attachments/${msg.fileName || internalFilename}` });
+        } catch {}
       }
     }
 
@@ -211,8 +210,6 @@ export class TicketsExportService {
     if (!isCreator && !isAssignee && !isParticipant && !isAdmin) {
       throw new ForbiddenException('您无权导出此工单报告');
     }
-
-    const ossDir = path.join(process.cwd(), 'oss');
 
     const creatorName = ticket.creator?.realName || ticket.creator?.displayName || '-';
     const assigneeName = ticket.assignee?.realName || ticket.assignee?.displayName || '-';
@@ -374,52 +371,49 @@ export class TicketsExportService {
         const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
         if (urlMatch) {
           const filename = urlMatch[1];
-          const imgPath = path.join(ossDir, filename);
-          if (fs.existsSync(imgPath)) {
-            try {
-              const imgBuffer = fs.readFileSync(imgPath);
-              const dimensions = sizeOf(imgBuffer);
-              let rawW = dimensions.width || 400;
-              let rawH = dimensions.height || 300;
-              
-              let rotation = 0;
-              let isSwapped = false;
-              if (dimensions.orientation === 6) { rotation = 90; isSwapped = true; }
-              else if (dimensions.orientation === 8) { rotation = 270; isSwapped = true; }
-              else if (dimensions.orientation === 3) { rotation = 180; }
-              
-              let visualW = isSwapped ? rawH : rawW;
-              let visualH = isSwapped ? rawW : rawH;
-              
-              if (visualW > 500) {
-                visualH = Math.floor(visualH * (500 / visualW));
-                visualW = 500;
-              }
-              
-              let configW = isSwapped ? visualH : visualW;
-              let configH = isSwapped ? visualW : visualH;
-
-              const imgType = dimensions.type === 'jpg' ? 'jpeg' : (dimensions.type || 'png');
-
-              const imgConfig: any = {
-                data: imgBuffer,
-                transformation: { width: configW, height: configH },
-                type: imgType,
-              };
-              if (rotation !== 0) {
-                imgConfig.transformation.rotation = rotation;
-              }
-
-              docChildren.push(new Paragraph({
-                children: [
-                  new ImageRun(imgConfig),
-                ],
-                spacing: { after: 80 },
-              }));
-              imageEmbedded = true;
-            } catch {
-              // 图片嵌入失败，降级为文本
+          try {
+            const imgBuffer = await this.filesService.getFileBuffer(filename);
+            const dimensions = sizeOf(imgBuffer);
+            let rawW = dimensions.width || 400;
+            let rawH = dimensions.height || 300;
+            
+            let rotation = 0;
+            let isSwapped = false;
+            if (dimensions.orientation === 6) { rotation = 90; isSwapped = true; }
+            else if (dimensions.orientation === 8) { rotation = 270; isSwapped = true; }
+            else if (dimensions.orientation === 3) { rotation = 180; }
+            
+            let visualW = isSwapped ? rawH : rawW;
+            let visualH = isSwapped ? rawW : rawH;
+            
+            if (visualW > 500) {
+              visualH = Math.floor(visualH * (500 / visualW));
+              visualW = 500;
             }
+            
+            let configW = isSwapped ? visualH : visualW;
+            let configH = isSwapped ? visualW : visualH;
+
+            const imgType = dimensions.type === 'jpg' ? 'jpeg' : (dimensions.type || 'png');
+
+            const imgConfig: any = {
+              data: imgBuffer,
+              transformation: { width: configW, height: configH },
+              type: imgType,
+            };
+            if (rotation !== 0) {
+              imgConfig.transformation.rotation = rotation;
+            }
+
+            docChildren.push(new Paragraph({
+              children: [
+                new ImageRun(imgConfig),
+              ],
+              spacing: { after: 80 },
+            }));
+            imageEmbedded = true;
+          } catch {
+            // 图片嵌入失败，降级为文本
           }
         }
       }

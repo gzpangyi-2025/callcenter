@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Button, Tooltip, Tag } from 'antd';
+import { Button, Tooltip, Tag, message } from 'antd';
 import {
   FullscreenOutlined, FullscreenExitOutlined,
   CloseOutlined, CompressOutlined, ExpandOutlined,
   DesktopOutlined, LoadingOutlined, DisconnectOutlined,
-  CustomerServiceOutlined, ReloadOutlined,
+  CustomerServiceOutlined, ReloadOutlined, ScissorOutlined,
 } from '@ant-design/icons';
+import { useScreenshotStore } from '../stores/screenshotStore';
 
 interface ScreenSharePanelProps {
   /** 远程视频流 (观看方) */
@@ -57,6 +58,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [hasVideoFrames, setHasVideoFrames] = useState(false);
+  const { addScreenshot } = useScreenshotStore();
 
   // 播放辅助函数（带防护）
   const safePlay = useCallback((el: HTMLVideoElement) => {
@@ -121,8 +123,34 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
     return () => { clearTimeout(timerId); };
   }, [remoteStream]);
 
-  // 取消了激进的自动重试，因为在弱网下 WebRTC 获取首帧可能需要超过 10 秒。
-  // 频繁自动重连会导致永远看不到画面。
+  // 弱网下 WebRTC ICE 穿透和获取首帧可能较慢（有时甚至长达1分钟）
+  // 为了避免打断正在建立的弱网连接，将自动重连放宽到 45 秒，同时在 15 秒时给出提示
+  const isWaitingFrames = connectionState === 'connected' && isViewing && !hasVideoFrames;
+
+  useEffect(() => {
+    if (isWaitingFrames && onRetry) {
+      let timer1: ReturnType<typeof setTimeout>;
+      let timer2: ReturnType<typeof setTimeout>;
+
+      // 15秒提示
+      timer1 = setTimeout(() => {
+        console.log('[屏幕共享] 15秒未收到首帧画面，可能网络拥堵...');
+        message.warning('画面传输较慢，正在努力缓冲中...如果长时间无画面可点击手动重试', 5);
+      }, 15000);
+
+      // 45秒彻底超时才自动重试
+      timer2 = setTimeout(() => {
+        console.log('[屏幕共享] 45秒超时仍无画面，触发自动重连...');
+        message.error('获取画面严重超时，系统自动重新连接...');
+        onRetry();
+      }, 45000);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [isWaitingFrames, onRetry]);
 
   // 绑定本地预览流到 video 元素
   useEffect(() => {
@@ -160,8 +188,60 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   // 没有活跃的共享时不渲染
   if (!isSharing && !isViewing) return null;
 
+  // 截图逻辑
+  const handleScreenshot = useCallback(() => {
+    const videoElement = remoteVideoRef.current;
+    if (!videoElement || !hasVideoFrames) {
+      message.warning('无可用视频画面');
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    
+    // 短暂闪屏特效
+    const flash = document.createElement('div');
+    flash.style.position = 'absolute';
+    flash.style.inset = '0';
+    flash.style.backgroundColor = 'white';
+    flash.style.opacity = '0.5';
+    flash.style.transition = 'opacity 0.2s';
+    flash.style.zIndex = '9999';
+    flash.style.pointerEvents = 'none';
+    if (panelRef.current) panelRef.current.appendChild(flash);
+    setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 200); }, 50);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      
+      // 添加到暂存箱
+      addScreenshot(blob);
+      
+      // 写入系统剪贴板 (仅保存最新一张)
+      try {
+        navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]).then(() => {
+          message.success('已截图并保存到剪贴板！');
+        }).catch((err) => {
+          console.error('剪贴板写入失败:', err);
+          message.success('已截图并放入暂存箱，但未获剪贴板权限');
+        });
+      } catch (err) {
+        console.error('浏览器不支持 clipboard.write:', err);
+        message.success('已截图并放入暂存箱');
+      }
+
+    }, 'image/png');
+  }, [hasVideoFrames, addScreenshot]);
+
   // 区分"已连接但等待画面"和"已连接且有画面"两种状态
-  const isWaitingFrames = connectionState === 'connected' && isViewing && !hasVideoFrames;
+  // isWaitingFrames 已在上方定义
 
   const statusIcon = connectionState === 'connecting'
     ? <LoadingOutlined spin style={{ color: '#f59e0b' }} />
@@ -212,6 +292,19 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
                 onClick={onRetry}
                 className="screen-share-toolbar-btn"
                 style={{ color: '#60a5fa' }}
+              />
+            </Tooltip>
+          )}
+          {/* 截图按钮 */}
+          {isViewing && connectionState === 'connected' && hasVideoFrames && (
+            <Tooltip title="一键截图并复制 (临时保存 10 张)">
+              <Button
+                type="text"
+                size="small"
+                icon={<ScissorOutlined />}
+                onClick={handleScreenshot}
+                className="screen-share-toolbar-btn"
+                style={{ color: '#10b981' }}
               />
             </Tooltip>
           )}

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message, MessageType } from '../../entities/message.entity';
 import { SearchService } from '../search/search.service';
+import { FilesService } from '../files/files.service';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -14,6 +15,7 @@ export class ChatService {
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
     private readonly searchService: SearchService,
+    private readonly filesService: FilesService,
   ) {}
 
   async createMessage(data: {
@@ -70,15 +72,15 @@ export class ChatService {
       throw new BadRequestException('只能撤回 10 分钟内的消息');
     }
 
-    // 物理删除文件
+    // 删除云端文件
     if (message.fileUrl && (message.type === MessageType.IMAGE || message.type === MessageType.FILE)) {
       try {
         const filename = message.fileUrl.split('/').pop();
         if (filename) {
-          const filePath = path.join(process.cwd(), 'oss', filename);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-          }
+          // 这里使用不等待的异步调用或等待都可
+          this.filesService.deleteFromCos(filename).catch(err => {
+            this.logger.error('Delete recalled file from COS failed:', err);
+          });
         }
       } catch (err) {
         this.logger.error('Delete recalled file failed:', err);

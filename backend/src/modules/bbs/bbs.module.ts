@@ -10,9 +10,10 @@ import { BbsSubscription } from '../../entities/bbs-subscription.entity';
 import { SearchModule } from '../search/search.module';
 import { AuthModule } from '../auth/auth.module';
 import { ChatModule } from '../chat/chat.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, PostComment, BbsSection, BbsTag, BbsSubscription]), SearchModule, AuthModule, ChatModule],
+  imports: [TypeOrmModule.forFeature([Post, PostComment, BbsSection, BbsTag, BbsSubscription]), SearchModule, AuthModule, ChatModule, FilesModule],
   controllers: [BbsController],
   providers: [BbsService],
 })

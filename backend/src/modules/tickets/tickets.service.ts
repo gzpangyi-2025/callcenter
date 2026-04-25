@@ -17,6 +17,7 @@ import { AuditType } from '../../entities/audit-log.entity';
 import { TicketReadState } from '../../entities/ticket-read-state.entity';
 import { Message } from '../../entities/message.entity';
 import { AuthenticatedUser } from '../../common/types/auth.types';
+import { BackupService } from '../backup/backup.service';
 
 @Injectable()
 export class TicketsService {
@@ -122,9 +123,10 @@ export class TicketsService {
     category3?: string;
     creatorId?: number;
     assigneeId?: number;
+    customerName?: string;
     isDashboard?: boolean;
   }) {
-    const { page = 1, pageSize = 10, status, type, keyword, category1, category2, category3, creatorId, assigneeId, isDashboard } = query;
+    const { page = 1, pageSize = 10, status, type, keyword, category1, category2, category3, creatorId, assigneeId, customerName, isDashboard } = query;
 
     const qb = this.ticketRepository
       .createQueryBuilder('ticket')
@@ -160,6 +162,9 @@ export class TicketsService {
     if (assigneeId) {
       qb.andWhere('ticket.assigneeId = :assigneeId', { assigneeId });
     }
+    if (customerName) {
+      qb.andWhere('ticket.customerName LIKE :customerName', { customerName: `%${customerName}%` });
+    }
     if (keyword) {
       qb.andWhere(
         '(ticket.title LIKE :keyword OR ticket.description LIKE :keyword OR ticket.ticketNo LIKE :keyword OR ticket.serviceNo LIKE :keyword)',
@@ -191,6 +196,107 @@ export class TicketsService {
       page,
       pageSize,
       totalPages: Math.ceil(total / pageSize),
+    };
+  }
+
+  async getAggregates(query: {
+    status?: TicketStatus;
+    type?: string;
+    keyword?: string;
+    category1?: string;
+    category2?: string;
+    category3?: string;
+    creatorId?: number;
+    assigneeId?: number;
+    customerName?: string;
+    isDashboard?: boolean;
+  }) {
+    const baseQb = this.ticketRepository.createQueryBuilder('ticket')
+      .leftJoin('ticket.creator', 'creator')
+      .leftJoin('ticket.assignee', 'assignee');
+
+    const { status, type, keyword, category1, category2, category3, creatorId, assigneeId, customerName, isDashboard } = query;
+
+    if (status) {
+      baseQb.andWhere('ticket.status = :status', { status });
+    } else if (!isDashboard) {
+      baseQb.andWhere(
+        '(ticket.assigneeId IS NULL OR ticket.status != :pendingStatus)',
+        { pendingStatus: TicketStatus.PENDING },
+      );
+    }
+    if (type) {
+      baseQb.andWhere('ticket.type = :type', { type });
+    }
+    if (category1) {
+      baseQb.andWhere('ticket.category1 = :category1', { category1 });
+    }
+    if (category2) {
+      baseQb.andWhere('ticket.category2 = :category2', { category2 });
+    }
+    if (category3) {
+      baseQb.andWhere('ticket.category3 = :category3', { category3 });
+    }
+    if (creatorId) {
+      baseQb.andWhere('ticket.creatorId = :creatorId', { creatorId });
+    }
+    if (assigneeId) {
+      baseQb.andWhere('ticket.assigneeId = :assigneeId', { assigneeId });
+    }
+    if (customerName) {
+      baseQb.andWhere('ticket.customerName LIKE :customerName', { customerName: `%${customerName}%` });
+    }
+    if (keyword) {
+      baseQb.andWhere(
+        '(ticket.title LIKE :keyword OR ticket.description LIKE :keyword OR ticket.ticketNo LIKE :keyword OR ticket.serviceNo LIKE :keyword)',
+        { keyword: `%${keyword}%` },
+      );
+    }
+
+    const categoriesQb = baseQb.clone();
+    categoriesQb.select(['ticket.category1 AS value', 'COUNT(ticket.id) AS count'])
+      .andWhere('ticket.category1 IS NOT NULL')
+      .andWhere('ticket.category1 != ""')
+      .groupBy('ticket.category1');
+
+    const customersQb = baseQb.clone();
+    customersQb.select(['ticket.customerName AS value', 'COUNT(ticket.id) AS count'])
+      .andWhere('ticket.customerName IS NOT NULL')
+      .andWhere('ticket.customerName != ""')
+      .groupBy('ticket.customerName');
+
+    const creatorsQb = baseQb.clone();
+    creatorsQb.select([
+        'creator.id AS value', 
+        'creator.username AS username', 
+        'creator.realName AS realName', 
+        'COUNT(ticket.id) AS count'
+      ])
+      .andWhere('ticket.creatorId IS NOT NULL')
+      .groupBy('creator.id');
+
+    const assigneesQb = baseQb.clone();
+    assigneesQb.select([
+        'assignee.id AS value', 
+        'assignee.username AS username', 
+        'assignee.realName AS realName', 
+        'COUNT(ticket.id) AS count'
+      ])
+      .andWhere('ticket.assigneeId IS NOT NULL')
+      .groupBy('assignee.id');
+
+    const [categories, customers, creators, assignees] = await Promise.all([
+      categoriesQb.getRawMany(),
+      customersQb.getRawMany(),
+      creatorsQb.getRawMany(),
+      assigneesQb.getRawMany(),
+    ]);
+
+    return {
+      categories: categories.map(c => ({ value: c.value, label: c.value, count: Number(c.count) })),
+      customers: customers.map(c => ({ value: c.value, label: c.value, count: Number(c.count) })),
+      creators: creators.map(c => ({ value: c.value, label: c.realName || c.username, count: Number(c.count) })),
+      assignees: assignees.map(c => ({ value: c.value, label: c.realName || c.username, count: Number(c.count) })),
     };
   }
 
@@ -360,6 +466,21 @@ export class TicketsService {
     const ticketTitle = ticket.title;
     const ticketId = ticket.id;
 
+    // Collect OSS files from messages BEFORE cascade delete
+    const filesToDelete: string[] = [];
+    try {
+      const messages = await this.messageRepo.find({
+        where: { ticketId: id },
+        select: ['fileUrl'],
+      });
+      for (const msg of messages) {
+        if (msg.fileUrl) {
+          const filename = msg.fileUrl.split('/').pop();
+          if (filename) filesToDelete.push(filename);
+        }
+      }
+    } catch { /* ignore */ }
+
     await this.ticketRepository.remove(ticket);
     this.broadcastTicketEvent('deleted', { id: ticketId }, user.id);
 
@@ -373,6 +494,14 @@ export class TicketsService {
       targetName: ticketNo,
       detail: `删除工单「${ticketTitle}」(${ticketNo})`,
     });
+
+    // Async cleanup OSS files (fire-and-forget)
+    if (filesToDelete.length > 0) {
+      setImmediate(() => {
+        BackupService.deleteOssFiles(filesToDelete, this.logger);
+        this.logger.log(`Ticket #${ticketId} deleted: cleaned ${filesToDelete.length} OSS files`);
+      });
+    }
   }
 
   async batchDelete(ids: number[], user: AuthenticatedUser): Promise<void> {
@@ -386,6 +515,24 @@ export class TicketsService {
       if (roleName === 'user' && ticket.creatorId !== user.id) {
         throw new ForbiddenException(`工单 ${ticket.ticketNo} 属于他人，您无权批量删除。操作已整体中止。`);
       }
+    }
+
+    // Collect OSS files from all ticket messages BEFORE cascade delete
+    const filesToDelete: string[] = [];
+    const ticketIds = tickets.map(t => t.id);
+    if (ticketIds.length > 0) {
+      try {
+        const messages = await this.messageRepo.find({
+          where: { ticketId: In(ticketIds) },
+          select: ['fileUrl'],
+        });
+        for (const msg of messages) {
+          if (msg.fileUrl) {
+            const filename = msg.fileUrl.split('/').pop();
+            if (filename) filesToDelete.push(filename);
+          }
+        }
+      } catch { /* ignore */ }
     }
     
     // 执行删除
@@ -404,6 +551,14 @@ export class TicketsService {
         userId: user.id,
         username: user.realName || user.displayName || user.username,
         detail: `批量删除 ${deletedNames.length} 个工单: ${deletedNames.join(', ')}`,
+      });
+    }
+
+    // Async cleanup OSS files (fire-and-forget)
+    if (filesToDelete.length > 0) {
+      setImmediate(() => {
+        BackupService.deleteOssFiles(filesToDelete, this.logger);
+        this.logger.log(`Batch delete tickets: cleaned ${filesToDelete.length} OSS files`);
       });
     }
   }
