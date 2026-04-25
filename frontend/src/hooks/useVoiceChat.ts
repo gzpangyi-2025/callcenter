@@ -177,8 +177,8 @@ export function useVoiceChat(
   // 对单个 peer 发起 ICE Restart 重连（最多 3 次）
   const restartIceForPeer = useCallback(async (peerId: number) => {
     const count = (iceRestartCountRef.current.get(peerId) || 0) + 1;
-    if (count > 3) {
-      console.warn('[语音通话] peerId', peerId, '已达 ICE Restart 上限(3次)，放弃重连');
+    if (count > 5) {
+      console.warn('[语音通话] peerId', peerId, '已达 ICE Restart 上限(5次)，放弃重连');
       return;
     }
     iceRestartCountRef.current.set(peerId, count);

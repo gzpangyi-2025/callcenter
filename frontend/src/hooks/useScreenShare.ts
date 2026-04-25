@@ -47,7 +47,7 @@ export interface ScreenShareState {
   reconnectAttempts: number;
 }
 
-const MAX_RECONNECT_ATTEMPTS = 3;
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 export function useScreenShare(
   socket: Socket | null,
