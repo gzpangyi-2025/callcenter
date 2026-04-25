@@ -103,15 +103,15 @@ const ScreenshotContainer: React.FC<ScreenshotContainerProps> = ({ onSendToChat,
   return (
     <div style={{ 
       position: 'fixed', 
-      left: isMobile ? 16 : undefined, 
-      right: isMobile ? undefined : 32, 
-      bottom: 100, 
+      right: isMobile ? 16 : 32, 
+      bottom: isMobile ? undefined : 100,
+      top: isMobile ? 120 : undefined,
       zIndex: 1000 
     }}>
       <Popover 
         content={content} 
         trigger="click" 
-        placement={isMobile ? "rightBottom" : "leftBottom"}
+        placement={isMobile ? "bottomRight" : "leftBottom"}
         open={open}
         onOpenChange={setOpen}
       >

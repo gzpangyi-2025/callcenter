@@ -643,14 +643,14 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
           isMobile={isMobile}
           supportMode={supportMode}
           onToggleSupportMode={() => setSupportMode(prev => !prev)}
-          style={supportMode ? { flex: 'none', width: `${videoPanelWidth}%` } : undefined}
+          style={supportMode && !isMobile ? { flex: 'none', width: `${videoPanelWidth}%` } : undefined}
         />
       )}
-      {supportMode && (
+      {supportMode && !isMobile && (
         <div className="support-mode-divider" onMouseDown={handleDividerMouseDown} />
       )}
       <div className={`chat-content-wrapper ${supportMode ? 'support-mode-chat' : ''}`}
-        style={supportMode ? { flex: 'none', width: `${100 - videoPanelWidth}%` } : undefined}>
+        style={supportMode && !isMobile ? { flex: 'none', width: `${100 - videoPanelWidth}%` } : undefined}>
 
       <ChatHeader
         ticket={ticket}
