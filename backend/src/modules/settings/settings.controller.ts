@@ -14,6 +14,8 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../auth/permissions.decorator';
 import { SettingsService } from './settings.service';
 
 // 确保上传目录存在
@@ -21,7 +23,7 @@ const uploadDir = join(process.cwd(), 'uploads', 'logo');
 if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
 
 @Controller('settings')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @UsePipes(
   new ValidationPipe({
     whitelist: false,
@@ -34,6 +36,7 @@ export class SettingsController {
 
   /** 获取所有系统配置 */
   @Get()
+  @Permissions('settings:read', 'settings:manage') // Allow read or manage to view
   async getAll() {
     const data = await this.settingsService.getAll();
     return { code: 0, data };
@@ -41,6 +44,7 @@ export class SettingsController {
 
   /** 保存 AI 模型配置 */
   @Post('ai')
+  @Permissions('settings:manage')
   async saveAi(
     @Body()
     body: {
@@ -63,6 +67,7 @@ export class SettingsController {
 
   /** 保存企业信息 */
   @Post('biz')
+  @Permissions('settings:manage')
   async saveBiz(
     @Body()
     body: {
@@ -85,6 +90,7 @@ export class SettingsController {
 
   /** 上传 Logo */
   @Post('logo')
+  @Permissions('settings:manage')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -113,6 +119,7 @@ export class SettingsController {
 
   /** 保存安全设置 */
   @Post('security')
+  @Permissions('settings:manage')
   async saveSecurity(@Body() body: { shareExpiration?: string }) {
     await this.settingsService.saveMany({
       'security.shareExpiration': body.shareExpiration || '7d',
@@ -163,6 +170,7 @@ export class SettingsController {
 
   /** 保存 WebRTC 设置 */
   @Post('webrtc')
+  @Permissions('settings:manage')
   async saveWebRtc(
     @Body()
     body: {
@@ -202,6 +210,7 @@ export class SettingsController {
 
   /** 保存存储配置 */
   @Post('storage')
+  @Permissions('settings:manage')
   async saveStorage(
     @Body()
     body: {

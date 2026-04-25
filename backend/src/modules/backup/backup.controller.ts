@@ -12,6 +12,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../auth/permissions.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join, extname } from 'path';
@@ -21,7 +23,7 @@ import { BackupService } from './backup.service';
 const backupsDir = join(process.cwd(), 'backups');
 
 @Controller('backup')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class BackupController {
   constructor(private readonly backupService: BackupService) {}
 
@@ -29,6 +31,7 @@ export class BackupController {
    * Get current system statistics (table counts, file counts)
    */
   @Get('stats')
+  @Permissions('admin:access')
   async getStats() {
     return this.backupService.getStats();
   }
@@ -37,6 +40,7 @@ export class BackupController {
    * Create a new backup
    */
   @Post('create')
+  @Permissions('admin:access')
   async createBackup(
     @Body()
     body: {
@@ -56,6 +60,7 @@ export class BackupController {
    * List all backup files
    */
   @Get('list')
+  @Permissions('admin:access')
   async listBackups() {
     return this.backupService.listBackups();
   }
@@ -64,6 +69,7 @@ export class BackupController {
    * Download a backup file
    */
   @Get('download/:filename')
+  @Permissions('admin:access')
   async downloadBackup(
     @Param('filename') filename: string,
     @Res() res: Response,
@@ -98,6 +104,7 @@ export class BackupController {
       limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
     }),
   )
+  @Permissions('admin:access')
   async restoreBackup(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { code: 1, message: '请上传备份文件' };
@@ -109,6 +116,7 @@ export class BackupController {
    * Delete a backup file
    */
   @Delete(':filename')
+  @Permissions('admin:access')
   async deleteBackup(@Param('filename') filename: string) {
     return this.backupService.deleteBackup(filename);
   }
@@ -117,6 +125,7 @@ export class BackupController {
    * Scan and clean orphan OSS files (not referenced by any DB record)
    */
   @Post('clean-orphans')
+  @Permissions('admin:access')
   async cleanOrphans() {
     const result = await this.backupService.cleanOrphanFiles();
     return {
@@ -130,6 +139,7 @@ export class BackupController {
    * 扫描 COS 存储桶，找出未被数据库引用的孤儿对象（不执行删除）
    */
   @Get('cos-orphans')
+  @Permissions('admin:access')
   async getCosOrphans() {
     const result = await this.backupService.getCosOrphanFiles();
     return {
@@ -142,6 +152,7 @@ export class BackupController {
    * 删除 COS 存储桶中的所有孤儿对象
    */
   @Post('clean-cos-orphans')
+  @Permissions('admin:access')
   async cleanCosOrphans() {
     const result = await this.backupService.cleanCosOrphanFiles();
     return {

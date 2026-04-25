@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../auth/permissions.decorator';
 import { InfraService } from './infra.service';
 import { SearchService } from '../search/search.service';
 
 @Controller('infra')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class InfraController {
   constructor(
     private readonly infraService: InfraService,
@@ -12,6 +14,7 @@ export class InfraController {
   ) {}
 
   @Get('env')
+  @Permissions('admin:access')
   getEnv() {
     return {
       code: 0,
@@ -23,12 +26,14 @@ export class InfraController {
   }
 
   @Post('env')
+  @Permissions('admin:access')
   async saveEnv(@Body() data: Record<string, string>) {
     await this.infraService.updateEnvConfig(data);
     return { code: 0, message: '配置已保存' };
   }
 
   @Post('restart')
+  @Permissions('admin:access')
   async restart() {
     const result = await this.infraService.restartService();
     if (result.success) {
@@ -38,6 +43,7 @@ export class InfraController {
   }
 
   @Post('test-es')
+  @Permissions('admin:access')
   async testEs(
     @Body()
     data: {
@@ -52,6 +58,7 @@ export class InfraController {
   }
 
   @Post('test-redis')
+  @Permissions('admin:access')
   async testRedis(
     @Body() data: { host: string; port: number; password?: string },
   ) {
@@ -60,6 +67,7 @@ export class InfraController {
   }
 
   @Post('test-mysql')
+  @Permissions('admin:access')
   async testMysql(
     @Body()
     data: {
@@ -75,6 +83,7 @@ export class InfraController {
   }
 
   @Post('rebuild-index')
+  @Permissions('admin:access')
   async rebuildIndex() {
     const result = await this.searchService.syncAll();
     return { code: 0, message: '索引重建成功', data: result };
