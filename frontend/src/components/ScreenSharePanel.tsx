@@ -5,6 +5,7 @@ import {
   CloseOutlined, CompressOutlined, ExpandOutlined,
   DesktopOutlined, LoadingOutlined, DisconnectOutlined,
   CustomerServiceOutlined, ReloadOutlined, ScissorOutlined,
+  ArrowLeftOutlined,
 } from '@ant-design/icons';
 import { useScreenshotStore } from '../stores/screenshotStore';
 
@@ -164,19 +165,8 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
     if (!panelRef.current) return;
 
     if (isMobile) {
-      // 手机端使用 CSS 全屏 + 尝试锁定横屏
-      if (!isFullscreen) {
-        setIsFullscreen(true);
-        // 尝试锁定横屏（部分浏览器支持）
-        try {
-          (screen.orientation as any)?.lock?.('landscape').catch(() => {});
-        } catch (e) { /* 静默忽略 */ }
-      } else {
-        setIsFullscreen(false);
-        try {
-          (screen.orientation as any)?.unlock?.();
-        } catch (e) { /* 静默忽略 */ }
-      }
+      // 手机端使用 CSS transform 旋转模拟横屏
+      setIsFullscreen(prev => !prev);
     } else {
       // PC端使用原生 Fullscreen API
       if (!document.fullscreenElement) {
@@ -191,7 +181,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
         });
       }
     }
-  }, [isMobile, isFullscreen]);
+  }, [isMobile]);
 
   // 监听 ESC 退出全屏
   useEffect(() => {
@@ -287,10 +277,38 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   return (
     <div
       ref={panelRef}
-      className={`screen-share-panel ${isFullscreen ? 'fullscreen' : ''} ${isExpanded ? 'expanded' : 'collapsed'} ${supportMode ? 'support-mode-video' : ''}`}
+      className={`screen-share-panel ${isFullscreen ? (isMobile ? 'mobile-landscape' : 'fullscreen') : ''} ${isExpanded ? 'expanded' : 'collapsed'} ${supportMode ? 'support-mode-video' : ''}`}
       style={style}
     >
-      {/* 工具栏 */}
+      {/* 手机横屏全屏模式：显示浮动返回按钮，隐藏普通工具栏 */}
+      {isFullscreen && isMobile && (
+        <div style={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
+          zIndex: 30,
+        }}>
+          <Button
+            type="primary"
+            icon={<ArrowLeftOutlined />}
+            onClick={toggleFullscreen}
+            style={{
+              background: 'rgba(0,0,0,0.6)',
+              border: 'none',
+              borderRadius: 24,
+              padding: '6px 18px',
+              height: 36,
+              color: '#fff',
+              fontSize: 14,
+              fontWeight: 500,
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            }}
+          >返回</Button>
+        </div>
+      )}
+      {/* 工具栏（手机全屏时隐藏） */}
+      {!(isFullscreen && isMobile) && (
       <div className="screen-share-toolbar">
         <div className="screen-share-toolbar-left">
           {statusIcon}
@@ -376,6 +394,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
           </Tooltip>
         </div>
       </div>
+      )}
 
       {/* 视频画面区域 */}
       <div className="screen-share-video-container">
@@ -460,35 +479,11 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
         )}
       </div>
 
-      {/* 全屏模式下的提示 / 返回按钮 */}
-      {isFullscreen && (
-        isMobile ? (
-          <div style={{
-            position: 'absolute',
-            top: 16,
-            left: 16,
-            zIndex: 20,
-          }}>
-            <Button
-              type="primary"
-              size="small"
-              onClick={toggleFullscreen}
-              style={{
-                background: 'rgba(0,0,0,0.5)',
-                border: 'none',
-                borderRadius: 20,
-                padding: '4px 16px',
-                color: '#fff',
-                fontSize: 13,
-                backdropFilter: 'blur(8px)',
-              }}
-            >← 返回</Button>
-          </div>
-        ) : (
-          <div className="screen-share-fullscreen-hint">
-            按 Esc 退出全屏 · 聊天区域在底部保留
-          </div>
-        )
+      {/* PC全屏模式下的提示 */}
+      {isFullscreen && !isMobile && (
+        <div className="screen-share-fullscreen-hint">
+          按 Esc 退出全屏 · 聊天区域在底部保留
+        </div>
       )}
     </div>
   );
