@@ -5,6 +5,7 @@ import { Role } from '../../entities/role.entity';
 import { Permission } from '../../entities/permission.entity';
 import { User } from '../../entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class RoleInitService implements OnModuleInit {
@@ -99,7 +100,8 @@ export class RoleInitService implements OnModuleInit {
         where: { name: 'admin' },
       });
       if (adminRole) {
-        const hashedPassword = await bcrypt.hash('admin123', 10);
+        const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || crypto.randomBytes(8).toString('hex');
+        const hashedPassword = await bcrypt.hash(initialPassword, 10);
         await this.userRepository.save(
           this.userRepository.create({
             username: 'admin',
@@ -111,7 +113,8 @@ export class RoleInitService implements OnModuleInit {
             isActive: true,
           }),
         );
-        this.logger.log('Initialized default admin user: admin / admin123');
+        this.logger.warn(`Initialized default admin user: admin / ${initialPassword}`);
+        this.logger.warn('Please change the default password immediately after login!');
       }
     }
   }
