@@ -33,8 +33,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // 活跃屏幕共享跟踪: roomName -> { userId, userName }
   private activeSharers = new Map<string, { userId: number; userName: string }>();
 
-  // 活跃语音通话跟踪: roomName -> Set<{ userId, userName }>
-  private activeVoiceRooms = new Map<string, Set<{ userId: number; userName: string }>>();
+  // 活跃语音通话跟踪: roomName -> Map<userId, userName>（使用 Map 天然去重，避免 Set 对象引用比较问题）
+  private activeVoiceRooms = new Map<string, Map<number, string>>();
 
   constructor(
     private readonly chatService: ChatService,
@@ -119,9 +119,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       // 清理该用户的语音通话状态
       for (const [roomName, participants] of this.activeVoiceRooms.entries()) {
-        const found = [...participants].find(p => p.userId === userId);
-        if (found) {
-          participants.delete(found);
+        if (participants.has(userId)) {
+          participants.delete(userId);
           this.logger.log(`[语音通话] 用户 ${userId} 断开连接，从房间 ${roomName} 的语音通话中移除`);
           this.server.to(roomName).emit('voice:peerLeft', {
             ticketId: parseInt(roomName.replace('ticket_', '')),
@@ -233,7 +232,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (voiceParticipants && voiceParticipants.size > 0) {
       client.emit('voice:active', {
         ticketId: data.ticketId,
-        participants: [...voiceParticipants],
+        participants: [...voiceParticipants.entries()].map(([id, name]) => ({ userId: id, userName: name })),
       });
     }
   }
@@ -394,6 +393,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number },
   ) {
     const roomName = `ticket_${data.ticketId}`;
+    const userId = (client as any).userId;
+
+    // 如果该用户在此房间的语音通话中，自动移除（防止切换房间后语音状态残留）
+    const participants = this.activeVoiceRooms.get(roomName);
+    if (participants?.has(userId)) {
+      participants.delete(userId);
+      this.logger.log(`[语音通话] 用户 ${userId} 离开房间 ${roomName}，自动清理语音状态`);
+      client.to(roomName).emit('voice:peerLeft', {
+        ticketId: data.ticketId,
+        userId,
+      });
+      if (participants.size === 0) {
+        this.activeVoiceRooms.delete(roomName);
+      }
+    }
+
+    // 如果该用户是此房间的屏幕共享方，自动停止共享
+    const sharer = this.activeSharers.get(roomName);
+    if (sharer?.userId === userId) {
+      this.activeSharers.delete(roomName);
+      this.logger.log(`[屏幕共享] 用户 ${userId} 离开房间 ${roomName}，自动清理共享状态`);
+      client.to(roomName).emit('screenShare:stopped', {
+        ticketId: data.ticketId,
+        from: userId,
+      });
+      this.server.emit('ticketEvent', { action: 'screenShareChanged' });
+    }
+
     await client.leave(roomName);
     // 广播最新在线用户
     await this.broadcastRoomUsers(roomName);
@@ -613,7 +640,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // 检查人数上限
     const maxStr = await this.settingsService.get('voice_maxParticipants');
     const maxParticipants = maxStr ? parseInt(maxStr, 10) : 6;
-    const participants = this.activeVoiceRooms.get(roomName) || new Set();
+    let participants = this.activeVoiceRooms.get(roomName);
+    if (!participants) {
+      participants = new Map();
+      this.activeVoiceRooms.set(roomName, participants);
+    }
+
+    // 去重：如果同一用户重复加入（如切换房间后状态残留），先移除旧记录
+    if (participants.has(userId)) {
+      this.logger.warn(`[语音通话] 用户 ${userId} 重复加入，先移除旧记录`);
+      participants.delete(userId);
+    }
 
     if (participants.size >= maxParticipants) {
       client.emit('voice:rejected', {
@@ -626,15 +663,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`[语音通话] 用户 ${userName} (${userId}) 加入工单 ${data.ticketId} 的语音通话`);
 
     // 将当前参与者列表发送给新加入的用户（用于建立 PeerConnection）
-    const existingParticipants = [...participants];
+    const existingParticipants = [...participants.entries()].map(([id, name]) => ({ userId: id, userName: name }));
     client.emit('voice:currentParticipants', {
       ticketId: data.ticketId,
       participants: existingParticipants,
     });
 
-    // 加入通话列表
-    participants.add({ userId, userName });
-    this.activeVoiceRooms.set(roomName, participants);
+    // 加入通话列表（Map 天然去重）
+    participants.set(userId, userName);
 
     // 广播给房间内所有人（包括非语音参与者，用于显示状态）
     client.to(roomName).emit('voice:peerJoined', {
@@ -656,8 +692,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const participants = this.activeVoiceRooms.get(roomName);
     if (participants) {
-      const found = [...participants].find(p => p.userId === userId);
-      if (found) participants.delete(found);
+      participants.delete(userId);
       if (participants.size === 0) {
         this.activeVoiceRooms.delete(roomName);
       }
