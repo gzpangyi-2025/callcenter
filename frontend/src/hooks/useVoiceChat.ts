@@ -97,6 +97,9 @@ export function useVoiceChat(
   // disconnected 恢复计时器 (per peer)
   const disconnectTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
+  // ICE Restart 重试计数器（每个 peer 最多 3 次）
+  const iceRestartCountRef = useRef<Map<number, number>>(new Map());
+
   // 健康心跳定时器
   const heartbeatTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -171,12 +174,19 @@ export function useVoiceChat(
     setTimeout(tryPlay, 100);
   };
 
-  // 对单个 peer 发起 ICE Restart 重连
+  // 对单个 peer 发起 ICE Restart 重连（最多 3 次）
   const restartIceForPeer = useCallback(async (peerId: number) => {
+    const count = (iceRestartCountRef.current.get(peerId) || 0) + 1;
+    if (count > 3) {
+      console.warn('[语音通话] peerId', peerId, '已达 ICE Restart 上限(3次)，放弃重连');
+      return;
+    }
+    iceRestartCountRef.current.set(peerId, count);
+
     const pc = voicePeersRef.current.get(peerId);
     if (!pc || !localStreamRef.current) return;
 
-    console.log('[语音通话] 触发 ICE Restart, peerId:', peerId);
+    console.log(`[语音通话] 触发 ICE Restart (第${count}次), peerId:`, peerId);
     try {
       const offer = await pc.createOffer({ iceRestart: true });
       await pc.setLocalDescription(offer);
@@ -258,6 +268,8 @@ export function useVoiceChat(
       }
 
       if (pc.iceConnectionState === 'connected') {
+        // 连接成功，重置该 peer 的 ICE Restart 计数器
+        iceRestartCountRef.current.delete(peerId);
         const audioEl = audioElementsRef.current.get(peerId);
         if (audioEl && audioEl.paused && audioEl.srcObject) {
           console.log('[语音通话] ICE connected, 重新尝试播放音频');
@@ -295,6 +307,7 @@ export function useVoiceChat(
       audioElementsRef.current.delete(peerId);
     }
     pendingCandidatesRef.current.delete(peerId);
+    iceRestartCountRef.current.delete(peerId);
     const timer = disconnectTimersRef.current.get(peerId);
     if (timer) {
       clearTimeout(timer);
@@ -320,6 +333,7 @@ export function useVoiceChat(
     audioElementsRef.current.clear();
 
     pendingCandidatesRef.current.clear();
+    iceRestartCountRef.current.clear();
 
     // 清理所有 disconnected 计时器
     disconnectTimersRef.current.forEach(timer => clearTimeout(timer));
