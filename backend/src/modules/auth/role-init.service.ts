@@ -5,7 +5,6 @@ import { Role } from '../../entities/role.entity';
 import { Permission } from '../../entities/permission.entity';
 import { User } from '../../entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class RoleInitService implements OnModuleInit {
@@ -100,7 +99,7 @@ export class RoleInitService implements OnModuleInit {
         where: { name: 'admin' },
       });
       if (adminRole) {
-        const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || crypto.randomBytes(8).toString('hex');
+        const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'admin123';
         const hashedPassword = await bcrypt.hash(initialPassword, 10);
         await this.userRepository.save(
           this.userRepository.create({
