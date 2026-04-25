@@ -90,7 +90,7 @@ const VoiceBar: React.FC<VoiceBarProps> = ({
 
       {/* 控制按钮 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <Tooltip title={isMuted ? '取消静音' : '静音'}>
+        <Tooltip title={isMuted ? '开麦' : '闭麦'}>
           <Button
             type="text"
             size="small"
