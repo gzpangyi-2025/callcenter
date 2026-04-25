@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, OnModuleInit, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, MoreThan } from 'typeorm';
 import { Post } from '../../entities/post.entity';
@@ -8,12 +8,16 @@ import { BbsTag } from '../../entities/bbs-tag.entity';
 import { BbsSubscription } from '../../entities/bbs-subscription.entity';
 import { SearchService } from '../search/search.service';
 import { ChatGateway } from '../chat/chat.gateway';
+import { BackupService } from '../backup/backup.service';
+import { FilesService } from '../files/files.service';
 
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class BbsService implements OnModuleInit {
+  private readonly logger = new Logger(BbsService.name);
+
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
@@ -29,6 +33,7 @@ export class BbsService implements OnModuleInit {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly chatGateway: ChatGateway,
+    private readonly filesService: FilesService,
   ) {}
 
   // ───────── Seed 默认板块 ─────────
@@ -216,8 +221,32 @@ export class BbsService implements OnModuleInit {
     if (post.authorId !== userId && !isAdmin) {
       throw new ForbiddenException('无权删除该帖');
     }
+
+    // Collect OSS files from post content and its comments BEFORE deletion
+    const filesToDelete: string[] = [];
+    filesToDelete.push(...BackupService.extractOssFilenames(post.content));
+    try {
+      const comments = await this.commentRepository.find({ where: { postId: id } });
+      for (const c of comments) {
+        filesToDelete.push(...BackupService.extractOssFilenames(c.content));
+      }
+    } catch { /* ignore */ }
+
     await this.postRepository.remove(post);
     this.searchService.removePost(id).catch(() => {});
+
+    // Async cleanup OSS files (fire-and-forget)
+    if (filesToDelete.length > 0) {
+      setImmediate(() => {
+        filesToDelete.forEach(f => {
+          this.filesService.deleteFromCos(f).catch(err => {
+            this.logger.error(`Delete recalled file from COS failed: ${f}`, err);
+          });
+        });
+        this.logger.log(`Post #${id} deleted: cleaned ${filesToDelete.length} OSS files`);
+      });
+    }
+
     return { success: true };
   }
 
@@ -226,10 +255,36 @@ export class BbsService implements OnModuleInit {
       .where('post.id IN (:...ids)', { ids })
       .getMany();
     const postsToDelete = posts.filter(post => post.authorId === userId || isAdmin);
+
+    // Collect OSS files from all posts and their comments BEFORE deletion
+    const filesToDelete: string[] = [];
+    for (const p of postsToDelete) {
+      filesToDelete.push(...BackupService.extractOssFilenames(p.content));
+      try {
+        const comments = await this.commentRepository.find({ where: { postId: p.id } });
+        for (const c of comments) {
+          filesToDelete.push(...BackupService.extractOssFilenames(c.content));
+        }
+      } catch { /* ignore */ }
+    }
+
     if (postsToDelete.length > 0) {
       await this.postRepository.remove(postsToDelete);
       postsToDelete.forEach(p => this.searchService.removePost(p.id).catch(() => {}));
     }
+
+    // Async cleanup OSS files (fire-and-forget)
+    if (filesToDelete.length > 0) {
+      setImmediate(() => {
+        filesToDelete.forEach(f => {
+          this.filesService.deleteFromCos(f).catch(err => {
+            this.logger.error(`Delete recalled file from COS failed: ${f}`, err);
+          });
+        });
+        this.logger.log(`Batch delete: cleaned ${filesToDelete.length} OSS files`);
+      });
+    }
+
     return { success: true, deletedCount: postsToDelete.length };
   }
 

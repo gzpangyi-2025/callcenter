@@ -171,4 +171,23 @@ export class SettingsController {
 
     return { code: 0, message: 'WebRTC 配置保存成功' };
   }
+
+  /** 保存存储配置 */
+  @Post('storage')
+  async saveStorage(@Body() body: {
+    provider?: string;
+    cosSecretId?: string;
+    cosSecretKey?: string;
+    cosBucket?: string;
+    cosRegion?: string;
+  }) {
+    await this.settingsService.saveMany({
+      'storage.provider': body.provider || 'local',
+      'storage.cos.secretId': body.cosSecretId || '',
+      'storage.cos.secretKey': body.cosSecretKey || '',
+      'storage.cos.bucket': body.cosBucket || '',
+      'storage.cos.region': body.cosRegion || '',
+    });
+    return { code: 0, message: '存储配置保存成功' };
+  }
 }

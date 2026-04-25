@@ -100,4 +100,42 @@ export class BackupController {
   async deleteBackup(@Param('filename') filename: string) {
     return this.backupService.deleteBackup(filename);
   }
+
+  /**
+   * Scan and clean orphan OSS files (not referenced by any DB record)
+   */
+  @Post('clean-orphans')
+  async cleanOrphans() {
+    const result = await this.backupService.cleanOrphanFiles();
+    return {
+      code: 0,
+      message: `已清理 ${result.deletedCount} 个孤儿文件，释放 ${(result.freedSize / 1024 / 1024).toFixed(2)} MB`,
+      data: result,
+    };
+  }
+
+  /**
+   * 扫描 COS 存储桶，找出未被数据库引用的孤儿对象（不执行删除）
+   */
+  @Get('cos-orphans')
+  async getCosOrphans() {
+    const result = await this.backupService.getCosOrphanFiles();
+    return {
+      code: 0,
+      data: { orphanCount: result.count, orphanFiles: result.files },
+    };
+  }
+
+  /**
+   * 删除 COS 存储桶中的所有孤儿对象
+   */
+  @Post('clean-cos-orphans')
+  async cleanCosOrphans() {
+    const result = await this.backupService.cleanCosOrphanFiles();
+    return {
+      code: 0,
+      message: `已删除 ${result.deletedCount} 个云端孤儿文件，失败 ${result.failedCount} 个`,
+      data: result,
+    };
+  }
 }

@@ -4,6 +4,7 @@ import { Badge, Drawer, Spin, message, Modal } from 'antd';
 import { LockOutlined, DownOutlined } from '@ant-design/icons';
 import ScreenSharePanel from '../../components/ScreenSharePanel';
 import VoiceBar from '../../components/VoiceBar';
+import ScreenshotContainer from '../../components/ScreenshotContainer';
 import ChatMessageList from './ChatMessageList';
 import ChatInputBar from './ChatInputBar';
 import ChatHeader from './ChatHeader';
@@ -758,6 +759,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
         </Drawer>
       )}
 
+      <ScreenshotContainer onSendToChat={(file) => setPendingFiles(prev => [...prev, file])} isMobile={isMobile} />
       <TicketModals />
     </div>
     </TicketProvider>

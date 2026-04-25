@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { FilesController } from './files.controller';
+import { FilesService } from './files.service';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
-  imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'oss'),
-      serveRoot: '/api/files/static',
-    }),
-  ],
+  imports: [SettingsModule],
   controllers: [FilesController],
+  providers: [FilesService],
+  exports: [FilesService],
 })
 export class FilesModule {}

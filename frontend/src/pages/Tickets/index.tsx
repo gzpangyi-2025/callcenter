@@ -70,10 +70,11 @@ const TicketList: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [tableHeight, setTableHeight] = useState(window.innerHeight - 280);
+  const [tableHeight, setTableHeight] = useState(window.innerHeight - 265);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [batchDeleting, setBatchDeleting] = useState(false);
   const { user } = useAuthStore();
@@ -98,6 +99,12 @@ const TicketList: React.FC = () => {
   const [assigneeOptions, setAssigneeOptions] = useState<any[]>([]);
   const [assigneeSearching, setAssigneeSearching] = useState(false);
   const [categoryTree, setCategoryTree] = useState<any[]>([]);
+  const [tableFilters, setTableFilters] = useState<Record<string, any>>({});
+  const [aggregates, setAggregates] = useState<{
+    categories: any[], customers: any[], creators: any[], assignees: any[]
+  }>({ categories: [], customers: [], creators: [], assignees: [] });
+  const [filterSearchText, setFilterSearchText] = useState<Record<string, string>>({});
+
   let searchTimer: any = null;
 
   const handleAssigneeSearch = (value: string) => {
@@ -117,11 +124,59 @@ const TicketList: React.FC = () => {
     }, 300);
   };
 
+  const getFilterDropdown = (field: string, placeholder: string) => ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
+    const list = aggregates[field as keyof typeof aggregates] || [];
+    const searchText = filterSearchText[field] || '';
+    const filteredList = list
+      .filter((item: any) => item.label?.toString().toLowerCase().includes(searchText.toLowerCase()))
+      .sort((a: any, b: any) => (b.count || 0) - (a.count || 0));
+
+    return (
+      <div style={{ padding: 8, width: 240 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          placeholder={placeholder}
+          value={searchText}
+          onChange={(e) => setFilterSearchText({ ...filterSearchText, [field]: e.target.value })}
+          style={{ marginBottom: 8 }}
+          prefix={<SearchOutlined />}
+          allowClear
+          autoFocus
+        />
+        <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 8, display: 'flex', flexDirection: 'column' }}>
+          {filteredList.map((item: any) => {
+            const isSelected = selectedKeys.includes(item.value);
+            return (
+              <div 
+                key={item.value} 
+                style={{ padding: '6px 8px', display: 'flex', alignItems: 'center', cursor: 'pointer', borderRadius: 4, background: isSelected ? 'var(--bg-hover)' : 'transparent' }}
+                onClick={() => {
+                  const newKeys = isSelected ? selectedKeys.filter((k: any) => k !== item.value) : [...selectedKeys, item.value];
+                  setSelectedKeys(newKeys);
+                }}
+              >
+                <input type="checkbox" checked={isSelected} readOnly style={{ marginRight: 8, cursor: 'pointer' }} />
+                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {item.label}
+                </span>
+                <span style={{ color: 'var(--text-color-secondary)', fontSize: 12, marginLeft: 8 }}>({item.count})</span>
+              </div>
+            );
+          })}
+          {filteredList.length === 0 && <div style={{ padding: 8, color: 'var(--text-color-secondary)', textAlign: 'center' }}>无匹配数据</div>}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+          <Button onClick={() => { clearFilters(); confirm(); }} size="small" style={{ width: 90 }}>清除筛选</Button>
+          <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>确定</Button>
+        </div>
+      </div>
+    );
+  };
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      setTableHeight(window.innerHeight - 280);
+      setTableHeight(window.innerHeight - 265);
       // 手机端默认使用卡片视图
       if (mobile) setViewMode('card');
     };
@@ -137,12 +192,27 @@ const TicketList: React.FC = () => {
     setLoading(true);
     setPage(1);
     try {
-      const res: any = await ticketsAPI.getAll({
+      const params = {
         page: 1,
         pageSize: PAGE_SIZE,
         status: statusFilter as any,
         keyword: keyword || undefined,
-      });
+        category1: categoryFilter?.[0] || tableFilters.type?.[0] || undefined,
+        category2: categoryFilter?.[1] || undefined,
+        category3: categoryFilter?.[2] || undefined,
+        customerName: tableFilters.customerName?.[0] || undefined,
+        creatorId: tableFilters.creator?.[0] || undefined,
+        assigneeId: tableFilters.assignee?.[0] || undefined,
+      };
+      
+      const [res, aggRes]: any = await Promise.all([
+        ticketsAPI.getAll(params),
+        ticketsAPI.getAggregates(params)
+      ]);
+      
+      if (aggRes.code === 0) {
+        setAggregates(aggRes.data);
+      }
       if (res.code === 0) {
         setTickets(res.data.items);
         setTotal(res.data.total || 0);
@@ -153,7 +223,7 @@ const TicketList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, keyword]);
+  }, [statusFilter, keyword, categoryFilter, tableFilters]);
 
   // 加载更多（追加）
   const loadMore = useCallback(async (nextPage: number) => {
@@ -165,6 +235,12 @@ const TicketList: React.FC = () => {
         pageSize: PAGE_SIZE,
         status: statusFilter as any,
         keyword: keyword || undefined,
+        category1: categoryFilter?.[0] || tableFilters.type?.[0] || undefined,
+        category2: categoryFilter?.[1] || undefined,
+        category3: categoryFilter?.[2] || undefined,
+        customerName: tableFilters.customerName?.[0] || undefined,
+        creatorId: tableFilters.creator?.[0] || undefined,
+        assigneeId: tableFilters.assignee?.[0] || undefined,
       });
       if (res.code === 0) {
         const newItems = res.data.items || [];
@@ -176,7 +252,7 @@ const TicketList: React.FC = () => {
     } catch {} finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore, statusFilter, keyword]);
+  }, [loadingMore, hasMore, statusFilter, keyword, categoryFilter, tableFilters]);
 
   useEffect(() => {
     loadTickets();
@@ -300,6 +376,7 @@ const TicketList: React.FC = () => {
     },
     {
       title: '分类', dataIndex: 'type', width: colWidths.type,
+      filterDropdown: getFilterDropdown('categories', '搜索分类'),
       render: (_type: string, record: any) => {
         if (record.category1) {
           const color = record.category1 === '硬件设备' ? 'volcano' : 'geekblue';
@@ -320,13 +397,18 @@ const TicketList: React.FC = () => {
         <Tag color={statusMap[status]?.color}>{statusMap[status]?.text}</Tag>
       ),
     },
-    { title: '客户', dataIndex: 'customerName', width: colWidths.customerName, ellipsis: true },
+    { 
+      title: '客户', dataIndex: 'customerName', width: colWidths.customerName, ellipsis: true,
+      filterDropdown: getFilterDropdown('customers', '搜索客户'),
+    },
     {
       title: '创建人', dataIndex: 'creator', width: colWidths.creator,
+      filterDropdown: getFilterDropdown('creators', '搜索创建人'),
       render: (c: any) => c ? <span>{c.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({c.username})</span></span> : '-',
     },
     {
       title: '当前接单人', dataIndex: 'assignee', width: colWidths.assignee,
+      filterDropdown: getFilterDropdown('assignees', '搜索接单人'),
       render: (a: any) => a ? <span>{a.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({a.username})</span></span> : '-',
     },
     {
@@ -471,11 +553,22 @@ const TicketList: React.FC = () => {
             /* 手机端筛选：垂直堆叠 */
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
+                allowClear
                 value={keyword} onChange={(e) => setKeyword(e.target.value)}
                 onPressEnter={handleSearch}
                 onFocus={(e) => e.target.select()}
                 style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
               <div style={{ display: 'flex', gap: 8 }}>
+                <Cascader
+                  options={categoryTree}
+                  placeholder="三级分类筛选"
+                  changeOnSelect
+                  allowClear
+                  value={categoryFilter}
+                  onChange={(v) => { setCategoryFilter((v as string[]) || []); setPage(1); }}
+                  style={{ flex: 1.5 }}
+                  showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                />
                 <Select placeholder="状态筛选" allowClear style={{ flex: 1 }}
                   value={statusFilter} onChange={(v) => { setStatusFilter(v); setPage(1); }}>
                   <Option value="pending">待接单</Option>
@@ -483,7 +576,9 @@ const TicketList: React.FC = () => {
                   <Option value="closing">待确认</Option>
                   <Option value="closed">已关闭</Option>
                 </Select>
-                <Button onClick={handleSearch} type="primary"
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button onClick={handleSearch} type="primary" block
                   style={{ background: 'var(--primary)', border: 'none' }}>搜索</Button>
                 {showScrollTop && (
                   <Button
@@ -501,11 +596,22 @@ const TicketList: React.FC = () => {
               <Col flex="auto">
                 <Space>
                   <Input placeholder="搜索工单号/服务单号/标题/描述" prefix={<SearchOutlined />}
+                    allowClear
                     value={keyword} onChange={(e) => setKeyword(e.target.value)}
                     onPressEnter={handleSearch}
                     onFocus={(e) => e.target.select()}
-                    style={{ width: 240, background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
-                  <Select placeholder="状态筛选" allowClear style={{ width: 130 }}
+                    style={{ width: 280, background: 'var(--bg-primary)', border: '1px solid var(--border)' }} />
+                  <Cascader
+                    options={categoryTree}
+                    placeholder="三级分类筛选"
+                    changeOnSelect
+                    allowClear
+                    value={categoryFilter}
+                    onChange={(v) => { setCategoryFilter((v as string[]) || []); setPage(1); }}
+                    style={{ width: 180 }}
+                    showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                  />
+                  <Select placeholder="状态筛选" allowClear style={{ width: 110 }}
                     value={statusFilter} onChange={(v) => { setStatusFilter(v); setPage(1); }}>
                     <Option value="pending">待接单</Option>
                     <Option value="in_progress">服务中</Option>
@@ -538,53 +644,74 @@ const TicketList: React.FC = () => {
       )}
       </div>
 
-      <div className={!isMobile ? 'page-scroll-content' : ''}>
+      <div className={!isMobile ? 'page-scroll-content' : ''} style={!isMobile && viewMode === 'list' ? { overflowY: 'hidden', position: 'relative' } : {}}>
       {/* 列表/卡片视图 */}
       {viewMode === 'list' && !isMobile ? (
-        <Card style={{ borderRadius: 12 }}>
-          <Table 
-            components={{ header: { cell: ResizableTitle } }}
-            size="small"
-            columns={resizableColumns as any} 
-            dataSource={tickets} 
-            rowKey="id"
-            loading={loading}
-            scroll={{ x: 1260, y: tableHeight }}
-            virtual
-            rowSelection={{
-              columnWidth: 56,
-              selectedRowKeys,
-              onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
-            }}
-            onRow={(record) => {
-              const isLocked = record.isRoomLocked;
-              const userId = Number(user?.id);
-              const isAuthorized = !isLocked
-                || Number(record.creatorId) === userId
-                || Number(record.assigneeId) === userId
-                || (record.participants || []).some((p: any) => Number(p.id) === userId)
-                || (user?.role as any)?.name === 'admin';
-              return {
-                onClick: () => {
-                  if (!isAuthorized) {
-                    message.warning('该工单房间已锁定，您无权进入');
-                    return;
-                  }
-                  navigate(`/tickets/${record.id}`);
-                },
-                style: { cursor: isAuthorized ? 'pointer' : 'not-allowed', opacity: isLocked && !isAuthorized ? 0.6 : 1 },
-              };
-            }}
-            pagination={false}
-            footer={() => loadingMore ? (
-              <div style={{ textAlign: 'center', padding: 8 }}>
-                <Spin size="small" /> <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--text-muted)' }}>加载中...</span>
-              </div>
-            ) : !hasMore && tickets.length > 0 ? (
-              <div style={{ textAlign: 'center', padding: 8, color: 'var(--text-muted)', fontSize: 12 }}>已加载全部 {total} 条工单</div>
-            ) : null}
-          />
-        </Card>
+        <>
+          <Card style={{ borderRadius: 12 }}>
+            <Table 
+              components={{ header: { cell: ResizableTitle } }}
+              size="small"
+              columns={resizableColumns as any} 
+              dataSource={tickets} 
+              rowKey="id"
+              loading={loading}
+              scroll={{ x: 1260, y: tableHeight }}
+              virtual
+              rowSelection={{
+                columnWidth: 56,
+                selectedRowKeys,
+                onChange: (newSelectedRowKeys) => setSelectedRowKeys(newSelectedRowKeys),
+              }}
+              onRow={(record) => {
+                const isLocked = record.isRoomLocked;
+                const userId = Number(user?.id);
+                const isAuthorized = !isLocked
+                  || Number(record.creatorId) === userId
+                  || Number(record.assigneeId) === userId
+                  || (record.participants || []).some((p: any) => Number(p.id) === userId)
+                  || (user?.role as any)?.name === 'admin';
+                return {
+                  onClick: () => {
+                    if (!isAuthorized) {
+                      message.warning('该工单房间已锁定，您无权进入');
+                      return;
+                    }
+                    navigate(`/tickets/${record.id}`);
+                  },
+                  style: { cursor: isAuthorized ? 'pointer' : 'not-allowed', opacity: isLocked && !isAuthorized ? 0.6 : 1 },
+                };
+              }}
+              onChange={(_pagination, filters) => {
+                setTableFilters(filters);
+              }}
+              pagination={false}
+            />
+          </Card>
+          {/* 悬浮加载状态指示器 */}
+          {(loadingMore || (!hasMore && tickets.length > 0)) && (
+            <div style={{
+              position: 'absolute',
+              bottom: 30,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(4px)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              padding: '4px 16px',
+              borderRadius: 20,
+              fontSize: 12,
+              color: 'var(--text-muted)',
+              zIndex: 10,
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}>
+              {loadingMore ? <><Spin size="small" /> <span>加载中...</span></> : <span>已加载全部 {total} 条工单</span>}
+            </div>
+          )}
+        </>
       ) : (
         <>
           <Row gutter={[isMobile ? 12 : 16, isMobile ? 12 : 16]}>

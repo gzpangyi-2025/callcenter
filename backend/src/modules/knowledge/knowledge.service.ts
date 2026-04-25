@@ -13,6 +13,7 @@ import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';
 import { Ticket } from '../../entities/ticket.entity';
 import { Message } from '../../entities/message.entity';
 import { SettingsService } from '../settings/settings.service';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class KnowledgeService {
@@ -26,6 +27,7 @@ export class KnowledgeService {
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
     private readonly settingsService: SettingsService,
+    private readonly filesService: FilesService,
   ) {}
 
   /**
@@ -399,7 +401,6 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       
       if (ticket) {
         const sortedMessages = ticket.messages.sort((a, b) => a.id - b.id);
-        const ossDir = path.join(process.cwd(), 'oss');
 
         for (const msg of sortedMessages) {
           const isCreator = ticket.creatorId === msg.senderId;
@@ -418,13 +419,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
             const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)]+)/);
             if (urlMatch) {
                const filename = urlMatch[1];
-               const imgPath = path.join(ossDir, filename);
-               if (fs.existsSync(imgPath)) {
-                 try {
-                   const imgBuffer = fs.readFileSync(imgPath);
-                   const dimensions = sizeOf(imgBuffer);
-                   let w = dimensions.width || 400;
-                   let h = dimensions.height || 300;
+               try {
+                 const imgBuffer = await this.filesService.getFileBuffer(filename);
+                 const dimensions = sizeOf(imgBuffer);
+                 let w = dimensions.width || 400;
+                 let h = dimensions.height || 300;
                    // scale down if too large for word doc
                    if (w > 500) {
                       h = Math.floor(h * (500 / w));
@@ -444,7 +443,6 @@ engineer: ${ticket.assignee?.displayName || '未知'}
                  } catch (e) {
                    this.logger.error('Failed to embed image to docx', e);
                  }
-               }
             }
           }
           
@@ -501,18 +499,9 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         return defaultImg;
       }
 
-      // Save to static uploads folder
-      const uploadDir = path.join(process.cwd(), 'uploads');
-      const knowledgeDir = path.join(uploadDir, 'knowledge');
-      if (!fs.existsSync(knowledgeDir)) {
-        fs.mkdirSync(knowledgeDir, { recursive: true });
-      }
-
       const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
-      const filePath = path.join(knowledgeDir, fileName);
-      
-      fs.writeFileSync(filePath, Buffer.from(b64, 'base64'));
-      return `/uploads/knowledge/${fileName}`;
+      const buffer = Buffer.from(b64, 'base64');
+      return await this.filesService.uploadToCos(fileName, buffer, 'image/png');
       
     } catch (error: any) {
       this.logger.error('Failed to generate image via Google Google Generative AI API: ' + (error.response?.data?.error?.message || error.message));
@@ -543,7 +532,6 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     });
 
     if (ticket && ticket.messages) {
-      const ossDir = path.join(process.cwd(), 'oss');
       for (const msg of ticket.messages) {
         let internalFilename = '';
         if (msg.fileUrl) {
@@ -555,10 +543,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         }
 
         if (internalFilename) {
-          const imgPath = path.join(ossDir, internalFilename);
-          if (fs.existsSync(imgPath)) {
-            archive.append(fs.createReadStream(imgPath), { name: `attachments/${msg.fileName || internalFilename}` });
-          }
+          try {
+            const buffer = await this.filesService.getFileBuffer(internalFilename);
+            archive.append(buffer, { name: `attachments/${msg.fileName || internalFilename}` });
+          } catch {}
         }
       }
     }

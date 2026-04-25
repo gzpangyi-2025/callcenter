@@ -55,6 +55,7 @@ export interface TicketQueryParams {
   category3?: string;
   creatorId?: number;
   assigneeId?: number;
+  customerName?: string;
   isDashboard?: boolean;
 }
 

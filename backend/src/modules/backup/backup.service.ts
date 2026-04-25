@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { SearchService } from '../search/search.service';
+import { FilesService } from '../files/files.service';
 import { join, extname } from 'path';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, unlinkSync, statSync, copyFileSync, rmSync } from 'fs';
 import { createHash } from 'crypto';
@@ -14,6 +15,9 @@ const backupsDir = join(process.cwd(), 'backups');
 // Image extensions for classification
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico']);
 
+// Regex to extract OSS filenames from content (matches /api/files/static/xxx.ext)
+const OSS_REF_REGEX = /\/api\/files\/static\/([a-f0-9-]+\.[a-z0-9]+)/gi;
+
 @Injectable()
 export class BackupService {
   private readonly logger = new Logger(BackupService.name);
@@ -21,10 +25,212 @@ export class BackupService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly searchService: SearchService,
+    private readonly filesService: FilesService,
   ) {
     // Ensure backups directory exists
     if (!existsSync(backupsDir)) {
       mkdirSync(backupsDir, { recursive: true });
+    }
+  }
+
+  /**
+   * Collect all OSS filenames referenced anywhere in the database
+   */
+  private async collectReferencedFiles(): Promise<Set<string>> {
+    const referenced = new Set<string>();
+
+    const extractFromContent = (content: string) => {
+      if (!content) return;
+      let match: RegExpExecArray | null;
+      const regex = new RegExp(OSS_REF_REGEX.source, 'gi');
+      while ((match = regex.exec(content)) !== null) {
+        referenced.add(match[1]);
+      }
+    };
+
+    // 1. messages.fileUrl (chat images & files)
+    try {
+      const messages = await this.dataSource.query(
+        `SELECT fileUrl FROM messages WHERE fileUrl IS NOT NULL AND fileUrl != ''`
+      );
+      for (const msg of messages) {
+        if (msg.fileUrl) {
+          const filename = msg.fileUrl.split('/').pop();
+          if (filename) referenced.add(filename);
+        }
+      }
+    } catch (err) {
+      this.logger.warn('Failed to scan messages for file references', err);
+    }
+
+    // 2. posts.content (BBS post body with embedded images)
+    try {
+      const posts = await this.dataSource.query(
+        `SELECT content FROM posts WHERE content IS NOT NULL`
+      );
+      for (const post of posts) {
+        extractFromContent(post.content);
+      }
+    } catch (err) {
+      this.logger.warn('Failed to scan posts for file references', err);
+    }
+
+    // 3. post_comments.content
+    try {
+      const comments = await this.dataSource.query(
+        `SELECT content FROM post_comments WHERE content IS NOT NULL`
+      );
+      for (const comment of comments) {
+        extractFromContent(comment.content);
+      }
+    } catch (err) {
+      this.logger.warn('Failed to scan post_comments for file references', err);
+    }
+
+    // 4. knowledge_docs.content + analysisImgUrl + flowImgUrl
+    try {
+      const docs = await this.dataSource.query(
+        `SELECT content, analysisImgUrl, flowImgUrl FROM knowledge_docs`
+      );
+      for (const doc of docs) {
+        extractFromContent(doc.content);
+        if (doc.analysisImgUrl) {
+          const fn = doc.analysisImgUrl.split('/').pop();
+          if (fn) referenced.add(fn);
+        }
+        if (doc.flowImgUrl) {
+          const fn = doc.flowImgUrl.split('/').pop();
+          if (fn) referenced.add(fn);
+        }
+      }
+    } catch (err) {
+      this.logger.warn('Failed to scan knowledge_docs for file references', err);
+    }
+
+    // 5. users.avatar
+    try {
+      const users = await this.dataSource.query(
+        `SELECT avatar FROM users WHERE avatar IS NOT NULL AND avatar != ''`
+      );
+      for (const user of users) {
+        if (user.avatar) {
+          const fn = user.avatar.split('/').pop();
+          if (fn) referenced.add(fn);
+        }
+      }
+    } catch (err) {
+      this.logger.warn('Failed to scan users for avatar references', err);
+    }
+
+    return referenced;
+  }
+
+  /**
+   * Get list of orphan files (files in oss/ not referenced by any DB record)
+   */
+  async getOrphanFiles(): Promise<{ files: string[]; count: number; totalSize: number }> {
+    if (!existsSync(ossDir)) {
+      return { files: [], count: 0, totalSize: 0 };
+    }
+
+    const allFiles = readdirSync(ossDir).filter(f => {
+      try { return statSync(join(ossDir, f)).isFile(); } catch { return false; }
+    });
+
+    const referenced = await this.collectReferencedFiles();
+
+    const orphans: string[] = [];
+    let totalSize = 0;
+
+    for (const f of allFiles) {
+      if (!referenced.has(f)) {
+        orphans.push(f);
+        try {
+          totalSize += statSync(join(ossDir, f)).size;
+        } catch { /* skip */ }
+      }
+    }
+
+    return { files: orphans, count: orphans.length, totalSize };
+  }
+
+  /**
+   * Delete all orphan files from oss/ directory
+   */
+  async cleanOrphanFiles(): Promise<{ deletedCount: number; freedSize: number }> {
+    const { files, totalSize } = await this.getOrphanFiles();
+    let deletedCount = 0;
+
+    for (const f of files) {
+      try {
+        unlinkSync(join(ossDir, f));
+        deletedCount++;
+      } catch (err) {
+        this.logger.warn(`Failed to delete orphan file: ${f}`, err);
+      }
+    }
+
+    this.logger.log(`Cleaned ${deletedCount} orphan files, freed ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+    return { deletedCount, freedSize: totalSize };
+  }
+
+  /**
+   * 检测 COS 存储中的孤儿文件（在 COS 中存在但数据库中没有引用的对象）
+   */
+  async getCosOrphanFiles(): Promise<{ files: string[]; count: number }> {
+    try {
+      const [cosKeys, referenced] = await Promise.all([
+        this.filesService.listAllCosKeys(),
+        this.collectReferencedFiles(),
+      ]);
+
+      const orphans = cosKeys.filter(key => !referenced.has(key));
+      return { files: orphans, count: orphans.length };
+    } catch (err) {
+      this.logger.warn('Failed to compute COS orphan stats', err);
+      return { files: [], count: 0 };
+    }
+  }
+
+  /**
+   * 删除 COS 存储中的所有孤儿文件
+   */
+  async cleanCosOrphanFiles(): Promise<{ deletedCount: number; failedCount: number }> {
+    const { files } = await this.getCosOrphanFiles();
+    this.logger.log(`Deleting ${files.length} COS orphan files...`);
+    const result = await this.filesService.deleteCosObjects(files);
+    this.logger.log(`COS orphan cleanup: deleted=${result.deleted}, failed=${result.failed}`);
+    return { deletedCount: result.deleted, failedCount: result.failed };
+  }
+
+  /**
+   * Helper: extract OSS filenames from HTML/Markdown content string
+   */
+  static extractOssFilenames(content: string): string[] {
+    if (!content) return [];
+    const filenames: string[] = [];
+    const regex = new RegExp(OSS_REF_REGEX.source, 'gi');
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(content)) !== null) {
+      filenames.push(match[1]);
+    }
+    return filenames;
+  }
+
+  /**
+   * Helper: delete a list of OSS files (fire-and-forget safe)
+   */
+  static deleteOssFiles(filenames: string[], logger?: Logger): void {
+    for (const f of filenames) {
+      try {
+        const fPath = join(ossDir, f);
+        if (existsSync(fPath)) {
+          unlinkSync(fPath);
+          logger?.debug(`Deleted OSS file: ${f}`);
+        }
+      } catch (err) {
+        logger?.warn(`Failed to delete OSS file: ${f}`, err);
+      }
     }
   }
 
@@ -43,27 +249,36 @@ export class BackupService {
       totalRecords += count;
     }
 
-    // OSS file stats
+    // OSS file stats from FilesService
     let imageCount = 0;
     let fileCount = 0;
     let imageSize = 0;
     let fileSize = 0;
+    let provider = 'local';
+    
+    try {
+      const stats = await this.filesService.getStorageStats();
+      imageCount = stats.imageCount;
+      imageSize = stats.imageSize;
+      fileCount = stats.fileCount;
+      fileSize = stats.fileSize;
+      provider = stats.provider;
+    } catch (err) {
+      this.logger.warn('Failed to fetch storage stats', err);
+    }
 
-    if (existsSync(ossDir)) {
-      const files = readdirSync(ossDir);
-      for (const f of files) {
-        const ext = extname(f).toLowerCase();
-        const fPath = join(ossDir, f);
-        try {
-          const size = statSync(fPath).size;
-          if (IMAGE_EXTS.has(ext)) {
-            imageCount++;
-            imageSize += size;
-          } else {
-            fileCount++;
-            fileSize += size;
-          }
-        } catch { /* skip broken files */ }
+    // Orphan file stats
+    let orphanCount = 0;
+    let orphanSize = 0;
+    
+    // 只有在使用本地存储时才计算孤儿文件（COS因为费用/限制原因不全量拉取计算孤儿）
+    if (provider === 'local') {
+      try {
+        const orphanInfo = await this.getOrphanFiles();
+        orphanCount = orphanInfo.count;
+        orphanSize = orphanInfo.totalSize;
+      } catch (err) {
+        this.logger.warn('Failed to compute orphan file stats', err);
       }
     }
 
@@ -78,6 +293,9 @@ export class BackupService {
         imageSize,
         fileCount,
         fileSize,
+        orphanCount,
+        orphanSize,
+        provider,
       },
     };
   }
@@ -140,29 +358,8 @@ export class BackupService {
       // 2. Collect OSS files
       let imageCount = 0;
       let fileCount = 0;
+      // 迁移到腾讯云 COS 后，不再在系统备份中打包附件，以极大地提升备份效率
 
-      if (existsSync(ossDir)) {
-        const ossFiles = readdirSync(ossDir);
-        for (const f of ossFiles) {
-          const ext = extname(f).toLowerCase();
-          const fPath = join(ossDir, f);
-          try {
-            if (!statSync(fPath).isFile()) continue;
-          } catch { continue; }
-
-          if (IMAGE_EXTS.has(ext)) {
-            if (options.includeImages) {
-              archive.file(fPath, { name: `oss_images/${f}` });
-              imageCount++;
-            }
-          } else {
-            if (options.includeFiles) {
-              archive.file(fPath, { name: `oss_files/${f}` });
-              fileCount++;
-            }
-          }
-        }
-      }
 
       // 3. Generate manifest
       const manifest = {
@@ -288,38 +485,8 @@ export class BackupService {
         // 6. Restore OSS files
         let restoredImages = 0;
         let restoredFiles = 0;
+        // 迁移到腾讯云 COS 后，不再恢复本地附件
 
-        if (!existsSync(ossDir)) {
-          mkdirSync(ossDir, { recursive: true });
-        }
-
-        // Restore images
-        const imgDir = join(extractDir, 'oss_images');
-        if (existsSync(imgDir)) {
-          const imgFiles = readdirSync(imgDir);
-          for (const f of imgFiles) {
-            try {
-              copyFileSync(join(imgDir, f), join(ossDir, f));
-              restoredImages++;
-            } catch (err) {
-              this.logger.warn(`Failed to restore image ${f}`, err);
-            }
-          }
-        }
-
-        // Restore files
-        const fileDir = join(extractDir, 'oss_files');
-        if (existsSync(fileDir)) {
-          const dataFiles = readdirSync(fileDir);
-          for (const f of dataFiles) {
-            try {
-              copyFileSync(join(fileDir, f), join(ossDir, f));
-              restoredFiles++;
-            } catch (err) {
-              this.logger.warn(`Failed to restore file ${f}`, err);
-            }
-          }
-        }
 
         // 7. Re-enable foreign key checks
         await this.dataSource.query('SET FOREIGN_KEY_CHECKS = 1');

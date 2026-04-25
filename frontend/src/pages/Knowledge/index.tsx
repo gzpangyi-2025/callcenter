@@ -101,7 +101,7 @@ const KnowledgePage: React.FC = () => {
   return (
     <div className="fade-in page-flex-layout" style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
       <div className="page-sticky-header">
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, gap: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16, gap: 12 }}>
         <BookOutlined style={{ fontSize: 24, color: 'var(--primary)' }} />
         <Title level={2} style={{ margin: 0, fontSize: 24 }}>技术支持知识库</Title>
       </div>
@@ -113,7 +113,7 @@ const KnowledgePage: React.FC = () => {
         value={searchText}
         onChange={handleSearchChange}
         onFocus={(e) => e.target.select()}
-        style={{ marginBottom: 24, borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: 'none' }}
+        style={{ marginBottom: 16, borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: 'none' }}
         allowClear
       />
 
@@ -129,7 +129,7 @@ const KnowledgePage: React.FC = () => {
           { key: 'chat_history', label: '💬 聊天记录' },
           { key: 'ai_doc', label: '📖 知识文档' },
         ]}
-        style={{ marginBottom: 16 }}
+        style={{ marginBottom: 8 }}
       />
       </div>
 
