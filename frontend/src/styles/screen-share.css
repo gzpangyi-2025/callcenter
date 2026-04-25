@@ -33,6 +33,22 @@
   border-radius: 0;
 }
 
+/* 手机端横屏全屏：CSS transform 旋转90度模拟横屏 */
+.screen-share-panel.mobile-landscape {
+  position: fixed;
+  top: 0;
+  left: 100vw;
+  z-index: 99999;
+  width: 100vh !important;
+  height: 100vw !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border: none;
+  border-radius: 0;
+  transform: rotate(90deg);
+  transform-origin: top left;
+}
+
 /* 工具栏 */
 .screen-share-toolbar {
   display: flex;
