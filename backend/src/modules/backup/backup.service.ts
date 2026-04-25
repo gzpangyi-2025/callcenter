@@ -3,7 +3,17 @@ import { DataSource } from 'typeorm';
 import { SearchService } from '../search/search.service';
 import { FilesService } from '../files/files.service';
 import { join, extname } from 'path';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, unlinkSync, statSync, copyFileSync, rmSync } from 'fs';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  unlinkSync,
+  statSync,
+  copyFileSync,
+  rmSync,
+} from 'fs';
 import { createHash } from 'crypto';
 import * as archiver from 'archiver';
 import { createWriteStream, createReadStream } from 'fs';
@@ -13,7 +23,16 @@ const ossDir = join(process.cwd(), 'oss');
 const backupsDir = join(process.cwd(), 'backups');
 
 // Image extensions for classification
-const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico']);
+const IMAGE_EXTS = new Set([
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.webp',
+  '.svg',
+  '.bmp',
+  '.ico',
+]);
 
 // Regex to extract OSS filenames from content (matches /api/files/static/xxx.ext)
 const OSS_REF_REGEX = /\/api\/files\/static\/([a-f0-9-]+\.[a-z0-9]+)/gi;
@@ -51,7 +70,7 @@ export class BackupService {
     // 1. messages.fileUrl (chat images & files)
     try {
       const messages = await this.dataSource.query(
-        `SELECT fileUrl FROM messages WHERE fileUrl IS NOT NULL AND fileUrl != ''`
+        `SELECT fileUrl FROM messages WHERE fileUrl IS NOT NULL AND fileUrl != ''`,
       );
       for (const msg of messages) {
         if (msg.fileUrl) {
@@ -66,7 +85,7 @@ export class BackupService {
     // 2. posts.content (BBS post body with embedded images)
     try {
       const posts = await this.dataSource.query(
-        `SELECT content FROM posts WHERE content IS NOT NULL`
+        `SELECT content FROM posts WHERE content IS NOT NULL`,
       );
       for (const post of posts) {
         extractFromContent(post.content);
@@ -78,7 +97,7 @@ export class BackupService {
     // 3. post_comments.content
     try {
       const comments = await this.dataSource.query(
-        `SELECT content FROM post_comments WHERE content IS NOT NULL`
+        `SELECT content FROM post_comments WHERE content IS NOT NULL`,
       );
       for (const comment of comments) {
         extractFromContent(comment.content);
@@ -90,7 +109,7 @@ export class BackupService {
     // 4. knowledge_docs.content + analysisImgUrl + flowImgUrl
     try {
       const docs = await this.dataSource.query(
-        `SELECT content, analysisImgUrl, flowImgUrl FROM knowledge_docs`
+        `SELECT content, analysisImgUrl, flowImgUrl FROM knowledge_docs`,
       );
       for (const doc of docs) {
         extractFromContent(doc.content);
@@ -104,13 +123,16 @@ export class BackupService {
         }
       }
     } catch (err) {
-      this.logger.warn('Failed to scan knowledge_docs for file references', err);
+      this.logger.warn(
+        'Failed to scan knowledge_docs for file references',
+        err,
+      );
     }
 
     // 5. users.avatar
     try {
       const users = await this.dataSource.query(
-        `SELECT avatar FROM users WHERE avatar IS NOT NULL AND avatar != ''`
+        `SELECT avatar FROM users WHERE avatar IS NOT NULL AND avatar != ''`,
       );
       for (const user of users) {
         if (user.avatar) {
@@ -128,13 +150,21 @@ export class BackupService {
   /**
    * Get list of orphan files (files in oss/ not referenced by any DB record)
    */
-  async getOrphanFiles(): Promise<{ files: string[]; count: number; totalSize: number }> {
+  async getOrphanFiles(): Promise<{
+    files: string[];
+    count: number;
+    totalSize: number;
+  }> {
     if (!existsSync(ossDir)) {
       return { files: [], count: 0, totalSize: 0 };
     }
 
-    const allFiles = readdirSync(ossDir).filter(f => {
-      try { return statSync(join(ossDir, f)).isFile(); } catch { return false; }
+    const allFiles = readdirSync(ossDir).filter((f) => {
+      try {
+        return statSync(join(ossDir, f)).isFile();
+      } catch {
+        return false;
+      }
     });
 
     const referenced = await this.collectReferencedFiles();
@@ -147,7 +177,9 @@ export class BackupService {
         orphans.push(f);
         try {
           totalSize += statSync(join(ossDir, f)).size;
-        } catch { /* skip */ }
+        } catch {
+          /* skip */
+        }
       }
     }
 
@@ -157,7 +189,10 @@ export class BackupService {
   /**
    * Delete all orphan files from oss/ directory
    */
-  async cleanOrphanFiles(): Promise<{ deletedCount: number; freedSize: number }> {
+  async cleanOrphanFiles(): Promise<{
+    deletedCount: number;
+    freedSize: number;
+  }> {
     const { files, totalSize } = await this.getOrphanFiles();
     let deletedCount = 0;
 
@@ -170,7 +205,9 @@ export class BackupService {
       }
     }
 
-    this.logger.log(`Cleaned ${deletedCount} orphan files, freed ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+    this.logger.log(
+      `Cleaned ${deletedCount} orphan files, freed ${(totalSize / 1024 / 1024).toFixed(2)} MB`,
+    );
     return { deletedCount, freedSize: totalSize };
   }
 
@@ -184,7 +221,7 @@ export class BackupService {
         this.collectReferencedFiles(),
       ]);
 
-      const orphans = cosKeys.filter(key => !referenced.has(key));
+      const orphans = cosKeys.filter((key) => !referenced.has(key));
       return { files: orphans, count: orphans.length };
     } catch (err) {
       this.logger.warn('Failed to compute COS orphan stats', err);
@@ -195,11 +232,16 @@ export class BackupService {
   /**
    * 删除 COS 存储中的所有孤儿文件
    */
-  async cleanCosOrphanFiles(): Promise<{ deletedCount: number; failedCount: number }> {
+  async cleanCosOrphanFiles(): Promise<{
+    deletedCount: number;
+    failedCount: number;
+  }> {
     const { files } = await this.getCosOrphanFiles();
     this.logger.log(`Deleting ${files.length} COS orphan files...`);
     const result = await this.filesService.deleteCosObjects(files);
-    this.logger.log(`COS orphan cleanup: deleted=${result.deleted}, failed=${result.failed}`);
+    this.logger.log(
+      `COS orphan cleanup: deleted=${result.deleted}, failed=${result.failed}`,
+    );
     return { deletedCount: result.deleted, failedCount: result.failed };
   }
 
@@ -243,7 +285,9 @@ export class BackupService {
     let totalRecords = 0;
 
     for (const table of tableNames) {
-      const result = await this.dataSource.query(`SELECT COUNT(*) as cnt FROM \`${table}\``);
+      const result = await this.dataSource.query(
+        `SELECT COUNT(*) as cnt FROM \`${table}\``,
+      );
       const count = parseInt(result[0].cnt, 10);
       recordCounts[table] = count;
       totalRecords += count;
@@ -255,7 +299,7 @@ export class BackupService {
     let imageSize = 0;
     let fileSize = 0;
     let provider = 'local';
-    
+
     try {
       const stats = await this.filesService.getStorageStats();
       imageCount = stats.imageCount;
@@ -270,7 +314,7 @@ export class BackupService {
     // Orphan file stats
     let orphanCount = 0;
     let orphanSize = 0;
-    
+
     // 只有在使用本地存储时才计算孤儿文件（COS因为费用/限制原因不全量拉取计算孤儿）
     if (provider === 'local') {
       try {
@@ -308,11 +352,16 @@ export class BackupService {
     includeFiles?: boolean;
     includeAuditLogs?: boolean;
   }): Promise<{ code: number; data: { filename: string; size: number } }> {
-    const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:T]/g, '')
+      .slice(0, 14);
     const filename = `backup_callcenter_${timestamp}.zip`;
     const zipPath = join(backupsDir, filename);
 
-    this.logger.log(`Starting backup: ${filename}, options: ${JSON.stringify(options)}`);
+    this.logger.log(
+      `Starting backup: ${filename}, options: ${JSON.stringify(options)}`,
+    );
 
     return new Promise(async (resolve, reject) => {
       const output = createWriteStream(zipPath);
@@ -320,7 +369,9 @@ export class BackupService {
 
       output.on('close', () => {
         const size = archive.pointer();
-        this.logger.log(`Backup completed: ${filename}, size: ${(size / 1024 / 1024).toFixed(2)} MB`);
+        this.logger.log(
+          `Backup completed: ${filename}, size: ${(size / 1024 / 1024).toFixed(2)} MB`,
+        );
         resolve({ code: 0, data: { filename, size } });
       });
 
@@ -338,13 +389,15 @@ export class BackupService {
         excludeTables.push('audit_logs');
       }
 
-      const targetTables = tableNames.filter(t => !excludeTables.includes(t));
+      const targetTables = tableNames.filter((t) => !excludeTables.includes(t));
       const tableRecordCounts: Record<string, number> = {};
       let totalRecords = 0;
 
       for (const table of targetTables) {
         try {
-          const rows = await this.dataSource.query(`SELECT * FROM \`${table}\``);
+          const rows = await this.dataSource.query(
+            `SELECT * FROM \`${table}\``,
+          );
           const json = JSON.stringify(rows, null, 2);
           archive.append(json, { name: `database/${table}.json` });
           tableRecordCounts[table] = rows.length;
@@ -356,10 +409,9 @@ export class BackupService {
       }
 
       // 2. Collect OSS files
-      let imageCount = 0;
-      let fileCount = 0;
+      const imageCount = 0;
+      const fileCount = 0;
       // 迁移到腾讯云 COS 后，不再在系统备份中打包附件，以极大地提升备份效率
-
 
       // 3. Generate manifest
       const manifest = {
@@ -380,7 +432,9 @@ export class BackupService {
         },
       };
 
-      archive.append(JSON.stringify(manifest, null, 2), { name: 'manifest.json' });
+      archive.append(JSON.stringify(manifest, null, 2), {
+        name: 'manifest.json',
+      });
 
       await archive.finalize();
     });
@@ -389,7 +443,9 @@ export class BackupService {
   /**
    * Restore system from a backup ZIP file
    */
-  async restoreBackup(zipPath: string): Promise<{ code: number; message: string; details: any }> {
+  async restoreBackup(
+    zipPath: string,
+  ): Promise<{ code: number; message: string; details: any }> {
     const extractDir = join(backupsDir, `_restore_${Date.now()}`);
 
     try {
@@ -414,7 +470,9 @@ export class BackupService {
         throw new Error('备份文件无效：不是 CallCenter 系统的备份');
       }
 
-      this.logger.log(`Restoring backup from ${manifest.createdAt}, tables: ${manifest.statistics?.tables?.length || 'unknown'}`);
+      this.logger.log(
+        `Restoring backup from ${manifest.createdAt}, tables: ${manifest.statistics?.tables?.length || 'unknown'}`,
+      );
 
       // 3. Disable foreign key checks
       await this.dataSource.query('SET FOREIGN_KEY_CHECKS = 0');
@@ -437,7 +495,9 @@ export class BackupService {
         let importedRecords = 0;
 
         if (existsSync(dbDir)) {
-          const jsonFiles = readdirSync(dbDir).filter(f => f.endsWith('.json'));
+          const jsonFiles = readdirSync(dbDir).filter((f) =>
+            f.endsWith('.json'),
+          );
 
           for (const file of jsonFiles) {
             const tableName = file.replace('.json', '');
@@ -452,7 +512,9 @@ export class BackupService {
               // Check if table exists in current database
               const tableExists = currentTables.includes(tableName);
               if (!tableExists) {
-                this.logger.warn(`Table ${tableName} exists in backup but not in current database, skipping`);
+                this.logger.warn(
+                  `Table ${tableName} exists in backup but not in current database, skipping`,
+                );
                 continue;
               }
 
@@ -461,11 +523,15 @@ export class BackupService {
               for (let i = 0; i < rows.length; i += batchSize) {
                 const batch = rows.slice(i, i + batchSize);
                 const columns = Object.keys(batch[0]);
-                const escapedColumns = columns.map(c => `\`${c}\``).join(', ');
-                const valuePlaceholders = batch.map(
-                  () => `(${columns.map(() => '?').join(', ')})`
-                ).join(', ');
-                const values = batch.flatMap(row => columns.map(c => row[c]));
+                const escapedColumns = columns
+                  .map((c) => `\`${c}\``)
+                  .join(', ');
+                const valuePlaceholders = batch
+                  .map(() => `(${columns.map(() => '?').join(', ')})`)
+                  .join(', ');
+                const values = batch.flatMap((row) =>
+                  columns.map((c) => row[c]),
+                );
 
                 await this.dataSource.query(
                   `INSERT INTO \`${tableName}\` (${escapedColumns}) VALUES ${valuePlaceholders}`,
@@ -475,7 +541,9 @@ export class BackupService {
 
               importedTables++;
               importedRecords += rows.length;
-              this.logger.debug(`Imported table: ${tableName} (${rows.length} rows)`);
+              this.logger.debug(
+                `Imported table: ${tableName} (${rows.length} rows)`,
+              );
             } catch (err) {
               this.logger.error(`Failed to import table ${tableName}`, err);
             }
@@ -483,10 +551,9 @@ export class BackupService {
         }
 
         // 6. Restore OSS files
-        let restoredImages = 0;
-        let restoredFiles = 0;
+        const restoredImages = 0;
+        const restoredFiles = 0;
         // 迁移到腾讯云 COS 后，不再恢复本地附件
-
 
         // 7. Re-enable foreign key checks
         await this.dataSource.query('SET FOREIGN_KEY_CHECKS = 1');
@@ -531,7 +598,9 @@ export class BackupService {
       // Clean up temp extract directory
       try {
         rmSync(extractDir, { recursive: true, force: true });
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
   }
 
@@ -544,7 +613,7 @@ export class BackupService {
     }
 
     const files = readdirSync(backupsDir)
-      .filter(f => f.endsWith('.zip') && f.startsWith('backup_'))
+      .filter((f) => f.endsWith('.zip') && f.startsWith('backup_'))
       .sort()
       .reverse();
 
@@ -558,12 +627,16 @@ export class BackupService {
         let manifest: any = null;
         try {
           const directory = await unzipper.Open.file(fPath);
-          const manifestEntry = directory.files.find(e => e.path === 'manifest.json');
+          const manifestEntry = directory.files.find(
+            (e) => e.path === 'manifest.json',
+          );
           if (manifestEntry) {
             const buf = await manifestEntry.buffer();
             manifest = JSON.parse(buf.toString('utf-8'));
           }
-        } catch { /* skip */ }
+        } catch {
+          /* skip */
+        }
 
         list.push({
           filename: f,
@@ -572,7 +645,9 @@ export class BackupService {
           options: manifest?.options || {},
           statistics: manifest?.statistics || {},
         });
-      } catch { /* skip broken files */ }
+      } catch {
+        /* skip broken files */
+      }
     }
 
     return { code: 0, data: list };

@@ -50,7 +50,7 @@ export class InfraService {
     const lines = content.split('\n');
     const updatedKeys = new Set<string>();
 
-    const newLines = lines.map(line => {
+    const newLines = lines.map((line) => {
       const trimmed = line.trim();
       if (!trimmed || trimmed.startsWith('#')) return line;
       const eqIdx = trimmed.indexOf('=');
@@ -100,23 +100,34 @@ export class InfraService {
     }
   }
 
-  async testElasticsearch(config: { node: string; username?: string; password?: string; rejectUnauthorized?: string }) {
+  async testElasticsearch(config: {
+    node: string;
+    username?: string;
+    password?: string;
+    rejectUnauthorized?: string;
+  }) {
     try {
       if (!config.node) throw new Error('Elasticsearch Node URL is required');
 
       const client = new Client({
         node: config.node,
-        auth: config.username && config.password ? {
-          username: config.username,
-          password: config.password,
-        } : undefined,
+        auth:
+          config.username && config.password
+            ? {
+                username: config.username,
+                password: config.password,
+              }
+            : undefined,
         tls: {
-          rejectUnauthorized: config.rejectUnauthorized !== 'false'
-        }
+          rejectUnauthorized: config.rejectUnauthorized !== 'false',
+        },
       });
 
       const info = await client.info();
-      return { success: true, message: `连接成功！版本: ${info.version.number}, 集群: ${info.cluster_name}` };
+      return {
+        success: true,
+        message: `连接成功！版本: ${info.version.number}, 集群: ${info.cluster_name}`,
+      };
     } catch (e: any) {
       return { success: false, message: `连接失败: ${e.message}` };
     }
@@ -126,7 +137,10 @@ export class InfraService {
     return new Promise((resolve) => {
       try {
         if (!config.host || !config.port) {
-          return resolve({ success: false, message: 'Redis host and port are required' });
+          return resolve({
+            success: false,
+            message: 'Redis host and port are required',
+          });
         }
 
         const client = new Redis({
@@ -138,7 +152,8 @@ export class InfraService {
           maxRetriesPerRequest: 1,
         });
 
-        client.connect()
+        client
+          .connect()
           .then(() => {
             resolve({ success: true, message: '连接成功！' });
             client.disconnect();
@@ -152,10 +167,23 @@ export class InfraService {
     });
   }
 
-  async testMysql(config: { host: string; port: number; username: string; password?: string; database: string }) {
+  async testMysql(config: {
+    host: string;
+    port: number;
+    username: string;
+    password?: string;
+    database: string;
+  }) {
     try {
-      if (!config.host || !config.port || !config.username || !config.database) {
-        throw new Error('MySQL host, port, username, and database are required');
+      if (
+        !config.host ||
+        !config.port ||
+        !config.username ||
+        !config.database
+      ) {
+        throw new Error(
+          'MySQL host, port, username, and database are required',
+        );
       }
 
       const connection = await mysql.createConnection({

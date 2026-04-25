@@ -1,6 +1,17 @@
 import {
-  Controller, Get, Post, Put, Delete, Param, Body, Query,
-  UseGuards, Req, Res, ParseIntPipe, ForbiddenException,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  Req,
+  Res,
+  ParseIntPipe,
+  ForbiddenException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,7 +26,8 @@ import { TicketStatus } from '../../entities/ticket.entity';
 import type { AuthenticatedUser } from '../../common/types/auth.types';
 
 /** 从 Express Request 中提取经过 JWT 认证的用户信息 */
-const getUser = (req: { user?: unknown }): AuthenticatedUser => req.user as AuthenticatedUser;
+const getUser = (req: { user?: unknown }): AuthenticatedUser =>
+  req.user as AuthenticatedUser;
 
 @Controller('tickets')
 @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
@@ -121,28 +133,37 @@ export class TicketsController {
   @Get('my/created')
   @Permissions('tickets:read')
   async myCreated(@Req() req: any) {
-    const tickets = await this.ticketsService.getMyTickets(getUser(req).id, 'creator');
+    const tickets = await this.ticketsService.getMyTickets(
+      getUser(req).id,
+      'creator',
+    );
     return { code: 0, data: tickets };
   }
 
   @Get('my/assigned')
   @Permissions('tickets:read')
   async myAssigned(@Req() req: any) {
-    const tickets = await this.ticketsService.getMyTickets(getUser(req).id, 'assignee');
+    const tickets = await this.ticketsService.getMyTickets(
+      getUser(req).id,
+      'assignee',
+    );
     return { code: 0, data: tickets };
   }
 
   @Get('my/participated')
   @Permissions('tickets:read')
   async myParticipated(@Req() req: any) {
-    const tickets = await this.ticketsService.getMyTickets(getUser(req).id, 'participant');
+    const tickets = await this.ticketsService.getMyTickets(
+      getUser(req).id,
+      'participant',
+    );
     return { code: 0, data: tickets };
   }
 
   @Get(':id')
   @Permissions('tickets:read')
   async findOne(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    if (getUser(req).role?.name === 'external' && (req.user as any).ticketId !== id) {
+    if (getUser(req).role?.name === 'external' && req.user.ticketId !== id) {
       throw new ForbiddenException('外部用户无权访问此工单');
     }
     const ticket = await this.ticketsService.findOne(id);
@@ -163,7 +184,11 @@ export class TicketsController {
     @Body() updateDto: UpdateTicketDto,
     @Req() req: any,
   ) {
-    const ticket = await this.ticketsService.update(id, updateDto, getUser(req));
+    const ticket = await this.ticketsService.update(
+      id,
+      updateDto,
+      getUser(req),
+    );
     return { code: 0, message: '工单更新成功', data: ticket };
   }
 
@@ -217,7 +242,10 @@ export class TicketsController {
 
   @Post(':id/share')
   @Permissions('tickets:share')
-  async generateShareLink(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async generateShareLink(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: any,
+  ) {
     const token = await this.ticketsService.generateShareToken(id);
     return { code: 0, message: '分享外链生成成功', data: { token } };
   }
@@ -227,9 +255,13 @@ export class TicketsController {
   async inviteParticipant(
     @Param('id', ParseIntPipe) id: number,
     @Body('userId') targetUserId: number,
-    @Req() req: any
+    @Req() req: any,
   ) {
-    const ticket = await this.ticketsService.inviteParticipant(id, getUser(req).id, targetUserId);
+    const ticket = await this.ticketsService.inviteParticipant(
+      id,
+      getUser(req).id,
+      targetUserId,
+    );
     return { code: 0, message: '邀请成功', data: ticket };
   }
 
@@ -238,9 +270,13 @@ export class TicketsController {
   async removeParticipant(
     @Param('id', ParseIntPipe) id: number,
     @Param('userId', ParseIntPipe) targetUserId: number,
-    @Req() req: any
+    @Req() req: any,
   ) {
-    const ticket = await this.ticketsService.removeParticipant(id, getUser(req).id, targetUserId);
+    const ticket = await this.ticketsService.removeParticipant(
+      id,
+      getUser(req).id,
+      targetUserId,
+    );
     return { code: 0, message: '专家已移除', data: ticket };
   }
 
@@ -252,9 +288,16 @@ export class TicketsController {
     @Req() req: any,
   ) {
     const ticket = await this.ticketsService.toggleRoomLock(
-      id, getUser(req).id, body.locked, !!body.disableExternal,
+      id,
+      getUser(req).id,
+      body.locked,
+      !!body.disableExternal,
     );
-    return { code: 0, message: body.locked ? '房间已锁定' : '房间已解锁', data: ticket };
+    return {
+      code: 0,
+      message: body.locked ? '房间已锁定' : '房间已解锁',
+      data: ticket,
+    };
   }
 
   @Get(':id/export-chat-zip')
@@ -267,7 +310,12 @@ export class TicketsController {
     if (getUser(req).role?.name === 'external') {
       throw new ForbiddenException('外部用户无权导出聊天记录');
     }
-    await this.ticketsExportService.exportChatZip(id, getUser(req).id, getUser(req).role?.name || '', res);
+    await this.ticketsExportService.exportChatZip(
+      id,
+      getUser(req).id,
+      getUser(req).role?.name || '',
+      res,
+    );
   }
 
   @Get(':id/export-report')
@@ -280,6 +328,11 @@ export class TicketsController {
     if (getUser(req).role?.name === 'external') {
       throw new ForbiddenException('外部用户无权导出报告');
     }
-    await this.ticketsExportService.exportReport(id, getUser(req).id, getUser(req).role?.name || '', res);
+    await this.ticketsExportService.exportReport(
+      id,
+      getUser(req).id,
+      getUser(req).role?.name || '',
+      res,
+    );
   }
 }

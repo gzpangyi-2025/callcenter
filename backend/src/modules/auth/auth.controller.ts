@@ -1,5 +1,13 @@
 import {
-  Controller, Post, Body, Res, Req, HttpCode, HttpStatus, Get, UseGuards,
+  Controller,
+  Post,
+  Body,
+  Res,
+  Req,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
@@ -15,7 +23,11 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto, @Req() req: any, @Res() res: any) {
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Req() req: any,
+    @Res() res: any,
+  ) {
     const result = await this.authService.register(registerDto);
 
     res.cookie('refreshToken', result.refreshToken, {
@@ -39,7 +51,11 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto, @Req() req: any, @Res() res: any) {
-    const ip = req.headers['x-forwarded-for'] || req.ip || req.socket?.remoteAddress || null;
+    const ip =
+      req.headers['x-forwarded-for'] ||
+      req.ip ||
+      req.socket?.remoteAddress ||
+      null;
     try {
       const result = await this.authService.login(loginDto);
 
@@ -127,12 +143,22 @@ export class AuthController {
   }
 
   @Post('external/login')
-  async externalLogin(@Body() body: { ticketToken: string; nickname: string }, @Req() req: any) {
+  async externalLogin(
+    @Body() body: { ticketToken: string; nickname: string },
+    @Req() req: any,
+  ) {
     if (!body.ticketToken || !body.nickname) {
       return { code: -1, message: '缺少 token 或昵称参数' };
     }
-    const ip = req.headers['x-forwarded-for'] || req.ip || req.socket?.remoteAddress || null;
-    const data = await this.authService.externalLogin(body.ticketToken, body.nickname);
+    const ip =
+      req.headers['x-forwarded-for'] ||
+      req.ip ||
+      req.socket?.remoteAddress ||
+      null;
+    const data = await this.authService.externalLogin(
+      body.ticketToken,
+      body.nickname,
+    );
 
     // 审计：外部用户登录
     this.auditService.log({
@@ -152,7 +178,11 @@ export class AuthController {
     if (!body.token) {
       return { code: -1, message: '缺少 token 参数' };
     }
-    const ip = req.headers['x-forwarded-for'] || req.ip || req.socket?.remoteAddress || null;
+    const ip =
+      req.headers['x-forwarded-for'] ||
+      req.ip ||
+      req.socket?.remoteAddress ||
+      null;
     const data = await this.authService.bbsExternalLogin(body.token);
 
     this.auditService.log({

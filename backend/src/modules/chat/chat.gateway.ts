@@ -1,6 +1,11 @@
 import {
-  WebSocketGateway, WebSocketServer, SubscribeMessage,
-  OnGatewayConnection, OnGatewayDisconnect, ConnectedSocket, MessageBody,
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  ConnectedSocket,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
@@ -31,7 +36,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private onlineUsers = new Map<string | number, string>();
 
   // 活跃屏幕共享跟踪: roomName -> { userId, userName }
-  private activeSharers = new Map<string, { userId: number; userName: string }>();
+  private activeSharers = new Map<
+    string,
+    { userId: number; userName: string }
+  >();
 
   // 活跃语音通话跟踪: roomName -> Map<userId, userName>（使用 Map 天然去重，避免 Set 对象引用比较问题）
   private activeVoiceRooms = new Map<string, Map<number, string>>();
@@ -58,8 +66,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     try {
-      const token = client.handshake.auth?.token
-        || client.handshake.headers?.authorization?.replace('Bearer ', '');
+      const token =
+        client.handshake.auth?.token ||
+        client.handshake.headers?.authorization?.replace('Bearer ', '');
 
       if (!token) {
         client.disconnect();
@@ -77,7 +86,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (payload.role === 'external') {
         authClient.allowedTicketId = payload.ticketId;
       } else {
-        const user = await this.userRepository.findOne({ where: { id: payload.sub } });
+        const user = await this.userRepository.findOne({
+          where: { id: payload.sub },
+        });
         if (user) {
           authClient.realName = user.realName;
           authClient.displayName = user.displayName;
@@ -108,7 +119,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       for (const [roomName, sharer] of this.activeSharers.entries()) {
         if (sharer.userId === userId) {
           this.activeSharers.delete(roomName);
-          this.logger.log(`[屏幕共享] 分享方 ${userId} 断开连接，清理房间 ${roomName} 的共享状态`);
+          this.logger.log(
+            `[屏幕共享] 分享方 ${userId} 断开连接，清理房间 ${roomName} 的共享状态`,
+          );
           this.server.to(roomName).emit('screenShare:stopped', {
             ticketId: parseInt(roomName.replace('ticket_', '')),
             from: userId,
@@ -121,7 +134,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       for (const [roomName, participants] of this.activeVoiceRooms.entries()) {
         if (participants.has(userId)) {
           participants.delete(userId);
-          this.logger.log(`[语音通话] 用户 ${userId} 断开连接，从房间 ${roomName} 的语音通话中移除`);
+          this.logger.log(
+            `[语音通话] 用户 ${userId} 断开连接，从房间 ${roomName} 的语音通话中移除`,
+          );
           this.server.to(roomName).emit('voice:peerLeft', {
             ticketId: parseInt(roomName.replace('ticket_', '')),
             userId,
@@ -146,7 +161,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       seenKeys.add(key);
       users.push({
         id: (s as any).userId,
-        name: (s as any).realName || (s as any).displayName || (s as any).username,
+        name:
+          (s as any).realName || (s as any).displayName || (s as any).username,
         role: (s as any).role || 'user',
       });
     }
@@ -179,7 +195,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
-    if ((client as any).role === 'external' && (client as any).allowedTicketId !== data.ticketId) {
+    if (
+      (client as any).role === 'external' &&
+      (client as any).allowedTicketId !== data.ticketId
+    ) {
       client.emit('error', '无权访问此工单聊天室');
       return;
     }
@@ -192,7 +211,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (ticket && ticket.isRoomLocked) {
       const authorized = this.isAuthorizedForRoom(client, ticket);
       if (!authorized) {
-        client.emit('roomLocked', { ticketId: data.ticketId, message: '该房间已锁定，仅受邀人员可参与' });
+        client.emit('roomLocked', {
+          ticketId: data.ticketId,
+          message: '该房间已锁定，仅受邀人员可参与',
+        });
         return;
       }
     }
@@ -232,7 +254,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (voiceParticipants && voiceParticipants.size > 0) {
       client.emit('voice:active', {
         ticketId: data.ticketId,
-        participants: [...voiceParticipants.entries()].map(([id, name]) => ({ userId: id, userName: name })),
+        participants: [...voiceParticipants.entries()].map(([id, name]) => ({
+          userId: id,
+          userName: name,
+        })),
       });
     }
   }
@@ -242,11 +267,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number; page: number },
   ) {
-    if ((client as any).role === 'external' && (client as any).allowedTicketId !== data.ticketId) {
+    if (
+      (client as any).role === 'external' &&
+      (client as any).allowedTicketId !== data.ticketId
+    ) {
       client.emit('error', '无权访问此工单聊天室');
       return;
     }
-    const messages = await this.chatService.getMessagesByTicket(data.ticketId, data.page);
+    const messages = await this.chatService.getMessagesByTicket(
+      data.ticketId,
+      data.page,
+    );
     client.emit('moreHistoryLoaded', messages);
   }
 
@@ -264,10 +295,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // creator / assignee
-    if (ticket.creatorId === Number(userId) || ticket.assigneeId === Number(userId)) return true;
+    if (
+      ticket.creatorId === Number(userId) ||
+      ticket.assigneeId === Number(userId)
+    )
+      return true;
 
     // participants
-    if (ticket.participants && ticket.participants.some(p => p.id === Number(userId))) return true;
+    if (
+      ticket.participants &&
+      ticket.participants.some((p) => p.id === Number(userId))
+    )
+      return true;
 
     return false;
   }
@@ -282,10 +321,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       where: { id: data.ticketId },
       relations: ['participants'],
     });
-    if (!ticket) { client.emit('error', '工单不存在'); return; }
+    if (!ticket) {
+      client.emit('error', '工单不存在');
+      return;
+    }
 
     // 仅 creator / assignee 可锁定
-    if (ticket.creatorId !== Number(userId) && ticket.assigneeId !== Number(userId)) {
+    if (
+      ticket.creatorId !== Number(userId) &&
+      ticket.assigneeId !== Number(userId)
+    ) {
       client.emit('error', '仅工单创建人或接单人可锁定房间');
       return;
     }
@@ -305,7 +350,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       const authorized = this.isAuthorizedForRoom(socketData, ticket);
       if (!authorized) {
-        socketData.emit('roomLocked', { ticketId: data.ticketId, message: '房间已被锁定，您已被移出' });
+        socketData.emit('roomLocked', {
+          ticketId: data.ticketId,
+          message: '房间已被锁定，您已被移出',
+        });
         socketData.leave(roomName);
       }
     }
@@ -321,22 +369,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await this.broadcastRoomUsers(roomName);
 
     // 发送全局事件，触发工单列表刷新状态
-    this.server.emit('ticketEvent', { action: 'update', data: { id: ticket.id } });
+    this.server.emit('ticketEvent', {
+      action: 'update',
+      data: { id: ticket.id },
+    });
   }
 
   kickUserFromRoom(ticketId: number, targetUserId: number, message: string) {
     const roomName = `ticket_${ticketId}`;
-    this.server.to(`user_${targetUserId}`).emit('roomKicked', { ticketId, message });
-    
+    this.server
+      .to(`user_${targetUserId}`)
+      .emit('roomKicked', { ticketId, message });
+
     // Server-side force leave
-    this.server.in(roomName).fetchSockets().then(sockets => {
-      for (const s of sockets) {
-        if ((s as any).userId === targetUserId) {
-          s.leave(roomName);
+    this.server
+      .in(roomName)
+      .fetchSockets()
+      .then((sockets) => {
+        for (const s of sockets) {
+          if ((s as any).userId === targetUserId) {
+            s.leave(roomName);
+          }
         }
-      }
-      setTimeout(() => this.broadcastRoomUsers(roomName), 200);
-    }).catch(err => this.logger.error('发送消息失败:', err));
+        setTimeout(() => this.broadcastRoomUsers(roomName), 200);
+      })
+      .catch((err) => this.logger.error('发送消息失败:', err));
   }
 
   @SubscribeMessage('kickUser')
@@ -345,16 +402,29 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number; targetUserId: number },
   ) {
     const operatorId = (client as any).userId;
-    const ticket = await this.ticketRepository.findOne({ where: { id: data.ticketId }});
-    if (!ticket) { client.emit('error', '工单不存在'); return; }
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: data.ticketId },
+    });
+    if (!ticket) {
+      client.emit('error', '工单不存在');
+      return;
+    }
 
     const operatorRole = (client as any).role;
-    if (operatorRole !== 'admin' && ticket.creatorId !== Number(operatorId) && ticket.assigneeId !== Number(operatorId)) {
+    if (
+      operatorRole !== 'admin' &&
+      ticket.creatorId !== Number(operatorId) &&
+      ticket.assigneeId !== Number(operatorId)
+    ) {
       client.emit('error', '只有创建人、接单人或管理员可以驱逐用户');
       return;
     }
 
-    this.kickUserFromRoom(data.ticketId, data.targetUserId, '您已被移出该工单聊天室');
+    this.kickUserFromRoom(
+      data.ticketId,
+      data.targetUserId,
+      '您已被移出该工单聊天室',
+    );
   }
 
   @SubscribeMessage('unlockRoom')
@@ -363,11 +433,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number },
   ) {
     const userId = (client as any).userId;
-    const ticket = await this.ticketRepository.findOne({ where: { id: data.ticketId } });
-    if (!ticket) { client.emit('error', '工单不存在'); return; }
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: data.ticketId },
+    });
+    if (!ticket) {
+      client.emit('error', '工单不存在');
+      return;
+    }
 
     // 仅 creator / assignee 可解锁
-    if (ticket.creatorId !== Number(userId) && ticket.assigneeId !== Number(userId)) {
+    if (
+      ticket.creatorId !== Number(userId) &&
+      ticket.assigneeId !== Number(userId)
+    ) {
       client.emit('error', '仅工单创建人或接单人可解锁房间');
       return;
     }
@@ -384,7 +462,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     // 触发全局更新
-    this.server.emit('ticketEvent', { action: 'update', data: { id: ticket.id } });
+    this.server.emit('ticketEvent', {
+      action: 'update',
+      data: { id: ticket.id },
+    });
   }
 
   @SubscribeMessage('leaveRoom')
@@ -399,7 +480,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const participants = this.activeVoiceRooms.get(roomName);
     if (participants?.has(userId)) {
       participants.delete(userId);
-      this.logger.log(`[语音通话] 用户 ${userId} 离开房间 ${roomName}，自动清理语音状态`);
+      this.logger.log(
+        `[语音通话] 用户 ${userId} 离开房间 ${roomName}，自动清理语音状态`,
+      );
       client.to(roomName).emit('voice:peerLeft', {
         ticketId: data.ticketId,
         userId,
@@ -413,7 +496,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const sharer = this.activeSharers.get(roomName);
     if (sharer?.userId === userId) {
       this.activeSharers.delete(roomName);
-      this.logger.log(`[屏幕共享] 用户 ${userId} 离开房间 ${roomName}，自动清理共享状态`);
+      this.logger.log(
+        `[屏幕共享] 用户 ${userId} 离开房间 ${roomName}，自动清理共享状态`,
+      );
       client.to(roomName).emit('screenShare:stopped', {
         ticketId: data.ticketId,
         from: userId,
@@ -429,7 +514,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: {
+    @MessageBody()
+    data: {
       ticketId: number;
       content: string;
       type?: string;
@@ -438,7 +524,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       fileSize?: number;
     },
   ) {
-    if ((client as any).role === 'external' && (client as any).allowedTicketId !== data.ticketId) {
+    if (
+      (client as any).role === 'external' &&
+      (client as any).allowedTicketId !== data.ticketId
+    ) {
       client.emit('error', '无权发送消息至此工单');
       return;
     }
@@ -473,10 +562,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (ticket.creatorId) targetUserIds.add(ticket.creatorId);
       if (ticket.assigneeId) targetUserIds.add(ticket.assigneeId);
       if (Array.isArray(ticket.participants)) {
-        ticket.participants.forEach(p => targetUserIds.add(p.id));
+        ticket.participants.forEach((p) => targetUserIds.add(p.id));
       }
 
-      targetUserIds.forEach(targetId => {
+      targetUserIds.forEach((targetId) => {
         this.server.to(`user_${targetId}`).emit('ticketNewMessage', {
           ticketId: data.ticketId,
           messageId: message.id,
@@ -512,7 +601,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     try {
-      const message = await this.chatService.recallMessage(data.messageId, userId, username);
+      const message = await this.chatService.recallMessage(
+        data.messageId,
+        userId,
+        username,
+      );
       const roomName = `ticket_${data.ticketId}`;
       // 广播给房间内所有人（包括发送者自己）
       this.server.to(roomName).emit('messageRecalled', {
@@ -533,9 +626,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const roomName = `ticket_${data.ticketId}`;
     const userId = (client as any).userId;
-    const userName = (client as any).realName || (client as any).displayName || (client as any).username;
+    const userName =
+      (client as any).realName ||
+      (client as any).displayName ||
+      (client as any).username;
 
-    this.logger.log(`[屏幕共享] 用户 ${userName} (${userId}) 在工单 ${data.ticketId} 发起屏幕共享`);
+    this.logger.log(
+      `[屏幕共享] 用户 ${userName} (${userId}) 在工单 ${data.ticketId} 发起屏幕共享`,
+    );
 
     // 记录活跃分享状态
     this.activeSharers.set(roomName, { userId, userName });
@@ -558,7 +656,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomName = `ticket_${data.ticketId}`;
     const userId = (client as any).userId;
 
-    this.logger.log(`[屏幕共享] 用户 ${userId} 在工单 ${data.ticketId} 停止屏幕共享`);
+    this.logger.log(
+      `[屏幕共享] 用户 ${userId} 在工单 ${data.ticketId} 停止屏幕共享`,
+    );
 
     // 清除活跃分享状态
     this.activeSharers.delete(roomName);
@@ -577,7 +677,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number; sdp: any; to: number },
   ) {
     const fromId = (client as any).userId;
-    this.logger.debug(`[屏幕共享] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`);
+    this.logger.debug(
+      `[屏幕共享] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`,
+    );
     // 将 SDP Offer 转发给指定观看者
     this.server.to(`user_${data.to}`).emit('screenShare:offer', {
       ticketId: data.ticketId,
@@ -618,7 +720,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number; to: number },
   ) {
     const fromId = (client as any).userId;
-    this.logger.debug(`[屏幕共享] 观看请求: 用户 ${fromId} -> 分享方 user_${data.to}`);
+    this.logger.debug(
+      `[屏幕共享] 观看请求: 用户 ${fromId} -> 分享方 user_${data.to}`,
+    );
     // 观看者请求建立连接，转发给分享方
     this.server.to(`user_${data.to}`).emit('screenShare:requestView', {
       ticketId: data.ticketId,
@@ -635,7 +739,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const roomName = `ticket_${data.ticketId}`;
     const userId = (client as any).userId;
-    const userName = (client as any).realName || (client as any).displayName || (client as any).username;
+    const userName =
+      (client as any).realName ||
+      (client as any).displayName ||
+      (client as any).username;
 
     // 检查人数上限
     const maxStr = await this.settingsService.get('voice_maxParticipants');
@@ -660,10 +767,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    this.logger.log(`[语音通话] 用户 ${userName} (${userId}) 加入工单 ${data.ticketId} 的语音通话`);
+    this.logger.log(
+      `[语音通话] 用户 ${userName} (${userId}) 加入工单 ${data.ticketId} 的语音通话`,
+    );
 
     // 将当前参与者列表发送给新加入的用户（用于建立 PeerConnection）
-    const existingParticipants = [...participants.entries()].map(([id, name]) => ({ userId: id, userName: name }));
+    const existingParticipants = [...participants.entries()].map(
+      ([id, name]) => ({ userId: id, userName: name }),
+    );
     client.emit('voice:currentParticipants', {
       ticketId: data.ticketId,
       participants: existingParticipants,
@@ -688,7 +799,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const roomName = `ticket_${data.ticketId}`;
     const userId = (client as any).userId;
 
-    this.logger.log(`[语音通话] 用户 ${userId} 离开工单 ${data.ticketId} 的语音通话`);
+    this.logger.log(
+      `[语音通话] 用户 ${userId} 离开工单 ${data.ticketId} 的语音通话`,
+    );
 
     const participants = this.activeVoiceRooms.get(roomName);
     if (participants) {
@@ -710,7 +823,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number; sdp: any; to: number },
   ) {
     const fromId = (client as any).userId;
-    this.logger.debug(`[语音通话] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`);
+    this.logger.debug(
+      `[语音通话] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`,
+    );
     this.server.to(`user_${data.to}`).emit('voice:offer', {
       ticketId: data.ticketId,
       sdp: data.sdp,

@@ -1,6 +1,13 @@
 import {
-  Controller, Get, Post, Body, UseGuards,
-  UseInterceptors, UploadedFile, UsePipes, ValidationPipe,
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -15,7 +22,13 @@ if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
 
 @Controller('settings')
 @UseGuards(AuthGuard('jwt'))
-@UsePipes(new ValidationPipe({ whitelist: false, forbidNonWhitelisted: false, transform: true }))
+@UsePipes(
+  new ValidationPipe({
+    whitelist: false,
+    forbidNonWhitelisted: false,
+    transform: true,
+  }),
+)
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
@@ -28,13 +41,16 @@ export class SettingsController {
 
   /** 保存 AI 模型配置 */
   @Post('ai')
-  async saveAi(@Body() body: {
-    visionModel?: string;
-    visionApiKey?: string;
-    systemPrompt?: string;
-    imageModel?: string;
-    imageApiKey?: string;
-  }) {
+  async saveAi(
+    @Body()
+    body: {
+      visionModel?: string;
+      visionApiKey?: string;
+      systemPrompt?: string;
+      imageModel?: string;
+      imageApiKey?: string;
+    },
+  ) {
     await this.settingsService.saveMany({
       'ai.visionModel': body.visionModel || '',
       'ai.visionApiKey': body.visionApiKey || '',
@@ -47,13 +63,16 @@ export class SettingsController {
 
   /** 保存企业信息 */
   @Post('biz')
-  async saveBiz(@Body() body: {
-    companyName?: string;
-    websiteUrl?: string;
-    companyEmail?: string;
-    companyPhone?: string;
-    sla?: string;
-  }) {
+  async saveBiz(
+    @Body()
+    body: {
+      companyName?: string;
+      websiteUrl?: string;
+      companyEmail?: string;
+      companyPhone?: string;
+      sla?: string;
+    },
+  ) {
     await this.settingsService.saveMany({
       'biz.companyName': body.companyName || '',
       'biz.websiteUrl': body.websiteUrl || '',
@@ -106,7 +125,7 @@ export class SettingsController {
   async getWebRtcConfig() {
     const data = await this.settingsService.getAll();
     const mode = data['webrtc.mode'] || 'auto';
-    
+
     if (mode === 'auto') {
       // 返回国内可用的免费高可用 STUN
       return {
@@ -114,15 +133,15 @@ export class SettingsController {
         data: [
           { urls: 'stun:stun.qq.com:3478' },
           { urls: 'stun:stun.miwifi.com:3478' },
-          { urls: 'stun:stun.chat.bilibili.com:3478' }
-        ]
+          { urls: 'stun:stun.chat.bilibili.com:3478' },
+        ],
       };
     } else {
       // 返回自定义配置
       const iceServers: any[] = [];
       const customStun = data['webrtc.customStun'];
       const customTurn = data['webrtc.customTurn'];
-      
+
       if (customStun) {
         iceServers.push({ urls: `stun:${customStun}` });
       }
@@ -130,10 +149,10 @@ export class SettingsController {
         iceServers.push({
           urls: `turn:${customTurn}`,
           username: data['webrtc.turnUsername'] || '',
-          credential: data['webrtc.turnPassword'] || ''
+          credential: data['webrtc.turnPassword'] || '',
         });
       }
-      
+
       // Fallback 机制：如果什么都没配，给一个保底的
       if (iceServers.length === 0) {
         iceServers.push({ urls: 'stun:stun.qq.com:3478' });
@@ -144,15 +163,18 @@ export class SettingsController {
 
   /** 保存 WebRTC 设置 */
   @Post('webrtc')
-  async saveWebRtc(@Body() body: {
-    mode?: string;
-    customStun?: string;
-    customTurn?: string;
-    turnUsername?: string;
-    turnPassword?: string;
-    screenShareMaxViewers?: number;
-    voiceMaxParticipants?: number;
-  }) {
+  async saveWebRtc(
+    @Body()
+    body: {
+      mode?: string;
+      customStun?: string;
+      customTurn?: string;
+      turnUsername?: string;
+      turnPassword?: string;
+      screenShareMaxViewers?: number;
+      voiceMaxParticipants?: number;
+    },
+  ) {
     await this.settingsService.saveMany({
       'webrtc.mode': body.mode || 'auto',
       'webrtc.customStun': body.customStun || '',
@@ -163,10 +185,16 @@ export class SettingsController {
 
     // 保存人数限制（如果提供了）
     if (body.screenShareMaxViewers !== undefined) {
-      await this.settingsService.set('screenShare_maxViewers', String(body.screenShareMaxViewers));
+      await this.settingsService.set(
+        'screenShare_maxViewers',
+        String(body.screenShareMaxViewers),
+      );
     }
     if (body.voiceMaxParticipants !== undefined) {
-      await this.settingsService.set('voice_maxParticipants', String(body.voiceMaxParticipants));
+      await this.settingsService.set(
+        'voice_maxParticipants',
+        String(body.voiceMaxParticipants),
+      );
     }
 
     return { code: 0, message: 'WebRTC 配置保存成功' };
@@ -174,13 +202,16 @@ export class SettingsController {
 
   /** 保存存储配置 */
   @Post('storage')
-  async saveStorage(@Body() body: {
-    provider?: string;
-    cosSecretId?: string;
-    cosSecretKey?: string;
-    cosBucket?: string;
-    cosRegion?: string;
-  }) {
+  async saveStorage(
+    @Body()
+    body: {
+      provider?: string;
+      cosSecretId?: string;
+      cosSecretKey?: string;
+      cosBucket?: string;
+      cosRegion?: string;
+    },
+  ) {
     await this.settingsService.saveMany({
       'storage.provider': body.provider || 'local',
       'storage.cos.secretId': body.cosSecretId || '',

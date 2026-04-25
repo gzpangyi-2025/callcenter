@@ -1,7 +1,15 @@
 import {
-  Controller, Post, Get, UseInterceptors, UploadedFile,
-  UseGuards, BadRequestException, NotFoundException,
-  Param, Query, Res,
+  Controller,
+  Post,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+  BadRequestException,
+  NotFoundException,
+  Param,
+  Query,
+  Res,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,8 +38,12 @@ export class FilesController {
   ) {
     const safeName = filename.replace(/[/\\]/g, '');
     const downloadName = originalName || safeName;
-    const url = await this.filesService.getPresignedUrl(safeName, downloadName, false);
-    
+    const url = await this.filesService.getPresignedUrl(
+      safeName,
+      downloadName,
+      false,
+    );
+
     if (url.startsWith('/api/files/static/')) {
       const localPath = path.join(process.cwd(), 'oss', safeName);
       if (fs.existsSync(localPath)) {
@@ -50,13 +62,14 @@ export class FilesController {
    * 前端渲染图片（/api/files/static/xxx.png）会走到这里
    */
   @Get('static/:filename')
-  async serveStatic(
-    @Param('filename') filename: string,
-    @Res() res: Response,
-  ) {
+  async serveStatic(@Param('filename') filename: string, @Res() res: Response) {
     const safeName = filename.replace(/[/\\]/g, '');
-    const url = await this.filesService.getPresignedUrl(safeName, undefined, true);
-    
+    const url = await this.filesService.getPresignedUrl(
+      safeName,
+      undefined,
+      true,
+    );
+
     if (url.startsWith('/api/files/static/')) {
       const localPath = path.join(process.cwd(), 'oss', safeName);
       if (fs.existsSync(localPath)) {
@@ -90,7 +103,7 @@ export class FilesController {
     }
 
     const uniqueName = `${uuidv4()}${extname(file.originalname)}`;
-    
+
     await this.filesService.uploadToCos(uniqueName, file.buffer, file.mimetype);
 
     return {
@@ -114,13 +127,13 @@ export class FilesController {
     if (fs.existsSync(localDir)) {
       localCount = fs.readdirSync(localDir).length;
     }
-    
-    return { 
-      code: 0, 
-      data: { 
+
+    return {
+      code: 0,
+      data: {
         localFiles: localCount,
-        migrationState: this.filesService.migrationState
-      } 
+        migrationState: this.filesService.migrationState,
+      },
     };
   }
 
@@ -147,7 +160,7 @@ export class FilesController {
       total: files.length,
       current: 0,
       failed: 0,
-      message: '迁移中...'
+      message: '迁移中...',
     };
 
     setImmediate(async () => {
@@ -161,19 +174,21 @@ export class FilesController {
           if (['.jpg', '.jpeg'].includes(ext)) mime = 'image/jpeg';
           if (['.gif'].includes(ext)) mime = 'image/gif';
           if (['.pdf'].includes(ext)) mime = 'application/pdf';
-          
+
           await this.filesService.uploadToCos(file, buffer, mime);
           this.filesService.migrationState.current++;
           // 上传成功后删除本地文件
-          try { fs.unlinkSync(filePath); } catch(delErr) {
+          try {
+            fs.unlinkSync(filePath);
+          } catch (delErr) {
             console.warn(`Local file delete failed: ${file}`, delErr);
           }
-        } catch(e) {
+        } catch (e) {
           console.error(`Migration failed for ${file}:`, e);
           this.filesService.migrationState.failed++;
         }
       }
-      
+
       this.filesService.migrationState.isMigrating = false;
       this.filesService.migrationState.message = '迁移完成';
     });

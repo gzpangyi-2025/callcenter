@@ -14,12 +14,19 @@ export class ReportService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  private applyDateFilter(qb: any, alias: string, startDate?: string, endDate?: string) {
+  private applyDateFilter(
+    qb: any,
+    alias: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
     if (startDate) {
       qb.andWhere(`${alias}.createdAt >= :startDate`, { startDate });
     }
     if (endDate) {
-      qb.andWhere(`${alias}.createdAt <= :endDate`, { endDate: endDate + ' 23:59:59' });
+      qb.andWhere(`${alias}.createdAt <= :endDate`, {
+        endDate: endDate + ' 23:59:59',
+      });
     }
   }
 
@@ -32,19 +39,21 @@ export class ReportService {
 
     const total = await qb.getCount();
 
-    const statusCounts = await this.ticketRepository.createQueryBuilder('t')
+    const statusCounts = await this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.status', 'status')
       .addSelect('COUNT(*)', 'count')
       .where('1=1')
       .groupBy('t.status')
       .getRawMany()
-      .then(rows => {
+      .then((rows) => {
         // Apply date filter manually for this query
         return rows;
       });
 
     // Rebuild with date filter
-    const statusQb = this.ticketRepository.createQueryBuilder('t')
+    const statusQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.status', 'status')
       .addSelect('COUNT(*)', 'count');
     this.applyDateFilter(statusQb, 't', startDate, endDate);
@@ -56,7 +65,8 @@ export class ReportService {
     }
 
     // 平均处理时长（仅已关闭工单）
-    const avgQb = this.ticketRepository.createQueryBuilder('t')
+    const avgQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('AVG(TIMESTAMPDIFF(HOUR, t.createdAt, t.closedAt))', 'avgHours')
       .where('t.status = :status', { status: 'closed' })
       .andWhere('t.closedAt IS NOT NULL');
@@ -69,7 +79,9 @@ export class ReportService {
       in_progress: statusMap['in_progress'] || 0,
       closing: statusMap['closing'] || 0,
       closed: statusMap['closed'] || 0,
-      avgHours: avgResult?.avgHours ? parseFloat(parseFloat(avgResult.avgHours).toFixed(1)) : 0,
+      avgHours: avgResult?.avgHours
+        ? parseFloat(parseFloat(avgResult.avgHours).toFixed(1))
+        : 0,
     };
   }
 
@@ -77,61 +89,93 @@ export class ReportService {
    * 按工单分类(Category1 和 Category2)统计
    */
   async getCategoryStats(startDate?: string, endDate?: string) {
-    const qb1 = this.ticketRepository.createQueryBuilder('t')
+    const qb1 = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.category1', 'category1')
       .addSelect('COUNT(*)', 'total')
       .where('t.category1 IS NOT NULL')
       .andWhere('t.category1 != ""');
     this.applyDateFilter(qb1, 't', startDate, endDate);
-    const category1Data = await qb1.groupBy('t.category1').orderBy('total', 'DESC').getRawMany();
+    const category1Data = await qb1
+      .groupBy('t.category1')
+      .orderBy('total', 'DESC')
+      .getRawMany();
 
-    const qb2 = this.ticketRepository.createQueryBuilder('t')
+    const qb2 = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.category2', 'category2')
       .addSelect('COUNT(*)', 'total')
       .where('t.category2 IS NOT NULL')
       .andWhere('t.category2 != ""');
     this.applyDateFilter(qb2, 't', startDate, endDate);
-    const category2Data = await qb2.groupBy('t.category2').orderBy('total', 'DESC').limit(10).getRawMany();
+    const category2Data = await qb2
+      .groupBy('t.category2')
+      .orderBy('total', 'DESC')
+      .limit(10)
+      .getRawMany();
 
     return {
-      category1: category1Data.map(r => ({ name: r.category1, value: parseInt(r.total) })),
-      category2: category2Data.map(r => ({ name: r.category2, value: parseInt(r.total) })),
+      category1: category1Data.map((r) => ({
+        name: r.category1,
+        value: parseInt(r.total),
+      })),
+      category2: category2Data.map((r) => ({
+        name: r.category2,
+        value: parseInt(r.total),
+      })),
     };
   }
 
   /**
    * 下钻：按 Category1 获取下属所有 Category2 (Level 2 视图)
    */
-  async getCategory2Stats(category1: string, startDate?: string, endDate?: string) {
-    const qb = this.ticketRepository.createQueryBuilder('t')
+  async getCategory2Stats(
+    category1: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.category2', 'category2')
       .addSelect('COUNT(*)', 'total')
       .where('t.category1 = :category1', { category1 })
       .andWhere('t.category2 IS NOT NULL')
       .andWhere('t.category2 != ""');
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb.groupBy('t.category2').orderBy('total', 'DESC').getRawMany();
+    const data = await qb
+      .groupBy('t.category2')
+      .orderBy('total', 'DESC')
+      .getRawMany();
 
-    return data.map(r => ({
+    return data.map((r) => ({
       name: r.category2,
-      value: parseInt(r.total)
+      value: parseInt(r.total),
     }));
   }
 
   /**
    * 下钻：按 Category2 获取下级 Category3 分布 (Top 5)
    */
-  async getCategory3Stats(category2: string, startDate?: string, endDate?: string) {
-    const qb = this.ticketRepository.createQueryBuilder('t')
+  async getCategory3Stats(
+    category2: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.category3', 'category3')
       .addSelect('COUNT(*)', 'total')
       .where('t.category2 = :category2', { category2 })
       .andWhere('t.category3 IS NOT NULL')
       .andWhere('t.category3 != ""');
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb.groupBy('t.category3').orderBy('total', 'DESC').limit(5).getRawMany();
+    const data = await qb
+      .groupBy('t.category3')
+      .orderBy('total', 'DESC')
+      .limit(5)
+      .getRawMany();
 
-    return data.map(r => ({
+    return data.map((r) => ({
       name: r.category3,
       value: parseInt(r.total),
     }));
@@ -142,31 +186,43 @@ export class ReportService {
    */
   async getByPerson(limit?: number, startDate?: string, endDate?: string) {
     // 接单统计
-    const assignQb = this.ticketRepository.createQueryBuilder('t')
+    const assignQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.assigneeId', 'userId')
       .addSelect('COUNT(*)', 'count')
       .where('t.assigneeId IS NOT NULL');
     this.applyDateFilter(assignQb, 't', startDate, endDate);
     if (limit) assignQb.limit(limit);
-    const assignData = await assignQb.groupBy('t.assigneeId').orderBy('count', 'DESC').getRawMany();
+    const assignData = await assignQb
+      .groupBy('t.assigneeId')
+      .orderBy('count', 'DESC')
+      .getRawMany();
 
     // 创建统计
-    const createQb = this.ticketRepository.createQueryBuilder('t')
+    const createQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.creatorId', 'userId')
       .addSelect('COUNT(*)', 'count')
       .where('t.creatorId IS NOT NULL');
     this.applyDateFilter(createQb, 't', startDate, endDate);
     if (limit) createQb.limit(limit);
-    const createData = await createQb.groupBy('t.creatorId').orderBy('count', 'DESC').getRawMany();
+    const createData = await createQb
+      .groupBy('t.creatorId')
+      .orderBy('count', 'DESC')
+      .getRawMany();
 
     // 参与统计
-    const participateQb = this.ticketRepository.createQueryBuilder('t')
+    const participateQb = this.ticketRepository
+      .createQueryBuilder('t')
       .innerJoin('ticket_participants', 'tp', 'tp.ticketId = t.id')
       .select('tp.userId', 'userId')
       .addSelect('COUNT(*)', 'count');
     this.applyDateFilter(participateQb, 't', startDate, endDate);
     if (limit) participateQb.limit(limit);
-    const participateData = await participateQb.groupBy('tp.userId').orderBy('count', 'DESC').getRawMany();
+    const participateData = await participateQb
+      .groupBy('tp.userId')
+      .orderBy('count', 'DESC')
+      .getRawMany();
 
     // 收集所有 userId 一次性查用户名
     const allIds = new Set<number>();
@@ -174,14 +230,19 @@ export class ReportService {
       allIds.add(parseInt(r.userId));
     }
 
-    let usersMap: Record<number, any> = {};
+    const usersMap: Record<number, any> = {};
     if (allIds.size > 0) {
-      const users = await this.userRepository.createQueryBuilder('u')
+      const users = await this.userRepository
+        .createQueryBuilder('u')
         .select(['u.id', 'u.username', 'u.realName', 'u.displayName'])
         .whereInIds([...allIds])
         .getMany();
       for (const u of users) {
-        usersMap[u.id] = { username: u.username, realName: u.realName, displayName: u.displayName };
+        usersMap[u.id] = {
+          username: u.username,
+          realName: u.realName,
+          displayName: u.displayName,
+        };
       }
     }
 
@@ -189,7 +250,10 @@ export class ReportService {
       userId: parseInt(r.userId),
       count: parseInt(r.count),
       username: usersMap[parseInt(r.userId)]?.username || '-',
-      realName: usersMap[parseInt(r.userId)]?.realName || usersMap[parseInt(r.userId)]?.displayName || '-',
+      realName:
+        usersMap[parseInt(r.userId)]?.realName ||
+        usersMap[parseInt(r.userId)]?.displayName ||
+        '-',
     });
 
     return {
@@ -203,17 +267,27 @@ export class ReportService {
    * 按客户统计
    */
   async getByCustomer(startDate?: string, endDate?: string) {
-    const qb = this.ticketRepository.createQueryBuilder('t')
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.customerName', 'customerName')
       .addSelect('COUNT(*)', 'total')
-      .addSelect('SUM(CASE WHEN t.status = \'closed\' THEN 1 ELSE 0 END)', 'closed')
-      .addSelect('SUM(CASE WHEN t.status != \'closed\' THEN 1 ELSE 0 END)', 'active')
+      .addSelect(
+        "SUM(CASE WHEN t.status = 'closed' THEN 1 ELSE 0 END)",
+        'closed',
+      )
+      .addSelect(
+        "SUM(CASE WHEN t.status != 'closed' THEN 1 ELSE 0 END)",
+        'active',
+      )
       .where('t.customerName IS NOT NULL')
-      .andWhere('t.customerName != \'\'');
+      .andWhere("t.customerName != ''");
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb.groupBy('t.customerName').orderBy('total', 'DESC').getRawMany();
+    const data = await qb
+      .groupBy('t.customerName')
+      .orderBy('total', 'DESC')
+      .getRawMany();
 
-    return data.map(r => ({
+    return data.map((r) => ({
       customerName: r.customerName,
       total: parseInt(r.total),
       closed: parseInt(r.closed),
@@ -224,9 +298,13 @@ export class ReportService {
   /**
    * 时间趋势 (多维度支持)
    */
-  async getTimeSeries(dimension: 'day' | 'month' | 'quarter' | 'year' = 'day', startDate?: string, endDate?: string) {
+  async getTimeSeries(
+    dimension: 'day' | 'month' | 'quarter' | 'year' = 'day',
+    startDate?: string,
+    endDate?: string,
+  ) {
     const qb = this.ticketRepository.createQueryBuilder('t');
-    
+
     // 如果没有显示传入时间范围，按维度加上默认过滤以提升性能
     if (!startDate && !endDate) {
       if (dimension === 'day') {
@@ -243,7 +321,7 @@ export class ReportService {
     }
 
     let dateExpr = 'DATE(t.createdAt)';
-    let resultMapper = (r: any) => r.date;
+    const resultMapper = (r: any) => r.date;
 
     if (dimension === 'month') {
       dateExpr = 'DATE_FORMAT(t.createdAt, "%Y-%m")';
@@ -260,7 +338,7 @@ export class ReportService {
 
     const data = await qb.getRawMany();
 
-    return data.map(r => ({
+    return data.map((r) => ({
       date: String(r.date),
       count: parseInt(r.count),
     }));
@@ -269,11 +347,19 @@ export class ReportService {
   /**
    * 矩阵统计：工单类型与人员的汇总交叉统计 (如指定 Category2 或 Category3 的提单和接单排行)
    */
-  async getCrossMatrix(categoryName: string, level: 'category2' | 'category3' = 'category2', limit: number = 8, parentCategory?: string, startDate?: string, endDate?: string) {
+  async getCrossMatrix(
+    categoryName: string,
+    level: 'category2' | 'category3' = 'category2',
+    limit: number = 8,
+    parentCategory?: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
     const colName = `t.${level}`;
 
     // 获取特定技术方向下 提供支持排名 (接单人)
-    const assignQb = this.ticketRepository.createQueryBuilder('t')
+    const assignQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.assigneeId', 'userId')
       .addSelect('COUNT(*)', 'count')
       .where(`${colName} = :categoryName`, { categoryName })
@@ -283,10 +369,15 @@ export class ReportService {
       assignQb.andWhere('t.category2 = :parentCategory', { parentCategory });
     }
     this.applyDateFilter(assignQb, 't', startDate, endDate);
-    const assignData = await assignQb.groupBy('t.assigneeId').orderBy('count', 'DESC').limit(limit).getRawMany();
+    const assignData = await assignQb
+      .groupBy('t.assigneeId')
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany();
 
     // 获取特定技术方向下 申请支持排名 (开单人)
-    const createQb = this.ticketRepository.createQueryBuilder('t')
+    const createQb = this.ticketRepository
+      .createQueryBuilder('t')
       .select('t.creatorId', 'userId')
       .addSelect('COUNT(*)', 'count')
       .where(`${colName} = :categoryName`, { categoryName })
@@ -295,21 +386,30 @@ export class ReportService {
       createQb.andWhere('t.category2 = :parentCategory', { parentCategory });
     }
     this.applyDateFilter(createQb, 't', startDate, endDate);
-    const createData = await createQb.groupBy('t.creatorId').orderBy('count', 'DESC').limit(limit).getRawMany();
+    const createData = await createQb
+      .groupBy('t.creatorId')
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany();
 
     const allIds = new Set<number>();
     for (const r of [...assignData, ...createData]) {
       allIds.add(parseInt(r.userId));
     }
 
-    let usersMap: Record<number, any> = {};
+    const usersMap: Record<number, any> = {};
     if (allIds.size > 0) {
-      const users = await this.userRepository.createQueryBuilder('u')
+      const users = await this.userRepository
+        .createQueryBuilder('u')
         .select(['u.id', 'u.username', 'u.realName', 'u.displayName'])
         .whereInIds([...allIds])
         .getMany();
       for (const u of users) {
-        usersMap[u.id] = { username: u.username, realName: u.realName, displayName: u.displayName };
+        usersMap[u.id] = {
+          username: u.username,
+          realName: u.realName,
+          displayName: u.displayName,
+        };
       }
     }
 
@@ -317,7 +417,10 @@ export class ReportService {
       userId: parseInt(r.userId),
       count: parseInt(r.count),
       username: usersMap[parseInt(r.userId)]?.username || '-',
-      realName: usersMap[parseInt(r.userId)]?.realName || usersMap[parseInt(r.userId)]?.displayName || '-',
+      realName:
+        usersMap[parseInt(r.userId)]?.realName ||
+        usersMap[parseInt(r.userId)]?.displayName ||
+        '-',
     });
 
     return {
@@ -337,7 +440,8 @@ export class ReportService {
     startDate?: string,
     endDate?: string,
   ) {
-    let qb = this.ticketRepository.createQueryBuilder('t')
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .leftJoinAndSelect('t.creator', 'creator')
       .leftJoinAndSelect('t.assignee', 'assignee');
 
@@ -346,7 +450,12 @@ export class ReportService {
     } else if (role === 'assignee') {
       qb.where('t.assigneeId = :userId', { userId });
     } else {
-      qb.innerJoin('ticket_participants', 'tp', 'tp.ticketId = t.id AND tp.userId = :userId', { userId });
+      qb.innerJoin(
+        'ticket_participants',
+        'tp',
+        'tp.ticketId = t.id AND tp.userId = :userId',
+        { userId },
+      );
     }
 
     if (categoryName) {
@@ -362,8 +471,13 @@ export class ReportService {
   /**
    * 下钻：客户 → 工单列表
    */
-  async drillCustomerTickets(customerName: string, startDate?: string, endDate?: string) {
-    const qb = this.ticketRepository.createQueryBuilder('t')
+  async drillCustomerTickets(
+    customerName: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .leftJoinAndSelect('t.creator', 'creator')
       .leftJoinAndSelect('t.assignee', 'assignee')
       .where('t.customerName = :customerName', { customerName });
@@ -375,8 +489,12 @@ export class ReportService {
   /**
    * 导出所有工单数据为 XLSX
    */
-  async exportAllTickets(startDate?: string, endDate?: string): Promise<Buffer> {
-    const qb = this.ticketRepository.createQueryBuilder('t')
+  async exportAllTickets(
+    startDate?: string,
+    endDate?: string,
+  ): Promise<Buffer> {
+    const qb = this.ticketRepository
+      .createQueryBuilder('t')
       .leftJoinAndSelect('t.creator', 'creator')
       .leftJoinAndSelect('t.assignee', 'assignee')
       .leftJoinAndSelect('t.participants', 'participants');
@@ -401,29 +519,43 @@ export class ReportService {
       other: '其他',
     };
 
-    const formatDate = (d: any) => d ? new Date(d).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }) : '';
+    const formatDate = (d: any) =>
+      d
+        ? new Date(d).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+        : '';
 
     const rows = tickets.map((t) => ({
-      '工单编号': t.ticketNo || '',
-      '标题': t.title || '',
-      '描述': t.description || '',
-      '工单类型': typeMap[t.type] || t.type || '',
-      '工单状态': statusMap[t.status] || t.status || '',
-      '服务单号': t.serviceNo || '',
-      '客户名称': t.customerName || '',
+      工单编号: t.ticketNo || '',
+      标题: t.title || '',
+      描述: t.description || '',
+      工单类型: typeMap[t.type] || t.type || '',
+      工单状态: statusMap[t.status] || t.status || '',
+      服务单号: t.serviceNo || '',
+      客户名称: t.customerName || '',
       '支持类型 (大类)': t.category1 || '',
       '技术方向 (中类)': t.category2 || '',
       '品牌 (小类)': t.category3 || '',
-      '创建人': t.creator?.realName || t.creator?.displayName || t.creator?.username || '',
-      '处理人': t.assignee?.realName || t.assignee?.displayName || t.assignee?.username || '',
-      '参与专家': t.participants?.map(p => p.realName || p.displayName || p.username).join('、') || '',
-      '外部链接': t.externalLink || '',
+      创建人:
+        t.creator?.realName ||
+        t.creator?.displayName ||
+        t.creator?.username ||
+        '',
+      处理人:
+        t.assignee?.realName ||
+        t.assignee?.displayName ||
+        t.assignee?.username ||
+        '',
+      参与专家:
+        t.participants
+          ?.map((p) => p.realName || p.displayName || p.username)
+          .join('、') || '',
+      外部链接: t.externalLink || '',
       'AI 摘要': t.aiSummary || '',
-      '创建时间': formatDate(t.createdAt),
-      '接单时间': formatDate(t.assignedAt),
-      '关单时间': formatDate(t.closedAt),
-      '确认时间': formatDate(t.confirmedAt),
-      '最后更新': formatDate(t.updatedAt),
+      创建时间: formatDate(t.createdAt),
+      接单时间: formatDate(t.assignedAt),
+      关单时间: formatDate(t.closedAt),
+      确认时间: formatDate(t.confirmedAt),
+      最后更新: formatDate(t.updatedAt),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(rows);

@@ -31,7 +31,9 @@ export class AuditService {
     try {
       // 检查该审计类型的开关是否启用
       const settingKey = `audit.${params.type}`;
-      const setting = await this.settingRepository.findOne({ where: { key: settingKey } });
+      const setting = await this.settingRepository.findOne({
+        where: { key: settingKey },
+      });
       // 默认开启（setting 不存在或值不为 'false' 时均视为开启）
       if (setting && setting.value === 'false') {
         return;
@@ -65,7 +67,14 @@ export class AuditService {
     startDate?: string;
     endDate?: string;
   }) {
-    const { page = 1, pageSize = 20, type, keyword, startDate, endDate } = query;
+    const {
+      page = 1,
+      pageSize = 20,
+      type,
+      keyword,
+      startDate,
+      endDate,
+    } = query;
 
     const qb = this.auditLogRepository
       .createQueryBuilder('log')
@@ -84,7 +93,9 @@ export class AuditService {
       qb.andWhere('log.createdAt >= :startDate', { startDate });
     }
     if (endDate) {
-      qb.andWhere('log.createdAt <= :endDate', { endDate: endDate + ' 23:59:59' });
+      qb.andWhere('log.createdAt <= :endDate', {
+        endDate: endDate + ' 23:59:59',
+      });
     }
 
     const total = await qb.getCount();
@@ -93,7 +104,13 @@ export class AuditService {
       .limit(pageSize)
       .getMany();
 
-    return { items, total, page, pageSize, totalPages: Math.ceil(total / pageSize) };
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   }
 
   /**
@@ -115,14 +132,17 @@ export class AuditService {
       qb.andWhere('log.createdAt >= :startDate', { startDate });
     }
     if (endDate) {
-      qb.andWhere('log.createdAt <= :endDate', { endDate: endDate + ' 23:59:59' });
+      qb.andWhere('log.createdAt <= :endDate', {
+        endDate: endDate + ' 23:59:59',
+      });
     }
 
     // 先统计将要被删除的数量
     const count = await qb.getCount();
 
     // 构建删除查询
-    const deleteQb = this.auditLogRepository.createQueryBuilder()
+    const deleteQb = this.auditLogRepository
+      .createQueryBuilder()
       .delete()
       .from(AuditLog);
 
@@ -133,7 +153,9 @@ export class AuditService {
       deleteQb.andWhere('createdAt >= :startDate', { startDate });
     }
     if (endDate) {
-      deleteQb.andWhere('createdAt <= :endDate', { endDate: endDate + ' 23:59:59' });
+      deleteQb.andWhere('createdAt <= :endDate', {
+        endDate: endDate + ' 23:59:59',
+      });
     }
 
     await deleteQb.execute();
@@ -144,7 +166,11 @@ export class AuditService {
    * 获取审计开关状态
    */
   async getSettings() {
-    const keys = ['audit.ticket_status', 'audit.user_login', 'audit.external_login'];
+    const keys = [
+      'audit.ticket_status',
+      'audit.user_login',
+      'audit.external_login',
+    ];
     const settings = await this.settingRepository.find({
       where: { key: In(keys) },
     });
@@ -169,7 +195,9 @@ export class AuditService {
   async updateSettings(data: Record<string, boolean>) {
     for (const [key, value] of Object.entries(data)) {
       const fullKey = `audit.${key}`;
-      const existing = await this.settingRepository.findOne({ where: { key: fullKey } });
+      const existing = await this.settingRepository.findOne({
+        where: { key: fullKey },
+      });
       if (existing) {
         existing.value = String(value);
         await this.settingRepository.save(existing);

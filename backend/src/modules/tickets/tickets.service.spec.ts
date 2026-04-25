@@ -25,7 +25,11 @@ describe('TicketsService', () => {
   beforeEach(async () => {
     mockTicketRepo = {
       create: jest.fn().mockImplementation((dto) => ({ ...dto, id: 1 })),
-      save: jest.fn().mockImplementation((entity) => Promise.resolve({ ...entity, id: entity.id || 1 })),
+      save: jest
+        .fn()
+        .mockImplementation((entity) =>
+          Promise.resolve({ ...entity, id: entity.id || 1 }),
+        ),
       findOne: jest.fn(),
       find: jest.fn(),
       findAndCount: jest.fn().mockResolvedValue([[], 0]),
@@ -75,11 +79,17 @@ describe('TicketsService', () => {
         TicketsService,
         { provide: getRepositoryToken(Ticket), useValue: mockTicketRepo },
         { provide: getRepositoryToken(User), useValue: mockUserRepo },
-        { provide: getRepositoryToken(TicketReadState), useValue: mockReadStateRepo },
+        {
+          provide: getRepositoryToken(TicketReadState),
+          useValue: mockReadStateRepo,
+        },
         { provide: getRepositoryToken(Message), useValue: mockMessageRepo },
         { provide: ChatGateway, useValue: mockChatGateway },
         { provide: ChatService, useValue: mockChatService },
-        { provide: JwtService, useValue: { sign: jest.fn().mockReturnValue('token') } },
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn().mockReturnValue('token') },
+        },
         { provide: ConfigService, useValue: { get: jest.fn() } },
         { provide: AuditService, useValue: mockAuditService },
       ],
@@ -90,7 +100,12 @@ describe('TicketsService', () => {
 
   describe('findOne', () => {
     it('should return a ticket when found', async () => {
-      const ticket = { id: 1, ticketNo: 'TK-001', title: 'Test', status: TicketStatus.PENDING };
+      const ticket = {
+        id: 1,
+        ticketNo: 'TK-001',
+        title: 'Test',
+        status: TicketStatus.PENDING,
+      };
       mockTicketRepo.findOne.mockResolvedValue(ticket);
 
       const result = await service.findOne(1);
@@ -109,10 +124,17 @@ describe('TicketsService', () => {
     const normalUser = { id: 2, role: { name: 'user', permissions: [] } };
 
     it('should allow admin to delete any ticket', async () => {
-      const ticket = { id: 1, ticketNo: 'TK-001', title: 'Test', creatorId: 99 };
+      const ticket = {
+        id: 1,
+        ticketNo: 'TK-001',
+        title: 'Test',
+        creatorId: 99,
+      };
       mockTicketRepo.findOne.mockResolvedValue(ticket);
 
-      await expect(service.deleteTicket(1, adminUser as any)).resolves.not.toThrow();
+      await expect(
+        service.deleteTicket(1, adminUser as any),
+      ).resolves.not.toThrow();
       expect(mockTicketRepo.remove).toHaveBeenCalled();
     });
 
@@ -120,14 +142,23 @@ describe('TicketsService', () => {
       const ticket = { id: 1, ticketNo: 'TK-001', title: 'Test', creatorId: 2 };
       mockTicketRepo.findOne.mockResolvedValue(ticket);
 
-      await expect(service.deleteTicket(1, normalUser as any)).resolves.not.toThrow();
+      await expect(
+        service.deleteTicket(1, normalUser as any),
+      ).resolves.not.toThrow();
     });
 
-    it('should deny user from deleting another user\'s ticket', async () => {
-      const ticket = { id: 1, ticketNo: 'TK-001', title: 'Test', creatorId: 99 };
+    it("should deny user from deleting another user's ticket", async () => {
+      const ticket = {
+        id: 1,
+        ticketNo: 'TK-001',
+        title: 'Test',
+        creatorId: 99,
+      };
       mockTicketRepo.findOne.mockResolvedValue(ticket);
 
-      await expect(service.deleteTicket(1, normalUser as any)).rejects.toThrow(ForbiddenException);
+      await expect(service.deleteTicket(1, normalUser as any)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -146,22 +177,34 @@ describe('TicketsService', () => {
       expect(mockAuditService.log).toHaveBeenCalled();
     });
 
-    it('should throw ForbiddenException when user tries to delete others\' tickets', async () => {
+    it("should throw ForbiddenException when user tries to delete others' tickets", async () => {
       const tickets = [
         { id: 1, ticketNo: 'TK-001', title: 'A', creatorId: 99 },
       ];
       mockTicketRepo.find.mockResolvedValue(tickets);
 
       const normalUser = { id: 2, role: { name: 'user', permissions: [] } };
-      await expect(service.batchDelete([1], normalUser as any)).rejects.toThrow(ForbiddenException);
+      await expect(service.batchDelete([1], normalUser as any)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
   describe('assign', () => {
     it('should assign a pending ticket to the user', async () => {
-      const ticket = { id: 1, ticketNo: 'TK-001', title: 'Test', status: TicketStatus.PENDING, assigneeId: null };
+      const ticket = {
+        id: 1,
+        ticketNo: 'TK-001',
+        title: 'Test',
+        status: TicketStatus.PENDING,
+        assigneeId: null,
+      };
       mockTicketRepo.findOne.mockResolvedValue(ticket);
-      mockTicketRepo.save.mockResolvedValue({ ...ticket, assigneeId: 5, status: TicketStatus.IN_PROGRESS });
+      mockTicketRepo.save.mockResolvedValue({
+        ...ticket,
+        assigneeId: 5,
+        status: TicketStatus.IN_PROGRESS,
+      });
 
       const result = await service.assign(1, 5);
       expect(mockTicketRepo.save).toHaveBeenCalled();

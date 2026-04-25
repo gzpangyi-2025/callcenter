@@ -1,8 +1,22 @@
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Document, Paragraph, TextRun, ImageRun, Packer, HeadingLevel, AlignmentType, ShadingType } from 'docx';
+import {
+  Document,
+  Paragraph,
+  TextRun,
+  ImageRun,
+  Packer,
+  HeadingLevel,
+  AlignmentType,
+  ShadingType,
+} from 'docx';
 import axios from 'axios';
 import sizeOf from 'image-size';
 import * as fs from 'fs';
@@ -40,7 +54,8 @@ export class KnowledgeService {
     });
 
     if (!ticket) throw new NotFoundException('工单不存在');
-    if (ticket.status !== 'closed') throw new BadRequestException('仅能为已关闭的工单生成知识文档');
+    if (ticket.status !== 'closed')
+      throw new BadRequestException('仅能为已关闭的工单生成知识文档');
 
     const messages = await this.messageRepository.find({
       where: { ticketId },
@@ -54,8 +69,9 @@ export class KnowledgeService {
     let systemPrompt = settings['ai.systemPrompt'];
     const imageApiKey = settings['ai.imageApiKey'];
 
-    if (!visionApiKey) throw new BadRequestException('未配置 AI 文本模型 (Gemini) API Key');
-    
+    if (!visionApiKey)
+      throw new BadRequestException('未配置 AI 文本模型 (Gemini) API Key');
+
     if (!systemPrompt || systemPrompt.trim() === '') {
       systemPrompt = `你是一个专业的 IT 技术支持知识库撰写引擎。
 请根据工单信息和聊天记录，生成规范的技术支持知识文档。
@@ -63,15 +79,17 @@ export class KnowledgeService {
     }
 
     // 拼装上下文
-    const chatHistory = messages.map(m => {
-      const sender = m.sender?.displayName || m.senderName || '系统';
-      const time = m.createdAt.toLocaleString('zh-CN');
-      let msg = `[${sender}] ${time}: ${m.content}`;
-      if (m.fileUrl) {
-         msg += ` (附件: ${m.fileName || m.fileUrl})`;
-      }
-      return msg;
-    }).join('\n');
+    const chatHistory = messages
+      .map((m) => {
+        const sender = m.sender?.displayName || m.senderName || '系统';
+        const time = m.createdAt.toLocaleString('zh-CN');
+        let msg = `[${sender}] ${time}: ${m.content}`;
+        if (m.fileUrl) {
+          msg += ` (附件: ${m.fileName || m.fileUrl})`;
+        }
+        return msg;
+      })
+      .join('\n');
 
     const ticketInfo = `工单号: ${ticket.ticketNo}
 标题: ${ticket.title}
@@ -145,14 +163,17 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     // 调用 Gemini
     try {
       const genAI = new GoogleGenerativeAI(visionApiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview", systemInstruction: systemPrompt });
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-3.1-pro-preview',
+        systemInstruction: systemPrompt,
+      });
 
       const result = await model.generateContent(prompt);
       const text = result.response.text();
-      
+
       // 提取标题和 tags（简单正则或手动替换，后续存库时可由前端发送过来）
       // 返回生成的 Markdown 内容
-      
+
       let finalMarkdown = text;
 
       // Real integration for Nano Banana 2 (or standard Imagen models)
@@ -160,26 +181,43 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         try {
           const analysisImgPrompt = `A simple, clean technical abstract system architecture diagram summarizing the issue: ${ticket.title}`;
           const flowImgPrompt = `A simple, professional step-by-step flowchart or workflow diagram for solving the issue: ${ticket.title}`;
-          
+
           this.logger.log(`Generating images for ticket ${ticket.ticketNo}...`);
-          
+
           const [analysisImgUrl, flowImgUrl] = await Promise.all([
             this.generateKnowledgeImage(analysisImgPrompt, imageApiKey),
-            this.generateKnowledgeImage(flowImgPrompt, imageApiKey)
+            this.generateKnowledgeImage(flowImgPrompt, imageApiKey),
           ]);
-          
-          finalMarkdown = finalMarkdown.replace('[ANALYSIS_IMAGE_PLACEHOLDER]', `![问题分析总结图](${analysisImgUrl})`);
-          finalMarkdown = finalMarkdown.replace('[FLOW_IMAGE_PLACEHOLDER]', `![解决方案流程图](${flowImgUrl})`);
+
+          finalMarkdown = finalMarkdown.replace(
+            '[ANALYSIS_IMAGE_PLACEHOLDER]',
+            `![问题分析总结图](${analysisImgUrl})`,
+          );
+          finalMarkdown = finalMarkdown.replace(
+            '[FLOW_IMAGE_PLACEHOLDER]',
+            `![解决方案流程图](${flowImgUrl})`,
+          );
         } catch (imgError: any) {
-          this.logger.error('Image generation failed, falling back to placeholders', imgError);
+          this.logger.error(
+            'Image generation failed, falling back to placeholders',
+            imgError,
+          );
           // Fallback to placeholder if generation fails
           const mockAnalysisImg = `https://via.placeholder.com/600x300.png?text=Analysis+Summary+for+${ticket.ticketNo}`;
           const mockFlowImg = `https://via.placeholder.com/600x400.png?text=Solution+Workflow+for+${ticket.ticketNo}`;
-          finalMarkdown = finalMarkdown.replace('[ANALYSIS_IMAGE_PLACEHOLDER]', `![问题分析总结图](${mockAnalysisImg})`);
-          finalMarkdown = finalMarkdown.replace('[FLOW_IMAGE_PLACEHOLDER]', `![解决方案流程图](${mockFlowImg})`);
+          finalMarkdown = finalMarkdown.replace(
+            '[ANALYSIS_IMAGE_PLACEHOLDER]',
+            `![问题分析总结图](${mockAnalysisImg})`,
+          );
+          finalMarkdown = finalMarkdown.replace(
+            '[FLOW_IMAGE_PLACEHOLDER]',
+            `![解决方案流程图](${mockFlowImg})`,
+          );
         }
       } else {
-        finalMarkdown = finalMarkdown.replace('[ANALYSIS_IMAGE_PLACEHOLDER]\n', '').replace('[FLOW_IMAGE_PLACEHOLDER]\n', '');
+        finalMarkdown = finalMarkdown
+          .replace('[ANALYSIS_IMAGE_PLACEHOLDER]\n', '')
+          .replace('[FLOW_IMAGE_PLACEHOLDER]\n', '');
       }
 
       // 解析 Front matter 提取标题、tags 等信息辅助前端预览
@@ -193,7 +231,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         const metaStr = metadataMatches[1];
         const titleMatch = metaStr.match(/title:\s*(.*)/);
         if (titleMatch) parsedTitle = titleMatch[1];
-        
+
         const tagsMatch = metaStr.match(/tags:\s*\[?(.*?)\]?$/m);
         if (tagsMatch) parsedTags = tagsMatch[1].replace(/[\[\]]/g, '');
 
@@ -249,7 +287,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   /**
    * 获取某工单某种类型的文档
    */
-  async getByTicketIdAndType(ticketId: number, docType: string): Promise<KnowledgeDoc | null> {
+  async getByTicketIdAndType(
+    ticketId: number,
+    docType: string,
+  ): Promise<KnowledgeDoc | null> {
     return this.knowledgeRepository.findOne({ where: { ticketId, docType } });
   }
 
@@ -265,9 +306,13 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   /**
    * 获取文档以及安全的文件名 (工单号_标题)
    */
-  async getDocAndSafeName(id: number): Promise<{ doc: KnowledgeDoc, safeName: string }> {
+  async getDocAndSafeName(
+    id: number,
+  ): Promise<{ doc: KnowledgeDoc; safeName: string }> {
     const doc = await this.getDocById(id);
-    const ticket = await this.ticketRepository.findOne({ where: { id: doc.ticketId } });
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: doc.ticketId },
+    });
     const title = ticket ? ticket.title : doc.title;
     const ticketNo = ticket ? ticket.ticketNo : doc.ticketId;
     const safeName = `${ticketNo}_${title.replace(/[/\\]/g, '_')}`;
@@ -288,10 +333,18 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         skip: (page - 1) * pageSize,
         take: pageSize,
       });
-      const augmentedItems = await Promise.all(items.map(async (item) => {
-        const ticket = await this.ticketRepository.findOne({ where: { id: item.ticketId }, select: ['ticketNo'] });
-        return { ...item, ticketNo: ticket ? ticket.ticketNo : item.ticketId };
-      }));
+      const augmentedItems = await Promise.all(
+        items.map(async (item) => {
+          const ticket = await this.ticketRepository.findOne({
+            where: { id: item.ticketId },
+            select: ['ticketNo'],
+          });
+          return {
+            ...item,
+            ticketNo: ticket ? ticket.ticketNo : item.ticketId,
+          };
+        }),
+      );
       return { items: augmentedItems, total };
     }
 
@@ -299,17 +352,22 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     const [items, total] = await this.knowledgeRepository.findAndCount({
       where: [
         { ...baseWhere, title: Like(keyword) },
-        { ...baseWhere, tags: Like(keyword) }
+        { ...baseWhere, tags: Like(keyword) },
       ],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * pageSize,
       take: pageSize,
     });
 
-    const augmentedItems = await Promise.all(items.map(async (item) => {
-      const ticket = await this.ticketRepository.findOne({ where: { id: item.ticketId }, select: ['ticketNo'] });
-      return { ...item, ticketNo: ticket ? ticket.ticketNo : item.ticketId };
-    }));
+    const augmentedItems = await Promise.all(
+      items.map(async (item) => {
+        const ticket = await this.ticketRepository.findOne({
+          where: { id: item.ticketId },
+          select: ['ticketNo'],
+        });
+        return { ...item, ticketNo: ticket ? ticket.ticketNo : item.ticketId };
+      }),
+    );
 
     return { items: augmentedItems, total };
   }
@@ -317,7 +375,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   /**
    * 直接导出聊天记录并入库
    */
-  async exportChatHistory(ticketId: number, username: string): Promise<KnowledgeDoc> {
+  async exportChatHistory(
+    ticketId: number,
+    username: string,
+  ): Promise<KnowledgeDoc> {
     const ticket = await this.ticketRepository.findOne({
       where: { id: ticketId },
       relations: ['messages', 'messages.sender', 'creator'],
@@ -330,7 +391,8 @@ engineer: ${ticket.assignee?.displayName || '未知'}
 
     const sortedMessages = ticket.messages.sort((a, b) => a.id - b.id);
     for (const msg of sortedMessages) {
-      const senderName = msg.sender?.displayName || msg.sender?.username || 'System';
+      const senderName =
+        msg.sender?.displayName || msg.sender?.username || 'System';
       const timeStr = msg.createdAt.toLocaleString();
       markdownContent += `**【${senderName}】 ${timeStr}**\n`;
       markdownContent += `${msg.content}\n\n`;
@@ -341,7 +403,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       title: `[聊天记录] ${ticket.title}`,
       content: markdownContent,
       tags: '聊天记录',
-      category: ticket.category1 ? (ticket.category2 ? `${ticket.category1} · ${ticket.category2}` : ticket.category1) : (ticket.type || '全部'),
+      category: ticket.category1
+        ? ticket.category2
+          ? `${ticket.category1} · ${ticket.category2}`
+          : ticket.category1
+        : ticket.type || '全部',
       severity: '一般',
       docType: 'chat_history',
       generatedBy: username,
@@ -353,7 +419,12 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   /**
    * 更新原有知识文档
    */
-  async updateKnowledge(id: number, content: string, title?: string, tags?: string): Promise<KnowledgeDoc> {
+  async updateKnowledge(
+    id: number,
+    content: string,
+    title?: string,
+    tags?: string,
+  ): Promise<KnowledgeDoc> {
     const doc = await this.getDocById(id);
     doc.content = content;
     if (title) doc.title = title;
@@ -374,7 +445,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   async exportDocx(id: number): Promise<Buffer> {
     const docInfo = await this.getDocById(id);
 
-    let docChildren: any[] = [
+    const docChildren: any[] = [
       new Paragraph({
         text: docInfo.title,
         heading: HeadingLevel.HEADING_1,
@@ -398,99 +469,132 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         where: { id: docInfo.ticketId },
         relations: ['messages', 'messages.sender', 'creator'],
       });
-      
+
       if (ticket) {
         const sortedMessages = ticket.messages.sort((a, b) => a.id - b.id);
 
         for (const msg of sortedMessages) {
           const isCreator = ticket.creatorId === msg.senderId;
           const align = isCreator ? AlignmentType.LEFT : AlignmentType.RIGHT;
-          const senderName = msg.sender?.displayName || msg.sender?.username || 'System';
-          
-          docChildren.push(new Paragraph({
-            children: [
-              new TextRun({ text: `【${senderName}】 - ${msg.createdAt.toLocaleString()}`, bold: true, color: '555555' })
-            ],
-            alignment: align
-          }));
+          const senderName =
+            msg.sender?.displayName || msg.sender?.username || 'System';
 
-          if (msg.type === 'image' || msg.content.includes('/api/files/static/')) {
+          docChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `【${senderName}】 - ${msg.createdAt.toLocaleString()}`,
+                  bold: true,
+                  color: '555555',
+                }),
+              ],
+              alignment: align,
+            }),
+          );
+
+          if (
+            msg.type === 'image' ||
+            msg.content.includes('/api/files/static/')
+          ) {
             // Extract file URL from markdown syntax ![alt](/api/files/static/uuid.png)
-            const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)]+)/);
+            const urlMatch = msg.content.match(
+              /\/api\/files\/static\/([^\)]+)/,
+            );
             if (urlMatch) {
-               const filename = urlMatch[1];
-               try {
-                 const imgBuffer = await this.filesService.getFileBuffer(filename);
-                 const dimensions = sizeOf(imgBuffer);
-                 let w = dimensions.width || 400;
-                 let h = dimensions.height || 300;
-                   // scale down if too large for word doc
-                   if (w > 500) {
-                      h = Math.floor(h * (500 / w));
-                      w = 500;
-                   }
-                   docChildren.push(new Paragraph({
-                     children: [
-                       new ImageRun({
-                         data: imgBuffer,
-                         transformation: { width: w, height: h },
-                         type: 'png'
-                       })
-                     ],
-                     alignment: align
-                   }));
-                   continue;
-                 } catch (e) {
-                   this.logger.error('Failed to embed image to docx', e);
-                 }
+              const filename = urlMatch[1];
+              try {
+                const imgBuffer =
+                  await this.filesService.getFileBuffer(filename);
+                const dimensions = sizeOf(imgBuffer);
+                let w = dimensions.width || 400;
+                let h = dimensions.height || 300;
+                // scale down if too large for word doc
+                if (w > 500) {
+                  h = Math.floor(h * (500 / w));
+                  w = 500;
+                }
+                docChildren.push(
+                  new Paragraph({
+                    children: [
+                      new ImageRun({
+                        data: imgBuffer,
+                        transformation: { width: w, height: h },
+                        type: 'png',
+                      }),
+                    ],
+                    alignment: align,
+                  }),
+                );
+                continue;
+              } catch (e) {
+                this.logger.error('Failed to embed image to docx', e);
+              }
             }
           }
-          
-          const lines = msg.content.split('\n');
-          const textRuns = lines.map((line, idx) => new TextRun({
-             text: line,
-             break: idx > 0 ? 1 : 0,
-             shading: { type: ShadingType.CLEAR, fill: isCreator ? "E8F4F8" : "F0F0F0" }
-          }));
 
-          docChildren.push(new Paragraph({
-            children: textRuns,
-            alignment: align
-          }));
-          
+          const lines = msg.content.split('\n');
+          const textRuns = lines.map(
+            (line, idx) =>
+              new TextRun({
+                text: line,
+                break: idx > 0 ? 1 : 0,
+                shading: {
+                  type: ShadingType.CLEAR,
+                  fill: isCreator ? 'E8F4F8' : 'F0F0F0',
+                },
+              }),
+          );
+
+          docChildren.push(
+            new Paragraph({
+              children: textRuns,
+              alignment: align,
+            }),
+          );
+
           docChildren.push(new Paragraph({ text: '' })); // Spacing
         }
       }
     } else {
       // Regular AI Knowledge Doc Mode
-      docChildren.push(...docInfo.content.split('\\n').map(line => new Paragraph({ text: line })));
+      docChildren.push(
+        ...docInfo.content
+          .split('\\n')
+          .map((line) => new Paragraph({ text: line })),
+      );
     }
 
     const doc = new Document({
-      sections: [{
-        properties: {},
-        children: docChildren,
-      }],
+      sections: [
+        {
+          properties: {},
+          children: docChildren,
+        },
+      ],
     });
 
     return await Packer.toBuffer(doc);
   }
 
-  private async generateKnowledgeImage(prompt: string, apiKey: string): Promise<string> {
+  private async generateKnowledgeImage(
+    prompt: string,
+    apiKey: string,
+  ): Promise<string> {
     // Determine which model to use. Assume imagen-4.0-generate-001 as the underlying implementation for nano-banana-2
     const modelToUse = 'imagen-4.0-generate-001';
-    
+
     // Fallback placeholder
-    let defaultImg = 'https://via.placeholder.com/600x300.png?text=Image+Generating';
+    const defaultImg =
+      'https://via.placeholder.com/600x300.png?text=Image+Generating';
 
     try {
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:predict?key=${apiKey}`,
         {
           instances: [{ prompt }],
-          parameters: { sampleCount: 1 }
+          parameters: { sampleCount: 1 },
         },
-        { timeout: 60000 }
+        { timeout: 60000 },
       );
 
       const b64 = response.data?.predictions?.[0]?.bytesBase64Encoded;
@@ -502,9 +606,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
       const buffer = Buffer.from(b64, 'base64');
       return await this.filesService.uploadToCos(fileName, buffer, 'image/png');
-      
     } catch (error: any) {
-      this.logger.error('Failed to generate image via Google Google Generative AI API: ' + (error.response?.data?.error?.message || error.message));
+      this.logger.error(
+        'Failed to generate image via Google Google Generative AI API: ' +
+          (error.response?.data?.error?.message || error.message),
+      );
       throw error;
     }
   }
@@ -517,7 +623,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     const archive = archiver('zip', { zlib: { level: 9 } });
 
     res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(safeName)}.zip"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(safeName)}.zip"`,
+    );
     archive.pipe(res);
 
     // 1. 生成并追加 DOCX 与 Markdown
@@ -538,14 +647,19 @@ engineer: ${ticket.assignee?.displayName || '未知'}
           const match = msg.fileUrl.match(/\/api\/files\/static\/([^\?]+)/);
           if (match) internalFilename = match[1];
         } else if (msg.content && msg.content.includes('/api/files/static/')) {
-          const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
+          const urlMatch = msg.content.match(
+            /\/api\/files\/static\/([^\)\s]+)/,
+          );
           if (urlMatch) internalFilename = urlMatch[1];
         }
 
         if (internalFilename) {
           try {
-            const buffer = await this.filesService.getFileBuffer(internalFilename);
-            archive.append(buffer, { name: `attachments/${msg.fileName || internalFilename}` });
+            const buffer =
+              await this.filesService.getFileBuffer(internalFilename);
+            archive.append(buffer, {
+              name: `attachments/${msg.fileName || internalFilename}`,
+            });
           } catch {}
         }
       }

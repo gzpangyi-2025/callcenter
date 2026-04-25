@@ -18,7 +18,7 @@ export class InfraController {
       data: {
         config: this.infraService.getEnvConfig(),
         path: this.infraService.getEnvPath(),
-      }
+      },
     };
   }
 
@@ -38,19 +38,38 @@ export class InfraController {
   }
 
   @Post('test-es')
-  async testEs(@Body() data: { node: string; username?: string; password?: string; rejectUnauthorized?: string }) {
+  async testEs(
+    @Body()
+    data: {
+      node: string;
+      username?: string;
+      password?: string;
+      rejectUnauthorized?: string;
+    },
+  ) {
     const result = await this.infraService.testElasticsearch(data);
     return { code: result.success ? 0 : 1, message: result.message };
   }
 
   @Post('test-redis')
-  async testRedis(@Body() data: { host: string; port: number; password?: string }) {
+  async testRedis(
+    @Body() data: { host: string; port: number; password?: string },
+  ) {
     const result: any = await this.infraService.testRedis(data);
     return { code: result.success ? 0 : 1, message: result.message };
   }
 
   @Post('test-mysql')
-  async testMysql(@Body() data: { host: string; port: number; username: string; password?: string; database: string }) {
+  async testMysql(
+    @Body()
+    data: {
+      host: string;
+      port: number;
+      username: string;
+      password?: string;
+      database: string;
+    },
+  ) {
     const result = await this.infraService.testMysql(data);
     return { code: result.success ? 0 : 1, message: result.message };
   }

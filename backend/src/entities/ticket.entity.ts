@@ -1,24 +1,32 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
-  UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Message } from './message.entity';
 
 export enum TicketStatus {
-  PENDING = 'pending',       // 待接单
+  PENDING = 'pending', // 待接单
   IN_PROGRESS = 'in_progress', // 服务中
-  CLOSING = 'closing',        // 待确认关单
-  CLOSED = 'closed',          // 已关单
+  CLOSING = 'closing', // 待确认关单
+  CLOSED = 'closed', // 已关单
 }
 
 export enum TicketType {
-  SOFTWARE = 'software',       // 软件问题
-  HARDWARE = 'hardware',       // 硬件问题
-  NETWORK = 'network',         // 网络问题
-  SECURITY = 'security',       // 安全问题
-  DATABASE = 'database',       // 数据库问题
-  OTHER = 'other',             // 其他
+  SOFTWARE = 'software', // 软件问题
+  HARDWARE = 'hardware', // 硬件问题
+  NETWORK = 'network', // 网络问题
+  SECURITY = 'security', // 安全问题
+  DATABASE = 'database', // 数据库问题
+  OTHER = 'other', // 其他
 }
 
 @Entity('tickets')

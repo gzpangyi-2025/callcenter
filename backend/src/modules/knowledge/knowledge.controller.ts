@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Res, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Res,
+  Req,
+} from '@nestjs/common';
 import type { Response, Request } from 'express';
 import { KnowledgeService } from './knowledge.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,9 +24,16 @@ export class KnowledgeController {
   @Post('tickets/:ticketId/generate')
   @Permissions('knowledge:generate')
   async generateDraft(@Param('ticketId') ticketId: string) {
-    const existDoc = await this.knowledgeService.getByTicketIdAndType(+ticketId, 'ai_doc');
+    const existDoc = await this.knowledgeService.getByTicketIdAndType(
+      +ticketId,
+      'ai_doc',
+    );
     if (existDoc) {
-       return { code: 2, data: existDoc, message: '已经存在知识库文档，正在为您跳转' };
+      return {
+        code: 2,
+        data: existDoc,
+        message: '已经存在知识库文档，正在为您跳转',
+      };
     }
     const draft = await this.knowledgeService.generateKnowledge(+ticketId);
     return { code: 0, data: draft, message: '草稿生成成功，请编辑后保存' };
@@ -23,13 +42,24 @@ export class KnowledgeController {
   @Post('tickets/:ticketId/export-chat')
   @Permissions('knowledge:export_history')
   async exportChat(@Param('ticketId') ticketId: string, @Req() req: Request) {
-    const existDoc = await this.knowledgeService.getByTicketIdAndType(+ticketId, 'chat_history');
+    const existDoc = await this.knowledgeService.getByTicketIdAndType(
+      +ticketId,
+      'chat_history',
+    );
     if (existDoc) {
-       return { code: 2, data: existDoc, message: '已经导出过聊天记录，正在为您跳转' };
+      return {
+        code: 2,
+        data: existDoc,
+        message: '已经导出过聊天记录，正在为您跳转',
+      };
     }
     const user = req.user as any;
-    const exporterName = user?.realName || user?.displayName || user?.username || 'System';
-    const doc = await this.knowledgeService.exportChatHistory(+ticketId, exporterName);
+    const exporterName =
+      user?.realName || user?.displayName || user?.username || 'System';
+    const doc = await this.knowledgeService.exportChatHistory(
+      +ticketId,
+      exporterName,
+    );
     return { code: 0, data: doc, message: '聊天记录已成功导出并保存至知识库' };
   }
 
@@ -43,17 +73,31 @@ export class KnowledgeController {
   @Put(':id')
   @Permissions('knowledge:manage')
   async updateKnowledge(@Param('id') id: string, @Body() body: any) {
-    const doc = await this.knowledgeService.updateKnowledge(+id, body.content, body.title, body.tags);
+    const doc = await this.knowledgeService.updateKnowledge(
+      +id,
+      body.content,
+      body.title,
+      body.tags,
+    );
     return { code: 0, data: doc, message: '知识文档更新成功' };
   }
 
   @Get()
   @Permissions('knowledge:read')
-  async search(@Query('q') q: string, @Query('page') page: string = '1', @Query('docType') docType?: string) {
-    const data = await this.knowledgeService.searchKnowledge(q, parseInt(page, 10), 20, docType);
+  async search(
+    @Query('q') q: string,
+    @Query('page') page: string = '1',
+    @Query('docType') docType?: string,
+  ) {
+    const data = await this.knowledgeService.searchKnowledge(
+      q,
+      parseInt(page, 10),
+      20,
+      docType,
+    );
     return { code: 0, data };
   }
-  
+
   @Get('ticket/:ticketId')
   @Permissions('knowledge:read')
   async getByTicket(@Param('ticketId') ticketId: string) {
@@ -78,9 +122,13 @@ export class KnowledgeController {
   @Get(':id/export/md')
   @Permissions('knowledge:read')
   async exportMd(@Param('id') id: string, @Res() res: Response) {
-    const { doc, safeName } = await this.knowledgeService.getDocAndSafeName(+id);
+    const { doc, safeName } =
+      await this.knowledgeService.getDocAndSafeName(+id);
     res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(safeName)}.md"`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(safeName)}.md"`,
+    );
     res.send(doc.content);
   }
 
@@ -89,8 +137,14 @@ export class KnowledgeController {
   async exportDocx(@Param('id') id: string, @Res() res: Response) {
     const buffer = await this.knowledgeService.exportDocx(+id);
     const { safeName } = await this.knowledgeService.getDocAndSafeName(+id);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(safeName)}.docx"`);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${encodeURIComponent(safeName)}.docx"`,
+    );
     res.send(buffer);
   }
 

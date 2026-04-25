@@ -1,7 +1,15 @@
 import {
-  Controller, Post, Get, Delete, Param,
-  UseGuards, UseInterceptors, UploadedFile,
-  Res, Body, NotFoundException,
+  Controller,
+  Post,
+  Get,
+  Delete,
+  Param,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+  Body,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -30,7 +38,8 @@ export class BackupController {
    */
   @Post('create')
   async createBackup(
-    @Body() body: {
+    @Body()
+    body: {
       includeImages?: boolean;
       includeFiles?: boolean;
       includeAuditLogs?: boolean;
@@ -80,7 +89,10 @@ export class BackupController {
       storage: diskStorage({
         destination: backupsDir,
         filename: (_req, file, cb) => {
-          cb(null, `_upload_restore_${Date.now()}${extname(file.originalname)}`);
+          cb(
+            null,
+            `_upload_restore_${Date.now()}${extname(file.originalname)}`,
+          );
         },
       }),
       limits: { fileSize: 500 * 1024 * 1024 }, // 500MB

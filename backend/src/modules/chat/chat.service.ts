@@ -1,4 +1,10 @@
-import { Injectable, ForbiddenException, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message, MessageType } from '../../entities/message.entity';
@@ -32,22 +38,28 @@ export class ChatService {
     const saved = await this.messageRepository.save(message);
 
     // 重新查询以获取关联的发送者信息
-    const fullMessage = await this.messageRepository.findOne({
+    const fullMessage = (await this.messageRepository.findOne({
       where: { id: saved.id },
       relations: ['sender'],
-    }) as Message;
+    })) as Message;
 
     // 显式同步到 Elasticsearch（不依赖 Subscriber）
     if (fullMessage) {
-      this.searchService.indexMessage(fullMessage).catch(e => {
-        this.logger.warn(`ES sync failed for message #${fullMessage.id}: ${e.message}`);
+      this.searchService.indexMessage(fullMessage).catch((e) => {
+        this.logger.warn(
+          `ES sync failed for message #${fullMessage.id}: ${e.message}`,
+        );
       });
     }
 
     return fullMessage;
   }
 
-  async recallMessage(messageId: number, userId: number | string, username?: string): Promise<Message> {
+  async recallMessage(
+    messageId: number,
+    userId: number | string,
+    username?: string,
+  ): Promise<Message> {
     const message = await this.messageRepository.findOne({
       where: { id: messageId },
       relations: ['sender'],
@@ -73,12 +85,15 @@ export class ChatService {
     }
 
     // 删除云端文件
-    if (message.fileUrl && (message.type === MessageType.IMAGE || message.type === MessageType.FILE)) {
+    if (
+      message.fileUrl &&
+      (message.type === MessageType.IMAGE || message.type === MessageType.FILE)
+    ) {
       try {
         const filename = message.fileUrl.split('/').pop();
         if (filename) {
           // 这里使用不等待的异步调用或等待都可
-          this.filesService.deleteFromCos(filename).catch(err => {
+          this.filesService.deleteFromCos(filename).catch((err) => {
             this.logger.error('Delete recalled file from COS failed:', err);
           });
         }
@@ -95,11 +110,7 @@ export class ChatService {
     return this.messageRepository.save(message);
   }
 
-  async getMessagesByTicket(
-    ticketId: number,
-    page = 1,
-    pageSize = 200,
-  ) {
+  async getMessagesByTicket(ticketId: number, page = 1, pageSize = 200) {
     const [messages, total] = await this.messageRepository.findAndCount({
       where: { ticketId },
       relations: ['sender'],

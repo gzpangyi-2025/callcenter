@@ -371,7 +371,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
               />
             </Tooltip>
           )}
-          {!supportMode && (isViewing || isFullscreen) && (
+          {!supportMode && !isMobile && (isViewing || isFullscreen) && (
             <Tooltip title={isFullscreen ? '退出全屏 (Esc)' : '全屏观看'}>
               <Button
                 type="text"

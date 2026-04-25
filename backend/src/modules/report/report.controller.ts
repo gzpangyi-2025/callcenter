@@ -37,7 +37,11 @@ export class ReportController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const data = await this.reportService.getCategory3Stats(category2, startDate, endDate);
+    const data = await this.reportService.getCategory3Stats(
+      category2,
+      startDate,
+      endDate,
+    );
     return { code: 0, data };
   }
 
@@ -48,7 +52,11 @@ export class ReportController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const data = await this.reportService.getCategory2Stats(category1, startDate, endDate);
+    const data = await this.reportService.getCategory2Stats(
+      category1,
+      startDate,
+      endDate,
+    );
     return { code: 0, data };
   }
 
@@ -59,7 +67,11 @@ export class ReportController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const data = await this.reportService.getByPerson(limit ? parseInt(limit) : undefined, startDate, endDate);
+    const data = await this.reportService.getByPerson(
+      limit ? parseInt(limit) : undefined,
+      startDate,
+      endDate,
+    );
     return { code: 0, data };
   }
 
@@ -80,7 +92,11 @@ export class ReportController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const data = await this.reportService.getTimeSeries(dimension || 'day', startDate, endDate);
+    const data = await this.reportService.getTimeSeries(
+      dimension || 'day',
+      startDate,
+      endDate,
+    );
     return { code: 0, data };
   }
 
@@ -100,7 +116,7 @@ export class ReportController {
       limit ? parseInt(limit) : 8,
       parentCategory,
       startDate,
-      endDate
+      endDate,
     );
     return { code: 0, data };
   }
@@ -133,7 +149,11 @@ export class ReportController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const data = await this.reportService.drillCustomerTickets(customerName, startDate, endDate);
+    const data = await this.reportService.drillCustomerTickets(
+      customerName,
+      startDate,
+      endDate,
+    );
     return { code: 0, data };
   }
 
@@ -144,10 +164,16 @@ export class ReportController {
     @Query('endDate') endDate: string,
     @Res() res: express.Response,
   ) {
-    const buffer = await this.reportService.exportAllTickets(startDate, endDate);
-    const filename = encodeURIComponent(`工单数据导出_${startDate || '全部'}_${endDate || '至今'}.xlsx`);
+    const buffer = await this.reportService.exportAllTickets(
+      startDate,
+      endDate,
+    );
+    const filename = encodeURIComponent(
+      `工单数据导出_${startDate || '全部'}_${endDate || '至今'}.xlsx`,
+    );
     res.set({
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename*=UTF-8''${filename}`,
       'Content-Length': buffer.length,
     });

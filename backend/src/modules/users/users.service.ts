@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
@@ -18,7 +22,16 @@ export class UsersService {
 
   async findAll() {
     return this.userRepository.find({
-      select: ['id', 'username', 'email', 'displayName', 'realName', 'phone', 'isActive', 'createdAt'],
+      select: [
+        'id',
+        'username',
+        'email',
+        'displayName',
+        'realName',
+        'phone',
+        'isActive',
+        'createdAt',
+      ],
       relations: ['role'],
       order: { id: 'ASC' },
     });
@@ -42,7 +55,10 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
 
-    const role = await this.roleRepository.findOne({ where: { id: roleId }, relations: ['permissions'] });
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId },
+      relations: ['permissions'],
+    });
     if (!role) throw new NotFoundException('角色不存在');
 
     user.role = role;
@@ -60,7 +76,15 @@ export class UsersService {
     return saved;
   }
 
-  async updateUser(userId: number, data: { displayName?: string; realName?: string; email?: string; phone?: string }) {
+  async updateUser(
+    userId: number,
+    data: {
+      displayName?: string;
+      realName?: string;
+      email?: string;
+      phone?: string;
+    },
+  ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
 
@@ -85,7 +109,11 @@ export class UsersService {
     return { success: true, newPassword: password };
   }
 
-  async changePassword(userId: number, oldPassword: string, newPassword: string) {
+  async changePassword(
+    userId: number,
+    oldPassword: string,
+    newPassword: string,
+  ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
 
@@ -114,4 +142,3 @@ export class UsersService {
     return { success: true };
   }
 }
-

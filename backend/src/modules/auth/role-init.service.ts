@@ -29,7 +29,9 @@ export class RoleInitService implements OnModuleInit {
     ];
 
     for (const roleData of rolesToSeed) {
-      const existing = await this.roleRepository.findOne({ where: { name: roleData.name } });
+      const existing = await this.roleRepository.findOne({
+        where: { name: roleData.name },
+      });
       if (!existing) {
         await this.roleRepository.save(this.roleRepository.create(roleData));
         this.logger.log(`Initialized missing role: ${roleData.name}`);
@@ -44,34 +46,58 @@ export class RoleInitService implements OnModuleInit {
       { resource: 'tickets', action: 'edit', description: '编辑任意工单' },
       { resource: 'tickets', action: 'share', description: '生成外联分享' },
       { resource: 'knowledge', action: 'read', description: '查看知识库' },
-      { resource: 'knowledge', action: 'manage', description: '编辑/删除知识库' },
-      { resource: 'knowledge', action: 'generate', description: 'AI知识库生成' },
-      { resource: 'knowledge', action: 'export_history', description: '直接导出聊天记录' },
+      {
+        resource: 'knowledge',
+        action: 'manage',
+        description: '编辑/删除知识库',
+      },
+      {
+        resource: 'knowledge',
+        action: 'generate',
+        description: 'AI知识库生成',
+      },
+      {
+        resource: 'knowledge',
+        action: 'export_history',
+        description: '直接导出聊天记录',
+      },
       { resource: 'admin', action: 'access', description: '访问后台面板' },
       { resource: 'report', action: 'read', description: '查看数据报表' },
       { resource: 'settings', action: 'read', description: '查看系统设置' },
       { resource: 'settings', action: 'edit', description: '修改系统设置' },
       { resource: 'bbs', action: 'read', description: '查看论坛帖子' },
       { resource: 'bbs', action: 'create', description: '发布新帖子' },
-      { resource: 'bbs', action: 'edit', description: '编辑/管理帖子（含置顶归档）' },
+      {
+        resource: 'bbs',
+        action: 'edit',
+        description: '编辑/管理帖子（含置顶归档）',
+      },
       { resource: 'bbs', action: 'delete', description: '删除帖子' },
       { resource: 'bbs', action: 'comment', description: '发表评论' },
     ];
 
     for (const permData of permissionsToSeed) {
-      const existing = await this.permissionRepository.findOne({ 
-        where: { resource: permData.resource, action: permData.action } 
+      const existing = await this.permissionRepository.findOne({
+        where: { resource: permData.resource, action: permData.action },
       });
       if (!existing) {
-        await this.permissionRepository.save(this.permissionRepository.create(permData));
-        this.logger.log(`Initialized missing permission: ${permData.resource}:${permData.action}`);
+        await this.permissionRepository.save(
+          this.permissionRepository.create(permData),
+        );
+        this.logger.log(
+          `Initialized missing permission: ${permData.resource}:${permData.action}`,
+        );
       }
     }
 
     // 初始化超级管理员
-    const adminUser = await this.userRepository.findOne({ where: { username: 'admin' } });
+    const adminUser = await this.userRepository.findOne({
+      where: { username: 'admin' },
+    });
     if (!adminUser) {
-      const adminRole = await this.roleRepository.findOne({ where: { name: 'admin' } });
+      const adminRole = await this.roleRepository.findOne({
+        where: { name: 'admin' },
+      });
       if (adminRole) {
         const hashedPassword = await bcrypt.hash('admin123', 10);
         await this.userRepository.save(
@@ -83,7 +109,7 @@ export class RoleInitService implements OnModuleInit {
             displayName: 'Admin',
             roleId: adminRole.id,
             isActive: true,
-          })
+          }),
         );
         this.logger.log('Initialized default admin user: admin / admin123');
       }

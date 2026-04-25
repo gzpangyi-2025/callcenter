@@ -22,7 +22,12 @@ describe('AuthService', () => {
     displayName: 'Test User',
     realName: '测试用户',
     isActive: true,
-    role: { id: 1, name: 'tech', description: '技术支持', permissions: [] } as Role,
+    role: {
+      id: 1,
+      name: 'tech',
+      description: '技术支持',
+      permissions: [],
+    } as Role,
   };
 
   beforeEach(async () => {
@@ -126,18 +131,18 @@ describe('AuthService', () => {
         throw new Error('Invalid token');
       });
 
-      await expect(
-        service.refreshToken('invalid_token'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken('invalid_token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if user is inactive', async () => {
       mockJwtService.verify.mockReturnValue({ sub: 1 });
       mockUserRepo.findOne.mockResolvedValue(null);
 
-      await expect(
-        service.refreshToken('valid_but_user_gone'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken('valid_but_user_gone')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 

@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { Permissions } from '../auth/permissions.decorator';
@@ -87,9 +99,9 @@ export class BbsController {
   @Permissions('bbs:read')
   async findOne(@Param('id') id: string, @Request() req: any) {
     if (req.user?.role === 'external' || req.user?.role?.name === 'external') {
-       if (Number(req.user.bbsId) !== Number(id)) {
-           throw new UnauthorizedException('无权访问该论坛帖子');
-       }
+      if (Number(req.user.bbsId) !== Number(id)) {
+        throw new UnauthorizedException('无权访问该论坛帖子');
+      }
     }
     const post = await this.bbsService.findOne(Number(id));
     await this.bbsService.incrementView(Number(id));
@@ -111,22 +123,37 @@ export class BbsController {
 
   @Put('posts/:id')
   update(@Param('id') id: string, @Body() body: any, @Request() req: any) {
-    const hasEditPerm = req.user.role?.permissions?.some((p: any) => `${p.resource}:${p.action}` === 'bbs:edit');
-    const canBypass = req.user.role?.name === 'admin' || req.user.username === 'admin' || hasEditPerm;
+    const hasEditPerm = req.user.role?.permissions?.some(
+      (p: any) => `${p.resource}:${p.action}` === 'bbs:edit',
+    );
+    const canBypass =
+      req.user.role?.name === 'admin' ||
+      req.user.username === 'admin' ||
+      hasEditPerm;
     return this.bbsService.update(Number(id), body, req.user.id, canBypass);
   }
 
   @Delete('posts/batch')
   batchRemove(@Body('ids') ids: number[], @Request() req: any) {
-    const hasDeletePerm = req.user.role?.permissions?.some((p: any) => `${p.resource}:${p.action}` === 'bbs:delete');
-    const canBypass = req.user.role?.name === 'admin' || req.user.username === 'admin' || hasDeletePerm;
+    const hasDeletePerm = req.user.role?.permissions?.some(
+      (p: any) => `${p.resource}:${p.action}` === 'bbs:delete',
+    );
+    const canBypass =
+      req.user.role?.name === 'admin' ||
+      req.user.username === 'admin' ||
+      hasDeletePerm;
     return this.bbsService.batchRemove(ids, req.user.id, canBypass);
   }
 
   @Delete('posts/:id')
   remove(@Param('id') id: string, @Request() req: any) {
-    const hasDeletePerm = req.user.role?.permissions?.some((p: any) => `${p.resource}:${p.action}` === 'bbs:delete');
-    const canBypass = req.user.role?.name === 'admin' || req.user.username === 'admin' || hasDeletePerm;
+    const hasDeletePerm = req.user.role?.permissions?.some(
+      (p: any) => `${p.resource}:${p.action}` === 'bbs:delete',
+    );
+    const canBypass =
+      req.user.role?.name === 'admin' ||
+      req.user.username === 'admin' ||
+      hasDeletePerm;
     return this.bbsService.remove(Number(id), req.user.id, canBypass);
   }
 
@@ -150,7 +177,11 @@ export class BbsController {
 
   @Post('posts/:id/comments')
   @Permissions('bbs:comment')
-  addComment(@Param('id') id: string, @Body('content') content: string, @Request() req: any) {
+  addComment(
+    @Param('id') id: string,
+    @Body('content') content: string,
+    @Request() req: any,
+  ) {
     return this.bbsService.addComment(Number(id), content, req.user.id);
   }
 
@@ -185,4 +216,3 @@ export class BbsController {
     return this.bbsService.clearUnread(Number(id), req.user.id);
   }
 }
-

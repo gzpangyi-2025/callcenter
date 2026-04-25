@@ -1,5 +1,9 @@
 import {
-  Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -42,7 +46,11 @@ export class TicketsService {
   /**
    * 通过 ChatGateway 的 WebSocket server 向所有在线客户端广播工单事件
    */
-  private broadcastTicketEvent(action: string, ticket: Partial<Ticket> & { id: number }, operatorId?: number) {
+  private broadcastTicketEvent(
+    action: string,
+    ticket: Partial<Ticket> & { id: number },
+    operatorId?: number,
+  ) {
     try {
       // 使用 /chat namespace 的 server 实例全局广播
       this.chatGateway.server.emit('ticketEvent', {
@@ -63,13 +71,28 @@ export class TicketsService {
           closedAt: ticket.closedAt,
           createdAt: ticket.createdAt,
           creator: ticket.creator
-            ? { id: ticket.creator.id, username: ticket.creator.username, displayName: ticket.creator.displayName, realName: ticket.creator.realName }
+            ? {
+                id: ticket.creator.id,
+                username: ticket.creator.username,
+                displayName: ticket.creator.displayName,
+                realName: ticket.creator.realName,
+              }
             : null,
           assignee: ticket.assignee
-            ? { id: ticket.assignee.id, username: ticket.assignee.username, displayName: ticket.assignee.displayName, realName: ticket.assignee.realName }
+            ? {
+                id: ticket.assignee.id,
+                username: ticket.assignee.username,
+                displayName: ticket.assignee.displayName,
+                realName: ticket.assignee.realName,
+              }
             : null,
           participants: Array.isArray(ticket.participants)
-            ? ticket.participants.map((p: User) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
+            ? ticket.participants.map((p: User) => ({
+                id: p.id,
+                username: p.username,
+                displayName: p.displayName,
+                realName: p.realName,
+              }))
             : [],
         },
       });
@@ -94,11 +117,15 @@ export class TicketsService {
     });
 
     const saved = await this.ticketRepository.save(ticket);
-    const fullTicket = await this.findOne((saved as any).id || (saved as any)[0]?.id);
+    const fullTicket = await this.findOne(
+      (saved as any).id || (saved as any)[0]?.id,
+    );
     this.broadcastTicketEvent('created', fullTicket, userId);
 
     // 审计：工单创建
-    const operator = await this.userRepository.findOne({ where: { id: userId } });
+    const operator = await this.userRepository.findOne({
+      where: { id: userId },
+    });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'created',
@@ -126,7 +153,20 @@ export class TicketsService {
     customerName?: string;
     isDashboard?: boolean;
   }) {
-    const { page = 1, pageSize = 10, status, type, keyword, category1, category2, category3, creatorId, assigneeId, customerName, isDashboard } = query;
+    const {
+      page = 1,
+      pageSize = 10,
+      status,
+      type,
+      keyword,
+      category1,
+      category2,
+      category3,
+      creatorId,
+      assigneeId,
+      customerName,
+      isDashboard,
+    } = query;
 
     const qb = this.ticketRepository
       .createQueryBuilder('ticket')
@@ -163,7 +203,9 @@ export class TicketsService {
       qb.andWhere('ticket.assigneeId = :assigneeId', { assigneeId });
     }
     if (customerName) {
-      qb.andWhere('ticket.customerName LIKE :customerName', { customerName: `%${customerName}%` });
+      qb.andWhere('ticket.customerName LIKE :customerName', {
+        customerName: `%${customerName}%`,
+      });
     }
     if (keyword) {
       qb.andWhere(
@@ -182,13 +224,28 @@ export class TicketsService {
       items: items.map((item) => ({
         ...item,
         creator: item.creator
-          ? { id: item.creator.id, username: item.creator.username, displayName: item.creator.displayName, realName: item.creator.realName }
+          ? {
+              id: item.creator.id,
+              username: item.creator.username,
+              displayName: item.creator.displayName,
+              realName: item.creator.realName,
+            }
           : null,
         assignee: item.assignee
-          ? { id: item.assignee.id, username: item.assignee.username, displayName: item.assignee.displayName, realName: item.assignee.realName }
+          ? {
+              id: item.assignee.id,
+              username: item.assignee.username,
+              displayName: item.assignee.displayName,
+              realName: item.assignee.realName,
+            }
           : null,
         participants: Array.isArray(item.participants)
-          ? item.participants.map((p: User) => ({ id: p.id, username: p.username, displayName: p.displayName, realName: p.realName }))
+          ? item.participants.map((p: User) => ({
+              id: p.id,
+              username: p.username,
+              displayName: p.displayName,
+              realName: p.realName,
+            }))
           : [],
         hasActiveScreenShare: this.chatGateway.hasActiveScreenShare(item.id),
       })),
@@ -211,11 +268,23 @@ export class TicketsService {
     customerName?: string;
     isDashboard?: boolean;
   }) {
-    const baseQb = this.ticketRepository.createQueryBuilder('ticket')
+    const baseQb = this.ticketRepository
+      .createQueryBuilder('ticket')
       .leftJoin('ticket.creator', 'creator')
       .leftJoin('ticket.assignee', 'assignee');
 
-    const { status, type, keyword, category1, category2, category3, creatorId, assigneeId, customerName, isDashboard } = query;
+    const {
+      status,
+      type,
+      keyword,
+      category1,
+      category2,
+      category3,
+      creatorId,
+      assigneeId,
+      customerName,
+      isDashboard,
+    } = query;
 
     if (status) {
       baseQb.andWhere('ticket.status = :status', { status });
@@ -244,7 +313,9 @@ export class TicketsService {
       baseQb.andWhere('ticket.assigneeId = :assigneeId', { assigneeId });
     }
     if (customerName) {
-      baseQb.andWhere('ticket.customerName LIKE :customerName', { customerName: `%${customerName}%` });
+      baseQb.andWhere('ticket.customerName LIKE :customerName', {
+        customerName: `%${customerName}%`,
+      });
     }
     if (keyword) {
       baseQb.andWhere(
@@ -254,33 +325,37 @@ export class TicketsService {
     }
 
     const categoriesQb = baseQb.clone();
-    categoriesQb.select(['ticket.category1 AS value', 'COUNT(ticket.id) AS count'])
+    categoriesQb
+      .select(['ticket.category1 AS value', 'COUNT(ticket.id) AS count'])
       .andWhere('ticket.category1 IS NOT NULL')
       .andWhere('ticket.category1 != ""')
       .groupBy('ticket.category1');
 
     const customersQb = baseQb.clone();
-    customersQb.select(['ticket.customerName AS value', 'COUNT(ticket.id) AS count'])
+    customersQb
+      .select(['ticket.customerName AS value', 'COUNT(ticket.id) AS count'])
       .andWhere('ticket.customerName IS NOT NULL')
       .andWhere('ticket.customerName != ""')
       .groupBy('ticket.customerName');
 
     const creatorsQb = baseQb.clone();
-    creatorsQb.select([
-        'creator.id AS value', 
-        'creator.username AS username', 
-        'creator.realName AS realName', 
-        'COUNT(ticket.id) AS count'
+    creatorsQb
+      .select([
+        'creator.id AS value',
+        'creator.username AS username',
+        'creator.realName AS realName',
+        'COUNT(ticket.id) AS count',
       ])
       .andWhere('ticket.creatorId IS NOT NULL')
       .groupBy('creator.id');
 
     const assigneesQb = baseQb.clone();
-    assigneesQb.select([
-        'assignee.id AS value', 
-        'assignee.username AS username', 
-        'assignee.realName AS realName', 
-        'COUNT(ticket.id) AS count'
+    assigneesQb
+      .select([
+        'assignee.id AS value',
+        'assignee.username AS username',
+        'assignee.realName AS realName',
+        'COUNT(ticket.id) AS count',
       ])
       .andWhere('ticket.assigneeId IS NOT NULL')
       .groupBy('assignee.id');
@@ -293,10 +368,26 @@ export class TicketsService {
     ]);
 
     return {
-      categories: categories.map(c => ({ value: c.value, label: c.value, count: Number(c.count) })),
-      customers: customers.map(c => ({ value: c.value, label: c.value, count: Number(c.count) })),
-      creators: creators.map(c => ({ value: c.value, label: c.realName || c.username, count: Number(c.count) })),
-      assignees: assignees.map(c => ({ value: c.value, label: c.realName || c.username, count: Number(c.count) })),
+      categories: categories.map((c) => ({
+        value: c.value,
+        label: c.value,
+        count: Number(c.count),
+      })),
+      customers: customers.map((c) => ({
+        value: c.value,
+        label: c.value,
+        count: Number(c.count),
+      })),
+      creators: creators.map((c) => ({
+        value: c.value,
+        label: c.realName || c.username,
+        count: Number(c.count),
+      })),
+      assignees: assignees.map((c) => ({
+        value: c.value,
+        label: c.realName || c.username,
+        count: Number(c.count),
+      })),
     };
   }
 
@@ -322,17 +413,25 @@ export class TicketsService {
     return ticket;
   }
 
-  async update(id: number, updateDto: UpdateTicketDto, user: AuthenticatedUser): Promise<Ticket> {
+  async update(
+    id: number,
+    updateDto: UpdateTicketDto,
+    user: AuthenticatedUser,
+  ): Promise<Ticket> {
     const ticket = await this.findOne(id);
 
     // 权限判断：创建人可以编辑，或拥有 tickets:edit 权限的用户可以编辑
     const isCreator = ticket.creatorId === user.id;
     const roleName = user.role?.name || '';
     const userPermissions = user.role?.permissions || [];
-    const hasEditPerm = roleName === 'admin' || userPermissions.some((p: { code?: string; resource?: string; action?: string }) => {
-      const code = p.code || `${p.resource}:${p.action}`;
-      return code === 'tickets:edit';
-    });
+    const hasEditPerm =
+      roleName === 'admin' ||
+      userPermissions.some(
+        (p: { code?: string; resource?: string; action?: string }) => {
+          const code = p.code || `${p.resource}:${p.action}`;
+          return code === 'tickets:edit';
+        },
+      );
 
     if (!isCreator && !hasEditPerm) {
       throw new ForbiddenException('您没有权限编辑此工单');
@@ -360,7 +459,9 @@ export class TicketsService {
     this.broadcastTicketEvent('assigned', fullTicket, userId);
 
     // 审计：工单接单
-    const operator = await this.userRepository.findOne({ where: { id: userId } });
+    const operator = await this.userRepository.findOne({
+      where: { id: userId },
+    });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'assigned',
@@ -388,7 +489,9 @@ export class TicketsService {
     this.broadcastTicketEvent('requestClose', fullTicket, userId);
 
     // 审计：申请关单
-    const operator = await this.userRepository.findOne({ where: { id: userId } });
+    const operator = await this.userRepository.findOne({
+      where: { id: userId },
+    });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'requestClose',
@@ -418,7 +521,9 @@ export class TicketsService {
     this.broadcastTicketEvent('closed', fullTicket, userId);
 
     // 审计：确认关单
-    const operator = await this.userRepository.findOne({ where: { id: userId } });
+    const operator = await this.userRepository.findOne({
+      where: { id: userId },
+    });
     this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'closed',
@@ -432,7 +537,10 @@ export class TicketsService {
     return fullTicket;
   }
 
-  async getMyTickets(userId: number, role: 'creator' | 'assignee' | 'participant') {
+  async getMyTickets(
+    userId: number,
+    role: 'creator' | 'assignee' | 'participant',
+  ) {
     if (role === 'participant') {
       return this.ticketRepository.find({
         where: { participants: { id: userId } },
@@ -441,9 +549,8 @@ export class TicketsService {
       });
     }
 
-    const where = role === 'creator'
-      ? { creatorId: userId }
-      : { assigneeId: userId };
+    const where =
+      role === 'creator' ? { creatorId: userId } : { assigneeId: userId };
 
     return this.ticketRepository.find({
       where,
@@ -454,13 +561,13 @@ export class TicketsService {
 
   async deleteTicket(id: number, user: AuthenticatedUser): Promise<void> {
     const ticket = await this.findOne(id);
-    
+
     // 如果是 user 角色，只能删除自己创建的，其它高级角色 (admin, tech, director) 可以删除全部
     const roleName = user.role?.name || '';
     if (roleName === 'user' && ticket.creatorId !== user.id) {
       throw new ForbiddenException('您只能删除自己创建的工单');
     }
-    
+
     // 保存删除前的信息用于审计
     const ticketNo = ticket.ticketNo;
     const ticketTitle = ticket.title;
@@ -479,7 +586,9 @@ export class TicketsService {
           if (filename) filesToDelete.push(filename);
         }
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     await this.ticketRepository.remove(ticket);
     this.broadcastTicketEvent('deleted', { id: ticketId }, user.id);
@@ -499,27 +608,33 @@ export class TicketsService {
     if (filesToDelete.length > 0) {
       setImmediate(() => {
         BackupService.deleteOssFiles(filesToDelete, this.logger);
-        this.logger.log(`Ticket #${ticketId} deleted: cleaned ${filesToDelete.length} OSS files`);
+        this.logger.log(
+          `Ticket #${ticketId} deleted: cleaned ${filesToDelete.length} OSS files`,
+        );
       });
     }
   }
 
   async batchDelete(ids: number[], user: AuthenticatedUser): Promise<void> {
     const roleName = user.role?.name || '';
-    
+
     // 一次性查询所有工单，避免 N+1 查询
-    const tickets = await this.ticketRepository.find({ where: { id: In(ids) } });
-    
+    const tickets = await this.ticketRepository.find({
+      where: { id: In(ids) },
+    });
+
     // 权限检验
     for (const ticket of tickets) {
       if (roleName === 'user' && ticket.creatorId !== user.id) {
-        throw new ForbiddenException(`工单 ${ticket.ticketNo} 属于他人，您无权批量删除。操作已整体中止。`);
+        throw new ForbiddenException(
+          `工单 ${ticket.ticketNo} 属于他人，您无权批量删除。操作已整体中止。`,
+        );
       }
     }
 
     // Collect OSS files from all ticket messages BEFORE cascade delete
     const filesToDelete: string[] = [];
-    const ticketIds = tickets.map(t => t.id);
+    const ticketIds = tickets.map((t) => t.id);
     if (ticketIds.length > 0) {
       try {
         const messages = await this.messageRepo.find({
@@ -532,9 +647,11 @@ export class TicketsService {
             if (filename) filesToDelete.push(filename);
           }
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
-    
+
     // 执行删除
     const deletedNames: string[] = [];
     for (const ticket of tickets) {
@@ -558,7 +675,9 @@ export class TicketsService {
     if (filesToDelete.length > 0) {
       setImmediate(() => {
         BackupService.deleteOssFiles(filesToDelete, this.logger);
-        this.logger.log(`Batch delete tickets: cleaned ${filesToDelete.length} OSS files`);
+        this.logger.log(
+          `Batch delete tickets: cleaned ${filesToDelete.length} OSS files`,
+        );
       });
     }
   }
@@ -571,7 +690,7 @@ export class TicketsService {
       role: 'external',
       ticketId: ticket.id,
     };
-    
+
     // 生成一个有效期较短/或者配置有效期的 token
     return this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
@@ -579,24 +698,34 @@ export class TicketsService {
     });
   }
 
-  async inviteParticipant(ticketId: number, inviterId: number, targetUserId: number): Promise<Ticket> {
+  async inviteParticipant(
+    ticketId: number,
+    inviterId: number,
+    targetUserId: number,
+  ): Promise<Ticket> {
     const ticket = await this.findOne(ticketId);
-    
+
     // Authorization: Only creator or assignee can invite others
     if (ticket.creatorId !== inviterId && ticket.assigneeId !== inviterId) {
       throw new ForbiddenException('您没有权限邀请他人参与该工单');
     }
 
     // Checking if already participated
-    const isAlreadyParticipating = ticket.participants && ticket.participants.some(p => p.id === targetUserId);
+    const isAlreadyParticipating =
+      ticket.participants &&
+      ticket.participants.some((p) => p.id === targetUserId);
     if (isAlreadyParticipating) {
       throw new BadRequestException('该工程师已在工单中');
     }
 
-    const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
+    const targetUser = await this.userRepository.findOne({
+      where: { id: targetUserId },
+    });
     if (!targetUser) throw new NotFoundException('受邀工程师不存在');
 
-    const inviter = await this.userRepository.findOne({ where: { id: inviterId } });
+    const inviter = await this.userRepository.findOne({
+      where: { id: inviterId },
+    });
 
     // Initialize array if empty
     if (!ticket.participants) ticket.participants = [];
@@ -610,9 +739,11 @@ export class TicketsService {
 
     // Send a system message to the chat
     if (inviter) {
-      const inviterName = inviter.realName || inviter.displayName || inviter.username;
-      const targetName = targetUser.realName || targetUser.displayName || targetUser.username;
-      
+      const inviterName =
+        inviter.realName || inviter.displayName || inviter.username;
+      const targetName =
+        targetUser.realName || targetUser.displayName || targetUser.username;
+
       const message = await this.chatService.createMessage({
         ticketId: ticket.id,
         senderId: null,
@@ -620,20 +751,35 @@ export class TicketsService {
         content: `人员变动: 【${inviterName}】邀请专家【${targetName}】加入了工单`,
         type: MessageType.SYSTEM,
       });
-      this.chatGateway.server.to(`ticket_${ticket.id}`).emit('newMessage', message);
+      this.chatGateway.server
+        .to(`ticket_${ticket.id}`)
+        .emit('newMessage', message);
     }
 
     return fullTicket;
   }
 
-  async removeParticipant(ticketId: number, operatorId: number, targetUserId: number): Promise<Ticket> {
+  async removeParticipant(
+    ticketId: number,
+    operatorId: number,
+    targetUserId: number,
+  ): Promise<Ticket> {
     const ticket = await this.findOne(ticketId);
-    
-    const operator = await this.userRepository.findOne({ where: { id: operatorId }, relations: ['role'] });
+
+    const operator = await this.userRepository.findOne({
+      where: { id: operatorId },
+      relations: ['role'],
+    });
     if (!operator) throw new ForbiddenException('Invalid operator');
 
-    const roleName = typeof operator.role === 'string' ? operator.role : operator.role?.name;
-    if (roleName !== 'admin' && ticket.creatorId !== operatorId && ticket.assigneeId !== operatorId && operatorId !== targetUserId) {
+    const roleName =
+      typeof operator.role === 'string' ? operator.role : operator.role?.name;
+    if (
+      roleName !== 'admin' &&
+      ticket.creatorId !== operatorId &&
+      ticket.assigneeId !== operatorId &&
+      operatorId !== targetUserId
+    ) {
       throw new ForbiddenException('您没有权限移除该专家');
     }
 
@@ -641,7 +787,7 @@ export class TicketsService {
       throw new BadRequestException('该工程师不在工单中');
     }
 
-    const index = ticket.participants.findIndex(p => p.id === targetUserId);
+    const index = ticket.participants.findIndex((p) => p.id === targetUserId);
     if (index === -1) {
       throw new BadRequestException('该工程师不在工单中');
     }
@@ -655,9 +801,11 @@ export class TicketsService {
     // Broadcast ticket change
     this.broadcastTicketEvent('participantRemoved', fullTicket, operatorId);
 
-    const operatorName = operator.realName || operator.displayName || operator.username;
-    const targetName = targetUser.realName || targetUser.displayName || targetUser.username;
-    
+    const operatorName =
+      operator.realName || operator.displayName || operator.username;
+    const targetName =
+      targetUser.realName || targetUser.displayName || targetUser.username;
+
     const message = await this.chatService.createMessage({
       ticketId: ticket.id,
       senderId: null,
@@ -665,15 +813,26 @@ export class TicketsService {
       content: `人员变动: 【${operatorName}】将专家【${targetName}】移出了工单`,
       type: MessageType.SYSTEM,
     });
-    this.chatGateway.server.to(`ticket_${ticket.id}`).emit('newMessage', message);
+    this.chatGateway.server
+      .to(`ticket_${ticket.id}`)
+      .emit('newMessage', message);
 
     // Command the target user's socket to leave the room and get kicked
-    this.chatGateway.kickUserFromRoom(ticketId, targetUserId, '您已被移除该工单讨论组');
+    this.chatGateway.kickUserFromRoom(
+      ticketId,
+      targetUserId,
+      '您已被移除该工单讨论组',
+    );
 
     return fullTicket;
   }
 
-  async toggleRoomLock(ticketId: number, userId: number, locked: boolean, disableExternal: boolean): Promise<Ticket> {
+  async toggleRoomLock(
+    ticketId: number,
+    userId: number,
+    locked: boolean,
+    disableExternal: boolean,
+  ): Promise<Ticket> {
     const ticket = await this.findOne(ticketId);
 
     if (ticket.creatorId !== userId && ticket.assigneeId !== userId) {
@@ -703,7 +862,7 @@ export class TicketsService {
       .orWhere('participant.id = :userId', { userId })
       .getMany();
 
-    const ticketIds = relatedTickets.map(t => t.id);
+    const ticketIds = relatedTickets.map((t) => t.id);
     const unreadMap: Record<number, number> = {};
     const newTicketIds: number[] = [];
 
@@ -714,14 +873,17 @@ export class TicketsService {
     // 批量查询当前用户对这些工单的阅读指针状态
     const readStates = await this.ticketReadStateRepo
       .createQueryBuilder('state')
-      .where('state.userId = :userId AND state.ticketId IN (:...ticketIds)', { userId, ticketIds })
+      .where('state.userId = :userId AND state.ticketId IN (:...ticketIds)', {
+        userId,
+        ticketIds,
+      })
       .getMany();
 
-    const stateMap = new Map(readStates.map(s => [s.ticketId, s]));
+    const stateMap = new Map(readStates.map((s) => [s.ticketId, s]));
 
     for (const ticket of relatedTickets) {
       const state = stateMap.get(ticket.id);
-      
+
       let lastReadMessageId = 0;
       if (state) {
         lastReadMessageId = state.lastReadMessageId || 0;
@@ -737,7 +899,9 @@ export class TicketsService {
         .where('msg.ticketId = :ticketId', { ticketId: ticket.id })
         .andWhere('msg.id > :lastReadMessageId', { lastReadMessageId })
         // 自己发的消息不算未读
-        .andWhere('(msg.senderId IS NULL OR msg.senderId != :userId)', { userId })
+        .andWhere('(msg.senderId IS NULL OR msg.senderId != :userId)', {
+          userId,
+        })
         .getCount();
 
       if (unreadCount > 0) {
@@ -749,7 +913,8 @@ export class TicketsService {
       if (ticket.creatorId !== userId) {
         if (!state) {
           // 如果这工单创建在上线之前很久，不弹 NEW。简单处理：最近 24 小时内的算 NEW
-          const hoursSinceCreated = (Date.now() - new Date(ticket.createdAt).getTime()) / 3600000;
+          const hoursSinceCreated =
+            (Date.now() - new Date(ticket.createdAt).getTime()) / 3600000;
           if (hoursSinceCreated < 24) {
             newTicketIds.push(ticket.id);
           }
@@ -775,7 +940,7 @@ export class TicketsService {
     const lastReadMessageId = lastMessage ? lastMessage.id : 0;
 
     let state = await this.ticketReadStateRepo.findOne({
-      where: { userId, ticketId }
+      where: { userId, ticketId },
     });
 
     if (!state) {
@@ -813,7 +978,7 @@ export class TicketsService {
         'ticket.type',
         'ticket.creatorId',
         'ticket.assigneeId',
-        'ticket.createdAt'
+        'ticket.createdAt',
       ])
       .where('ticket.id IN (:...ticketIds)', { ticketIds })
       .getMany();
