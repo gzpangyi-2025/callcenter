@@ -26,6 +26,7 @@
   right: 0;
   bottom: 0;
   z-index: 9999;
+  width: 100vw !important;
   height: 100vh !important;
   max-height: none !important;
   border: none;
