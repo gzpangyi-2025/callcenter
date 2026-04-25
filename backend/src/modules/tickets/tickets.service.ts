@@ -881,32 +881,32 @@ export class TicketsService {
 
     const stateMap = new Map(readStates.map((s) => [s.ticketId, s]));
 
+    // 批量计算所有相关工单的未读消息数（消除 N+1）
+    const unreadCountsRaw = await this.messageRepo
+      .createQueryBuilder('msg')
+      .select('msg.ticketId', 'ticketId')
+      .addSelect('COUNT(msg.id)', 'unreadCount')
+      .leftJoin(
+        TicketReadState,
+        'state',
+        'state.ticketId = msg.ticketId AND state.userId = :userId',
+        { userId },
+      )
+      .where('msg.ticketId IN (:...ticketIds)', { ticketIds })
+      .andWhere('(msg.senderId IS NULL OR msg.senderId != :userId)')
+      .andWhere('msg.id > COALESCE(state.lastReadMessageId, 0)')
+      .groupBy('msg.ticketId')
+      .getRawMany();
+
+    for (const raw of unreadCountsRaw) {
+      const count = parseInt(raw.unreadCount, 10);
+      if (count > 0) {
+        unreadMap[raw.ticketId] = count;
+      }
+    }
+
     for (const ticket of relatedTickets) {
       const state = stateMap.get(ticket.id);
-
-      let lastReadMessageId = 0;
-      if (state) {
-        lastReadMessageId = state.lastReadMessageId || 0;
-      } else {
-        // 【兼容老数据平滑过渡】：如果该工单存在且用户从未点开过，理论上所有的消息都是未读的。
-        // 但为了防止系统刚升级导致历史几百个工单满屏红点，当缺少 read 记录时我们假定它全读了（不报错红点）。
-        // 唯独如果这是一个全新分配的工单，我们需要报错红点。
-      }
-
-      // 计算未读消息数
-      const unreadCount = await this.messageRepo
-        .createQueryBuilder('msg')
-        .where('msg.ticketId = :ticketId', { ticketId: ticket.id })
-        .andWhere('msg.id > :lastReadMessageId', { lastReadMessageId })
-        // 自己发的消息不算未读
-        .andWhere('(msg.senderId IS NULL OR msg.senderId != :userId)', {
-          userId,
-        })
-        .getCount();
-
-      if (unreadCount > 0) {
-        unreadMap[ticket.id] = unreadCount;
-      }
 
       // 判断是否是“NEW”工单 (没有阅读记录，或者有阅读记录但之后被重新分配或有新动作)
       // 注意：自己创建的工单不视为新到达的 NEW

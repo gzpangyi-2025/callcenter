@@ -15,9 +15,10 @@ import type { Response, Request } from 'express';
 import { KnowledgeService } from './knowledge.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from '../auth/permissions.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
 
 @Controller('knowledge')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class KnowledgeController {
   constructor(private readonly knowledgeService: KnowledgeService) {}
 
