@@ -20,7 +20,7 @@ interface ScreenSharePanelProps {
   /** 分享者名称 */
   sharerName: string;
   /** 连接状态 */
-  connectionState: 'idle' | 'connecting' | 'connected' | 'failed';
+  connectionState: 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'failed';
   /** 重试连接回调 */
   onRetry?: () => void;
   /** 停止分享回调 */
@@ -138,12 +138,12 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
         message.warning('画面传输较慢，正在努力缓冲中...如果长时间无画面可点击手动重试', 5);
       }, 15000);
 
-      // 45秒彻底超时才自动重试
+      // 20秒彻底超时才自动重试
       timer2 = setTimeout(() => {
-        console.log('[屏幕共享] 45秒超时仍无画面，触发自动重连...');
-        message.error('获取画面严重超时，系统自动重新连接...');
+        console.log('[屏幕共享] 20秒超时仍无画面，触发自动重连...');
+        message.error('获取画面超时，系统自动重新连接...');
         onRetry();
-      }, 45000);
+      }, 20000);
 
       return () => {
         clearTimeout(timer1);
@@ -245,6 +245,8 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
 
   const statusIcon = connectionState === 'connecting'
     ? <LoadingOutlined spin style={{ color: '#f59e0b' }} />
+    : connectionState === 'reconnecting'
+    ? <LoadingOutlined spin style={{ color: '#f97316' }} />
     : isWaitingFrames
     ? <LoadingOutlined spin style={{ color: '#60a5fa' }} />
     : connectionState === 'connected'
@@ -255,6 +257,8 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
 
   const statusText = connectionState === 'connecting'
     ? '正在建立连接...'
+    : connectionState === 'reconnecting'
+    ? '网络波动，自动重连中...'
     : isWaitingFrames
     ? '等待画面传输...'
     : connectionState === 'connected'
@@ -277,13 +281,13 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
             {isSharing ? (
               <>🖥️ 您正在分享屏幕</>
             ) : (
-              <>🖥️ {sharerName} 正在共享屏幕 <Tag color={isWaitingFrames ? 'blue' : connectionState === 'connected' ? 'green' : connectionState === 'failed' ? 'red' : 'orange'} style={{ marginLeft: 4, fontSize: 11, lineHeight: '18px', padding: '0 6px' }}>{statusText}</Tag></>
+              <>🖥️ {sharerName} 正在共享屏幕 <Tag color={connectionState === 'reconnecting' ? 'orange' : isWaitingFrames ? 'blue' : connectionState === 'connected' ? 'green' : connectionState === 'failed' ? 'red' : 'orange'} style={{ marginLeft: 4, fontSize: 11, lineHeight: '18px', padding: '0 6px' }}>{statusText}</Tag></>
             )}
           </span>
         </div>
         <div className="screen-share-toolbar-right">
           {/* 手动重试按钮 */}
-          {isViewing && (connectionState === 'failed' || isWaitingFrames) && onRetry && (
+          {isViewing && (connectionState === 'failed' || connectionState === 'reconnecting' || isWaitingFrames) && onRetry && (
             <Tooltip title="重新连接">
               <Button
                 type="text"
@@ -374,6 +378,22 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
           <div className="screen-share-connecting">
             <LoadingOutlined spin style={{ fontSize: 36, color: '#818cf8' }} />
             <div style={{ marginTop: 12, color: 'var(--text-secondary)' }}>正在建立远程连接...</div>
+          </div>
+        )}
+
+        {isViewing && connectionState === 'reconnecting' && (
+          <div className="screen-share-connecting">
+            <LoadingOutlined spin style={{ fontSize: 36, color: '#f97316' }} />
+            <div style={{ marginTop: 12, color: 'var(--text-secondary)' }}>网络波动，正在自动重连...</div>
+            <div style={{ marginTop: 6, fontSize: 12, color: 'var(--text-tertiary)' }}>系统将自动尝试恢复连接，请稍候</div>
+            {onRetry && (
+              <Button
+                type="link"
+                icon={<ReloadOutlined />}
+                onClick={onRetry}
+                style={{ marginTop: 8 }}
+              >手动重试连接</Button>
+            )}
           </div>
         )}
 

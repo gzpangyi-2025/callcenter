@@ -91,6 +91,18 @@ export function useVoiceChat(
   const localStreamRef = useRef<MediaStream | null>(null);
   const audioElementsRef = useRef<Map<number, HTMLAudioElement>>(new Map());
 
+  // ICE Candidate 缓冲队列
+  const pendingCandidatesRef = useRef<Map<number, RTCIceCandidateInit[]>>(new Map());
+
+  // disconnected 恢复计时器 (per peer)
+  const disconnectTimersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+
+  // 健康心跳定时器
+  const heartbeatTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // 标记是否正在语音通话中（ref 版本，给 cleanup 和 heartbeat 用）
+  const isInVoiceRef = useRef(false);
+
   const socketRef = useRef(socket);
   const ticketIdRef = useRef(ticketId);
   const currentUserIdRef = useRef(currentUserId);
@@ -98,6 +110,22 @@ export function useVoiceChat(
   useEffect(() => { socketRef.current = socket; }, [socket]);
   useEffect(() => { ticketIdRef.current = ticketId; }, [ticketId]);
   useEffect(() => { currentUserIdRef.current = currentUserId; }, [currentUserId]);
+
+  // 消化缓冲的 ICE Candidate
+  const flushPendingCandidates = async (peerId: number, pc: RTCPeerConnection) => {
+    const pending = pendingCandidatesRef.current.get(peerId);
+    if (pending && pending.length > 0) {
+      console.log(`[语音通话] 消化 ${pending.length} 个缓冲的 ICE Candidate, peerId:`, peerId);
+      for (const candidate of pending) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        } catch (err) {
+          console.error('[语音通话] 缓冲 ICE candidate 添加失败:', err);
+        }
+      }
+      pendingCandidatesRef.current.delete(peerId);
+    }
+  };
 
   /** 创建一个可靠播放远程音频的 audio 元素 */
   const createAudioElement = (peerId: number): HTMLAudioElement => {
@@ -142,6 +170,30 @@ export function useVoiceChat(
     };
     setTimeout(tryPlay, 100);
   };
+
+  // 对单个 peer 发起 ICE Restart 重连
+  const restartIceForPeer = useCallback(async (peerId: number) => {
+    const pc = voicePeersRef.current.get(peerId);
+    if (!pc || !localStreamRef.current) return;
+
+    console.log('[语音通话] 触发 ICE Restart, peerId:', peerId);
+    try {
+      const offer = await pc.createOffer({ iceRestart: true });
+      await pc.setLocalDescription(offer);
+
+      const s = socketRef.current;
+      const tid = ticketIdRef.current;
+      if (s && tid) {
+        s.emit('voice:offer', {
+          ticketId: tid,
+          sdp: offer,
+          to: peerId,
+        });
+      }
+    } catch (err) {
+      console.error('[语音通话] ICE Restart 失败, peerId:', peerId, err);
+    }
+  }, []);
 
   // 创建语音 PeerConnection
   const createVoicePeerConnection = async (peerId: number): Promise<RTCPeerConnection> => {
@@ -197,12 +249,32 @@ export function useVoiceChat(
 
     pc.oniceconnectionstatechange = () => {
       console.log('[语音通话] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
+
+      // 清理之前的 disconnected 计时器
+      const existingTimer = disconnectTimersRef.current.get(peerId);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        disconnectTimersRef.current.delete(peerId);
+      }
+
       if (pc.iceConnectionState === 'connected') {
         const audioEl = audioElementsRef.current.get(peerId);
         if (audioEl && audioEl.paused && audioEl.srcObject) {
           console.log('[语音通话] ICE connected, 重新尝试播放音频');
           safePlayAudio(audioEl, peerId);
         }
+      } else if (pc.iceConnectionState === 'disconnected') {
+        // disconnected 是临时状态，给 5 秒恢复窗口
+        const timer = setTimeout(() => {
+          if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+            console.log('[语音通话] disconnected 超时 5 秒未恢复，触发 ICE Restart, peerId:', peerId);
+            restartIceForPeer(peerId);
+          }
+        }, 5000);
+        disconnectTimersRef.current.set(peerId, timer);
+      } else if (pc.iceConnectionState === 'failed') {
+        console.log('[语音通话] ICE 连接失败，触发 ICE Restart, peerId:', peerId);
+        restartIceForPeer(peerId);
       }
     };
 
@@ -222,9 +294,22 @@ export function useVoiceChat(
       audioEl.remove();
       audioElementsRef.current.delete(peerId);
     }
+    pendingCandidatesRef.current.delete(peerId);
+    const timer = disconnectTimersRef.current.get(peerId);
+    if (timer) {
+      clearTimeout(timer);
+      disconnectTimersRef.current.delete(peerId);
+    }
   }, []);
 
   const cleanupAll = useCallback(() => {
+    // 关键修复：向服务端发送 voice:leave，确保后端清除该用户的语音状态
+    const s = socketRef.current;
+    const tid = ticketIdRef.current;
+    if (s && tid && isInVoiceRef.current) {
+      s.emit('voice:leave', { ticketId: tid });
+    }
+
     voicePeersRef.current.forEach(pc => pc.close());
     voicePeersRef.current.clear();
 
@@ -234,10 +319,24 @@ export function useVoiceChat(
     });
     audioElementsRef.current.clear();
 
+    pendingCandidatesRef.current.clear();
+
+    // 清理所有 disconnected 计时器
+    disconnectTimersRef.current.forEach(timer => clearTimeout(timer));
+    disconnectTimersRef.current.clear();
+
+    // 清理心跳定时器
+    if (heartbeatTimerRef.current) {
+      clearInterval(heartbeatTimerRef.current);
+      heartbeatTimerRef.current = null;
+    }
+
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => track.stop());
       localStreamRef.current = null;
     }
+
+    isInVoiceRef.current = false;
 
     setState({
       isInVoice: false,
@@ -246,6 +345,28 @@ export function useVoiceChat(
       hasActiveVoice: false,
     });
   }, []);
+
+  // ==================== 健康心跳检测 ====================
+  const startHeartbeat = useCallback(() => {
+    if (heartbeatTimerRef.current) clearInterval(heartbeatTimerRef.current);
+
+    heartbeatTimerRef.current = setInterval(() => {
+      if (!isInVoiceRef.current) return;
+
+      voicePeersRef.current.forEach((pc, peerId) => {
+        const iceState = pc.iceConnectionState;
+        if (iceState === 'failed') {
+          console.log('[语音通话] 心跳检测: peerId', peerId, '处于 failed 状态，触发 ICE Restart');
+          restartIceForPeer(peerId);
+        } else if (iceState === 'disconnected') {
+          // disconnected 已经有单独的计时器处理，这里不重复
+        } else if (iceState === 'closed') {
+          console.log('[语音通话] 心跳检测: peerId', peerId, '连接已关闭，清理');
+          cleanupPeer(peerId);
+        }
+      });
+    }, 10000); // 每 10 秒检查一次
+  }, [restartIceForPeer, cleanupPeer]);
 
   // ==================== 公开 API ====================
 
@@ -267,6 +388,7 @@ export function useVoiceChat(
       });
 
       localStreamRef.current = stream;
+      isInVoiceRef.current = true;
 
       setState(prev => ({
         ...prev,
@@ -275,6 +397,9 @@ export function useVoiceChat(
       }));
 
       s.emit('voice:join', { ticketId: tid });
+
+      // 启动健康心跳
+      startHeartbeat();
     } catch (err: any) {
       console.error('[语音通话] 获取麦克风失败:', err);
       if (err.name === 'NotAllowedError') {
@@ -285,7 +410,7 @@ export function useVoiceChat(
         message.error('无法访问麦克风: ' + err.message);
       }
     }
-  }, []);
+  }, [startHeartbeat]);
 
   const leaveVoice = useCallback(() => {
     const s = socketRef.current;
@@ -303,10 +428,22 @@ export function useVoiceChat(
     });
     audioElementsRef.current.clear();
 
+    pendingCandidatesRef.current.clear();
+
+    disconnectTimersRef.current.forEach(timer => clearTimeout(timer));
+    disconnectTimersRef.current.clear();
+
+    if (heartbeatTimerRef.current) {
+      clearInterval(heartbeatTimerRef.current);
+      heartbeatTimerRef.current = null;
+    }
+
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => track.stop());
       localStreamRef.current = null;
     }
+
+    isInVoiceRef.current = false;
 
     setState(prev => ({
       ...prev,
@@ -383,7 +520,7 @@ export function useVoiceChat(
       });
 
       // 修复 WebRTC Glare（冲突）问题：
-      // 不要让“先到者”发送 Offer，因为新人（后到者）在 handleCurrentParticipants 中已经向所有人发送了 Offer。
+      // 不要让"先到者"发送 Offer，因为新人（后到者）在 handleCurrentParticipants 中已经向所有人发送了 Offer。
       // 只需等待对方发送 Offer 触发 handleOffer 即可建立连接。
     };
 
@@ -404,17 +541,38 @@ export function useVoiceChat(
     };
 
     const handleOffer = async (data: { ticketId: number; sdp: RTCSessionDescriptionInit; from: number }) => {
-      if (data.ticketId !== ticketIdRef.current || !localStreamRef.current) return;
+      if (data.ticketId !== ticketIdRef.current) return;
+
+      // 增加重试保护：如果 localStream 尚未就绪，等待后重试
+      const waitForStream = async (retries = 3): Promise<boolean> => {
+        for (let i = 0; i < retries; i++) {
+          if (localStreamRef.current) return true;
+          console.log(`[语音通话] 收到 Offer 但 localStream 未就绪，等待重试 (${i + 1}/${retries}), from:`, data.from);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        return false;
+      };
+
+      if (!localStreamRef.current) {
+        const ready = await waitForStream();
+        if (!ready) {
+          console.warn('[语音通话] 放弃处理 Offer: localStream 始终未就绪, from:', data.from);
+          return;
+        }
+      }
 
       console.log('[语音通话] 收到 Offer, from:', data.from);
 
       const pc = await createVoicePeerConnection(data.from);
 
-      localStreamRef.current.getTracks().forEach(track => {
+      localStreamRef.current!.getTracks().forEach(track => {
         pc.addTrack(track, localStreamRef.current!);
       });
 
       await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+
+      // 消化缓冲的 ICE Candidate
+      await flushPendingCandidates(data.from, pc);
 
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
@@ -433,6 +591,8 @@ export function useVoiceChat(
       const pc = voicePeersRef.current.get(data.from);
       if (pc) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        // 消化缓冲的 ICE Candidate
+        await flushPendingCandidates(data.from, pc);
       }
     };
 
@@ -440,11 +600,23 @@ export function useVoiceChat(
       if (data.ticketId !== ticketIdRef.current) return;
       const pc = voicePeersRef.current.get(data.from);
       if (pc) {
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-        } catch (err) {
-          console.error('[语音通话] ICE candidate 添加失败:', err);
+        if (pc.remoteDescription) {
+          try {
+            await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+          } catch (err) {
+            console.error('[语音通话] ICE candidate 添加失败:', err);
+          }
+        } else {
+          console.log('[语音通话] remoteDescription 未就绪，缓冲 ICE candidate, from:', data.from);
+          const pending = pendingCandidatesRef.current.get(data.from) || [];
+          pending.push(data.candidate);
+          pendingCandidatesRef.current.set(data.from, pending);
         }
+      } else {
+        // PC 尚未创建，缓冲候选者
+        const pending = pendingCandidatesRef.current.get(data.from) || [];
+        pending.push(data.candidate);
+        pendingCandidatesRef.current.set(data.from, pending);
       }
     };
 
@@ -455,6 +627,7 @@ export function useVoiceChat(
         localStreamRef.current.getTracks().forEach(track => track.stop());
         localStreamRef.current = null;
       }
+      isInVoiceRef.current = false;
       setState(prev => ({ ...prev, isInVoice: false, isMuted: false }));
     };
 
