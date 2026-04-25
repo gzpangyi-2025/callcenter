@@ -31,6 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         displayName: payload.username,
         role: { id: -1, name: 'external', permissions: [] },
         ticketId: payload.ticketId,
+        bbsId: payload.bbsId,
       };
     }
 
