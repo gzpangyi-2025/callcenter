@@ -1,7 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
 
 @Entity('knowledge_docs')
-@Index('IDX_KNOWLEDGE_FULLTEXT', ['title', 'content', 'tags'], { fulltext: true, parser: 'ngram' })
+@Index('IDX_KNOWLEDGE_FULLTEXT', ['title', 'content', 'tags'], {
+  fulltext: true,
+  parser: 'ngram',
+})
 export class KnowledgeDoc {
   @PrimaryGeneratedColumn()
   id: number;

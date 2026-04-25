@@ -1,6 +1,12 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
-  UpdateDateColumn, OneToMany, ManyToMany, JoinTable,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Permission } from './permission.entity';
@@ -22,7 +28,9 @@ export class Role {
   @OneToMany(() => User, (user) => user.role)
   users: User[];
 
-  @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })
+  @ManyToMany(() => Permission, (permission) => permission.roles, {
+    eager: true,
+  })
   @JoinTable({
     name: 'role_permissions',
     joinColumn: { name: 'roleId', referencedColumnName: 'id' },

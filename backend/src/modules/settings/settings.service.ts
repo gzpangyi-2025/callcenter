@@ -28,7 +28,9 @@ export class SettingsService implements OnModuleInit {
 
   /** 批量保存（upsert）一组 key-value */
   async saveMany(data: Record<string, string>): Promise<void> {
-    const entries = Object.entries(data).filter(([, v]) => v !== undefined && v !== null);
+    const entries = Object.entries(data).filter(
+      ([, v]) => v !== undefined && v !== null,
+    );
     for (const [key, value] of entries) {
       await this.settingRepository.save({ key, value: String(value) });
     }

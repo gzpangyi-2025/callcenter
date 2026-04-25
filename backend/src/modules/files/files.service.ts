@@ -1,4 +1,8 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import COS = require('cos-nodejs-sdk-v5');
 import { SettingsService } from '../settings/settings.service';
 import * as fs from 'fs';
@@ -15,7 +19,7 @@ export class FilesService {
     total: 0,
     current: 0,
     failed: 0,
-    message: ''
+    message: '',
   };
 
   constructor(private readonly settingsService: SettingsService) {
@@ -27,11 +31,14 @@ export class FilesService {
   }
 
   private async getStorageConfig() {
-    const provider = await this.settingsService.get('storage.provider') || 'local';
-    const secretId = await this.settingsService.get('storage.cos.secretId') || '';
-    const secretKey = await this.settingsService.get('storage.cos.secretKey') || '';
-    const bucket = await this.settingsService.get('storage.cos.bucket') || '';
-    const region = await this.settingsService.get('storage.cos.region') || '';
+    const provider =
+      (await this.settingsService.get('storage.provider')) || 'local';
+    const secretId =
+      (await this.settingsService.get('storage.cos.secretId')) || '';
+    const secretKey =
+      (await this.settingsService.get('storage.cos.secretKey')) || '';
+    const bucket = (await this.settingsService.get('storage.cos.bucket')) || '';
+    const region = (await this.settingsService.get('storage.cos.region')) || '';
     return { provider, secretId, secretKey, bucket, region };
   }
 
@@ -41,7 +48,11 @@ export class FilesService {
 
     const configStr = `${config.secretId}:${config.secretKey}`;
     if (this._cosInstance && this._lastCosConfigStr === configStr) {
-      return { cos: this._cosInstance, bucket: config.bucket, region: config.region };
+      return {
+        cos: this._cosInstance,
+        bucket: config.bucket,
+        region: config.region,
+      };
     }
 
     if (!config.secretId || !config.secretKey) {
@@ -53,13 +64,21 @@ export class FilesService {
       SecretKey: config.secretKey,
     });
     this._lastCosConfigStr = configStr;
-    
-    return { cos: this._cosInstance, bucket: config.bucket, region: config.region };
+
+    return {
+      cos: this._cosInstance,
+      bucket: config.bucket,
+      region: config.region,
+    };
   }
 
-  async uploadToCos(filename: string, buffer: Buffer, mimetype: string): Promise<string> {
+  async uploadToCos(
+    filename: string,
+    buffer: Buffer,
+    mimetype: string,
+  ): Promise<string> {
     const config = await this.getStorageConfig();
-    
+
     if (config.provider === 'local') {
       const localPath = path.join(process.cwd(), 'oss', filename);
       try {
@@ -94,9 +113,13 @@ export class FilesService {
     }
   }
 
-  async getPresignedUrl(filename: string, originalName?: string, inline: boolean = true): Promise<string> {
+  async getPresignedUrl(
+    filename: string,
+    originalName?: string,
+    inline: boolean = true,
+  ): Promise<string> {
     const config = await this.getStorageConfig();
-    
+
     if (config.provider === 'local') {
       return `/api/files/static/${filename}`;
     }
@@ -121,7 +144,7 @@ export class FilesService {
       }
 
       const url = cosContext.cos.getObjectUrl(params);
-      return url as string;
+      return url;
     } catch (e: any) {
       this.logger.error(`Error generating presigned URL: ${e.message}`);
       throw new InternalServerErrorException('无法获取文件链接');
@@ -130,10 +153,11 @@ export class FilesService {
 
   async getFileBuffer(filename: string): Promise<Buffer> {
     const config = await this.getStorageConfig();
-    
+
     if (config.provider === 'local') {
       const localPath = path.join(process.cwd(), 'oss', filename);
-      if (!fs.existsSync(localPath)) throw new InternalServerErrorException('本地文件不存在');
+      if (!fs.existsSync(localPath))
+        throw new InternalServerErrorException('本地文件不存在');
       return fs.readFileSync(localPath);
     }
 
@@ -154,7 +178,7 @@ export class FilesService {
               this.logger.error(`Error fetching file from COS: ${err.message}`);
               reject(new InternalServerErrorException('文件拉取失败'));
             } else {
-              resolve(data.Body as Buffer);
+              resolve(data.Body);
             }
           },
         );
@@ -166,7 +190,7 @@ export class FilesService {
 
   async deleteFromCos(filename: string): Promise<void> {
     const config = await this.getStorageConfig();
-    
+
     if (config.provider === 'local') {
       const localPath = path.join(process.cwd(), 'oss', filename);
       if (fs.existsSync(localPath)) {
@@ -206,9 +230,18 @@ export class FilesService {
     });
   }
 
-  async getStorageStats(): Promise<{ imageCount: number; imageSize: number; fileCount: number; fileSize: number, provider: string }> {
+  async getStorageStats(): Promise<{
+    imageCount: number;
+    imageSize: number;
+    fileCount: number;
+    fileSize: number;
+    provider: string;
+  }> {
     const config = await this.getStorageConfig();
-    let imageCount = 0, imageSize = 0, fileCount = 0, fileSize = 0;
+    let imageCount = 0,
+      imageSize = 0,
+      fileCount = 0,
+      fileSize = 0;
     const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
 
     if (config.provider === 'local') {
@@ -219,35 +252,55 @@ export class FilesService {
           try {
             const size = fs.statSync(path.join(localPath, f)).size;
             const ext = path.extname(f).toLowerCase();
-            if (IMAGE_EXTS.has(ext)) { imageCount++; imageSize += size; }
-            else { fileCount++; fileSize += size; }
-          } catch(e) {}
+            if (IMAGE_EXTS.has(ext)) {
+              imageCount++;
+              imageSize += size;
+            } else {
+              fileCount++;
+              fileSize += size;
+            }
+          } catch (e) {}
         }
       }
       return { imageCount, imageSize, fileCount, fileSize, provider: 'local' };
     } else {
       const cosContext = await this.getCosInstance();
-      if (!cosContext) return { imageCount: 0, imageSize: 0, fileCount: 0, fileSize: 0, provider: 'cos' };
-      
+      if (!cosContext)
+        return {
+          imageCount: 0,
+          imageSize: 0,
+          fileCount: 0,
+          fileSize: 0,
+          provider: 'cos',
+        };
+
       let isTruncated = true;
       let marker: string | undefined = undefined;
-      
+
       while (isTruncated) {
         try {
           const data: any = await new Promise((resolve, reject) => {
-            cosContext.cos.getBucket({
-              Bucket: cosContext.bucket,
-              Region: cosContext.region,
-              Marker: marker,
-              MaxKeys: 1000,
-            }, (err, data) => err ? reject(err) : resolve(data));
+            cosContext.cos.getBucket(
+              {
+                Bucket: cosContext.bucket,
+                Region: cosContext.region,
+                Marker: marker,
+                MaxKeys: 1000,
+              },
+              (err, data) => (err ? reject(err) : resolve(data)),
+            );
           });
-          
+
           for (const item of data.Contents || []) {
             const size = parseInt(item.Size, 10) || 0;
             const ext = path.extname(item.Key).toLowerCase();
-            if (IMAGE_EXTS.has(ext)) { imageCount++; imageSize += size; }
-            else { fileCount++; fileSize += size; }
+            if (IMAGE_EXTS.has(ext)) {
+              imageCount++;
+              imageSize += size;
+            } else {
+              fileCount++;
+              fileSize += size;
+            }
           }
           isTruncated = data.IsTruncated === 'true';
           marker = data.NextMarker;
@@ -274,12 +327,15 @@ export class FilesService {
     while (isTruncated) {
       try {
         const data: any = await new Promise((resolve, reject) => {
-          cosContext.cos.getBucket({
-            Bucket: cosContext.bucket,
-            Region: cosContext.region,
-            Marker: marker,
-            MaxKeys: 1000,
-          }, (err, data) => err ? reject(err) : resolve(data));
+          cosContext.cos.getBucket(
+            {
+              Bucket: cosContext.bucket,
+              Region: cosContext.region,
+              Marker: marker,
+              MaxKeys: 1000,
+            },
+            (err, data) => (err ? reject(err) : resolve(data)),
+          );
         });
         for (const item of data.Contents || []) {
           allKeys.push(item.Key);
@@ -297,7 +353,9 @@ export class FilesService {
   /**
    * 批量删除 COS 中的对象（传入 key 数组）
    */
-  async deleteCosObjects(keys: string[]): Promise<{ deleted: number; failed: number }> {
+  async deleteCosObjects(
+    keys: string[],
+  ): Promise<{ deleted: number; failed: number }> {
     if (keys.length === 0) return { deleted: 0, failed: 0 };
     const cosContext = await this.getCosInstance();
     if (!cosContext) return { deleted: 0, failed: keys.length };
@@ -310,16 +368,22 @@ export class FilesService {
       const chunk = keys.slice(i, i + chunkSize);
       try {
         await new Promise<void>((resolve, reject) => {
-          cosContext.cos.deleteMultipleObject({
-            Bucket: cosContext.bucket,
-            Region: cosContext.region,
-            Objects: chunk.map(k => ({ Key: k })),
-          }, (err, data) => {
-            if (err) { reject(err); return; }
-            deleted += (data.Deleted || []).length;
-            failed += (data.Error || []).length;
-            resolve();
-          });
+          cosContext.cos.deleteMultipleObject(
+            {
+              Bucket: cosContext.bucket,
+              Region: cosContext.region,
+              Objects: chunk.map((k) => ({ Key: k })),
+            },
+            (err, data) => {
+              if (err) {
+                reject(err);
+                return;
+              }
+              deleted += (data.Deleted || []).length;
+              failed += (data.Error || []).length;
+              resolve();
+            },
+          );
         });
       } catch (e) {
         this.logger.error(`Batch delete failed for chunk starting at ${i}`, e);

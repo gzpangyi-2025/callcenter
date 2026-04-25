@@ -7,10 +7,10 @@ export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     // 如果未设置 @Permissions 验证，默认允许（或你可以选择默认拦截，当前配合系统保持放行）
     if (!requiredPermissions) {
@@ -18,7 +18,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    
+
     // 如果没有 user 或其不包含 role，拒绝访问 (例外：external 临时通行证有自己的鉴别)
     if (!user || !user.role) {
       return false;
@@ -27,7 +27,10 @@ export class PermissionsGuard implements CanActivate {
     // 针对外部用户的特殊处理
     if (user.role === 'external' || user.role.name === 'external') {
       // 外部用户仅允许查看工单（controller 内部会进一步校验 ticketId）或 BBS帖子
-      return requiredPermissions.includes('tickets:read') || requiredPermissions.includes('bbs:read');
+      return (
+        requiredPermissions.includes('tickets:read') ||
+        requiredPermissions.includes('bbs:read')
+      );
     }
 
     // ⭐ 超级管理员通行权
@@ -43,7 +46,7 @@ export class PermissionsGuard implements CanActivate {
       permissions.some((p: any) => {
         const pCode = p.code || `${p.resource}:${p.action}`;
         return pCode === requiredCode;
-      })
+      }),
     );
 
     return hasPermission;

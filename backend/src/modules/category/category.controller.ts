@@ -1,6 +1,11 @@
 import {
-  Controller, Get, Post, UseGuards, UseInterceptors,
-  UploadedFile, BadRequestException,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
@@ -24,7 +29,11 @@ export class CategoryController {
       throw new BadRequestException('请上传 Excel 文件');
     }
     const result = await this.categoryService.importFromExcel(file.buffer);
-    return { code: 0, message: `成功导入 ${result.imported} 条分类数据`, data: result };
+    return {
+      code: 0,
+      message: `成功导入 ${result.imported} 条分类数据`,
+      data: result,
+    };
   }
 
   /**

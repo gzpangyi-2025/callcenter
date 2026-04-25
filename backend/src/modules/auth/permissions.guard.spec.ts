@@ -11,7 +11,10 @@ describe('PermissionsGuard', () => {
     guard = new PermissionsGuard(reflector);
   });
 
-  const createMockContext = (user: any, permissions?: string[]): ExecutionContext => {
+  const createMockContext = (
+    user: any,
+    permissions?: string[],
+  ): ExecutionContext => {
     // Mock reflector to return the desired permissions
     if (permissions) {
       jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(permissions);
@@ -36,7 +39,10 @@ describe('PermissionsGuard', () => {
   };
 
   it('should allow access when no @Permissions() decorator is set', () => {
-    const context = createMockContext({ id: 1, role: { name: 'user' } }, undefined);
+    const context = createMockContext(
+      { id: 1, role: { name: 'user' } },
+      undefined,
+    );
     expect(guard.canActivate(context)).toBe(true);
   });
 
@@ -67,26 +73,23 @@ describe('PermissionsGuard', () => {
   });
 
   it('should allow external users only for tickets:read', () => {
-    const context = createMockContext(
-      { id: -1, role: { name: 'external' } },
-      ['tickets:read'],
-    );
+    const context = createMockContext({ id: -1, role: { name: 'external' } }, [
+      'tickets:read',
+    ]);
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it('should allow external users only for bbs:read', () => {
-    const context = createMockContext(
-      { id: -1, role: { name: 'external' } },
-      ['bbs:read'],
-    );
+    const context = createMockContext({ id: -1, role: { name: 'external' } }, [
+      'bbs:read',
+    ]);
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it('should deny external users for non-read permissions', () => {
-    const context = createMockContext(
-      { id: -1, role: { name: 'external' } },
-      ['tickets:delete'],
-    );
+    const context = createMockContext({ id: -1, role: { name: 'external' } }, [
+      'tickets:delete',
+    ]);
     expect(guard.canActivate(context)).toBe(false);
   });
 

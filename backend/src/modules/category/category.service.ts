@@ -38,7 +38,7 @@ export class CategoryService {
     // 批量写入
     if (categories.length > 0) {
       await this.categoryRepository.save(
-        categories.map(c => this.categoryRepository.create(c)),
+        categories.map((c) => this.categoryRepository.create(c)),
       );
     }
 
@@ -49,7 +49,9 @@ export class CategoryService {
    * 获取全部扁平记录
    */
   async findAll(): Promise<TicketCategory[]> {
-    return this.categoryRepository.find({ order: { level1: 'ASC', level2: 'ASC', level3: 'ASC' } });
+    return this.categoryRepository.find({
+      order: { level1: 'ASC', level2: 'ASC', level3: 'ASC' },
+    });
   }
 
   /**
@@ -61,7 +63,8 @@ export class CategoryService {
 
     for (const item of all) {
       if (!treeMap[item.level1]) treeMap[item.level1] = {};
-      if (!treeMap[item.level1][item.level2]) treeMap[item.level1][item.level2] = new Set();
+      if (!treeMap[item.level1][item.level2])
+        treeMap[item.level1][item.level2] = new Set();
       if (item.level3) treeMap[item.level1][item.level2].add(item.level3);
     }
 
@@ -69,7 +72,9 @@ export class CategoryService {
     for (const [l1, l2Map] of Object.entries(treeMap).sort()) {
       const children: any[] = [];
       for (const [l2, l3Set] of Object.entries(l2Map).sort()) {
-        const l3Children = [...l3Set].sort().map(l3 => ({ label: l3, value: l3 }));
+        const l3Children = [...l3Set]
+          .sort()
+          .map((l3) => ({ label: l3, value: l3 }));
         children.push({
           label: l2,
           value: l2,

@@ -22,13 +22,18 @@ export class SearchService implements OnModuleInit {
     @InjectRepository(Post) private postRepo: Repository<Post>,
     @InjectRepository(Ticket) private ticketRepo: Repository<Ticket>,
     @InjectRepository(Message) private messageRepo: Repository<Message>,
-    @InjectRepository(KnowledgeDoc) private knowledgeRepo: Repository<KnowledgeDoc>,
+    @InjectRepository(KnowledgeDoc)
+    private knowledgeRepo: Repository<KnowledgeDoc>,
   ) {}
 
   private getTextFieldMapping() {
     const isProd = process.env.NODE_ENV === 'production';
     if (isProd) {
-      return { type: 'text', analyzer: 'ik_max_word', search_analyzer: 'ik_smart' };
+      return {
+        type: 'text',
+        analyzer: 'ik_max_word',
+        search_analyzer: 'ik_smart',
+      };
     }
     return { type: 'text', analyzer: 'standard' };
   }
@@ -85,7 +90,9 @@ export class SearchService implements OnModuleInit {
       });
       this.logger.log('Elasticsearch indices ready.');
     } catch (e: any) {
-      this.logger.warn(`Elasticsearch 尚未配置或无法连接，全局搜索功能将受限: ${e.message}`);
+      this.logger.warn(
+        `Elasticsearch 尚未配置或无法连接，全局搜索功能将受限: ${e.message}`,
+      );
     }
   }
 
@@ -124,9 +131,13 @@ export class SearchService implements OnModuleInit {
 
   async removePost(id: number) {
     try {
-      await this.esService.delete({ index: this.INDICES.post, id: id.toString() });
+      await this.esService.delete({
+        index: this.INDICES.post,
+        id: id.toString(),
+      });
     } catch (e: any) {
-      if (e.meta?.statusCode !== 404) this.logger.warn(`Failed to remove post ${id}`, e);
+      if (e.meta?.statusCode !== 404)
+        this.logger.warn(`Failed to remove post ${id}`, e);
     }
   }
 
@@ -154,15 +165,21 @@ export class SearchService implements OnModuleInit {
 
   async removeTicket(id: number) {
     try {
-      await this.esService.delete({ index: this.INDICES.ticket, id: id.toString() });
+      await this.esService.delete({
+        index: this.INDICES.ticket,
+        id: id.toString(),
+      });
     } catch (e: any) {
-      if (e.meta?.statusCode !== 404) this.logger.warn(`Failed to remove ticket ${id}`, e);
+      if (e.meta?.statusCode !== 404)
+        this.logger.warn(`Failed to remove ticket ${id}`, e);
     }
   }
 
   async indexMessage(msg: Message) {
     if (msg.type !== 'text') {
-      this.logger.warn(`indexMessage: skipping non-text message #${msg.id}, type=${msg.type}`);
+      this.logger.warn(
+        `indexMessage: skipping non-text message #${msg.id}, type=${msg.type}`,
+      );
       return;
     }
     try {
@@ -173,21 +190,31 @@ export class SearchService implements OnModuleInit {
           type: 'message',
           content: msg.content,
           ticketId: msg.ticketId,
-          senderName: msg.sender?.realName || msg.sender?.username || '系统/外部',
+          senderName:
+            msg.sender?.realName || msg.sender?.username || '系统/外部',
           createdAt: msg.createdAt,
         },
       });
-      this.logger.debug(`indexMessage: successfully wrote message #${msg.id} to ES`);
+      this.logger.debug(
+        `indexMessage: successfully wrote message #${msg.id} to ES`,
+      );
     } catch (e: any) {
-      this.logger.error(`Failed to index message ${msg.id}: ${e.message}`, e.meta?.body || e.stack);
+      this.logger.error(
+        `Failed to index message ${msg.id}: ${e.message}`,
+        e.meta?.body || e.stack,
+      );
     }
   }
 
   async removeMessage(id: number) {
     try {
-      await this.esService.delete({ index: this.INDICES.message, id: id.toString() });
+      await this.esService.delete({
+        index: this.INDICES.message,
+        id: id.toString(),
+      });
     } catch (e: any) {
-      if (e.meta?.statusCode !== 404) this.logger.warn(`Failed to remove message ${id}`, e);
+      if (e.meta?.statusCode !== 404)
+        this.logger.warn(`Failed to remove message ${id}`, e);
     }
   }
 
@@ -210,9 +237,13 @@ export class SearchService implements OnModuleInit {
 
   async removeKnowledge(id: number) {
     try {
-      await this.esService.delete({ index: this.INDICES.knowledge, id: id.toString() });
+      await this.esService.delete({
+        index: this.INDICES.knowledge,
+        id: id.toString(),
+      });
     } catch (e: any) {
-      if (e.meta?.statusCode !== 404) this.logger.warn(`Failed to remove knowledge ${id}`, e);
+      if (e.meta?.statusCode !== 404)
+        this.logger.warn(`Failed to remove knowledge ${id}`, e);
     }
   }
 
@@ -230,7 +261,14 @@ export class SearchService implements OnModuleInit {
       query: {
         multi_match: {
           query,
-          fields: ['title^3', 'content', 'aiSummary', 'customerName', 'ticketNo', 'serviceNo'],
+          fields: [
+            'title^3',
+            'content',
+            'aiSummary',
+            'customerName',
+            'ticketNo',
+            'serviceNo',
+          ],
         },
       },
       highlight: {
@@ -241,7 +279,7 @@ export class SearchService implements OnModuleInit {
           content: {
             fragment_size: 150,
             number_of_fragments: 3,
-            no_match_size: 150
+            no_match_size: 150,
           },
           aiSummary: {},
         },
@@ -254,8 +292,8 @@ export class SearchService implements OnModuleInit {
 
     try {
       const res = await this.esService.search({ index, body });
-      
-      const hits = (res.hits.hits as any[]).map(hit => ({
+
+      const hits = (res.hits.hits as any[]).map((hit) => ({
         id: hit._id,
         _index: hit._index,
         ...hit._source,
@@ -280,7 +318,9 @@ export class SearchService implements OnModuleInit {
     let totalSynced = 0;
 
     // 1. Posts
-    const posts = await this.postRepo.find({ relations: ['section', 'author'] });
+    const posts = await this.postRepo.find({
+      relations: ['section', 'author'],
+    });
     for (const post of posts) {
       await this.indexPost(post);
       totalSynced++;
@@ -294,7 +334,10 @@ export class SearchService implements OnModuleInit {
     }
 
     // 3. Messages
-    const messages = await this.messageRepo.find({ relations: ['sender'], where: { type: 'text' as any } });
+    const messages = await this.messageRepo.find({
+      relations: ['sender'],
+      where: { type: 'text' as any },
+    });
     for (const msg of messages) {
       await this.indexMessage(msg);
       totalSynced++;

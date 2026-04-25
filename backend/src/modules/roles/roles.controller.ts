@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Param, Body, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
@@ -31,7 +39,10 @@ export class RolesController {
     @Param('id', ParseIntPipe) id: number,
     @Body('permissionIds') permissionIds: number[],
   ) {
-    const data = await this.rolesService.updateRolePermissions(id, permissionIds);
+    const data = await this.rolesService.updateRolePermissions(
+      id,
+      permissionIds,
+    );
     return { code: 0, message: '权限更新成功', data };
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -44,7 +48,8 @@ export class AuthService {
     const user = this.userRepository.create({
       ...registerDto,
       password: hashedPassword,
-      displayName: registerDto.displayName || registerDto.realName || registerDto.username,
+      displayName:
+        registerDto.displayName || registerDto.realName || registerDto.username,
       realName: registerDto.realName,
       roleId: defaultRole.id,
     });
@@ -64,7 +69,10 @@ export class AuthService {
       throw new UnauthorizedException('用户名或密码错误');
     }
 
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('用户名或密码错误');
     }
@@ -125,7 +133,11 @@ export class AuthService {
         email: user.email,
         avatar: user.avatar,
         role: user.role
-          ? { id: user.role.id, name: user.role.name, permissions: user.role.permissions || [] }
+          ? {
+              id: user.role.id,
+              name: user.role.name,
+              permissions: user.role.permissions || [],
+            }
           : null,
       },
     };
@@ -137,7 +149,11 @@ export class AuthService {
         secret: this.configService.get('JWT_SECRET'),
       });
 
-      if (!invitePayload || invitePayload.role !== 'external' || !invitePayload.ticketId) {
+      if (
+        !invitePayload ||
+        invitePayload.role !== 'external' ||
+        !invitePayload.ticketId
+      ) {
         throw new UnauthorizedException('无效的外链 Token');
       }
 
@@ -161,8 +177,8 @@ export class AuthService {
           username: nickname,
           displayName: nickname,
           ticketId: invitePayload.ticketId,
-          role: { id: -1, name: 'external' }
-        }
+          role: { id: -1, name: 'external' },
+        },
       };
     } catch (e) {
       throw new UnauthorizedException('无效的外链 Token 或验证失败');
@@ -175,7 +191,11 @@ export class AuthService {
         secret: this.configService.get('JWT_SECRET'),
       });
 
-      if (!invitePayload || invitePayload.role !== 'external_bbs' || !invitePayload.bbsId) {
+      if (
+        !invitePayload ||
+        invitePayload.role !== 'external_bbs' ||
+        !invitePayload.bbsId
+      ) {
         throw new UnauthorizedException('无效的外链 Token');
       }
 
@@ -199,8 +219,8 @@ export class AuthService {
           username: '匿名访客',
           displayName: '匿名访客',
           bbsId: invitePayload.bbsId,
-          role: { id: -1, name: 'external' }
-        }
+          role: { id: -1, name: 'external' },
+        },
       };
     } catch (e) {
       throw new UnauthorizedException('无效的外链 Token 或验证失败');

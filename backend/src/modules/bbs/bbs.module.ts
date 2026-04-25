@@ -13,7 +13,19 @@ import { ChatModule } from '../chat/chat.module';
 import { FilesModule } from '../files/files.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, PostComment, BbsSection, BbsTag, BbsSubscription]), SearchModule, AuthModule, ChatModule, FilesModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Post,
+      PostComment,
+      BbsSection,
+      BbsTag,
+      BbsSubscription,
+    ]),
+    SearchModule,
+    AuthModule,
+    ChatModule,
+    FilesModule,
+  ],
   controllers: [BbsController],
   providers: [BbsService],
 })

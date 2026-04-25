@@ -16,11 +16,20 @@ import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const isProd = process.env.NODE_ENV === 'production';
-        const node = configService.get(isProd ? 'ES_NODE_PROD' : 'ES_NODE') || 'http://localhost:9200';
-        const username = configService.get(isProd ? 'ES_USERNAME_PROD' : 'ES_USERNAME') || '';
-        const password = configService.get(isProd ? 'ES_PASSWORD_PROD' : 'ES_PASSWORD') || '';
-        const rejectUnauthorizedStr = configService.get(isProd ? 'ES_TLS_REJECT_UNAUTHORIZED_PROD' : 'ES_TLS_REJECT_UNAUTHORIZED') || 'true';
-        
+        const node =
+          configService.get(isProd ? 'ES_NODE_PROD' : 'ES_NODE') ||
+          'http://localhost:9200';
+        const username =
+          configService.get(isProd ? 'ES_USERNAME_PROD' : 'ES_USERNAME') || '';
+        const password =
+          configService.get(isProd ? 'ES_PASSWORD_PROD' : 'ES_PASSWORD') || '';
+        const rejectUnauthorizedStr =
+          configService.get(
+            isProd
+              ? 'ES_TLS_REJECT_UNAUTHORIZED_PROD'
+              : 'ES_TLS_REJECT_UNAUTHORIZED',
+          ) || 'true';
+
         return {
           node,
           auth: username && password ? { username, password } : undefined,

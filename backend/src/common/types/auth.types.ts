@@ -12,7 +12,12 @@ export interface AuthenticatedUser {
   role: {
     id: number;
     name: string;
-    permissions?: { id: number; code: string; resource: string; action: string }[];
+    permissions?: {
+      id: number;
+      code: string;
+      resource: string;
+      action: string;
+    }[];
   };
 }
 

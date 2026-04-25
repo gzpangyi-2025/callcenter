@@ -1,4 +1,15 @@
-import { Controller, Get, Put, Delete, Param, Body, Query, UseGuards, ParseIntPipe, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  ParseIntPipe,
+  Request,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
@@ -39,7 +50,11 @@ export class UsersController {
       return { code: -1, message: '原密码和新密码不能为空' };
     }
     const userId = req.user.sub || req.user.id;
-    await this.usersService.changePassword(userId, body.oldPassword, body.newPassword);
+    await this.usersService.changePassword(
+      userId,
+      body.oldPassword,
+      body.newPassword,
+    );
     return { code: 0, message: '密码修改成功' };
   }
 
@@ -64,7 +79,13 @@ export class UsersController {
   @Permissions('admin:access')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { displayName?: string; realName?: string; email?: string; phone?: string },
+    @Body()
+    body: {
+      displayName?: string;
+      realName?: string;
+      email?: string;
+      phone?: string;
+    },
   ) {
     const data = await this.usersService.updateUser(id, body);
     return { code: 0, message: '用户信息更新成功', data };

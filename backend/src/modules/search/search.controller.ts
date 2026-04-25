@@ -19,7 +19,7 @@ export class SearchController {
       query,
       type || 'all',
       parseInt(page, 10),
-      parseInt(pageSize, 10)
+      parseInt(pageSize, 10),
     );
   }
 

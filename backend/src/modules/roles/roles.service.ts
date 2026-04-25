@@ -46,7 +46,11 @@ export class RolesService {
     this.chatGateway.server.emit('permissionsUpdated', {
       roleId: role.id,
       roleName: role.name,
-      permissions: permissions.map(p => ({ id: p.id, resource: p.resource, action: p.action })),
+      permissions: permissions.map((p) => ({
+        id: p.id,
+        resource: p.resource,
+        action: p.action,
+      })),
     });
 
     return saved;

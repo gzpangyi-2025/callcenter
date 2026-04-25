@@ -1,6 +1,13 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
-  UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { Ticket } from './ticket.entity';

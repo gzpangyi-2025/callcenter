@@ -23,9 +23,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       // Handle class-validator messages which might be an array
-      if (typeof exceptionResponse === 'object' && exceptionResponse !== null && 'message' in exceptionResponse) {
+      if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'message' in exceptionResponse
+      ) {
         const msg = (exceptionResponse as any).message;
         message = Array.isArray(msg) ? msg.join(', ') : msg;
       } else {
@@ -36,10 +40,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exception.message;
       // Log the full stack trace for internal server errors
       if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-        this.logger.error(`Error processing request for ${request.url}: ${exception.stack}`);
+        this.logger.error(
+          `Error processing request for ${request.url}: ${exception.stack}`,
+        );
       }
     } else {
-      this.logger.error(`Unknown error processing request for ${request.url}: ${JSON.stringify(exception)}`);
+      this.logger.error(
+        `Unknown error processing request for ${request.url}: ${JSON.stringify(exception)}`,
+      );
     }
 
     // Format the standard response structure

@@ -1,5 +1,8 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
   ManyToMany,
 } from 'typeorm';
 import { Role } from './role.entity';
