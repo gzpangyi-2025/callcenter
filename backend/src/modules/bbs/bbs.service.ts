@@ -298,8 +298,10 @@ export class BbsService implements OnModuleInit {
       for (const c of comments) {
         filesToDelete.push(...BackupService.extractOssFilenames(c.content));
       }
-    } catch {
-      /* ignore */
+    } catch (err) {
+      this.logger.warn(
+        `Failed to scan comments for post ${id}: ${err instanceof Error ? err.message : 'unknown'}`,
+      );
     }
 
     await this.postRepository.remove(post);
@@ -345,8 +347,10 @@ export class BbsService implements OnModuleInit {
         for (const c of comments) {
           filesToDelete.push(...BackupService.extractOssFilenames(c.content));
         }
-      } catch {
-        /* ignore */
+      } catch (err) {
+        this.logger.warn(
+          `Failed to scan comments for post ${p.id}: ${err instanceof Error ? err.message : 'unknown'}`,
+        );
       }
     }
 

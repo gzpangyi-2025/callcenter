@@ -658,7 +658,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
             archive.append(buffer, {
               name: `attachments/${msg.fileName || internalFilename}`,
             });
-          } catch {}
+          } catch (err) {
+            this.logger.warn(
+              `Knowledge ZIP: failed to attach ${internalFilename}: ${err instanceof Error ? err.message : 'unknown'}`,
+            );
+          }
         }
       }
     }

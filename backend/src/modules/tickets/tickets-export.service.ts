@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
@@ -28,6 +29,8 @@ import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class TicketsExportService {
+  private readonly logger = new Logger(TicketsExportService.name);
+
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
@@ -206,8 +209,10 @@ export class TicketsExportService {
               }),
             );
             imageEmbedded = true;
-          } catch {
-            // 图片嵌入失败，降级为文本
+          } catch (err) {
+            this.logger.warn(
+              `Image embed failed for ${filename}: ${err instanceof Error ? err.message : 'unknown'}`,
+            );
           }
         }
       }
@@ -266,7 +271,11 @@ export class TicketsExportService {
           archive.append(fileBuffer, {
             name: `attachments/${msg.fileName || internalFilename}`,
           });
-        } catch {}
+        } catch (err) {
+          this.logger.warn(
+            `Attachment fetch failed for ${internalFilename}: ${err instanceof Error ? err.message : 'unknown'}`,
+          );
+        }
       }
     }
 
@@ -650,8 +659,10 @@ export class TicketsExportService {
               }),
             );
             imageEmbedded = true;
-          } catch {
-            // 图片嵌入失败，降级为文本
+          } catch (err) {
+            this.logger.warn(
+              `Report image embed failed for ${filename}: ${err instanceof Error ? err.message : 'unknown'}`,
+            );
           }
         }
       }

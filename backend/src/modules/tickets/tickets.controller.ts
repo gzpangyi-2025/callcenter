@@ -78,7 +78,7 @@ export class TicketsController {
 
   @Get('test-reload')
   @Permissions('admin:access')
-  async testReload() {
+  testReload() {
     return { code: 0, message: 'PM2 Reload Successful!' };
   }
 

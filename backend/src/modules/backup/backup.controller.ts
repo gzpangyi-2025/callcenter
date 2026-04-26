@@ -70,10 +70,7 @@ export class BackupController {
    */
   @Get('download/:filename')
   @Permissions('admin:access')
-  async downloadBackup(
-    @Param('filename') filename: string,
-    @Res() res: Response,
-  ) {
+  downloadBackup(@Param('filename') filename: string, @Res() res: Response) {
     const filePath = this.backupService.getBackupPath(filename);
     if (!filePath) {
       throw new NotFoundException('备份文件不存在');
