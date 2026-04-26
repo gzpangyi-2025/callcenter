@@ -53,7 +53,7 @@ export class InfraService {
       const eqIdx = trimmed.indexOf('=');
       if (eqIdx !== -1) {
         const key = trimmed.slice(0, eqIdx).trim();
-        if (updates.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(updates, key)) {
           updatedKeys.add(key);
           return `${key}=${updates[key]}`;
         }
@@ -91,9 +91,10 @@ export class InfraService {
         });
       }, 1000);
       return { success: true };
-    } catch (e: any) {
-      this.logger.error('Failed to schedule restart', e.message);
-      return { success: false, message: e.message };
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'unknown';
+      this.logger.error('Failed to schedule restart', msg);
+      return { success: false, message: msg };
     }
   }
 
@@ -125,8 +126,11 @@ export class InfraService {
         success: true,
         message: `连接成功！版本: ${info.version.number}, 集群: ${info.cluster_name}`,
       };
-    } catch (e: any) {
-      return { success: false, message: `连接失败: ${e.message}` };
+    } catch (e: unknown) {
+      return {
+        success: false,
+        message: `连接失败: ${e instanceof Error ? e.message : 'unknown'}`,
+      };
     }
   }
 
@@ -155,11 +159,14 @@ export class InfraService {
             resolve({ success: true, message: '连接成功！' });
             client.disconnect();
           })
-          .catch((e) => {
+          .catch((e: Error) => {
             resolve({ success: false, message: `连接失败: ${e.message}` });
           });
-      } catch (e: any) {
-        resolve({ success: false, message: `连接失败: ${e.message}` });
+      } catch (e: unknown) {
+        resolve({
+          success: false,
+          message: `连接失败: ${e instanceof Error ? e.message : 'unknown'}`,
+        });
       }
     });
   }
@@ -196,8 +203,11 @@ export class InfraService {
       await connection.end();
 
       return { success: true, message: '连接成功！' };
-    } catch (e: any) {
-      return { success: false, message: `连接失败: ${e.message}` };
+    } catch (e: unknown) {
+      return {
+        success: false,
+        message: `连接失败: ${e instanceof Error ? e.message : 'unknown'}`,
+      };
     }
   }
 }

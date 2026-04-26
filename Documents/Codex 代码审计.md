@@ -1,0 +1,23 @@
+::code-comment{title="[P0] 管理接口缺少服务端授权" body="这里的控制器只挂了 `AuthGuard('jwt')`，没有再做 `PermissionsGuard` 或管理员权限校验，因此任何拿到有效 JWT 的用户都能读取和修改系统配置。结合前端把这些能力当作后台管理员功能来展示，这会直接打穿业务权限边界，暴露 AI/COS/WebRTC 凭据并允许普通用户改系统配置。" file="/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/settings/settings.controller.ts" start=23 end=24 priority=0 confidence=0.99}
+::code-comment{title="[P0] Knowledge 权限注解未生效" body="这个控制器的方法写了大量 `@Permissions(...)`，但类上只使用了 `AuthGuard('jwt')`，没有 `PermissionsGuard`。结果是知识库的读写、导出和基于工单生成接口实际上只要求“已登录”，包括外链访客令牌在内的任意 JWT 都可以越权访问。" file="/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/knowledge/knowledge.controller.ts" start=19 end=20 priority=0 confidence=0.99}
+::code-comment{title="[P1] BBS 外链身份在 JWT 归一化时丢了 bbsId" body="BBS 外链登录签发的 token 带有 `bbsId`，但这里在处理 external 用户时只保留了 `ticketId`，没有把 `bbsId` 放回 `req.user`。后续帖子详情接口会用 `req.user.bbsId` 做鉴权，所以分享登录成功后仍然会被当成未授权，整条 BBS 外链链路会失效。" file="/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/jwt.strategy.ts" start=26 end=34 priority=1 confidence=0.98}
+::code-comment{title="[P1] 默认超管口令是硬编码的" body="启动时如果不存在 `admin` 用户，系统会自动创建 `admin / admin123`。这在开发环境还能勉强解释，但对一个带外链、注册和运维接口的系统来说，相当于长期保留了可预测的高权限入口，应该改成环境变量引导并强制首登改密。" file="/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/role-init.service.ts" start=93 end=114 priority=1 confidence=0.97}
+::code-comment{title="[P2] 未读角标计算存在明显 N+1 查询" body="这里先查出相关工单，再在循环里逐个对消息表做 `COUNT(*)`。该逻辑会在角标刷新时频繁触发，工单数量一上来就会把一次轻量状态查询放大成 N 次数据库往返，后面很容易变成慢接口和连接池压力点。" file="/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/tickets/tickets.service.ts" start=855 end=925 priority=2 confidence=0.91}
+
+**发现**
+- `P0` 后端把“后台权限”主要交给了前端菜单控制，而不是服务端。前端在 [App.tsx](/Users/yipang/Documents/Antigravity/callcenter/frontend/src/App.tsx:95) 明确把 `/admin`、知识库、报表做了 `RequirePermission` 限制，但后端的 [settings.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/settings/settings.controller.ts:23)、[infra.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/infrastructure/infra.controller.ts:6)、[backup.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/backup/backup.controller.ts:23) 只校验“是否登录”。再叠加开放注册的 [auth.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/auth.controller.ts:25)，任何新注册账号，甚至部分外链 JWT，都能读系统密钥、改 `.env`、重启服务、创建/恢复备份。这是当前项目最严重的问题，业务上也明显不合理。
+- `P0` 知识库和全局搜索的权限边界已经失效。[knowledge.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/knowledge/knowledge.controller.ts:19) 写了 `@Permissions` 但没挂 `PermissionsGuard`；[search.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/search/search.controller.ts:5) 甚至连权限注解都没有。因为真正限制 external 用户只能访问 `tickets:read` / `bbs:read` 的逻辑在 [permissions.guard.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/permissions.guard.ts:24)，跳过它以后，外链访客就可以直接搜全站 ES、读知识库、导出文档，和“分享链接只能访问单一对象”的业务假设冲突。
+- `P1` BBS 分享链路现在是坏的。[auth.service.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/auth.service.ts:188) 给 BBS 外链 token 写入的是 `bbsId`，前端 [BbsShared.tsx](/Users/yipang/Documents/Antigravity/callcenter/frontend/src/pages/BBS/BbsShared.tsx:23) 也依赖这个字段，但 [jwt.strategy.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/jwt.strategy.ts:27) 归一化 external 用户时没有把 `bbsId` 带出来，导致 [bbs.controller.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/bbs/bbs.controller.ts:98) 的鉴权永远失败。结果就是“登录成功，但帖子打不开”。
+- `P1` 默认超管账号是硬编码的 `admin / admin123`，见 [role-init.service.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/auth/role-init.service.ts:93)。单看这一点已经危险，和上面的开放注册、后台接口缺少服务端授权叠加后，风险会更高。
+- `P2` 代码质量和可维护性基线偏弱。最典型的是 [tickets.service.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/src/modules/tickets/tickets.service.ts:855) 的未读角标计算，按工单逐个 `COUNT(*)`，是典型 N+1；测试里 [app.e2e-spec.ts](/Users/yipang/Documents/Antigravity/callcenter/backend/test/app.e2e-spec.ts:7) 还是 Nest 模板自带的 `Hello World`，对控制器装配和权限组合几乎没有保护，难怪前面的守卫遗漏没有被拦住。
+
+**假设**
+- 我默认这是一个内部工单中台，`settings / infra / backup` 应该只允许管理员操作。
+- 我也默认“外链访客只能访问被分享的单个工单或帖子”是硬约束，而不是可选体验。
+
+**结论**
+工单主状态机本身是顺的：`pending -> in_progress -> closing -> closed`，房间锁定、邀请参与、聊天留痕这些业务动作也大体自洽。真正不合理的地方不在主流程，而在权限边界远比业务边界宽，导致“谁能看什么、谁能改什么”这件事几乎靠前端自觉。
+
+自动化检查方面，`backend npm test` 通过了 `3` 个 suite / `28` 个测试，前后端 `build` 都能过；但 `backend npm run lint` 有 `793` 个问题（`662` error / `131` warning），`frontend npm run lint` 有 `619` 个问题（`604` error / `15` warning）。这说明项目目前更像“功能可跑”，还没到“质量稳定可控”。
+
+下一步最值得先收的，不是重构页面，而是先补齐后端权限守卫，修掉 BBS 外链，再把默认超管口令和开放注册策略收紧。

@@ -36,6 +36,29 @@ interface AuthenticatedRemoteSocket {
   leave: (room: string) => void;
 }
 
+/** JWT payload decoded from token */
+interface JwtTokenPayload {
+  sub: number;
+  username: string;
+  role: string;
+  ticketId?: number;
+  bbsId?: number;
+}
+
+/** WebRTC SDP description (offer/answer) */
+interface RTCSessionDescriptionInit {
+  type: 'offer' | 'answer';
+  sdp: string;
+}
+
+/** WebRTC ICE candidate */
+interface RTCIceCandidateInit {
+  candidate: string;
+  sdpMid?: string | null;
+  sdpMLineIndex?: number | null;
+  usernameFragment?: string | null;
+}
+
 @WebSocketGateway({
   cors: {
     origin: process.env.CORS_ORIGIN
@@ -84,7 +107,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
 
-      const payload = this.jwtService.verify(token, {
+      const payload = this.jwtService.verify<JwtTokenPayload>(token, {
         secret: this.configService.get('JWT_SECRET'),
       });
 
@@ -507,7 +530,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       senderId: parsedUserId,
       senderName: username, // 始终保存发送者名称（对外部用户尤为关键）
       content: data.content,
-      type: (data.type as any) || 'text',
+      type:
+        (data.type as import('../../entities/message.entity').MessageType) ||
+        'text',
       fileUrl: data.fileUrl,
       fileName: data.fileName,
       fileSize: data.fileSize,
@@ -574,8 +599,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         messageId: data.messageId,
         ticketId: data.ticketId,
       });
-    } catch (err: any) {
-      client.emit('recallError', { message: err.message || '撤回失败' });
+    } catch (err: unknown) {
+      client.emit('recallError', {
+        message: err instanceof Error ? err.message : '撤回失败',
+      });
     }
   }
 
@@ -622,7 +649,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('screenShare:offer')
   handleScreenShareOffer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; sdp: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
     const fromId = (client as AuthenticatedSocket).userId;
     this.logger.debug(
@@ -638,7 +666,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('screenShare:answer')
   handleScreenShareAnswer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; sdp: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
     this.server.to(`user_${data.to}`).emit('screenShare:answer', {
       ticketId: data.ticketId,
@@ -650,7 +679,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('screenShare:ice')
   handleScreenShareIce(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; candidate: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; candidate: RTCIceCandidateInit; to: number },
   ) {
     this.server.to(`user_${data.to}`).emit('screenShare:ice', {
       ticketId: data.ticketId,
@@ -739,7 +769,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('voice:offer')
   handleVoiceOffer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; sdp: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
     const fromId = (client as AuthenticatedSocket).userId;
     this.logger.debug(
@@ -755,7 +786,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('voice:answer')
   handleVoiceAnswer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; sdp: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
     this.server.to(`user_${data.to}`).emit('voice:answer', {
       ticketId: data.ticketId,
@@ -767,7 +799,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('voice:ice')
   handleVoiceIce(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { ticketId: number; candidate: any; to: number },
+    @MessageBody()
+    data: { ticketId: number; candidate: RTCIceCandidateInit; to: number },
   ) {
     this.server.to(`user_${data.to}`).emit('voice:ice', {
       ticketId: data.ticketId,

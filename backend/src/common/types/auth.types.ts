@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   username: string;
   realName?: string;
   displayName?: string;
+  ticketId?: number;
+  bbsId?: number;
   role: {
     id: number;
     name: string;

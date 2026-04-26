@@ -22,11 +22,13 @@ import { TicketsService } from './tickets.service';
 import { TicketsExportService } from './tickets-export.service';
 import { CreateTicketDto, UpdateTicketDto } from './dto/ticket.dto';
 import { TicketStatus } from '../../entities/ticket.entity';
-import type { AuthenticatedUser } from '../../common/types/auth.types';
+import type {
+  AuthenticatedUser,
+  AuthenticatedRequest,
+} from '../../common/types/auth.types';
 
 /** 从 Express Request 中提取经过 JWT 认证的用户信息 */
-const getUser = (req: { user?: unknown }): AuthenticatedUser =>
-  req.user as AuthenticatedUser;
+const getUser = (req: AuthenticatedRequest): AuthenticatedUser => req.user;
 
 @Controller('tickets')
 @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
@@ -38,7 +40,10 @@ export class TicketsController {
 
   @Post()
   @Permissions('tickets:create')
-  async create(@Body() createDto: CreateTicketDto, @Req() req: any) {
+  async create(
+    @Body() createDto: CreateTicketDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
     const ticket = await this.ticketsService.create(createDto, getUser(req).id);
     return { code: 0, message: '工单创建成功', data: ticket };
   }
@@ -115,7 +120,7 @@ export class TicketsController {
 
   @Get('my/badges')
   @Permissions('tickets:read')
-  async getMyBadges(@Req() req: any) {
+  async getMyBadges(@Req() req: AuthenticatedRequest) {
     const data = await this.ticketsService.getMyBadges(getUser(req).id);
     return { code: 0, data };
   }
@@ -132,7 +137,7 @@ export class TicketsController {
 
   @Get('my/created')
   @Permissions('tickets:read')
-  async myCreated(@Req() req: any) {
+  async myCreated(@Req() req: AuthenticatedRequest) {
     const tickets = await this.ticketsService.getMyTickets(
       getUser(req).id,
       'creator',
@@ -142,7 +147,7 @@ export class TicketsController {
 
   @Get('my/assigned')
   @Permissions('tickets:read')
-  async myAssigned(@Req() req: any) {
+  async myAssigned(@Req() req: AuthenticatedRequest) {
     const tickets = await this.ticketsService.getMyTickets(
       getUser(req).id,
       'assignee',
@@ -152,7 +157,7 @@ export class TicketsController {
 
   @Get('my/participated')
   @Permissions('tickets:read')
-  async myParticipated(@Req() req: any) {
+  async myParticipated(@Req() req: AuthenticatedRequest) {
     const tickets = await this.ticketsService.getMyTickets(
       getUser(req).id,
       'participant',
@@ -162,7 +167,10 @@ export class TicketsController {
 
   @Get(':id')
   @Permissions('tickets:read')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     if (getUser(req).role?.name === 'external' && req.user.ticketId !== id) {
       throw new ForbiddenException('外部用户无权访问此工单');
     }
@@ -182,7 +190,7 @@ export class TicketsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: UpdateTicketDto,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const ticket = await this.ticketsService.update(
       id,
@@ -194,7 +202,10 @@ export class TicketsController {
 
   @Post(':id/read')
   @Permissions('tickets:read')
-  async readTicket(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async readTicket(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     if (typeof getUser(req).id === 'string') {
       return { code: 0, message: 'external user skipped' };
     }
@@ -204,28 +215,40 @@ export class TicketsController {
 
   @Post(':id/assign')
   @Permissions('tickets:assign')
-  async assign(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async assign(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     const ticket = await this.ticketsService.assign(id, getUser(req).id);
     return { code: 0, message: '接单成功', data: ticket };
   }
 
   @Post(':id/request-close')
   @Permissions('tickets:assign')
-  async requestClose(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async requestClose(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     const ticket = await this.ticketsService.requestClose(id, getUser(req).id);
     return { code: 0, message: '已申请关单，等待创建者确认', data: ticket };
   }
 
   @Post(':id/confirm-close')
   @Permissions('tickets:read')
-  async confirmClose(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async confirmClose(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     const ticket = await this.ticketsService.confirmClose(id, getUser(req).id);
     return { code: 0, message: '工单已关闭', data: ticket };
   }
 
   @Delete('batch')
   @Permissions('tickets:delete')
-  async deleteBatch(@Body('ids') ids: number[], @Req() req: any) {
+  async deleteBatch(
+    @Body('ids') ids: number[],
+    @Req() req: AuthenticatedRequest,
+  ) {
     if (!Array.isArray(ids) || ids.length === 0) {
       return { code: -1, message: '请求参数错误，未提供有效的 IDs' };
     }
@@ -235,7 +258,10 @@ export class TicketsController {
 
   @Delete(':id')
   @Permissions('tickets:delete')
-  async deleteTicket(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+  async deleteTicket(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ) {
     await this.ticketsService.deleteTicket(id, getUser(req));
     return { code: 0, message: '工单已删除' };
   }
@@ -244,7 +270,7 @@ export class TicketsController {
   @Permissions('tickets:share')
   async generateShareLink(
     @Param('id', ParseIntPipe) id: number,
-    @Req() _req: any,
+    @Req() _req: AuthenticatedRequest,
   ) {
     const token = await this.ticketsService.generateShareToken(id);
     return { code: 0, message: '分享外链生成成功', data: { token } };
@@ -255,7 +281,7 @@ export class TicketsController {
   async inviteParticipant(
     @Param('id', ParseIntPipe) id: number,
     @Body('userId') targetUserId: number,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const ticket = await this.ticketsService.inviteParticipant(
       id,
@@ -270,7 +296,7 @@ export class TicketsController {
   async removeParticipant(
     @Param('id', ParseIntPipe) id: number,
     @Param('userId', ParseIntPipe) targetUserId: number,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const ticket = await this.ticketsService.removeParticipant(
       id,
@@ -285,7 +311,7 @@ export class TicketsController {
   async toggleRoomLock(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { locked: boolean; disableExternal?: boolean },
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const ticket = await this.ticketsService.toggleRoomLock(
       id,
@@ -304,7 +330,7 @@ export class TicketsController {
   @Permissions('tickets:read')
   async exportChatZip(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Res() res: Response,
   ) {
     if (getUser(req).role?.name === 'external') {
@@ -322,7 +348,7 @@ export class TicketsController {
   @Permissions('tickets:read')
   async exportReport(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Res() res: Response,
   ) {
     if (getUser(req).role?.name === 'external') {

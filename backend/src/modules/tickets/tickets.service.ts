@@ -23,6 +23,24 @@ import { Message } from '../../entities/message.entity';
 import { AuthenticatedUser } from '../../common/types/auth.types';
 import { BackupService } from '../backup/backup.service';
 
+/** Raw SQL result interfaces for getRawMany() */
+interface AggregateValueRaw {
+  value: string;
+  count: string;
+}
+
+interface AggregateUserRaw {
+  value: string;
+  realName: string;
+  username: string;
+  count: string;
+}
+
+interface UnreadCountRaw {
+  ticketId: number;
+  unreadCount: string;
+}
+
 @Injectable()
 export class TicketsService {
   private readonly logger = new Logger(TicketsService.name);
@@ -117,9 +135,7 @@ export class TicketsService {
     });
 
     const saved = await this.ticketRepository.save(ticket);
-    const fullTicket = await this.findOne(
-      (saved as any).id || (saved as any)[0]?.id,
-    );
+    const fullTicket = await this.findOne(saved.id ?? saved.id);
     this.broadcastTicketEvent('created', fullTicket, userId);
 
     // 审计：工单创建
@@ -361,10 +377,10 @@ export class TicketsService {
       .groupBy('assignee.id');
 
     const [categories, customers, creators, assignees] = await Promise.all([
-      categoriesQb.getRawMany(),
-      customersQb.getRawMany(),
-      creatorsQb.getRawMany(),
-      assigneesQb.getRawMany(),
+      categoriesQb.getRawMany<AggregateValueRaw>(),
+      customersQb.getRawMany<AggregateValueRaw>(),
+      creatorsQb.getRawMany<AggregateUserRaw>(),
+      assigneesQb.getRawMany<AggregateUserRaw>(),
     ]);
 
     return {
@@ -896,7 +912,7 @@ export class TicketsService {
       .andWhere('(msg.senderId IS NULL OR msg.senderId != :userId)')
       .andWhere('msg.id > COALESCE(state.lastReadMessageId, 0)')
       .groupBy('msg.ticketId')
-      .getRawMany();
+      .getRawMany<UnreadCountRaw>();
 
     for (const raw of unreadCountsRaw) {
       const count = parseInt(raw.unreadCount, 10);
