@@ -14,6 +14,7 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuditService } from '../audit/audit.service';
 import { AuditType } from '../../entities/audit-log.entity';
+import * as express from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -25,8 +26,8 @@ export class AuthController {
   @Post('register')
   async register(
     @Body() registerDto: RegisterDto,
-    @Req() req: any,
-    @Res() res: any,
+    @Req() req: express.Request,
+    @Res() res: express.Response,
   ) {
     const result = await this.authService.register(registerDto);
 
@@ -50,9 +51,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto, @Req() req: any, @Res() res: any) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ) {
     const ip =
-      req.headers['x-forwarded-for'] ||
+      (req.headers['x-forwarded-for'] as string) ||
       req.ip ||
       req.socket?.remoteAddress ||
       null;
@@ -85,13 +90,13 @@ export class AuthController {
           user: result.user,
         },
       });
-    } catch (err) {
-      // 审计：登录失败
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : '密码错误';
       void this.auditService.log({
         type: AuditType.USER_LOGIN,
         action: 'login_failed',
         username: loginDto.username,
-        detail: `用户 ${loginDto.username} 登录失败: ${err.message || '密码错误'}`,
+        detail: `用户 ${loginDto.username} 登录失败: ${errMsg}`,
         ip,
       });
       throw err;
@@ -100,8 +105,9 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(@Req() req: any, @Res() res: any) {
-    const refreshToken = req.cookies?.refreshToken;
+  async refresh(@Req() req: express.Request, @Res() res: express.Response) {
+    const refreshToken = (req as express.Request & { cookies?: Record<string, string> })
+      .cookies?.refreshToken;
     if (!refreshToken) {
       return res.status(HttpStatus.UNAUTHORIZED).json({
         code: -1,
@@ -131,27 +137,27 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Res() res: any) {
+  async logout(@Res() res: express.Response) {
     res.clearCookie('refreshToken', { path: '/api/auth' });
     return res.json({ code: 0, message: '退出成功' });
   }
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  async getProfile(@Req() req: any) {
-    return { code: 0, data: req.user };
+  async getProfile(@Req() req: express.Request) {
+    return { code: 0, data: (req as express.Request & { user: unknown }).user };
   }
 
   @Post('external/login')
   async externalLogin(
     @Body() body: { ticketToken: string; nickname: string },
-    @Req() req: any,
+    @Req() req: express.Request,
   ) {
     if (!body.ticketToken || !body.nickname) {
       return { code: -1, message: '缺少 token 或昵称参数' };
     }
     const ip =
-      req.headers['x-forwarded-for'] ||
+      (req.headers['x-forwarded-for'] as string) ||
       req.ip ||
       req.socket?.remoteAddress ||
       null;
@@ -174,12 +180,12 @@ export class AuthController {
   }
 
   @Post('external/bbs-login')
-  async bbsExternalLogin(@Body() body: { token: string }, @Req() req: any) {
+  async bbsExternalLogin(@Body() body: { token: string }, @Req() req: express.Request) {
     if (!body.token) {
       return { code: -1, message: '缺少 token 参数' };
     }
     const ip =
-      req.headers['x-forwarded-for'] ||
+      (req.headers['x-forwarded-for'] as string) ||
       req.ip ||
       req.socket?.remoteAddress ||
       null;

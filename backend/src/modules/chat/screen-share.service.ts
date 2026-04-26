@@ -17,11 +17,7 @@ export class ScreenShareService {
   >();
 
   /** 开始屏幕共享 */
-  startShare(
-    roomName: string,
-    userId: number,
-    userName: string,
-  ): void {
+  startShare(roomName: string, userId: number, userName: string): void {
     this.activeSharers.set(roomName, { userId, userName });
     this.logger.log(
       `[屏幕共享] 用户 ${userName} (${userId}) 在 ${roomName} 发起屏幕共享`,

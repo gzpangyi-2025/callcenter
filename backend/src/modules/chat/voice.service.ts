@@ -22,7 +22,10 @@ export class VoiceService {
     userId: number,
     userName: string,
     maxParticipants: number,
-  ): { status: 'ok' | 'duplicate' | 'full'; existingParticipants: { userId: number; userName: string }[] } {
+  ): {
+    status: 'ok' | 'duplicate' | 'full';
+    existingParticipants: { userId: number; userName: string }[];
+  } {
     let participants = this.activeVoiceRooms.get(roomName);
     if (!participants) {
       participants = new Map();
@@ -58,9 +61,7 @@ export class VoiceService {
     const participants = this.activeVoiceRooms.get(roomName);
     if (participants) {
       participants.delete(userId);
-      this.logger.log(
-        `[语音通话] 用户 ${userId} 离开 ${roomName} 的语音通话`,
-      );
+      this.logger.log(`[语音通话] 用户 ${userId} 离开 ${roomName} 的语音通话`);
       if (participants.size === 0) {
         this.activeVoiceRooms.delete(roomName);
       }

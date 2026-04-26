@@ -1,9 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Ticket } from '../../entities/ticket.entity';
 import { User } from '../../entities/user.entity';
 import * as XLSX from 'xlsx';
+
+// ── Raw query result interfaces ──
+interface StatusCountRaw {
+  status: string;
+  count: string;
+}
+interface CategoryRaw {
+  category1?: string;
+  category2?: string;
+  category3?: string;
+  total: string;
+}
+interface AvgHoursRaw {
+  avgHours: string | null;
+}
+interface UserCountRaw {
+  userId: string;
+  count: string;
+}
+interface CustomerRaw {
+  customerName: string;
+  total: string;
+  closed: string;
+  active: string;
+}
+interface TimeSeriesRaw {
+  date: string;
+  count: string;
+}
+interface UserInfo {
+  username: string;
+  realName?: string;
+  displayName?: string;
+}
 
 @Injectable()
 export class ReportService {
@@ -15,7 +49,7 @@ export class ReportService {
   ) {}
 
   private applyDateFilter(
-    qb: any,
+    qb: SelectQueryBuilder<Ticket>,
     alias: string,
     startDate?: string,
     endDate?: string,
@@ -47,7 +81,9 @@ export class ReportService {
       .select('t.status', 'status')
       .addSelect('COUNT(*)', 'count');
     this.applyDateFilter(statusQb, 't', startDate, endDate);
-    const statusData = await statusQb.groupBy('t.status').getRawMany();
+    const statusData: StatusCountRaw[] = await statusQb
+      .groupBy('t.status')
+      .getRawMany();
 
     const statusMap: Record<string, number> = {};
     for (const r of statusData) {
@@ -61,7 +97,7 @@ export class ReportService {
       .where('t.status = :status', { status: 'closed' })
       .andWhere('t.closedAt IS NOT NULL');
     this.applyDateFilter(avgQb, 't', startDate, endDate);
-    const avgResult = await avgQb.getRawOne();
+    const avgResult: AvgHoursRaw | undefined = await avgQb.getRawOne();
 
     return {
       total,
@@ -86,7 +122,7 @@ export class ReportService {
       .where('t.category1 IS NOT NULL')
       .andWhere('t.category1 != ""');
     this.applyDateFilter(qb1, 't', startDate, endDate);
-    const category1Data = await qb1
+    const category1Data: CategoryRaw[] = await qb1
       .groupBy('t.category1')
       .orderBy('total', 'DESC')
       .getRawMany();
@@ -98,18 +134,18 @@ export class ReportService {
       .where('t.category2 IS NOT NULL')
       .andWhere('t.category2 != ""');
     this.applyDateFilter(qb2, 't', startDate, endDate);
-    const category2Data = await qb2
+    const category2Data: CategoryRaw[] = await qb2
       .groupBy('t.category2')
       .orderBy('total', 'DESC')
       .limit(10)
       .getRawMany();
 
     return {
-      category1: category1Data.map((r) => ({
+      category1: category1Data.map((r: CategoryRaw) => ({
         name: r.category1,
         value: parseInt(r.total),
       })),
-      category2: category2Data.map((r) => ({
+      category2: category2Data.map((r: CategoryRaw) => ({
         name: r.category2,
         value: parseInt(r.total),
       })),
@@ -132,12 +168,12 @@ export class ReportService {
       .andWhere('t.category2 IS NOT NULL')
       .andWhere('t.category2 != ""');
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb
+    const data: CategoryRaw[] = await qb
       .groupBy('t.category2')
       .orderBy('total', 'DESC')
       .getRawMany();
 
-    return data.map((r) => ({
+    return data.map((r: CategoryRaw) => ({
       name: r.category2,
       value: parseInt(r.total),
     }));
@@ -159,13 +195,13 @@ export class ReportService {
       .andWhere('t.category3 IS NOT NULL')
       .andWhere('t.category3 != ""');
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb
+    const data: CategoryRaw[] = await qb
       .groupBy('t.category3')
       .orderBy('total', 'DESC')
       .limit(5)
       .getRawMany();
 
-    return data.map((r) => ({
+    return data.map((r: CategoryRaw) => ({
       name: r.category3,
       value: parseInt(r.total),
     }));
@@ -183,7 +219,7 @@ export class ReportService {
       .where('t.assigneeId IS NOT NULL');
     this.applyDateFilter(assignQb, 't', startDate, endDate);
     if (limit) assignQb.limit(limit);
-    const assignData = await assignQb
+    const assignData: UserCountRaw[] = await assignQb
       .groupBy('t.assigneeId')
       .orderBy('count', 'DESC')
       .getRawMany();
@@ -196,7 +232,7 @@ export class ReportService {
       .where('t.creatorId IS NOT NULL');
     this.applyDateFilter(createQb, 't', startDate, endDate);
     if (limit) createQb.limit(limit);
-    const createData = await createQb
+    const createData: UserCountRaw[] = await createQb
       .groupBy('t.creatorId')
       .orderBy('count', 'DESC')
       .getRawMany();
@@ -209,7 +245,7 @@ export class ReportService {
       .addSelect('COUNT(*)', 'count');
     this.applyDateFilter(participateQb, 't', startDate, endDate);
     if (limit) participateQb.limit(limit);
-    const participateData = await participateQb
+    const participateData: UserCountRaw[] = await participateQb
       .groupBy('tp.userId')
       .orderBy('count', 'DESC')
       .getRawMany();
@@ -220,7 +256,7 @@ export class ReportService {
       allIds.add(parseInt(r.userId));
     }
 
-    const usersMap: Record<number, any> = {};
+    const usersMap: Record<number, UserInfo> = {};
     if (allIds.size > 0) {
       const users = await this.userRepository
         .createQueryBuilder('u')
@@ -236,7 +272,7 @@ export class ReportService {
       }
     }
 
-    const mapRow = (r: any) => ({
+    const mapRow = (r: UserCountRaw) => ({
       userId: parseInt(r.userId),
       count: parseInt(r.count),
       username: usersMap[parseInt(r.userId)]?.username || '-',
@@ -272,12 +308,12 @@ export class ReportService {
       .where('t.customerName IS NOT NULL')
       .andWhere("t.customerName != ''");
     this.applyDateFilter(qb, 't', startDate, endDate);
-    const data = await qb
+    const data: CustomerRaw[] = await qb
       .groupBy('t.customerName')
       .orderBy('total', 'DESC')
       .getRawMany();
 
-    return data.map((r) => ({
+    return data.map((r: CustomerRaw) => ({
       customerName: r.customerName,
       total: parseInt(r.total),
       closed: parseInt(r.closed),
@@ -325,7 +361,7 @@ export class ReportService {
       .groupBy(`${dateExpr}`)
       .orderBy('MIN(t.createdAt)', 'ASC');
 
-    const data = await qb.getRawMany();
+    const data: TimeSeriesRaw[] = await qb.getRawMany();
 
     return data.map((r) => ({
       date: String(r.date),
@@ -358,7 +394,7 @@ export class ReportService {
       assignQb.andWhere('t.category2 = :parentCategory', { parentCategory });
     }
     this.applyDateFilter(assignQb, 't', startDate, endDate);
-    const assignData = await assignQb
+    const assignData: UserCountRaw[] = await assignQb
       .groupBy('t.assigneeId')
       .orderBy('count', 'DESC')
       .limit(limit)
@@ -375,7 +411,7 @@ export class ReportService {
       createQb.andWhere('t.category2 = :parentCategory', { parentCategory });
     }
     this.applyDateFilter(createQb, 't', startDate, endDate);
-    const createData = await createQb
+    const createData: UserCountRaw[] = await createQb
       .groupBy('t.creatorId')
       .orderBy('count', 'DESC')
       .limit(limit)
@@ -386,7 +422,7 @@ export class ReportService {
       allIds.add(parseInt(r.userId));
     }
 
-    const usersMap: Record<number, any> = {};
+    const usersMap: Record<number, UserInfo> = {};
     if (allIds.size > 0) {
       const users = await this.userRepository
         .createQueryBuilder('u')
@@ -402,7 +438,7 @@ export class ReportService {
       }
     }
 
-    const mapRow = (r: any) => ({
+    const mapRow = (r: UserCountRaw) => ({
       userId: parseInt(r.userId),
       count: parseInt(r.count),
       username: usersMap[parseInt(r.userId)]?.username || '-',
@@ -508,7 +544,7 @@ export class ReportService {
       other: '其他',
     };
 
-    const formatDate = (d: any) =>
+    const formatDate = (d: Date | string | null | undefined) =>
       d
         ? new Date(d).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
         : '';

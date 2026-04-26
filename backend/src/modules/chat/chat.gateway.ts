@@ -360,7 +360,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       .fetchSockets()
       .then((sockets) => {
         for (const s of sockets) {
-          if ((s as unknown as AuthenticatedRemoteSocket).userId === targetUserId) {
+          if (
+            (s as unknown as AuthenticatedRemoteSocket).userId === targetUserId
+          ) {
             s.leave(roomName);
           }
         }
@@ -689,7 +691,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const maxStr = await this.settingsService.get('voice_maxParticipants');
     const maxParticipants = maxStr ? parseInt(maxStr, 10) : 6;
 
-    const result = this.voiceService.joinVoice(roomName, userId, userName, maxParticipants);
+    const result = this.voiceService.joinVoice(
+      roomName,
+      userId,
+      userName,
+      maxParticipants,
+    );
 
     if (result.status === 'full') {
       client.emit('voice:rejected', {

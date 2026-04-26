@@ -158,7 +158,10 @@ export class BbsController {
 
   @Get('posts/:id')
   @Permissions('bbs:read')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req: { user?: unknown }) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
     const user = getUser(req);
     if (user.role?.name === 'external') {
       // 外部用户仅能查看被分享的帖子（bbsId 保存在 JWT payload 中）
@@ -192,16 +195,22 @@ export class BbsController {
     @Request() req: { user?: unknown },
   ) {
     const user = getUser(req);
-    return this.bbsService.update(id, body, user.id, canBypassOwnership(user, 'bbs:edit'));
+    return this.bbsService.update(
+      id,
+      body,
+      user.id,
+      canBypassOwnership(user, 'bbs:edit'),
+    );
   }
 
   @Delete('posts/batch')
-  batchRemove(
-    @Body('ids') ids: number[],
-    @Request() req: { user?: unknown },
-  ) {
+  batchRemove(@Body('ids') ids: number[], @Request() req: { user?: unknown }) {
     const user = getUser(req);
-    return this.bbsService.batchRemove(ids, user.id, canBypassOwnership(user, 'bbs:delete'));
+    return this.bbsService.batchRemove(
+      ids,
+      user.id,
+      canBypassOwnership(user, 'bbs:delete'),
+    );
   }
 
   @Delete('posts/:id')
@@ -210,7 +219,11 @@ export class BbsController {
     @Request() req: { user?: unknown },
   ) {
     const user = getUser(req);
-    return this.bbsService.remove(id, user.id, canBypassOwnership(user, 'bbs:delete'));
+    return this.bbsService.remove(
+      id,
+      user.id,
+      canBypassOwnership(user, 'bbs:delete'),
+    );
   }
 
   @Put('posts/:id/pin')
