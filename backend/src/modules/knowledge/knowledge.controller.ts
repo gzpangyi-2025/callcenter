@@ -16,6 +16,7 @@ import { KnowledgeService } from './knowledge.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from '../auth/permissions.decorator';
 import { PermissionsGuard } from '../auth/permissions.guard';
+import type { AuthenticatedUser } from '../../common/types/auth.types';
 
 @Controller('knowledge')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -54,7 +55,7 @@ export class KnowledgeController {
         message: '已经导出过聊天记录，正在为您跳转',
       };
     }
-    const user = req.user as any;
+    const user = req.user as AuthenticatedUser;
     const exporterName =
       user?.realName || user?.displayName || user?.username || 'System';
     const doc = await this.knowledgeService.exportChatHistory(
@@ -66,14 +67,29 @@ export class KnowledgeController {
 
   @Post()
   @Permissions('knowledge:manage')
-  async saveKnowledge(@Body() body: any) {
+  async saveKnowledge(
+    @Body()
+    body: {
+      ticketId: number;
+      title: string;
+      content: string;
+      tags?: string;
+      category?: string;
+      severity?: string;
+      analysisImgUrl?: string;
+      flowImgUrl?: string;
+    },
+  ) {
     const doc = await this.knowledgeService.saveKnowledge(body);
     return { code: 0, data: doc, message: '知识文档保存成功' };
   }
 
   @Put(':id')
   @Permissions('knowledge:manage')
-  async updateKnowledge(@Param('id') id: string, @Body() body: any) {
+  async updateKnowledge(
+    @Param('id') id: string,
+    @Body() body: { content: string; title?: string; tags?: string },
+  ) {
     const doc = await this.knowledgeService.updateKnowledge(
       +id,
       body.content,

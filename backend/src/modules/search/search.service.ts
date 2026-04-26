@@ -4,8 +4,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from '../../entities/post.entity';
 import { Ticket } from '../../entities/ticket.entity';
-import { Message } from '../../entities/message.entity';
+import { Message, MessageType } from '../../entities/message.entity';
 import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';
+
+/** Elasticsearch search hit shape */
+interface EsSearchHit {
+  _id: string;
+  _index: string;
+  _source: Record<string, unknown>;
+  highlight?: Record<string, string[]>;
+}
+
+/** Elasticsearch total shape */
+interface EsTotal {
+  value: number;
+  relation: string;
+}
+
+/** Elasticsearch error with meta */
+interface EsError extends Error {
+  meta?: { statusCode?: number; body?: unknown };
+  stack?: string;
+}
 
 @Injectable()
 export class SearchService implements OnModuleInit {
@@ -89,14 +109,15 @@ export class SearchService implements OnModuleInit {
         },
       });
       this.logger.log('Elasticsearch indices ready.');
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'unknown';
       this.logger.warn(
-        `Elasticsearch 尚未配置或无法连接，全局搜索功能将受限: ${e.message}`,
+        `Elasticsearch 尚未配置或无法连接，全局搜索功能将受限: ${msg}`,
       );
     }
   }
 
-  private async initIndex(index: string, mapping: any) {
+  private async initIndex(index: string, mapping: Record<string, unknown>) {
     const exists = await this.esService.indices.exists({ index });
     if (!exists) {
       await this.esService.indices.create({
@@ -135,8 +156,9 @@ export class SearchService implements OnModuleInit {
         index: this.INDICES.post,
         id: id.toString(),
       });
-    } catch (e: any) {
-      if (e.meta?.statusCode !== 404)
+    } catch (e: unknown) {
+      const esErr = e as EsError;
+      if (esErr.meta?.statusCode !== 404)
         this.logger.warn(`Failed to remove post ${id}`, e);
     }
   }
@@ -169,8 +191,9 @@ export class SearchService implements OnModuleInit {
         index: this.INDICES.ticket,
         id: id.toString(),
       });
-    } catch (e: any) {
-      if (e.meta?.statusCode !== 404)
+    } catch (e: unknown) {
+      const esErr = e as EsError;
+      if (esErr.meta?.statusCode !== 404)
         this.logger.warn(`Failed to remove ticket ${id}`, e);
     }
   }
@@ -198,10 +221,11 @@ export class SearchService implements OnModuleInit {
       this.logger.debug(
         `indexMessage: successfully wrote message #${msg.id} to ES`,
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const esErr = e as EsError;
       this.logger.error(
-        `Failed to index message ${msg.id}: ${e.message}`,
-        e.meta?.body || e.stack,
+        `Failed to index message ${msg.id}: ${esErr.message}`,
+        esErr.meta?.body || esErr.stack,
       );
     }
   }
@@ -212,8 +236,9 @@ export class SearchService implements OnModuleInit {
         index: this.INDICES.message,
         id: id.toString(),
       });
-    } catch (e: any) {
-      if (e.meta?.statusCode !== 404)
+    } catch (e: unknown) {
+      const esErr = e as EsError;
+      if (esErr.meta?.statusCode !== 404)
         this.logger.warn(`Failed to remove message ${id}`, e);
     }
   }
@@ -241,8 +266,9 @@ export class SearchService implements OnModuleInit {
         index: this.INDICES.knowledge,
         id: id.toString(),
       });
-    } catch (e: any) {
-      if (e.meta?.statusCode !== 404)
+    } catch (e: unknown) {
+      const esErr = e as EsError;
+      if (esErr.meta?.statusCode !== 404)
         this.logger.warn(`Failed to remove knowledge ${id}`, e);
     }
   }
@@ -255,7 +281,7 @@ export class SearchService implements OnModuleInit {
       index = this.INDICES[type as keyof typeof this.INDICES];
     }
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       from: (page - 1) * pageSize,
       size: pageSize,
       query: {
@@ -293,7 +319,7 @@ export class SearchService implements OnModuleInit {
     try {
       const res = await this.esService.search({ index, body });
 
-      const hits = (res.hits.hits as any[]).map((hit) => ({
+      const hits = (res.hits.hits as EsSearchHit[]).map((hit) => ({
         id: hit._id,
         _index: hit._index,
         ...hit._source,
@@ -301,12 +327,13 @@ export class SearchService implements OnModuleInit {
       }));
 
       return {
-        total: (res.hits.total as any).value,
+        total: (res.hits.total as EsTotal).value,
         items: hits,
-        aggregations: (res.aggregations as any) || {},
+        aggregations: (res.aggregations as Record<string, unknown>) || {},
       };
-    } catch (e: any) {
-      this.logger.error('Search failed', e.stack);
+    } catch (e: unknown) {
+      const esErr = e as EsError;
+      this.logger.error('Search failed', esErr.stack);
       return { total: 0, items: [], aggregations: {} };
     }
   }
@@ -336,7 +363,7 @@ export class SearchService implements OnModuleInit {
     // 3. Messages
     const messages = await this.messageRepo.find({
       relations: ['sender'],
-      where: { type: 'text' as any },
+      where: { type: 'text' as MessageType },
     });
     for (const msg of messages) {
       await this.indexMessage(msg);
