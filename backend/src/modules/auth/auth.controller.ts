@@ -106,8 +106,9 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(@Req() req: express.Request, @Res() res: express.Response) {
-    const refreshToken = (req as express.Request & { cookies?: Record<string, string> })
-      .cookies?.refreshToken;
+    const refreshToken = (
+      req as express.Request & { cookies?: Record<string, string> }
+    ).cookies?.refreshToken;
     if (!refreshToken) {
       return res.status(HttpStatus.UNAUTHORIZED).json({
         code: -1,
@@ -137,14 +138,14 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Res() res: express.Response) {
+  logout(@Res() res: express.Response) {
     res.clearCookie('refreshToken', { path: '/api/auth' });
     return res.json({ code: 0, message: '退出成功' });
   }
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  async getProfile(@Req() req: express.Request) {
+  getProfile(@Req() req: express.Request) {
     return { code: 0, data: (req as express.Request & { user: unknown }).user };
   }
 
@@ -180,7 +181,10 @@ export class AuthController {
   }
 
   @Post('external/bbs-login')
-  async bbsExternalLogin(@Body() body: { token: string }, @Req() req: express.Request) {
+  async bbsExternalLogin(
+    @Body() body: { token: string },
+    @Req() req: express.Request,
+  ) {
     if (!body.token) {
       return { code: -1, message: '缺少 token 参数' };
     }

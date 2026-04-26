@@ -250,7 +250,11 @@ export class FilesService {
               fileCount++;
               fileSize += size;
             }
-          } catch {}
+          } catch (err) {
+            this.logger.warn(
+              `Failed to stat file ${f}: ${err instanceof Error ? err.message : 'unknown'}`,
+            );
+          }
         }
       }
       return { imageCount, imageSize, fileCount, fileSize, provider: 'local' };

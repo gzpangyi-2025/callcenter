@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   UnauthorizedException,
   ConflictException,
 } from '@nestjs/common';
@@ -14,6 +15,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -100,7 +103,10 @@ export class AuthService {
       }
 
       return this.generateTokens(user);
-    } catch {
+    } catch (err) {
+      this.logger.warn(
+        `Refresh token verification failed: ${err instanceof Error ? err.message : 'unknown'}`,
+      );
       throw new UnauthorizedException('无效的刷新令牌');
     }
   }
@@ -180,7 +186,10 @@ export class AuthService {
           role: { id: -1, name: 'external' },
         },
       };
-    } catch {
+    } catch (err) {
+      this.logger.warn(
+        `External login token verification failed: ${err instanceof Error ? err.message : 'unknown'}`,
+      );
       throw new UnauthorizedException('无效的外链 Token 或验证失败');
     }
   }
@@ -222,7 +231,10 @@ export class AuthService {
           role: { id: -1, name: 'external' },
         },
       };
-    } catch {
+    } catch (err) {
+      this.logger.warn(
+        `BBS external login token verification failed: ${err instanceof Error ? err.message : 'unknown'}`,
+      );
       throw new UnauthorizedException('无效的外链 Token 或验证失败');
     }
   }

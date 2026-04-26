@@ -184,7 +184,10 @@ export class BackupService {
     const allFiles = readdirSync(ossDir).filter((f) => {
       try {
         return statSync(join(ossDir, f)).isFile();
-      } catch {
+      } catch (err) {
+        this.logger.warn(
+          `Failed to stat orphan candidate ${f}: ${err instanceof Error ? err.message : 'unknown'}`,
+        );
         return false;
       }
     });
@@ -199,8 +202,10 @@ export class BackupService {
         orphans.push(f);
         try {
           totalSize += statSync(join(ossDir, f)).size;
-        } catch {
-          /* skip */
+        } catch (err) {
+          this.logger.warn(
+            `Failed to stat orphan ${f}: ${err instanceof Error ? err.message : 'unknown'}`,
+          );
         }
       }
     }
@@ -624,8 +629,10 @@ export class BackupService {
       // Clean up temp extract directory
       try {
         rmSync(extractDir, { recursive: true, force: true });
-      } catch {
-        /* ignore */
+      } catch (err) {
+        this.logger.warn(
+          `Failed to clean up extract dir ${extractDir}: ${err instanceof Error ? err.message : 'unknown'}`,
+        );
       }
     }
   }
@@ -660,8 +667,10 @@ export class BackupService {
             const buf = await manifestEntry.buffer();
             manifest = JSON.parse(buf.toString('utf-8'));
           }
-        } catch {
-          /* skip */
+        } catch (err) {
+          this.logger.warn(
+            `Failed to read manifest from ${f}: ${err instanceof Error ? err.message : 'unknown'}`,
+          );
         }
 
         list.push({
@@ -671,8 +680,10 @@ export class BackupService {
           options: manifest?.options || {},
           statistics: manifest?.statistics || {},
         });
-      } catch {
-        /* skip broken files */
+      } catch (err) {
+        this.logger.warn(
+          `Failed to stat backup file ${f}: ${err instanceof Error ? err.message : 'unknown'}`,
+        );
       }
     }
 
@@ -682,7 +693,7 @@ export class BackupService {
   /**
    * Delete a specific backup file
    */
-  async deleteBackup(filename: string) {
+  deleteBackup(filename: string) {
     const safeName = filename.replace(/[/\\]/g, '');
     const fPath = join(backupsDir, safeName);
     if (!existsSync(fPath)) {
