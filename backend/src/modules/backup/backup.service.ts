@@ -20,6 +20,41 @@ import * as unzipper from 'unzipper';
 const ossDir = join(process.cwd(), 'oss');
 const backupsDir = join(process.cwd(), 'backups');
 
+// ── Raw SQL result interfaces ──
+interface TableCountRaw {
+  cnt: string;
+}
+interface FileUrlRaw {
+  fileUrl: string | null;
+}
+interface ContentRaw {
+  content: string | null;
+}
+interface KnowledgeDocRaw {
+  content: string | null;
+  analysisImgUrl: string | null;
+  flowImgUrl: string | null;
+}
+interface AvatarRaw {
+  avatar: string | null;
+}
+interface BackupManifest {
+  appName: string;
+  version: string;
+  createdAt: string;
+  options?: {
+    includeImages?: boolean;
+    includeFiles?: boolean;
+    includeAuditLogs?: boolean;
+  };
+  statistics?: {
+    tables?: string[];
+    tableRecordCounts?: Record<string, number>;
+    totalRecords?: number;
+    imageCount?: number;
+    fileCount?: number;
+  };
+}
 
 // Regex to extract OSS filenames from content (matches /api/files/static/xxx.ext)
 const OSS_REF_REGEX = /\/api\/files\/static\/([a-f0-9-]+\.[a-z0-9]+)/gi;
@@ -56,7 +91,7 @@ export class BackupService {
 
     // 1. messages.fileUrl (chat images & files)
     try {
-      const messages = await this.dataSource.query(
+      const messages: FileUrlRaw[] = await this.dataSource.query(
         `SELECT fileUrl FROM messages WHERE fileUrl IS NOT NULL AND fileUrl != ''`,
       );
       for (const msg of messages) {
@@ -71,11 +106,11 @@ export class BackupService {
 
     // 2. posts.content (BBS post body with embedded images)
     try {
-      const posts = await this.dataSource.query(
+      const posts: ContentRaw[] = await this.dataSource.query(
         `SELECT content FROM posts WHERE content IS NOT NULL`,
       );
       for (const post of posts) {
-        extractFromContent(post.content);
+        if (post.content) extractFromContent(post.content);
       }
     } catch (err) {
       this.logger.warn('Failed to scan posts for file references', err);
@@ -83,11 +118,11 @@ export class BackupService {
 
     // 3. post_comments.content
     try {
-      const comments = await this.dataSource.query(
+      const comments: ContentRaw[] = await this.dataSource.query(
         `SELECT content FROM post_comments WHERE content IS NOT NULL`,
       );
       for (const comment of comments) {
-        extractFromContent(comment.content);
+        if (comment.content) extractFromContent(comment.content);
       }
     } catch (err) {
       this.logger.warn('Failed to scan post_comments for file references', err);
@@ -95,11 +130,11 @@ export class BackupService {
 
     // 4. knowledge_docs.content + analysisImgUrl + flowImgUrl
     try {
-      const docs = await this.dataSource.query(
+      const docs: KnowledgeDocRaw[] = await this.dataSource.query(
         `SELECT content, analysisImgUrl, flowImgUrl FROM knowledge_docs`,
       );
       for (const doc of docs) {
-        extractFromContent(doc.content);
+        if (doc.content) extractFromContent(doc.content);
         if (doc.analysisImgUrl) {
           const fn = doc.analysisImgUrl.split('/').pop();
           if (fn) referenced.add(fn);
@@ -118,7 +153,7 @@ export class BackupService {
 
     // 5. users.avatar
     try {
-      const users = await this.dataSource.query(
+      const users: AvatarRaw[] = await this.dataSource.query(
         `SELECT avatar FROM users WHERE avatar IS NOT NULL AND avatar != ''`,
       );
       for (const user of users) {
@@ -272,7 +307,7 @@ export class BackupService {
     let totalRecords = 0;
 
     for (const table of tableNames) {
-      const result = await this.dataSource.query(
+      const result: TableCountRaw[] = await this.dataSource.query(
         `SELECT COUNT(*) as cnt FROM \`${table}\``,
       );
       const count = parseInt(result[0].cnt, 10);
@@ -353,7 +388,10 @@ export class BackupService {
     const output = createWriteStream(zipPath);
     const archive = archiver.default('zip', { zlib: { level: 6 } });
 
-    const finalized = new Promise<{ code: number; data: { filename: string; size: number } }>((resolve, reject) => {
+    const finalized = new Promise<{
+      code: number;
+      data: { filename: string; size: number };
+    }>((resolve, reject) => {
       output.on('close', () => {
         const size = archive.pointer();
         this.logger.log(
@@ -383,9 +421,7 @@ export class BackupService {
 
     for (const table of targetTables) {
       try {
-        const rows = await this.dataSource.query(
-          `SELECT * FROM \`${table}\``,
-        );
+        const rows = await this.dataSource.query(`SELECT * FROM \`${table}\``);
         const json = JSON.stringify(rows, null, 2);
         archive.append(json, { name: `database/${table}.json` });
         tableRecordCounts[table] = rows.length;
@@ -453,7 +489,9 @@ export class BackupService {
       if (!existsSync(manifestPath)) {
         throw new Error('备份文件无效：缺少 manifest.json');
       }
-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+      const manifest: BackupManifest = JSON.parse(
+        readFileSync(manifestPath, 'utf-8'),
+      );
       if (manifest.appName !== 'CallCenter') {
         throw new Error('备份文件无效：不是 CallCenter 系统的备份');
       }
@@ -612,7 +650,7 @@ export class BackupService {
         const stat = statSync(fPath);
 
         // Try to read manifest from zip for metadata
-        let manifest: any = null;
+        let manifest: BackupManifest | null = null;
         try {
           const directory = await unzipper.Open.file(fPath);
           const manifestEntry = directory.files.find(
@@ -667,7 +705,8 @@ export class BackupService {
   // ---- Private Helpers ----
 
   private async getAllTableNames(): Promise<string[]> {
-    const result = await this.dataSource.query('SHOW TABLES');
-    return result.map((row: any) => Object.values(row)[0] as string);
+    const result: Record<string, string>[] =
+      await this.dataSource.query('SHOW TABLES');
+    return result.map((row) => Object.values(row)[0]);
   }
 }

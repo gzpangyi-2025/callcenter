@@ -99,7 +99,8 @@ export class RoleInitService implements OnModuleInit {
         where: { name: 'admin' },
       });
       if (adminRole) {
-        const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'admin123';
+        const initialPassword =
+          process.env.ADMIN_INITIAL_PASSWORD || 'admin123';
         const hashedPassword = await bcrypt.hash(initialPassword, 10);
         await this.userRepository.save(
           this.userRepository.create({
@@ -112,8 +113,12 @@ export class RoleInitService implements OnModuleInit {
             isActive: true,
           }),
         );
-        this.logger.warn(`Initialized default admin user: admin / ${initialPassword}`);
-        this.logger.warn('Please change the default password immediately after login!');
+        this.logger.warn(
+          `Initialized default admin user: admin / ${initialPassword}`,
+        );
+        this.logger.warn(
+          'Please change the default password immediately after login!',
+        );
       }
     }
   }
