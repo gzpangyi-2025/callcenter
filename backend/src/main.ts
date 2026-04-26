@@ -1,12 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import * as express from 'express';
 
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -51,6 +53,9 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 CallCenter Backend running on http://localhost:${port}`);
+  logger.log(`🚀 CallCenter Backend running on http://localhost:${port}`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  logger.error('❌ 启动失败:', err);
+  process.exit(1);
+});

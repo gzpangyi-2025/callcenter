@@ -6,7 +6,6 @@ import {
   UploadedFile,
   UseGuards,
   BadRequestException,
-  NotFoundException,
   Param,
   Query,
   Res,
@@ -21,8 +20,12 @@ import * as multer from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
 
+import { Logger } from '@nestjs/common';
+
 @Controller('files')
 export class FilesController {
+  private readonly logger = new Logger(FilesController.name);
+
   constructor(private readonly filesService: FilesService) {}
 
   /**
@@ -125,7 +128,8 @@ export class FilesController {
     const localDir = path.join(process.cwd(), 'oss');
     let localCount = 0;
     if (fs.existsSync(localDir)) {
-      localCount = fs.readdirSync(localDir).length;
+      const files = await fs.promises.readdir(localDir);
+      localCount = files.length;
     }
 
     return {
@@ -149,7 +153,7 @@ export class FilesController {
       return { code: -1, message: '本地存储目录不存在' };
     }
 
-    const files = fs.readdirSync(localDir);
+    const files = await fs.promises.readdir(localDir);
     if (files.length === 0) {
       return { code: 0, message: '本地没有需要迁移的文件' };
     }
@@ -163,34 +167,36 @@ export class FilesController {
       message: '迁移中...',
     };
 
-    setImmediate(async () => {
-      for (const file of files) {
-        const filePath = path.join(localDir, file);
-        try {
-          const buffer = fs.readFileSync(filePath);
-          let mime = 'application/octet-stream';
-          const ext = extname(file).toLowerCase();
-          if (['.png'].includes(ext)) mime = 'image/png';
-          if (['.jpg', '.jpeg'].includes(ext)) mime = 'image/jpeg';
-          if (['.gif'].includes(ext)) mime = 'image/gif';
-          if (['.pdf'].includes(ext)) mime = 'application/pdf';
-
-          await this.filesService.uploadToCos(file, buffer, mime);
-          this.filesService.migrationState.current++;
-          // 上传成功后删除本地文件
+    setImmediate(() => {
+      void (async () => {
+        for (const file of files) {
+          const filePath = path.join(localDir, file);
           try {
-            fs.unlinkSync(filePath);
-          } catch (delErr) {
-            console.warn(`Local file delete failed: ${file}`, delErr);
-          }
-        } catch (e) {
-          console.error(`Migration failed for ${file}:`, e);
-          this.filesService.migrationState.failed++;
-        }
-      }
+            const buffer = await fs.promises.readFile(filePath);
+            let mime = 'application/octet-stream';
+            const ext = extname(file).toLowerCase();
+            if (['.png'].includes(ext)) mime = 'image/png';
+            if (['.jpg', '.jpeg'].includes(ext)) mime = 'image/jpeg';
+            if (['.gif'].includes(ext)) mime = 'image/gif';
+            if (['.pdf'].includes(ext)) mime = 'application/pdf';
 
-      this.filesService.migrationState.isMigrating = false;
-      this.filesService.migrationState.message = '迁移完成';
+            await this.filesService.uploadToCos(file, buffer, mime);
+            this.filesService.migrationState.current++;
+            // 上传成功后删除本地文件
+            try {
+              await fs.promises.unlink(filePath);
+            } catch (delErr) {
+              this.logger.warn(`Local file delete failed: ${file}`, delErr);
+            }
+          } catch (e) {
+            this.logger.error(`Migration failed for ${file}:`, e);
+            this.filesService.migrationState.failed++;
+          }
+        }
+
+        this.filesService.migrationState.isMigrating = false;
+        this.filesService.migrationState.message = '迁移完成';
+      })();
     });
 
     return { code: 0, message: '迁移任务已在后台启动，您可以稍后查看同步状态' };

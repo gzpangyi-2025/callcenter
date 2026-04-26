@@ -10,11 +10,69 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { Permissions } from '../auth/permissions.decorator';
 import { BbsService } from './bbs.service';
+import type { AuthenticatedUser } from '../../common/types/auth.types';
+
+/** 从 Express Request 中提取经过 JWT 认证的用户信息 */
+const getUser = (req: { user?: unknown }): AuthenticatedUser =>
+  req.user as AuthenticatedUser;
+
+/** 判断用户是否可以绕过所有权检查（admin 或拥有指定权限） */
+const canBypassOwnership = (
+  user: AuthenticatedUser,
+  permissionCode: string,
+): boolean => {
+  const isAdmin = user.role?.name === 'admin';
+  const hasPerm = user.role?.permissions?.some(
+    (p) => `${p.resource}:${p.action}` === permissionCode,
+  );
+  return isAdmin || !!hasPerm;
+};
+
+// ───────── DTO 定义 ─────────
+
+interface CreateSectionDto {
+  name: string;
+  icon?: string;
+  description?: string;
+  sortOrder?: number;
+}
+
+interface UpdateSectionDto {
+  name?: string;
+  icon?: string;
+  description?: string;
+  sortOrder?: number;
+}
+
+interface CreateTagDto {
+  name: string;
+  color?: string;
+}
+
+interface CreatePostDto {
+  title: string;
+  content: string;
+  tags?: string[];
+  sectionId?: number;
+}
+
+interface UpdatePostDto {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  sectionId?: number;
+}
+
+interface MigratePostsDto {
+  ids: number[];
+  targetSectionId: number;
+}
 
 @Controller('bbs')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -30,20 +88,23 @@ export class BbsController {
 
   @Post('sections')
   @Permissions('bbs:edit')
-  createSection(@Body() body: any) {
+  createSection(@Body() body: CreateSectionDto) {
     return this.bbsService.createSection(body);
   }
 
   @Put('sections/:id')
   @Permissions('bbs:edit')
-  updateSection(@Param('id') id: string, @Body() body: any) {
-    return this.bbsService.updateSection(Number(id), body);
+  updateSection(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSectionDto,
+  ) {
+    return this.bbsService.updateSection(id, body);
   }
 
   @Delete('sections/:id')
   @Permissions('bbs:delete')
-  removeSection(@Param('id') id: string) {
-    return this.bbsService.removeSection(Number(id));
+  removeSection(@Param('id', ParseIntPipe) id: number) {
+    return this.bbsService.removeSection(id);
   }
 
   // ───────── 预设标签路由 ─────────
@@ -55,20 +116,20 @@ export class BbsController {
 
   @Post('tags')
   @Permissions('bbs:edit')
-  createTag(@Body() body: any) {
+  createTag(@Body() body: CreateTagDto) {
     return this.bbsService.createTag(body);
   }
 
   @Delete('tags/:id')
   @Permissions('bbs:delete')
-  removeTag(@Param('id') id: string) {
-    return this.bbsService.removeTag(Number(id));
+  removeTag(@Param('id', ParseIntPipe) id: number) {
+    return this.bbsService.removeTag(id);
   }
 
   // ───────── 帖子迁移 ─────────
   @Put('posts/migrate')
   @Permissions('bbs:edit')
-  migrateToSection(@Body() body: { ids: number[]; targetSectionId: number }) {
+  migrateToSection(@Body() body: MigratePostsDto) {
     return this.bbsService.migrateToSection(body.ids, body.targetSectionId);
   }
 
@@ -97,122 +158,129 @@ export class BbsController {
 
   @Get('posts/:id')
   @Permissions('bbs:read')
-  async findOne(@Param('id') id: string, @Request() req: any) {
-    if (req.user?.role === 'external' || req.user?.role?.name === 'external') {
-      if (Number(req.user.bbsId) !== Number(id)) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req: { user?: unknown }) {
+    const user = getUser(req);
+    if (user.role?.name === 'external') {
+      // 外部用户仅能查看被分享的帖子（bbsId 保存在 JWT payload 中）
+      const bbsId = (user as AuthenticatedUser & { bbsId?: number }).bbsId;
+      if (bbsId !== id) {
         throw new UnauthorizedException('无权访问该论坛帖子');
       }
     }
-    const post = await this.bbsService.findOne(Number(id));
-    await this.bbsService.incrementView(Number(id));
+    const post = await this.bbsService.findOne(id);
+    await this.bbsService.incrementView(id);
     return post;
   }
 
   @Post('posts/:id/share')
   @Permissions('bbs:read')
-  async generateShareToken(@Param('id') id: string) {
-    const token = await this.bbsService.generateShareToken(Number(id));
+  async generateShareToken(@Param('id', ParseIntPipe) id: number) {
+    const token = await this.bbsService.generateShareToken(id);
     return { token };
   }
 
   @Post('posts')
   @Permissions('bbs:create')
-  create(@Body() body: any, @Request() req: any) {
-    return this.bbsService.create(body, req.user.id);
+  create(@Body() body: CreatePostDto, @Request() req: { user?: unknown }) {
+    return this.bbsService.create(body, getUser(req).id);
   }
 
   @Put('posts/:id')
-  update(@Param('id') id: string, @Body() body: any, @Request() req: any) {
-    const hasEditPerm = req.user.role?.permissions?.some(
-      (p: any) => `${p.resource}:${p.action}` === 'bbs:edit',
-    );
-    const canBypass =
-      req.user.role?.name === 'admin' ||
-      req.user.username === 'admin' ||
-      hasEditPerm;
-    return this.bbsService.update(Number(id), body, req.user.id, canBypass);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdatePostDto,
+    @Request() req: { user?: unknown },
+  ) {
+    const user = getUser(req);
+    return this.bbsService.update(id, body, user.id, canBypassOwnership(user, 'bbs:edit'));
   }
 
   @Delete('posts/batch')
-  batchRemove(@Body('ids') ids: number[], @Request() req: any) {
-    const hasDeletePerm = req.user.role?.permissions?.some(
-      (p: any) => `${p.resource}:${p.action}` === 'bbs:delete',
-    );
-    const canBypass =
-      req.user.role?.name === 'admin' ||
-      req.user.username === 'admin' ||
-      hasDeletePerm;
-    return this.bbsService.batchRemove(ids, req.user.id, canBypass);
+  batchRemove(
+    @Body('ids') ids: number[],
+    @Request() req: { user?: unknown },
+  ) {
+    const user = getUser(req);
+    return this.bbsService.batchRemove(ids, user.id, canBypassOwnership(user, 'bbs:delete'));
   }
 
   @Delete('posts/:id')
-  remove(@Param('id') id: string, @Request() req: any) {
-    const hasDeletePerm = req.user.role?.permissions?.some(
-      (p: any) => `${p.resource}:${p.action}` === 'bbs:delete',
-    );
-    const canBypass =
-      req.user.role?.name === 'admin' ||
-      req.user.username === 'admin' ||
-      hasDeletePerm;
-    return this.bbsService.remove(Number(id), req.user.id, canBypass);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    const user = getUser(req);
+    return this.bbsService.remove(id, user.id, canBypassOwnership(user, 'bbs:delete'));
   }
 
   @Put('posts/:id/pin')
   @Permissions('bbs:edit')
-  togglePin(@Param('id') id: string) {
-    return this.bbsService.togglePin(Number(id));
+  togglePin(@Param('id', ParseIntPipe) id: number) {
+    return this.bbsService.togglePin(id);
   }
 
   @Put('posts/:id/archive')
   @Permissions('bbs:edit')
-  archive(@Param('id') id: string) {
-    return this.bbsService.archive(Number(id));
+  archive(@Param('id', ParseIntPipe) id: number) {
+    return this.bbsService.archive(id);
   }
 
   @Get('posts/:id/comments')
   @Permissions('bbs:read')
-  getComments(@Param('id') id: string) {
-    return this.bbsService.getComments(Number(id));
+  getComments(@Param('id', ParseIntPipe) id: number) {
+    return this.bbsService.getComments(id);
   }
 
   @Post('posts/:id/comments')
   @Permissions('bbs:comment')
   addComment(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body('content') content: string,
-    @Request() req: any,
+    @Request() req: { user?: unknown },
   ) {
-    return this.bbsService.addComment(Number(id), content, req.user.id);
+    return this.bbsService.addComment(id, content, getUser(req).id);
   }
 
   // ───────── 订阅及通知 API ─────────
   @Get('notifications')
   @Permissions('bbs:read')
-  getNotifications(@Request() req: any) {
-    return this.bbsService.getUnreadNotifications(req.user.id);
+  getNotifications(@Request() req: { user?: unknown }) {
+    return this.bbsService.getUnreadNotifications(getUser(req).id);
   }
 
   @Post('posts/:id/subscribe')
   @Permissions('bbs:read')
-  subscribe(@Param('id') id: string, @Request() req: any) {
-    return this.bbsService.subscribe(Number(id), req.user.id);
+  subscribe(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    return this.bbsService.subscribe(id, getUser(req).id);
   }
 
   @Delete('posts/:id/subscribe')
   @Permissions('bbs:read')
-  unsubscribe(@Param('id') id: string, @Request() req: any) {
-    return this.bbsService.unsubscribe(Number(id), req.user.id);
+  unsubscribe(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    return this.bbsService.unsubscribe(id, getUser(req).id);
   }
 
   @Get('posts/:id/subscribe')
   @Permissions('bbs:read')
-  getSubscriptionStatus(@Param('id') id: string, @Request() req: any) {
-    return this.bbsService.getSubscriptionStatus(Number(id), req.user.id);
+  getSubscriptionStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    return this.bbsService.getSubscriptionStatus(id, getUser(req).id);
   }
 
   @Post('posts/:id/clearUnread')
   @Permissions('bbs:read')
-  clearUnread(@Param('id') id: string, @Request() req: any) {
-    return this.bbsService.clearUnread(Number(id), req.user.id);
+  clearUnread(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    return this.bbsService.clearUnread(id, getUser(req).id);
   }
 }

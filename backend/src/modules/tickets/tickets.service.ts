@@ -126,7 +126,7 @@ export class TicketsService {
     const operator = await this.userRepository.findOne({
       where: { id: userId },
     });
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'created',
       userId: userId,
@@ -462,7 +462,7 @@ export class TicketsService {
     const operator = await this.userRepository.findOne({
       where: { id: userId },
     });
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'assigned',
       userId: userId,
@@ -492,7 +492,7 @@ export class TicketsService {
     const operator = await this.userRepository.findOne({
       where: { id: userId },
     });
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'requestClose',
       userId: userId,
@@ -524,7 +524,7 @@ export class TicketsService {
     const operator = await this.userRepository.findOne({
       where: { id: userId },
     });
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'closed',
       userId: userId,
@@ -586,15 +586,15 @@ export class TicketsService {
           if (filename) filesToDelete.push(filename);
         }
       }
-    } catch {
-      /* ignore */
+    } catch (err) {
+      this.logger.warn('Failed to query messages for OSS cleanup', err);
     }
 
     await this.ticketRepository.remove(ticket);
     this.broadcastTicketEvent('deleted', { id: ticketId }, user.id);
 
     // 审计：工单删除
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.TICKET_STATUS,
       action: 'deleted',
       userId: user.id,
@@ -647,8 +647,8 @@ export class TicketsService {
             if (filename) filesToDelete.push(filename);
           }
         }
-      } catch {
-        /* ignore */
+      } catch (err) {
+        this.logger.warn('Failed to query messages for OSS cleanup', err);
       }
     }
 
@@ -662,7 +662,7 @@ export class TicketsService {
 
     // 审计：批量删除
     if (deletedNames.length > 0) {
-      this.auditService.log({
+      void this.auditService.log({
         type: AuditType.TICKET_STATUS,
         action: 'batchDeleted',
         userId: user.id,
