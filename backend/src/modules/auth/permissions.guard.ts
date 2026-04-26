@@ -34,8 +34,8 @@ export class PermissionsGuard implements CanActivate {
     }
 
     // ⭐ 超级管理员通行权
-    // 特权控制流：如果你的底层身份名就是 admin，那么你具备全部权限通过，无视 checkbox 是否不小心被勾去
-    if (user.role.name === 'admin' || user.username === 'admin') {
+    // 仅基于角色判断，不依赖 username，避免被注册同名账户绕过
+    if (user.role.name === 'admin') {
       return true;
     }
 

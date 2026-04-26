@@ -19,8 +19,6 @@ import {
 } from 'docx';
 import axios from 'axios';
 import sizeOf from 'image-size';
-import * as fs from 'fs';
-import * as path from 'path';
 import archiver from 'archiver';
 
 import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';

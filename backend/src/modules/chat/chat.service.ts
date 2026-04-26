@@ -10,8 +10,6 @@ import { Repository } from 'typeorm';
 import { Message, MessageType } from '../../entities/message.entity';
 import { SearchService } from '../search/search.service';
 import { FilesService } from '../files/files.service';
-import * as path from 'path';
-import * as fs from 'fs';
 
 @Injectable()
 export class ChatService {

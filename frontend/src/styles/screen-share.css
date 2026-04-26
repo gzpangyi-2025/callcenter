@@ -54,9 +54,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(79, 70, 229, 0.1));
-  border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #0f172a, #1e293b); /* 深邃的暗蓝灰底色 */
+  border-bottom: 1px solid rgba(16, 185, 129, 0.4); /* 底部一抹绿色作为点缀 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   flex-shrink: 0;
   z-index: 10;
 }
@@ -64,26 +65,30 @@
 .screen-share-toolbar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-primary);
+  gap: 10px;
+  font-size: 14px;
+  color: #e2e8f0; /* 明亮的灰白色，在暗底上清晰可见 */
   font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .screen-share-toolbar-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .screen-share-toolbar-btn {
-  color: var(--text-secondary) !important;
-  font-size: 15px !important;
+  color: #94a3b8 !important; /* 默认使用柔和的浅灰蓝 */
+  font-size: 16px !important;
+  transition: all 0.2s ease;
+  border-radius: 6px;
 }
 
 .screen-share-toolbar-btn:hover {
-  color: var(--text-primary) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  color: #10b981 !important; /* 悬停时变为鲜艳的主题绿 */
+  background: rgba(16, 185, 129, 0.15) !important;
+  transform: translateY(-1px);
 }
 
 .screen-share-status-text {

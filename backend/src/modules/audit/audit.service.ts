@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, Like, In } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { AuditLog, AuditType } from '../../entities/audit-log.entity';
 import { Setting } from '../../entities/setting.entity';
 
