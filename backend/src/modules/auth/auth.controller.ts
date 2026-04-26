@@ -60,7 +60,7 @@ export class AuthController {
       const result = await this.authService.login(loginDto);
 
       // 审计：登录成功
-      this.auditService.log({
+      void this.auditService.log({
         type: AuditType.USER_LOGIN,
         action: 'login',
         userId: result.user.id,
@@ -87,7 +87,7 @@ export class AuthController {
       });
     } catch (err) {
       // 审计：登录失败
-      this.auditService.log({
+      void this.auditService.log({
         type: AuditType.USER_LOGIN,
         action: 'login_failed',
         username: loginDto.username,
@@ -161,7 +161,7 @@ export class AuthController {
     );
 
     // 审计：外部用户登录
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.EXTERNAL_LOGIN,
       action: 'external_login',
       username: body.nickname,
@@ -185,7 +185,7 @@ export class AuthController {
       null;
     const data = await this.authService.bbsExternalLogin(body.token);
 
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.EXTERNAL_LOGIN,
       action: 'external_login',
       username: '匿名访客',

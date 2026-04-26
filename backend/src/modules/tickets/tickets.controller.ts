@@ -17,7 +17,6 @@ import type { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
-import { Roles } from '../auth/roles.decorator';
 import { Permissions } from '../auth/permissions.decorator';
 import { TicketsService } from './tickets.service';
 import { TicketsExportService } from './tickets-export.service';
@@ -78,6 +77,7 @@ export class TicketsController {
   }
 
   @Get('test-reload')
+  @Permissions('admin:access')
   async testReload() {
     return { code: 0, message: 'PM2 Reload Successful!' };
   }
@@ -244,7 +244,7 @@ export class TicketsController {
   @Permissions('tickets:share')
   async generateShareLink(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: any,
+    @Req() _req: any,
   ) {
     const token = await this.ticketsService.generateShareToken(id);
     return { code: 0, message: '分享外链生成成功', data: { token } };

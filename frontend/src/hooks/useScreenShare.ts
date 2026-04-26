@@ -206,25 +206,45 @@ export function useScreenShare(
 
     pc.oniceconnectionstatechange = () => {
       console.log('[屏幕共享] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
+      
+      const isSharer = !!localStreamRef.current;
 
       if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
-        clearDisconnectTimer();
-        setState(prev => ({ ...prev, connectionState: 'connected' }));
+        if (!isSharer) {
+          clearDisconnectTimer();
+          setState(prev => ({ ...prev, connectionState: 'connected' }));
+        }
       } else if (pc.iceConnectionState === 'disconnected') {
-        // disconnected 是临时状态，给 8 秒恢复窗口
-        clearDisconnectTimer();
-        setState(prev => ({ ...prev, connectionState: 'reconnecting' }));
-        disconnectTimerRef.current = setTimeout(() => {
-          // 超时仍未恢复，触发自动重连
-          if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
-            console.log('[屏幕共享] disconnected 超时 8 秒未恢复，触发自动重连');
-            triggerReconnect();
-          }
-        }, 8000);
+        if (isSharer) {
+          // 我是分享方，某个观看者断开了，不要修改全局状态，只清理该连接
+          setTimeout(() => {
+            if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+              console.log(`[屏幕共享] 观看者 ${peerId} 彻底断开，清理连接`);
+              pc.close();
+              peerConnectionsRef.current.delete(peerId);
+            }
+          }, 8000);
+        } else {
+          // 我是观看方，分享方断开了
+          clearDisconnectTimer();
+          setState(prev => ({ ...prev, connectionState: 'reconnecting' }));
+          disconnectTimerRef.current = setTimeout(() => {
+            // 超时仍未恢复，触发自动重连
+            if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+              console.log('[屏幕共享] disconnected 超时 8 秒未恢复，触发自动重连');
+              triggerReconnect();
+            }
+          }, 8000);
+        }
       } else if (pc.iceConnectionState === 'failed') {
-        clearDisconnectTimer();
-        console.log('[屏幕共享] ICE 连接失败，触发自动重连');
-        triggerReconnect();
+        if (isSharer) {
+          pc.close();
+          peerConnectionsRef.current.delete(peerId);
+        } else {
+          clearDisconnectTimer();
+          console.log('[屏幕共享] ICE 连接失败，触发自动重连');
+          triggerReconnect();
+        }
       }
     };
 
@@ -308,7 +328,7 @@ export function useScreenShare(
         isSharing: true,
         localStream: stream,
         sharerUserId: currentUserIdRef.current,
-        connectionState: 'connecting',
+        connectionState: 'connected', // 分享者获取屏幕成功即为 connected
         hasActiveShare: true,
       }));
 

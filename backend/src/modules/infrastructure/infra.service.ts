@@ -2,12 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
-import { promisify } from 'util';
 import { Client } from '@elastic/elasticsearch';
 import { Redis } from 'ioredis';
 import * as mysql from 'mysql2/promise';
-
-const execAsync = promisify(exec);
 
 @Injectable()
 export class InfraService {

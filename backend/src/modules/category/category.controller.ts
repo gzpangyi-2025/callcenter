@@ -14,6 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CategoryService } from './category.service';
 
 @Controller('category')
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
@@ -21,10 +22,9 @@ export class CategoryController {
    * 上传 Excel 导入分类（清空旧数据后全量写入）
    */
   @Post('import')
-  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('settings:edit')
   @UseInterceptors(FileInterceptor('file'))
-  async importExcel(@UploadedFile() file: any) {
+  async importExcel(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('请上传 Excel 文件');
     }
@@ -40,7 +40,6 @@ export class CategoryController {
    * 获取三级联动树（给前端 Cascader 用）
    */
   @Get('tree')
-  @UseGuards(AuthGuard('jwt'))
   async getTree() {
     const data = await this.categoryService.getTree();
     return { code: 0, data };
@@ -50,7 +49,6 @@ export class CategoryController {
    * 获取全部扁平记录（管理后台预览用）
    */
   @Get('all')
-  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('settings:read')
   async findAll() {
     const data = await this.categoryService.findAll();

@@ -39,17 +39,7 @@ export class ReportService {
 
     const total = await qb.getCount();
 
-    const statusCounts = await this.ticketRepository
-      .createQueryBuilder('t')
-      .select('t.status', 'status')
-      .addSelect('COUNT(*)', 'count')
-      .where('1=1')
-      .groupBy('t.status')
-      .getRawMany()
-      .then((rows) => {
-        // Apply date filter manually for this query
-        return rows;
-      });
+    // Note: Previous unused statusCounts query removed in favor of statusData below
 
     // Rebuild with date filter
     const statusQb = this.ticketRepository
@@ -321,7 +311,6 @@ export class ReportService {
     }
 
     let dateExpr = 'DATE(t.createdAt)';
-    const resultMapper = (r: any) => r.date;
 
     if (dimension === 'month') {
       dateExpr = 'DATE_FORMAT(t.createdAt, "%Y-%m")';

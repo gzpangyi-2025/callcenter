@@ -23,8 +23,6 @@ import {
 } from 'docx';
 import sizeOf from 'image-size';
 import archiver from 'archiver';
-import * as path from 'path';
-import * as fs from 'fs';
 
 import { FilesService } from '../files/files.service';
 

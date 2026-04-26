@@ -2,19 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { SearchService } from '../search/search.service';
 import { FilesService } from '../files/files.service';
-import { join, extname } from 'path';
+import { join } from 'path';
 import {
   existsSync,
   mkdirSync,
   readdirSync,
   readFileSync,
-  writeFileSync,
   unlinkSync,
   statSync,
-  copyFileSync,
   rmSync,
 } from 'fs';
-import { createHash } from 'crypto';
+
 import * as archiver from 'archiver';
 import { createWriteStream, createReadStream } from 'fs';
 import * as unzipper from 'unzipper';
@@ -22,17 +20,6 @@ import * as unzipper from 'unzipper';
 const ossDir = join(process.cwd(), 'oss');
 const backupsDir = join(process.cwd(), 'backups');
 
-// Image extensions for classification
-const IMAGE_EXTS = new Set([
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.gif',
-  '.webp',
-  '.svg',
-  '.bmp',
-  '.ico',
-]);
 
 // Regex to extract OSS filenames from content (matches /api/files/static/xxx.ext)
 const OSS_REF_REGEX = /\/api\/files\/static\/([a-f0-9-]+\.[a-z0-9]+)/gi;
@@ -363,10 +350,10 @@ export class BackupService {
       `Starting backup: ${filename}, options: ${JSON.stringify(options)}`,
     );
 
-    return new Promise(async (resolve, reject) => {
-      const output = createWriteStream(zipPath);
-      const archive = archiver.default('zip', { zlib: { level: 6 } });
+    const output = createWriteStream(zipPath);
+    const archive = archiver.default('zip', { zlib: { level: 6 } });
 
+    const finalized = new Promise<{ code: number; data: { filename: string; size: number } }>((resolve, reject) => {
       output.on('close', () => {
         const size = archive.pointer();
         this.logger.log(
@@ -379,65 +366,66 @@ export class BackupService {
         this.logger.error('Backup archive error', err);
         reject(err);
       });
-
-      archive.pipe(output);
-
-      // 1. Export all database tables
-      const tableNames = await this.getAllTableNames();
-      const excludeTables: string[] = [];
-      if (!options.includeAuditLogs) {
-        excludeTables.push('audit_logs');
-      }
-
-      const targetTables = tableNames.filter((t) => !excludeTables.includes(t));
-      const tableRecordCounts: Record<string, number> = {};
-      let totalRecords = 0;
-
-      for (const table of targetTables) {
-        try {
-          const rows = await this.dataSource.query(
-            `SELECT * FROM \`${table}\``,
-          );
-          const json = JSON.stringify(rows, null, 2);
-          archive.append(json, { name: `database/${table}.json` });
-          tableRecordCounts[table] = rows.length;
-          totalRecords += rows.length;
-          this.logger.debug(`Exported table: ${table} (${rows.length} rows)`);
-        } catch (err) {
-          this.logger.warn(`Failed to export table ${table}`, err);
-        }
-      }
-
-      // 2. Collect OSS files
-      const imageCount = 0;
-      const fileCount = 0;
-      // 迁移到腾讯云 COS 后，不再在系统备份中打包附件，以极大地提升备份效率
-
-      // 3. Generate manifest
-      const manifest = {
-        version: '1.0',
-        appName: 'CallCenter',
-        createdAt: new Date().toISOString(),
-        options: {
-          includeImages: !!options.includeImages,
-          includeFiles: !!options.includeFiles,
-          includeAuditLogs: !!options.includeAuditLogs,
-        },
-        statistics: {
-          tables: targetTables,
-          tableRecordCounts,
-          totalRecords,
-          imageCount,
-          fileCount,
-        },
-      };
-
-      archive.append(JSON.stringify(manifest, null, 2), {
-        name: 'manifest.json',
-      });
-
-      await archive.finalize();
     });
+
+    archive.pipe(output);
+
+    // 1. Export all database tables
+    const tableNames = await this.getAllTableNames();
+    const excludeTables: string[] = [];
+    if (!options.includeAuditLogs) {
+      excludeTables.push('audit_logs');
+    }
+
+    const targetTables = tableNames.filter((t) => !excludeTables.includes(t));
+    const tableRecordCounts: Record<string, number> = {};
+    let totalRecords = 0;
+
+    for (const table of targetTables) {
+      try {
+        const rows = await this.dataSource.query(
+          `SELECT * FROM \`${table}\``,
+        );
+        const json = JSON.stringify(rows, null, 2);
+        archive.append(json, { name: `database/${table}.json` });
+        tableRecordCounts[table] = rows.length;
+        totalRecords += rows.length;
+        this.logger.debug(`Exported table: ${table} (${rows.length} rows)`);
+      } catch (err) {
+        this.logger.warn(`Failed to export table ${table}`, err);
+      }
+    }
+
+    // 2. Collect OSS files
+    const imageCount = 0;
+    const fileCount = 0;
+    // 迁移到腾讯云 COS 后，不再在系统备份中打包附件，以极大地提升备份效率
+
+    // 3. Generate manifest
+    const manifest = {
+      version: '1.0',
+      appName: 'CallCenter',
+      createdAt: new Date().toISOString(),
+      options: {
+        includeImages: !!options.includeImages,
+        includeFiles: !!options.includeFiles,
+        includeAuditLogs: !!options.includeAuditLogs,
+      },
+      statistics: {
+        tables: targetTables,
+        tableRecordCounts,
+        totalRecords,
+        imageCount,
+        fileCount,
+      },
+    };
+
+    archive.append(JSON.stringify(manifest, null, 2), {
+      name: 'manifest.json',
+    });
+
+    await archive.finalize();
+    return finalized;
   }
 
   /**

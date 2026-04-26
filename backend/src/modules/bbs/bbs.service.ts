@@ -352,9 +352,9 @@ export class BbsService implements OnModuleInit {
 
     if (postsToDelete.length > 0) {
       await this.postRepository.remove(postsToDelete);
-      postsToDelete.forEach((p) =>
-        this.searchService.removePost(p.id).catch(() => {}),
-      );
+      for (const p of postsToDelete) {
+        void this.searchService.removePost(p.id).catch(() => {});
+      }
     }
 
     // Async cleanup OSS files (fire-and-forget)
@@ -397,9 +397,9 @@ export class BbsService implements OnModuleInit {
       where: { id: In(ids) },
       relations: ['section', 'author'],
     });
-    updatedPosts.forEach((p) =>
-      this.searchService.indexPost(p).catch(() => {}),
-    );
+    for (const p of updatedPosts) {
+      void this.searchService.indexPost(p).catch(() => {});
+    }
 
     return {
       success: true,

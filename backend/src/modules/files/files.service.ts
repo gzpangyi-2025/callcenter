@@ -100,7 +100,7 @@ export class FilesService {
             Body: buffer,
             ContentType: mimetype,
           },
-          (err, data) => {
+          (err, _data) => {
             if (err) {
               this.logger.error(`COS upload error: ${err.message}`, err);
               reject(new InternalServerErrorException('文件上传到云存储失败'));
@@ -161,30 +161,26 @@ export class FilesService {
       return fs.readFileSync(localPath);
     }
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        const cosContext = await this.getCosInstance();
-        if (!cosContext) throw new InternalServerErrorException('COS 配置异常');
+    const cosContext = await this.getCosInstance();
+    if (!cosContext) throw new InternalServerErrorException('COS 配置异常');
 
-        cosContext.cos.getObject(
-          {
-            Bucket: cosContext.bucket,
-            Region: cosContext.region,
-            Key: filename,
-            DataType: 'buffer',
-          } as any,
-          (err, data) => {
-            if (err) {
-              this.logger.error(`Error fetching file from COS: ${err.message}`);
-              reject(new InternalServerErrorException('文件拉取失败'));
-            } else {
-              resolve(data.Body);
-            }
-          },
-        );
-      } catch (e) {
-        reject(e);
-      }
+    return new Promise((resolve, reject) => {
+      cosContext.cos.getObject(
+        {
+          Bucket: cosContext.bucket,
+          Region: cosContext.region,
+          Key: filename,
+          DataType: 'buffer',
+        } as any,
+        (err, data) => {
+          if (err) {
+            this.logger.error(`Error fetching file from COS: ${err.message}`);
+            reject(new InternalServerErrorException('文件拉取失败'));
+          } else {
+            resolve(data.Body);
+          }
+        },
+      );
     });
   }
 
@@ -200,33 +196,28 @@ export class FilesService {
       return;
     }
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        const cosContext = await this.getCosInstance();
-        if (!cosContext) {
-          resolve();
-          return;
-        }
+    const cosContext = await this.getCosInstance();
+    if (!cosContext) {
+      return;
+    }
 
-        cosContext.cos.deleteObject(
-          {
-            Bucket: cosContext.bucket,
-            Region: cosContext.region,
-            Key: filename,
-          },
-          (err, data) => {
-            if (err) {
-              this.logger.error(`COS delete error: ${err.message}`, err);
-              resolve(); // 吞掉错误
-            } else {
-              this.logger.log(`COS delete success: ${filename}`);
-              resolve();
-            }
-          },
-        );
-      } catch (e) {
-        resolve();
-      }
+    return new Promise((resolve) => {
+      cosContext.cos.deleteObject(
+        {
+          Bucket: cosContext.bucket,
+          Region: cosContext.region,
+          Key: filename,
+        },
+        (err, _data) => {
+          if (err) {
+            this.logger.error(`COS delete error: ${err.message}`, err);
+            resolve(); // 吞掉错误
+          } else {
+            this.logger.log(`COS delete success: ${filename}`);
+            resolve();
+          }
+        },
+      );
     });
   }
 
@@ -259,7 +250,7 @@ export class FilesService {
               fileCount++;
               fileSize += size;
             }
-          } catch (e) {}
+          } catch {}
         }
       }
       return { imageCount, imageSize, fileCount, fileSize, provider: 'local' };

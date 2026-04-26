@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Post } from '../../entities/post.entity';
 import { Ticket } from '../../entities/ticket.entity';
-import { Message } from '../../entities/message.entity';
 import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';
 import { SearchService } from './search.service';
 
@@ -28,19 +27,19 @@ export class SearchSubscriber implements EntitySubscriberInterface {
     const entityName = event.metadata?.targetName;
     const entityId = event.entity?.id || event.entityId;
     this.logger.debug(`afterInsert triggered: ${entityName} #${entityId}`);
-    this.syncEntity(entityId, entityName);
+    void this.syncEntity(entityId, entityName);
   }
 
   afterUpdate(event: UpdateEvent<any>) {
     const entityName = event.metadata?.targetName;
     const entityId = event.entity?.id || event.databaseEntity?.id;
     this.logger.debug(`afterUpdate triggered: ${entityName} #${entityId}`);
-    this.syncEntity(entityId, entityName);
+    void this.syncEntity(entityId, entityName);
   }
 
   afterRemove(event: RemoveEvent<any>) {
     const entityId = event.entityId || event.databaseEntity?.id;
-    this.removeEntity(entityId, event.metadata?.targetName);
+    void this.removeEntity(entityId, event.metadata?.targetName);
   }
 
   private async syncEntity(entityId: number | undefined, type: string) {

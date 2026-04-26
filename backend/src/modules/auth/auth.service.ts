@@ -180,7 +180,7 @@ export class AuthService {
           role: { id: -1, name: 'external' },
         },
       };
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException('无效的外链 Token 或验证失败');
     }
   }
@@ -222,7 +222,7 @@ export class AuthService {
           role: { id: -1, name: 'external' },
         },
       };
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException('无效的外链 Token 或验证失败');
     }
   }
