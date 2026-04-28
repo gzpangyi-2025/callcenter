@@ -61,15 +61,15 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (data: { username: string; password: string }) =>
+  login: (data: { username: string; password: string }): Promise<ApiResponse<any>> =>
     api.post('/auth/login', data),
-  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }) =>
+  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }): Promise<ApiResponse<any>> =>
     api.post('/auth/register', data),
-  logout: () => api.post('/auth/logout'),
-  getMe: () => api.get('/auth/me'),
-  refresh: () => api.post('/auth/refresh'),
-  externalLogin: (ticketToken: string, nickname: string) => api.post('/auth/external/login', { ticketToken, nickname }),
-  bbsExternalLogin: (token: string) => api.post('/auth/external/bbs-login', { token }),
+  logout: (): Promise<ApiResponse<void>> => api.post('/auth/logout'),
+  getMe: (): Promise<ApiResponse<User>> => api.get('/auth/me'),
+  refresh: (): Promise<ApiResponse<any>> => api.post('/auth/refresh'),
+  externalLogin: (ticketToken: string, nickname: string): Promise<ApiResponse<any>> => api.post('/auth/external/login', { ticketToken, nickname }),
+  bbsExternalLogin: (token: string): Promise<ApiResponse<any>> => api.post('/auth/external/bbs-login', { token }),
 };
 
 // Tickets API
@@ -97,7 +97,7 @@ export const ticketsAPI = {
 
 // Files API
 export const filesAPI = {
-  upload: (file: File) => {
+  upload: (file: File): Promise<ApiResponse<any>> => {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/files/upload', formData, {
@@ -124,133 +124,133 @@ export const usersAPI = {
 
 // Roles API
 export const rolesAPI = {
-  getAll: () => api.get('/roles'),
-  getPermissions: () => api.get('/roles/permissions'),
-  updatePermissions: (id: number, permissionIds: number[]) => api.post(`/roles/${id}/permissions`, { permissionIds }),
+  getAll: (): Promise<ApiResponse<any[]>> => api.get('/roles'),
+  getPermissions: (): Promise<ApiResponse<any[]>> => api.get('/roles/permissions'),
+  updatePermissions: (id: number, permissionIds: number[]): Promise<ApiResponse<void>> => api.post(`/roles/${id}/permissions`, { permissionIds }),
 };
 
 // Settings API
 export const settingsAPI = {
-  getAll: () => api.get('/settings'),
+  getAll: (): Promise<ApiResponse<any>> => api.get('/settings'),
   saveAi: (data: {
     visionModel?: string; visionApiKey?: string;
     systemPrompt?: string; imageModel?: string; imageApiKey?: string;
-  }) => api.post('/settings/ai', data),
+  }): Promise<ApiResponse<void>> => api.post('/settings/ai', data),
   saveBiz: (data: {
     companyName?: string; websiteUrl?: string;
     companyEmail?: string; companyPhone?: string; sla?: string;
-  }) => api.post('/settings/biz', data),
-  saveSecurity: (data: { shareExpiration?: string }) => api.post('/settings/security', data),
+  }): Promise<ApiResponse<void>> => api.post('/settings/biz', data),
+  saveSecurity: (data: { shareExpiration?: string }): Promise<ApiResponse<void>> => api.post('/settings/security', data),
   saveStorage: (data: {
     provider?: string; cosSecretId?: string; cosSecretKey?: string;
     cosBucket?: string; cosRegion?: string;
-  }) => api.post('/settings/storage', data),
-  getMigrationStats: () => api.get('/files/migration-stats'),
-  migrateStorage: () => api.post('/files/migrate'),
+  }): Promise<ApiResponse<void>> => api.post('/settings/storage', data),
+  getMigrationStats: (): Promise<ApiResponse<any>> => api.get('/files/migration-stats'),
+  migrateStorage: (): Promise<ApiResponse<void>> => api.post('/files/migrate'),
 
-  uploadLogo: (file: File) => {
+  uploadLogo: (file: File): Promise<ApiResponse<any>> => {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/settings/logo', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
-  getWebRtcConfig: () => api.get('/settings/webrtc-config'),
+  getWebRtcConfig: (): Promise<ApiResponse<any>> => api.get('/settings/webrtc-config'),
   saveWebRtc: (data: {
     mode?: string; customStun?: string;
     customTurn?: string; turnUsername?: string; turnPassword?: string;
     screenShareMaxViewers?: number; voiceMaxParticipants?: number;
-  }) => api.post('/settings/webrtc', data),
+  }): Promise<ApiResponse<void>> => api.post('/settings/webrtc', data),
 };
 
 // Knowledge API
 export const knowledgeAPI = {
-  generateDraft: (ticketId: number) => api.post(`/knowledge/tickets/${ticketId}/generate`, {}, { timeout: 120000 }),
-  saveKnowledge: (data: { ticketId: number; title: string; content: string; tags?: string; category?: string; severity?: string; analysisImgUrl?: string; flowImgUrl?: string; }) => api.post('/knowledge', data, { timeout: 60000 }),
-  exportChatHistory: (ticketId: number) => api.post(`/knowledge/tickets/${ticketId}/export-chat`),
-  updateKnowledge: (id: number, data: { title?: string; content: string; tags?: string }) => api.put(`/knowledge/${id}`, data),
-  search: (q: string, page: number = 1, docType?: string) => api.get('/knowledge', { params: { q, page, docType } }),
-  getOne: (id: number) => api.get(`/knowledge/${id}`),
-  getByTicket: (ticketId: number) => api.get(`/knowledge/ticket/${ticketId}`),
-  deleteOne: (id: number) => api.delete(`/knowledge/${id}`),
+  generateDraft: (ticketId: number): Promise<ApiResponse<any>> => api.post(`/knowledge/tickets/${ticketId}/generate`, {}, { timeout: 120000 }),
+  saveKnowledge: (data: { ticketId: number; title: string; content: string; tags?: string; category?: string; severity?: string; analysisImgUrl?: string; flowImgUrl?: string; }): Promise<ApiResponse<any>> => api.post('/knowledge', data, { timeout: 60000 }),
+  exportChatHistory: (ticketId: number): Promise<ApiResponse<any>> => api.post(`/knowledge/tickets/${ticketId}/export-chat`),
+  updateKnowledge: (id: number, data: { title?: string; content: string; tags?: string }): Promise<ApiResponse<any>> => api.put(`/knowledge/${id}`, data),
+  search: (q: string, page: number = 1, docType?: string): Promise<ApiResponse<PaginatedData<any>>> => api.get('/knowledge', { params: { q, page, docType } }),
+  getOne: (id: number): Promise<ApiResponse<any>> => api.get(`/knowledge/${id}`),
+  getByTicket: (ticketId: number): Promise<ApiResponse<any[]>> => api.get(`/knowledge/ticket/${ticketId}`),
+  deleteOne: (id: number): Promise<ApiResponse<void>> => api.delete(`/knowledge/${id}`),
 };
 
 // Report API
 export const reportAPI = {
-  getSummary: (params?: any) => api.get('/report/summary', { params }),
-  getCategoryStats: (params?: any) => api.get('/report/by-category', { params }),
-  getCategory2Stats: (category1: string, params?: any) => api.get('/report/by-category2', { params: { ...params, category1 } }),
-  getCategory3Stats: (category2: string, params?: any) => api.get('/report/by-category3', { params: { ...params, category2 } }),
-  getByPerson: (limit?: number, params?: any) => api.get('/report/by-person', { params: { ...params, limit } }),
-  getByCustomer: (params?: any) => api.get('/report/by-customer', { params }),
-  getTimeSeries: (dimension?: string, params?: any) => api.get('/report/time-series', { params: { ...params, dimension } }),
-  getCrossMatrix: (categoryName: string, level: string, limit: number = 8, params?: any) => api.get('/report/cross-matrix', { params: { ...params, categoryName, level, limit } }),
-  drillTypePerson: (params: any) => api.get('/report/drill/type-person', { params }),
-  drillPersonTickets: (params: any) => api.get('/report/drill/person-tickets', { params }),
-  drillCustomerTickets: (params: any) => api.get('/report/drill/customer-tickets', { params }),
-  exportXlsx: (params?: any) => api.get('/report/export-xlsx', { params, responseType: 'blob' }),
+  getSummary: (params?: any): Promise<ApiResponse<any>> => api.get('/report/summary', { params }),
+  getCategoryStats: (params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category', { params }),
+  getCategory2Stats: (category1: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category2', { params: { ...params, category1 } }),
+  getCategory3Stats: (category2: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category3', { params: { ...params, category2 } }),
+  getByPerson: (limit?: number, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-person', { params: { ...params, limit } }),
+  getByCustomer: (params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-customer', { params }),
+  getTimeSeries: (dimension?: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/time-series', { params: { ...params, dimension } }),
+  getCrossMatrix: (categoryName: string, level: string, limit: number = 8, params?: any): Promise<ApiResponse<any>> => api.get('/report/cross-matrix', { params: { ...params, categoryName, level, limit } }),
+  drillTypePerson: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/type-person', { params }),
+  drillPersonTickets: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/person-tickets', { params }),
+  drillCustomerTickets: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/customer-tickets', { params }),
+  exportXlsx: (params?: any): Promise<Blob> => api.get('/report/export-xlsx', { params, responseType: 'blob' }),
 };
 
 // Category API
 export const categoryAPI = {
-  importExcel: (formData: FormData) => api.post('/category/import', formData, {
+  importExcel: (formData: FormData): Promise<ApiResponse<any>> => api.post('/category/import', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  getTree: () => api.get('/category/tree'),
-  getAll: () => api.get('/category/all'),
+  getTree: (): Promise<ApiResponse<any[]>> => api.get('/category/tree'),
+  getAll: (): Promise<ApiResponse<any[]>> => api.get('/category/all'),
 };
 
 // Audit API
 export const auditAPI = {
-  getLogs: (params?: any) => api.get('/audit/logs', { params }),
-  deleteLogs: (data: { type?: string; startDate?: string; endDate?: string }) =>
+  getLogs: (params?: any): Promise<ApiResponse<PaginatedData<any>>> => api.get('/audit/logs', { params }),
+  deleteLogs: (data: { type?: string; startDate?: string; endDate?: string }): Promise<ApiResponse<void>> =>
     api.delete('/audit/logs', { data }),
-  getSettings: () => api.get('/audit/settings'),
-  updateSettings: (data: Record<string, boolean>) => api.put('/audit/settings', data),
+  getSettings: (): Promise<ApiResponse<Record<string, boolean>>> => api.get('/audit/settings'),
+  updateSettings: (data: Record<string, boolean>): Promise<ApiResponse<void>> => api.put('/audit/settings', data),
 };
 
 // BBS API
 export const bbsAPI = {
   // 板块
-  getSections: () => api.get('/bbs/sections'),
-  createSection: (data: any) => api.post('/bbs/sections', data),
-  updateSection: (id: number, data: any) => api.put(`/bbs/sections/${id}`, data),
-  deleteSection: (id: number) => api.delete(`/bbs/sections/${id}`),
+  getSections: (): Promise<ApiResponse<any[]>> => api.get('/bbs/sections'),
+  createSection: (data: any): Promise<ApiResponse<any>> => api.post('/bbs/sections', data),
+  updateSection: (id: number, data: any): Promise<ApiResponse<any>> => api.put(`/bbs/sections/${id}`, data),
+  deleteSection: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/sections/${id}`),
   // 预设标签
-  getTags: () => api.get('/bbs/tags'),
-  createTag: (data: any) => api.post('/bbs/tags', data),
-  deleteTag: (id: number) => api.delete(`/bbs/tags/${id}`),
+  getTags: (): Promise<ApiResponse<any[]>> => api.get('/bbs/tags'),
+  createTag: (data: any): Promise<ApiResponse<any>> => api.post('/bbs/tags', data),
+  deleteTag: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/tags/${id}`),
 
   // Subscription/Notification
-  getNotifications: () => api.get('/bbs/notifications'),
-  subscribe: (id: number) => api.post(`/bbs/posts/${id}/subscribe`),
-  unsubscribe: (id: number) => api.delete(`/bbs/posts/${id}/subscribe`),
-  getSubscriptionStatus: (id: number) => api.get(`/bbs/posts/${id}/subscribe`),
-  clearUnread: (id: number) => api.post(`/bbs/posts/${id}/clearUnread`),
+  getNotifications: (): Promise<ApiResponse<any[]>> => api.get('/bbs/notifications'),
+  subscribe: (id: number): Promise<ApiResponse<void>> => api.post(`/bbs/posts/${id}/subscribe`),
+  unsubscribe: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/posts/${id}/subscribe`),
+  getSubscriptionStatus: (id: number): Promise<ApiResponse<{ subscribed: boolean }>> => api.get(`/bbs/posts/${id}/subscribe`),
+  clearUnread: (id: number): Promise<ApiResponse<void>> => api.post(`/bbs/posts/${id}/clearUnread`),
 
   // 帖子迁移
-  migratePosts: (ids: number[], targetSectionId: number) =>
+  migratePosts: (ids: number[], targetSectionId: number): Promise<ApiResponse<void>> =>
     api.put('/bbs/posts/migrate', { ids, targetSectionId }),
-  generateShareToken: (id: number) => api.post(`/bbs/posts/${id}/share`),
+  generateShareToken: (id: number): Promise<ApiResponse<string>> => api.post(`/bbs/posts/${id}/share`),
 };
 
 export const searchAPI = {
-  search: (params: { q: string; type?: string; page?: number; pageSize?: number }) => api.get('/search', { params }),
-  syncAll: () => api.post('/search/sync'),
+  search: (params: { q: string; type?: string; page?: number; pageSize?: number }): Promise<ApiResponse<PaginatedData<any>>> => api.get('/search', { params }),
+  syncAll: (): Promise<ApiResponse<void>> => api.post('/search/sync'),
 };
 
 // Backup API
 export const backupAPI = {
-  getStats: () => api.get('/backup/stats'),
-  create: (options: { includeImages?: boolean; includeFiles?: boolean; includeAuditLogs?: boolean }) =>
+  getStats: (): Promise<ApiResponse<any>> => api.get('/backup/stats'),
+  create: (options: { includeImages?: boolean; includeFiles?: boolean; includeAuditLogs?: boolean }): Promise<ApiResponse<any>> =>
     api.post('/backup/create', options, { timeout: 300000 }), // 5 min timeout for large backups
-  list: () => api.get('/backup/list'),
-  download: (filename: string) => {
+  list: (): Promise<ApiResponse<any[]>> => api.get('/backup/list'),
+  download: (filename: string): void => {
     const token = localStorage.getItem('accessToken');
     // Use window.open for direct file download
     window.open(`/api/backup/download/${encodeURIComponent(filename)}?token=${token}`, '_blank');
   },
-  restore: (file: File, onProgress?: (percent: number) => void) => {
+  restore: (file: File, onProgress?: (percent: number) => void): Promise<ApiResponse<void>> => {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/backup/restore', formData, {
@@ -263,21 +263,21 @@ export const backupAPI = {
       },
     });
   },
-  delete: (filename: string) => api.delete(`/backup/${encodeURIComponent(filename)}`),
-  cleanOrphans: () => api.post('/backup/clean-orphans', {}, { timeout: 120000 }),
-  getCosOrphans: () => api.get('/backup/cos-orphans', { timeout: 120000 }),
-  cleanCosOrphans: () => api.post('/backup/clean-cos-orphans', {}, { timeout: 120000 }),
+  delete: (filename: string): Promise<ApiResponse<void>> => api.delete(`/backup/${encodeURIComponent(filename)}`),
+  cleanOrphans: (): Promise<ApiResponse<any>> => api.post('/backup/clean-orphans', {}, { timeout: 120000 }),
+  getCosOrphans: (): Promise<ApiResponse<any>> => api.get('/backup/cos-orphans', { timeout: 120000 }),
+  cleanCosOrphans: (): Promise<ApiResponse<void>> => api.post('/backup/clean-cos-orphans', {}, { timeout: 120000 }),
 };
 
 // Infra API
 export const infraAPI = {
-  getEnv: () => api.get('/infra/env'),
-  saveEnv: (data: Record<string, string>) => api.post('/infra/env', data),
-  restart: () => api.post('/infra/restart'),
-  testEs: (data: any) => api.post('/infra/test-es', data),
-  testRedis: (data: any) => api.post('/infra/test-redis', data),
-  testMysql: (data: any) => api.post('/infra/test-mysql', data),
-  rebuildIndex: () => api.post('/infra/rebuild-index', {}, { timeout: 300000 }),
+  getEnv: (): Promise<ApiResponse<Record<string, string>>> => api.get('/infra/env'),
+  saveEnv: (data: Record<string, string>): Promise<ApiResponse<void>> => api.post('/infra/env', data),
+  restart: (): Promise<ApiResponse<void>> => api.post('/infra/restart'),
+  testEs: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-es', data),
+  testRedis: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-redis', data),
+  testMysql: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-mysql', data),
+  rebuildIndex: (): Promise<ApiResponse<void>> => api.post('/infra/rebuild-index', {}, { timeout: 300000 }),
 };
 
 export default api;
