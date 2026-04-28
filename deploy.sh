@@ -41,12 +41,12 @@ ssh $REMOTE_USER@$REMOTE_HOST << 'EOF'
 
   echo "  👉 正在构建前端项目..."
   cd /var/www/callcenter/frontend
-  npm install --omit=dev  # 只安装生产依赖
+  npm install
   npm run build
 
   echo "  👉 正在构建后端项目..."
   cd /var/www/callcenter/backend
-  npm install --omit=dev
+  npm install
   npm run build
 
   echo "  👉 正在重启 PM2 后端服务..."
