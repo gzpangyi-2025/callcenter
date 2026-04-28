@@ -2,157 +2,12 @@ import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from './authStore';
 import { authAPI, ticketsAPI, bbsAPI } from '../services/api';
+import { calcBadge } from '../utils/badgeUtils';
+import { playDing, playAlert } from '../utils/soundUtils';
+import { startTitleFlash, stopTitleFlash, initVisibilityListener } from '../utils/titleFlash';
 
-// ─── 工具函数：每次 unreadMap / newTicketIds / myTicketIds 变化时同步计算 ───
-const calcBadge = (
-  unreadMap: Record<number, number>,
-  newTicketIds: number[],
-  myTicketIds: number[],
-  bbsUnreadMap: Record<number, number>,
-): number => {
-  const unreadTotal = myTicketIds.reduce((sum, id) => sum + (unreadMap[id] || 0), 0);
-  const bbsTotal = Object.values(bbsUnreadMap).reduce((sum, count) => sum + count, 0);
-  return unreadTotal + newTicketIds.length + bbsTotal;
-};
-
-// ─── 通知音效：使用 Web Audio API 合成短促 "叮" 声 ───
-let audioCtx: AudioContext | null = null;
-let lastPlayTime = 0;
-
-const playDing = () => {
-  try {
-    const now = Date.now();
-    // 防抖：200ms 内不重复播放
-    if (now - lastPlayTime < 200) return;
-    lastPlayTime = now;
-
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    // 如果 AudioContext 被浏览器挂起（用户尚未交互），静默跳过
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
-      return;
-    }
-
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    // 清脆的叮声：高频正弦波 + 快速衰减
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);        // A5
-    oscillator.frequency.setValueAtTime(1320, audioCtx.currentTime + 0.05); // E6 上扬
-
-    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-
-    oscillator.start(audioCtx.currentTime);
-    oscillator.stop(audioCtx.currentTime + 0.3);
-  } catch {
-    // 浏览器不支持 Web Audio 或用户未交互，静默忽略
-  }
-};
-
-// ─── 新工单提示音：双响低音 "嘟嘟"，区别于消息叮声 ───
-const playAlert = () => {
-  try {
-    const now = Date.now();
-    if (now - lastPlayTime < 200) return;
-    lastPlayTime = now;
-
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
-      return;
-    }
-
-    // 第一声
-    const osc1 = audioCtx.createOscillator();
-    const gain1 = audioCtx.createGain();
-    osc1.connect(gain1);
-    gain1.connect(audioCtx.destination);
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(523, audioCtx.currentTime);      // C5
-    osc1.frequency.setValueAtTime(784, audioCtx.currentTime + 0.06); // G5
-    gain1.gain.setValueAtTime(0.35, audioCtx.currentTime);
-    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-    osc1.start(audioCtx.currentTime);
-    osc1.stop(audioCtx.currentTime + 0.2);
-
-    // 第二声（间隔 0.25s）
-    const osc2 = audioCtx.createOscillator();
-    const gain2 = audioCtx.createGain();
-    osc2.connect(gain2);
-    gain2.connect(audioCtx.destination);
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(523, audioCtx.currentTime + 0.25);
-    osc2.frequency.setValueAtTime(1047, audioCtx.currentTime + 0.31); // C6 上扬
-    gain2.gain.setValueAtTime(0.001, audioCtx.currentTime);
-    gain2.gain.setValueAtTime(0.35, audioCtx.currentTime + 0.25);
-    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-    osc2.start(audioCtx.currentTime + 0.25);
-    osc2.stop(audioCtx.currentTime + 0.5);
-  } catch {
-    // 静默忽略
-  }
-};
-
-// ─── 标签页标题闪烁 ───
-// 过滤掉脏标题数据（应对 Vite 热更新残留在 document.title 上的情况）
-const ORIGINAL_TITLE = (document.title || 'CallCenter').replace(/🔴\s*\(\d+条新消息\)\s*/g, '').trim() || 'CallCenter';
-let flashInterval: ReturnType<typeof setInterval> | null = null;
-let currentFlashBadge = 0;
-
-export const startTitleFlash = (badge: number) => {
-  if (badge <= 0) {
-    stopTitleFlash();
-    return;
-  }
-  
-  // 防止相同数量重复触发导致定时器频闪
-  if (flashInterval && currentFlashBadge === badge) return;
-  
-  currentFlashBadge = badge;
-  let showAlert = true;
-
-  if (flashInterval) clearInterval(flashInterval);
-  flashInterval = setInterval(() => {
-    if (showAlert) {
-      document.title = `🔴 (${badge}条新消息) ${ORIGINAL_TITLE}`;
-    } else {
-      document.title = ORIGINAL_TITLE;
-    }
-    showAlert = !showAlert;
-  }, 1000);
-};
-
-export const stopTitleFlash = () => {
-  if (flashInterval) {
-    clearInterval(flashInterval);
-    flashInterval = null;
-  }
-  currentFlashBadge = 0;
-  if (document.title !== ORIGINAL_TITLE) {
-    document.title = ORIGINAL_TITLE;
-  }
-};
-
-// 用户回到页面时，如果没有未读就停止闪烁
-if (typeof document !== 'undefined') {
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      const state = useSocketStore.getState();
-      if (state.profileBadge <= 0) {
-        stopTitleFlash();
-      }
-    }
-  });
-}
+// 重新导出供外部按需使用（保持 API 兼容）
+export { startTitleFlash, stopTitleFlash };
 
 interface SocketState {
   socket: Socket | null;
@@ -524,3 +379,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
   },
 }));
+
+// 初始化标签页可见性监听，用户回到页面时如果没有未读就停止闪烁
+initVisibilityListener(() => useSocketStore.getState().profileBadge);

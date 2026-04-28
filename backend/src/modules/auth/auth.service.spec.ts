@@ -146,6 +146,75 @@ describe('AuthService', () => {
     });
   });
 
+  describe('register', () => {
+    it('should successfully register a new user and return tokens', async () => {
+      mockUserRepo.findOne.mockResolvedValue(null);
+      mockRoleRepo.findOne.mockResolvedValue({ id: 2, name: 'user', permissions: [] });
+      mockUserRepo.create.mockImplementation((dto) => dto);
+      mockUserRepo.save.mockImplementation(async (user) => ({ ...user, id: 2 }));
+
+      const result = await service.register({
+        username: 'newuser',
+        password: 'password123',
+        realName: 'New User'
+      });
+
+      expect(result).toHaveProperty('accessToken');
+      expect(result).toHaveProperty('refreshToken');
+      expect(mockUserRepo.create).toHaveBeenCalled();
+      expect(mockUserRepo.save).toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException if username already exists', async () => {
+      mockUserRepo.findOne.mockResolvedValue(mockUser);
+
+      await expect(
+        service.register({ username: 'testuser', password: 'password123' })
+      ).rejects.toThrow('用户名已存在');
+    });
+  });
+
+  describe('externalLogin', () => {
+    it('should return tokens and external user profile for valid external ticket token', async () => {
+      mockJwtService.verify.mockReturnValue({ role: 'external', ticketId: 100 });
+
+      const result = await service.externalLogin('valid_token', 'Guest User');
+
+      expect(result).toHaveProperty('accessToken');
+      expect(result.user.username).toBe('Guest User');
+      expect(result.user.ticketId).toBe(100);
+      expect(result.user.role?.name).toBe('external');
+    });
+
+    it('should throw UnauthorizedException for invalid external token', async () => {
+      mockJwtService.verify.mockImplementation(() => { throw new Error('Invalid'); });
+
+      await expect(
+        service.externalLogin('invalid_token', 'Guest User')
+      ).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('bbsExternalLogin', () => {
+    it('should return tokens and external user profile for valid BBS token', async () => {
+      mockJwtService.verify.mockReturnValue({ role: 'external_bbs', bbsId: 200 });
+
+      const result = await service.bbsExternalLogin('valid_bbs_token');
+
+      expect(result).toHaveProperty('accessToken');
+      expect(result.user.username).toBe('匿名访客');
+      expect(result.user.bbsId).toBe(200);
+    });
+
+    it('should throw UnauthorizedException if role is incorrect', async () => {
+      mockJwtService.verify.mockReturnValue({ role: 'user', bbsId: 200 });
+
+      await expect(
+        service.bbsExternalLogin('wrong_role_token')
+      ).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
   describe('validateUser', () => {
     it('should return user for valid active user id', async () => {
       mockUserRepo.findOne.mockResolvedValue(mockUser);
