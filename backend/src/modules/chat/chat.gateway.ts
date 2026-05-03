@@ -205,6 +205,110 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
+  private getTicketRoomName(ticketId: number): string {
+    return `ticket_${ticketId}`;
+  }
+
+  private async loadRoomTicket(ticketId: number): Promise<Ticket | null> {
+    if (!Number.isInteger(Number(ticketId)) || Number(ticketId) <= 0) {
+      return null;
+    }
+
+    return this.ticketRepository.findOne({
+      where: { id: Number(ticketId) },
+      relations: ['participants'],
+    });
+  }
+
+  private async authorizeTicketRoom(
+    client: Socket,
+    ticketId: number,
+    action: string,
+  ): Promise<Ticket | null> {
+    const authClient = client as AuthenticatedSocket;
+    const ticket = await this.loadRoomTicket(ticketId);
+
+    if (!ticket) {
+      client.emit('error', '工单不存在');
+      return null;
+    }
+
+    const authorized = this.roomService.canAccessTicketRoom(
+      {
+        userId: authClient.userId,
+        role: authClient.role,
+        allowedTicketId: authClient.allowedTicketId,
+      },
+      ticket,
+    );
+
+    if (!authorized) {
+      if (ticket.isRoomLocked) {
+        client.emit('roomLocked', {
+          ticketId,
+          message: '该房间已锁定，仅受邀人员可参与',
+        });
+      } else {
+        client.emit('error', `无权${action}此工单聊天室`);
+      }
+      return null;
+    }
+
+    return ticket;
+  }
+
+  private async getAuthorizedSignalTargets(
+    client: Socket,
+    ticketId: number,
+    targetUserId: number,
+    action: string,
+  ): Promise<AuthenticatedRemoteSocket[] | null> {
+    const ticket = await this.authorizeTicketRoom(client, ticketId, action);
+    if (!ticket) return null;
+
+    const roomName = this.getTicketRoomName(ticket.id);
+    const sockets = await this.server.in(roomName).fetchSockets();
+    const targetSockets = sockets
+      .map((s) => s as unknown as AuthenticatedRemoteSocket)
+      .filter((s) => s.userId === Number(targetUserId));
+
+    if (targetSockets.length === 0) {
+      client.emit('error', '目标用户不在该工单房间内');
+      return null;
+    }
+
+    return targetSockets;
+  }
+
+  private emitToSignalTargets(
+    targets: AuthenticatedRemoteSocket[],
+    event: string,
+    data: Record<string, unknown>,
+  ): void {
+    targets.forEach((target) => target.emit(event, data));
+  }
+
+  private async forwardSignalToRoomUser(
+    client: Socket,
+    ticketId: number,
+    targetUserId: number,
+    action: string,
+    event: string,
+    data: Record<string, unknown>,
+  ): Promise<boolean> {
+    const targets = await this.getAuthorizedSignalTargets(
+      client,
+      ticketId,
+      targetUserId,
+      action,
+    );
+
+    if (!targets) return false;
+
+    this.emitToSignalTargets(targets, event, data);
+    return true;
+  }
+
   // 给特定用户的所有终端发送事件
   public emitToUser(userId: number, event: string, data: any) {
     this.server.to(`user_${userId}`).emit(event, data);
@@ -216,34 +320,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { ticketId: number },
   ) {
     const authClient = client as AuthenticatedSocket;
-    if (
-      authClient.role === 'external' &&
-      authClient.allowedTicketId !== data.ticketId
-    ) {
-      client.emit('error', '无权访问此工单聊天室');
-      return;
-    }
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '访问',
+    );
+    if (!ticket) return;
 
-    // 房间锁定鉴权
-    const ticket = await this.ticketRepository.findOne({
-      where: { id: data.ticketId },
-      relations: ['participants'],
-    });
-    if (ticket && ticket.isRoomLocked) {
-      const authorized = this.roomService.isAuthorizedForRoom(
-        { userId: authClient.userId, role: authClient.role },
-        ticket,
-      );
-      if (!authorized) {
-        client.emit('roomLocked', {
-          ticketId: data.ticketId,
-          message: '该房间已锁定，仅受邀人员可参与',
-        });
-        return;
-      }
-    }
-
-    const roomName = `ticket_${data.ticketId}`;
+    const roomName = this.getTicketRoomName(data.ticketId);
     await client.join(roomName);
     this.logger.log(`用户 ${authClient.username} 加入房间 ${roomName}`);
 
@@ -291,14 +375,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number; page: number },
   ) {
-    const authClient = client as AuthenticatedSocket;
-    if (
-      authClient.role === 'external' &&
-      authClient.allowedTicketId !== data.ticketId
-    ) {
-      client.emit('error', '无权访问此工单聊天室');
-      return;
-    }
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '访问',
+    );
+    if (!ticket) return;
+
     const messages = await this.chatService.getMessagesByTicket(
       data.ticketId,
       data.page,
@@ -337,15 +420,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const roomName = `ticket_${data.ticketId}`;
 
-    // 立即踢出未授权的内部用户
+    // 立即踢出未授权用户
     const sockets = await this.server.in(roomName).fetchSockets();
     for (const s of sockets) {
       const rs = s as unknown as AuthenticatedRemoteSocket;
-      if (rs.role === 'external') {
-        continue;
-      }
-      const authorized = this.roomService.isAuthorizedForRoom(
-        { userId: rs.userId, role: rs.role },
+      const authorized = this.roomService.canAccessTicketRoom(
+        {
+          userId: rs.userId,
+          role: rs.role,
+          allowedTicketId: rs.allowedTicketId,
+        },
         ticket,
       );
       if (!authorized) {
@@ -512,11 +596,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     },
   ) {
     const authClient = client as AuthenticatedSocket;
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '发送消息至',
+    );
+    if (!ticket) {
+      return;
+    }
+
+    if (ticket.isRoomLocked) {
+      const roomName = this.getTicketRoomName(data.ticketId);
+      const roomSockets = await this.server.in(roomName).fetchSockets();
+      const isInRoom = roomSockets.some(
+        (s) =>
+          (s as unknown as AuthenticatedRemoteSocket).id === client.id,
+      );
+      if (!isInRoom) {
+        client.emit('roomLocked', {
+          ticketId: data.ticketId,
+          message: '请先加入该工单聊天室再发送消息',
+        });
+        return;
+      }
+    }
+
     if (
-      authClient.role === 'external' &&
-      authClient.allowedTicketId !== data.ticketId
+      !data.content &&
+      !data.fileUrl
     ) {
-      client.emit('error', '无权发送消息至此工单');
+      client.emit('error', '消息内容不能为空');
       return;
     }
 
@@ -538,15 +647,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       fileSize: data.fileSize,
     });
 
-    const roomName = `ticket_${data.ticketId}`;
+    const roomName = this.getTicketRoomName(data.ticketId);
     this.server.to(roomName).emit('newMessage', message);
 
     // 取消全局广播新消息通知（避免信息泄露和不相关的红点累加），仅定向投放到参与该工单的用户
-    const ticket = await this.ticketRepository.findOne({
-      where: { id: data.ticketId },
-      relations: ['participants'],
-    });
-
     if (ticket) {
       const targetUserIds = new Set<number>();
       if (ticket.creatorId) targetUserIds.add(ticket.creatorId);
@@ -567,12 +671,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('typing')
-  handleTyping(
+  async handleTyping(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '访问',
+    );
+    if (!ticket) return;
+
     const authClient = client as AuthenticatedSocket;
-    const roomName = `ticket_${data.ticketId}`;
+    const roomName = this.getTicketRoomName(data.ticketId);
     client.to(roomName).emit('userTyping', {
       userId: authClient.userId,
       username: authClient.username,
@@ -591,10 +702,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('error', '未授权');
       return;
     }
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '撤回消息',
+    );
+    if (!ticket) return;
 
     try {
       await this.chatService.recallMessage(data.messageId, userId, username);
-      const roomName = `ticket_${data.ticketId}`;
+      const roomName = this.getTicketRoomName(data.ticketId);
       this.server.to(roomName).emit('messageRecalled', {
         messageId: data.messageId,
         ticketId: data.ticketId,
@@ -609,11 +726,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // ==================== 屏幕共享信令 ====================
 
   @SubscribeMessage('screenShare:start')
-  handleScreenShareStart(
+  async handleScreenShareStart(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
-    const roomName = `ticket_${data.ticketId}`;
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '发起屏幕共享',
+    );
+    if (!ticket) return;
+
+    const roomName = this.getTicketRoomName(ticket.id);
     const authClient = client as AuthenticatedSocket;
     const userId = authClient.userId;
     const userName =
@@ -630,11 +754,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('screenShare:stop')
-  handleScreenShareStop(
+  async handleScreenShareStop(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
-    const roomName = `ticket_${data.ticketId}`;
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '停止屏幕共享',
+    );
+    if (!ticket) return;
+
+    const roomName = this.getTicketRoomName(ticket.id);
     const userId = (client as AuthenticatedSocket).userId;
 
     this.screenShareService.stopShare(roomName);
@@ -647,7 +778,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('screenShare:offer')
-  handleScreenShareOffer(
+  async handleScreenShareOffer(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
@@ -656,41 +787,62 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.debug(
       `[屏幕共享] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`,
     );
-    this.server.to(`user_${data.to}`).emit('screenShare:offer', {
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送屏幕共享信令至',
+      'screenShare:offer',
+      {
       ticketId: data.ticketId,
       sdp: data.sdp,
       from: fromId,
-    });
+      },
+    );
   }
 
   @SubscribeMessage('screenShare:answer')
-  handleScreenShareAnswer(
+  async handleScreenShareAnswer(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
-    this.server.to(`user_${data.to}`).emit('screenShare:answer', {
-      ticketId: data.ticketId,
-      sdp: data.sdp,
-      from: (client as AuthenticatedSocket).userId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送屏幕共享信令至',
+      'screenShare:answer',
+      {
+        ticketId: data.ticketId,
+        sdp: data.sdp,
+        from: (client as AuthenticatedSocket).userId,
+      },
+    );
   }
 
   @SubscribeMessage('screenShare:ice')
-  handleScreenShareIce(
+  async handleScreenShareIce(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; candidate: RTCIceCandidateInit; to: number },
   ) {
-    this.server.to(`user_${data.to}`).emit('screenShare:ice', {
-      ticketId: data.ticketId,
-      candidate: data.candidate,
-      from: (client as AuthenticatedSocket).userId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送屏幕共享信令至',
+      'screenShare:ice',
+      {
+        ticketId: data.ticketId,
+        candidate: data.candidate,
+        from: (client as AuthenticatedSocket).userId,
+      },
+    );
   }
 
   @SubscribeMessage('screenShare:requestView')
-  handleScreenShareRequestView(
+  async handleScreenShareRequestView(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number; to: number },
   ) {
@@ -698,10 +850,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.debug(
       `[屏幕共享] 观看请求: 用户 ${fromId} -> 分享方 user_${data.to}`,
     );
-    this.server.to(`user_${data.to}`).emit('screenShare:requestView', {
-      ticketId: data.ticketId,
-      from: fromId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '请求观看屏幕共享',
+      'screenShare:requestView',
+      {
+        ticketId: data.ticketId,
+        from: fromId,
+      },
+    );
   }
 
   // ==================== 语音通话信令 ====================
@@ -711,7 +870,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
-    const roomName = `ticket_${data.ticketId}`;
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '加入语音通话',
+    );
+    if (!ticket) return;
+
+    const roomName = this.getTicketRoomName(ticket.id);
     const authClient = client as AuthenticatedSocket;
     const userId = authClient.userId;
     const userName =
@@ -751,11 +917,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('voice:leave')
-  handleVoiceLeave(
+  async handleVoiceLeave(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { ticketId: number },
   ) {
-    const roomName = `ticket_${data.ticketId}`;
+    const ticket = await this.authorizeTicketRoom(
+      client,
+      data.ticketId,
+      '离开语音通话',
+    );
+    if (!ticket) return;
+
+    const roomName = this.getTicketRoomName(ticket.id);
     const userId = (client as AuthenticatedSocket).userId;
 
     this.voiceService.leaveVoice(roomName, userId);
@@ -767,7 +940,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('voice:offer')
-  handleVoiceOffer(
+  async handleVoiceOffer(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
@@ -776,36 +949,57 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.debug(
       `[语音通话] 转发 Offer: 从 ${fromId} -> 到 user_${data.to}`,
     );
-    this.server.to(`user_${data.to}`).emit('voice:offer', {
-      ticketId: data.ticketId,
-      sdp: data.sdp,
-      from: fromId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送语音信令至',
+      'voice:offer',
+      {
+        ticketId: data.ticketId,
+        sdp: data.sdp,
+        from: fromId,
+      },
+    );
   }
 
   @SubscribeMessage('voice:answer')
-  handleVoiceAnswer(
+  async handleVoiceAnswer(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; sdp: RTCSessionDescriptionInit; to: number },
   ) {
-    this.server.to(`user_${data.to}`).emit('voice:answer', {
-      ticketId: data.ticketId,
-      sdp: data.sdp,
-      from: (client as AuthenticatedSocket).userId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送语音信令至',
+      'voice:answer',
+      {
+        ticketId: data.ticketId,
+        sdp: data.sdp,
+        from: (client as AuthenticatedSocket).userId,
+      },
+    );
   }
 
   @SubscribeMessage('voice:ice')
-  handleVoiceIce(
+  async handleVoiceIce(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: { ticketId: number; candidate: RTCIceCandidateInit; to: number },
   ) {
-    this.server.to(`user_${data.to}`).emit('voice:ice', {
-      ticketId: data.ticketId,
-      candidate: data.candidate,
-      from: (client as AuthenticatedSocket).userId,
-    });
+    await this.forwardSignalToRoomUser(
+      client,
+      data.ticketId,
+      data.to,
+      '发送语音信令至',
+      'voice:ice',
+      {
+        ticketId: data.ticketId,
+        candidate: data.candidate,
+        from: (client as AuthenticatedSocket).userId,
+      },
+    );
   }
 }

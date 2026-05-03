@@ -17,7 +17,10 @@ import type { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
-import { Permissions } from '../auth/permissions.decorator';
+import {
+  AllowExternalAccess,
+  Permissions,
+} from '../auth/permissions.decorator';
 import { TicketsService } from './tickets.service';
 import { TicketsExportService } from './tickets-export.service';
 import { CreateTicketDto, UpdateTicketDto } from './dto/ticket.dto';
@@ -167,6 +170,7 @@ export class TicketsController {
 
   @Get(':id')
   @Permissions('tickets:read')
+  @AllowExternalAccess('ticket')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: AuthenticatedRequest,

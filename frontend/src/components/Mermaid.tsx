@@ -6,9 +6,45 @@ import { LoadingOutlined } from '@ant-design/icons';
 mermaid.initialize({
   startOnLoad: false,
   theme: 'default', // 改为默认的浅色主题，适应明亮的页面背景
-  securityLevel: 'loose',
+  securityLevel: 'strict',
   fontFamily: 'inherit'
 });
+
+const sanitizeMermaidSvg = (svg: string): string => {
+  if (typeof DOMParser === 'undefined') {
+    return '';
+  }
+
+  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) {
+    return '';
+  }
+
+  doc
+    .querySelectorAll('script, foreignObject, iframe, object, embed')
+    .forEach((node) => node.remove());
+
+  doc.querySelectorAll('*').forEach((element) => {
+    Array.from(element.attributes).forEach((attr) => {
+      const name = attr.name.toLowerCase();
+      const value = attr.value.trim().toLowerCase();
+
+      if (name.startsWith('on')) {
+        element.removeAttribute(attr.name);
+        return;
+      }
+
+      if (
+        (name === 'href' || name === 'xlink:href') &&
+        (value.startsWith('javascript:') || value.startsWith('data:text/html'))
+      ) {
+        element.removeAttribute(attr.name);
+      }
+    });
+  });
+
+  return new XMLSerializer().serializeToString(doc.documentElement);
+};
 
 interface MermaidProps {
   chart: string;
@@ -29,7 +65,7 @@ export const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
         const { svg } = await mermaid.render(id, chart);
         if (isMounted) {
-          setSvgContent(svg);
+          setSvgContent(sanitizeMermaidSvg(svg));
           setLoading(false);
         }
       } catch (err: any) {

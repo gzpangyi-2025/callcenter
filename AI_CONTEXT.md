@@ -78,17 +78,34 @@ There is a fundamental difference between the local and production Elasticsearch
 ## 3. Deployment & Syncing Rules
 
 ### 3.1 The Sync Script (`sync.sh`)
-- Code is pushed to production using the `/Users/yipang/Documents/Antigravity/callcenter/sync.sh` script.
-- **Note:** The script has been updated to sync to BOTH the local production node (`192.168.50.51`) and the Shanghai node (`101.43.59.206`) simultaneously.
+- Production deployment is performed with `/Users/yipang/Documents/Antigravity/callcenter/sync.sh`.
+- The script deploys to BOTH production nodes: the local production node (`192.168.50.51`) and the Shanghai node (`101.43.59.206`).
+- The script is intentionally a controlled deployment script, not a loose file copy script. It checks that the local Git working tree is clean and that the current commit has already been pushed to the configured upstream branch before it syncs production.
+- The script syncs `frontend/` and `backend/` source files, then builds the backend and frontend on each remote server. It also reloads or starts the PM2 backend process named `callcenter-backend`.
 - **NEVER** remove the `--exclude '.env'` flag from this script. A past incident occurred where the local `.env` overwrote the production `.env`, bringing down the production Elasticsearch connection.
+- The script also excludes `node_modules`, `.git`, `dist`, backend `oss`, backend `uploads`, and backend `backups`. Production `dist` artifacts must be generated on the target servers, not copied from the local machine.
 
 ### 3.2 Frontend Compilation
-- The `sync.sh` script only syncs the source code.
-- If you modify frontend files (`frontend/src/*`), you **MUST** SSH into the production server, navigate to `/var/www/callcenter/frontend`, and **run `npm run build` (NEVER `npm run dev`)** to compile the changes for production. The production environment relies strictly on the compiled static files in the `dist` directory.
+- The `sync.sh` script now runs `npm run build` in `/var/www/callcenter/frontend` on BOTH production nodes after syncing source code.
+- **NEVER run `npm run dev` on production.** Production relies strictly on the compiled static files in the remote `frontend/dist` directory.
+- If frontend dependencies changed, run deployment with `RUN_NPM_INSTALL=1 ./sync.sh` so the remote servers install dependencies before building.
 
 ### 3.3 Git Workflow & Code Commits
-- **Always Commit Before Deploying:** Once a bug fix or feature is completed and tested locally, the AI Assistant MUST execute `git add .`, `git commit -m "..."`, and `git push` to save the work to the remote GitHub repository BEFORE running the `sync.sh` deployment script.
-- **Rollbacks:** If a modification causes system failure, utilize `git restore .` (for uncommitted changes) or `git revert <commit_hash>` to safely roll back.
+- **Always Commit and Push Before Deploying:** Once a bug fix or feature is completed and tested locally, the AI Assistant MUST inspect `git status` and `git diff`, stage only the intended files, create a meaningful commit, and push it to GitHub BEFORE running `sync.sh`.
+- Do not deploy uncommitted local code. The deployed production state must correspond to a GitHub commit so rollbacks and incident review are possible.
+- Avoid blind `git add .` unless the user explicitly wants every changed file included. Prefer precise staging such as `git add backend/src/... frontend/src/...`.
+- **Rollbacks:** If a modification causes system failure, use `git revert <commit_hash>` for deployed commits. Use `git restore .` only for local uncommitted changes that have not been deployed.
+
+### 3.4 Deployment Command
+- Standard deployment command:
+  ```bash
+  ./sync.sh
+  ```
+- If dependencies changed:
+  ```bash
+  RUN_NPM_INSTALL=1 ./sync.sh
+  ```
+- After deployment, verify both servers by checking application behavior and PM2 logs. The backend process name is `callcenter-backend`.
 
 ---
 

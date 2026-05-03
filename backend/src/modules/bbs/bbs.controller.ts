@@ -14,7 +14,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
-import { Permissions } from '../auth/permissions.decorator';
+import {
+  AllowExternalAccess,
+  Permissions,
+} from '../auth/permissions.decorator';
 import { BbsService } from './bbs.service';
 import type { AuthenticatedUser } from '../../common/types/auth.types';
 
@@ -158,6 +161,7 @@ export class BbsController {
 
   @Get('posts/:id')
   @Permissions('bbs:read')
+  @AllowExternalAccess('bbs')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Request() req: { user?: unknown },
@@ -240,7 +244,15 @@ export class BbsController {
 
   @Get('posts/:id/comments')
   @Permissions('bbs:read')
-  getComments(@Param('id', ParseIntPipe) id: number) {
+  @AllowExternalAccess('bbs')
+  getComments(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: { user?: unknown },
+  ) {
+    const user = getUser(req);
+    if (user.role?.name === 'external' && user.bbsId !== id) {
+      throw new UnauthorizedException('无权访问该论坛帖子的评论');
+    }
     return this.bbsService.getComments(id);
   }
 

@@ -129,6 +129,7 @@ export const filesAPI = {
           Region: region,
           Key: key,
           Body: file,
+          ContentType: file.type || 'application/octet-stream',
         }, function(err, data) {
            if (err) reject(err);
            else resolve(data);

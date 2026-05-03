@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CopyOutlined, CheckOutlined, InfoCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, WarningOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -13,6 +14,36 @@ const alertConfig: Record<string, any> = {
   IMPORTANT: { color: '#8250df', icon: <ExclamationCircleOutlined />, title: 'Important' },
   WARNING: { color: '#9a6700', icon: <WarningOutlined />, title: 'Warning' },
   CAUTION: { color: '#d1242f', icon: <CloseCircleOutlined />, title: 'Caution' },
+};
+
+const SAFE_URL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+const SAFE_DATA_IMAGE_PATTERN =
+  /^data:image\/(png|jpe?g|gif|webp|bmp);base64,[a-z0-9+/=\s]+$/i;
+
+const safeUrlTransform = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  if (
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('./') ||
+    trimmed.startsWith('../') ||
+    trimmed.startsWith('#')
+  ) {
+    return value;
+  }
+
+  if (SAFE_DATA_IMAGE_PATTERN.test(trimmed)) {
+    return value;
+  }
+
+  try {
+    const baseUrl = globalThis.location?.origin || 'http://localhost';
+    const parsed = new URL(trimmed, baseUrl);
+    return SAFE_URL_PROTOCOLS.has(parsed.protocol) ? value : '';
+  } catch {
+    return '';
+  }
 };
 
 const extractAlert = (children: React.ReactNode): { type: string | null, newChildren: React.ReactNode } => {
@@ -59,8 +90,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
   return (
     <div className="markdown-viewer">
       <ReactMarkdown
-        urlTransform={(value: string) => value}
+        urlTransform={safeUrlTransform}
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeSanitize]}
         components={{
           blockquote({ node, children, ...props }: any) {
             const { type, newChildren } = extractAlert(children);

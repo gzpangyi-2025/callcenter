@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Input, Tag, Spin, List, Tabs, Typography, Space } from 'antd';
 import { FileTextOutlined, FireOutlined, BookOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons';
@@ -49,9 +49,34 @@ export default function GlobalSearch() {
     }
   };
 
+  const renderHighlightText = (raw: string) => {
+    const parts = raw.split(/(<\/?em>)/gi);
+    let highlighted = false;
+
+    return parts.map((part, index) => {
+      const lower = part.toLowerCase();
+      if (lower === '<em>') {
+        highlighted = true;
+        return null;
+      }
+      if (lower === '</em>') {
+        highlighted = false;
+        return null;
+      }
+      if (!part) return null;
+
+      return highlighted ? (
+        <em key={index}>{part}</em>
+      ) : (
+        <Fragment key={index}>{part}</Fragment>
+      );
+    });
+  };
+
   const renderHighlight = (highlight: any, field: string, fallback: string) => {
     if (highlight && highlight[field] && highlight[field].length > 0) {
-      return <span className="search-highlight" dangerouslySetInnerHTML={{ __html: highlight[field].join(' ... ') }} />;
+      const fragments = highlight[field].join(' ... ');
+      return <span className="search-highlight">{renderHighlightText(fragments)}</span>;
     }
     return fallback;
   };

@@ -1,36 +1,40 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PERMISSIONS_KEY } from './permissions.decorator';
+import { EXTERNAL_ACCESS_KEY, PERMISSIONS_KEY } from './permissions.decorator';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const targets = [context.getHandler(), context.getClass()];
     const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
       PERMISSIONS_KEY,
-      [context.getHandler(), context.getClass()],
+      targets,
     );
+    const externalAccess = this.reflector.getAllAndOverride<string[]>(
+      EXTERNAL_ACCESS_KEY,
+      targets,
+    );
+
+    const { user } = context.switchToHttp().getRequest();
 
     // 如果未设置 @Permissions 验证，默认允许（或你可以选择默认拦截，当前配合系统保持放行）
     if (!requiredPermissions) {
+      if (this.isExternalUser(user)) {
+        return Array.isArray(externalAccess) && externalAccess.length > 0;
+      }
       return true;
     }
-
-    const { user } = context.switchToHttp().getRequest();
 
     // 如果没有 user 或其不包含 role，拒绝访问 (例外：external 临时通行证有自己的鉴别)
     if (!user || !user.role) {
       return false;
     }
 
-    // 针对外部用户的特殊处理
-    if (user.role === 'external' || user.role.name === 'external') {
-      // 外部用户仅允许查看工单（controller 内部会进一步校验 ticketId）或 BBS帖子
-      return (
-        requiredPermissions.includes('tickets:read') ||
-        requiredPermissions.includes('bbs:read')
-      );
+    // 外部分享 token 只允许访问显式标记的详情类路由，避免 tickets:read/bbs:read 被列表和搜索复用。
+    if (this.isExternalUser(user)) {
+      return Array.isArray(externalAccess) && externalAccess.length > 0;
     }
 
     // ⭐ 超级管理员通行权
@@ -50,5 +54,9 @@ export class PermissionsGuard implements CanActivate {
     );
 
     return hasPermission;
+  }
+
+  private isExternalUser(user: any): boolean {
+    return user?.role === 'external' || user?.role?.name === 'external';
   }
 }

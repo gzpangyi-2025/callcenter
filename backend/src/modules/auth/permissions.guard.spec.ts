@@ -1,6 +1,7 @@
 import { PermissionsGuard } from './permissions.guard';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
+import { EXTERNAL_ACCESS_KEY, PERMISSIONS_KEY } from './permissions.decorator';
 
 describe('PermissionsGuard', () => {
   let guard: PermissionsGuard;
@@ -14,13 +15,13 @@ describe('PermissionsGuard', () => {
   const createMockContext = (
     user: any,
     permissions?: string[],
+    externalAccess?: string[],
   ): ExecutionContext => {
-    // Mock reflector to return the desired permissions
-    if (permissions) {
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(permissions);
-    } else {
-      jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined);
-    }
+    jest.spyOn(reflector, 'getAllAndOverride').mockImplementation((key) => {
+      if (key === PERMISSIONS_KEY) return permissions;
+      if (key === EXTERNAL_ACCESS_KEY) return externalAccess;
+      return undefined;
+    });
 
     return {
       getHandler: () => jest.fn(),
@@ -64,25 +65,34 @@ describe('PermissionsGuard', () => {
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should grant admin access even for username "admin" with non-admin role', () => {
+  it('should deny admin access for username "admin" with non-admin role', () => {
     const context = createMockContext(
       { id: 1, role: { name: 'tech' }, username: 'admin' },
       ['admin:access'],
     );
-    expect(guard.canActivate(context)).toBe(true);
+    expect(guard.canActivate(context)).toBe(false);
   });
 
-  it('should allow external users only for tickets:read', () => {
+  it('should deny external users for tickets:read unless route is explicitly marked', () => {
     const context = createMockContext({ id: -1, role: { name: 'external' } }, [
       'tickets:read',
     ]);
+    expect(guard.canActivate(context)).toBe(false);
+  });
+
+  it('should allow external users for an explicitly marked ticket route', () => {
+    const context = createMockContext(
+      { id: -1, role: { name: 'external' } },
+      ['tickets:read'],
+      ['ticket'],
+    );
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should allow external users only for bbs:read', () => {
+  it('should allow external users for an explicitly marked bbs route', () => {
     const context = createMockContext({ id: -1, role: { name: 'external' } }, [
       'bbs:read',
-    ]);
+    ], ['bbs']);
     expect(guard.canActivate(context)).toBe(true);
   });
 
@@ -90,6 +100,14 @@ describe('PermissionsGuard', () => {
     const context = createMockContext({ id: -1, role: { name: 'external' } }, [
       'tickets:delete',
     ]);
+    expect(guard.canActivate(context)).toBe(false);
+  });
+
+  it('should deny external users for routes without permissions unless explicitly marked', () => {
+    const context = createMockContext(
+      { id: -1, role: { name: 'external' } },
+      undefined,
+    );
     expect(guard.canActivate(context)).toBe(false);
   });
 

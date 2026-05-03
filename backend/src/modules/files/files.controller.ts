@@ -6,12 +6,15 @@ import {
   UploadedFile,
   UseGuards,
   BadRequestException,
+  ForbiddenException,
   Param,
   Query,
   Res,
   Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../auth/permissions.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,6 +25,78 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Logger } from '@nestjs/common';
+
+const PUBLIC_IMAGE_EXTENSIONS = new Set([
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.webp',
+  '.bmp',
+]);
+
+const ALLOWED_UPLOAD_EXTENSIONS = new Set([
+  ...PUBLIC_IMAGE_EXTENSIONS,
+  '.pdf',
+  '.doc',
+  '.docx',
+  '.xls',
+  '.xlsx',
+  '.ppt',
+  '.pptx',
+  '.txt',
+  '.csv',
+  '.zip',
+  '.rar',
+  '.7z',
+  '.log',
+]);
+
+const BLOCKED_MIME_TYPES = new Set([
+  'image/svg+xml',
+  'text/html',
+  'application/xhtml+xml',
+  'application/javascript',
+  'text/javascript',
+]);
+
+const INLINE_MIME_BY_EXTENSION: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+  '.bmp': 'image/bmp',
+};
+
+function sanitizeFilename(filename: string): string {
+  return filename.replace(/[/\\]/g, '');
+}
+
+function getExtension(filename: string): string {
+  return extname(filename).toLowerCase();
+}
+
+function isPublicPreviewImage(filename: string): boolean {
+  return PUBLIC_IMAGE_EXTENSIONS.has(getExtension(filename));
+}
+
+function assertAllowedUpload(filename: string, mimetype?: string): void {
+  const ext = getExtension(filename);
+  const normalizedMime = (mimetype || '').toLowerCase();
+
+  if (!ALLOWED_UPLOAD_EXTENSIONS.has(ext)) {
+    throw new BadRequestException('不支持的文件类型');
+  }
+
+  if (BLOCKED_MIME_TYPES.has(normalizedMime)) {
+    throw new BadRequestException('该文件类型存在安全风险，禁止上传');
+  }
+
+  if (normalizedMime.includes('svg') || normalizedMime.includes('html')) {
+    throw new BadRequestException('该文件类型存在安全风险，禁止上传');
+  }
+}
 
 @Controller('files')
 export class FilesController {
@@ -40,7 +115,7 @@ export class FilesController {
     @Query('name') originalName: string,
     @Res() res: Response,
   ) {
-    const safeName = filename.replace(/[/\\]/g, '');
+    const safeName = sanitizeFilename(filename);
     const downloadName = originalName || safeName;
     const url = await this.filesService.getPresignedUrl(
       safeName,
@@ -67,16 +142,23 @@ export class FilesController {
    */
   @Get('static/:filename')
   async serveStatic(@Param('filename') filename: string, @Res() res: Response) {
-    const safeName = filename.replace(/[/\\]/g, '');
+    const safeName = sanitizeFilename(filename);
+    if (!isPublicPreviewImage(safeName)) {
+      throw new ForbiddenException('该文件类型不允许公开预览，请使用鉴权下载');
+    }
+
     const url = await this.filesService.getPresignedUrl(
       safeName,
-      undefined,
+      safeName,
       true,
     );
 
     if (url.startsWith('/api/files/static/')) {
       const localPath = path.join(process.cwd(), 'oss', safeName);
       if (fs.existsSync(localPath)) {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
+        res.type(INLINE_MIME_BY_EXTENSION[getExtension(safeName)]);
         return res.sendFile(localPath);
       } else {
         return res.status(404).send('Not Found');
@@ -92,6 +174,7 @@ export class FilesController {
     if (!filename) {
       throw new BadRequestException('请提供文件名');
     }
+    assertAllowedUpload(filename);
     const uniqueName = `${uuidv4()}${extname(filename)}`;
     const result = await this.filesService.generateUploadCredentials(uniqueName);
     return {
@@ -111,7 +194,14 @@ export class FilesController {
     if (!key || !originalName) {
       throw new BadRequestException('参数不完整');
     }
-    const result = await this.filesService.confirmUpload(key, originalName, size, mimetype);
+    assertAllowedUpload(originalName, mimetype);
+    assertAllowedUpload(key, mimetype);
+    const result = await this.filesService.confirmUpload(
+      key,
+      originalName,
+      size,
+      mimetype,
+    );
     return {
       code: 0,
       message: '确认成功',
@@ -130,7 +220,12 @@ export class FilesController {
           cb(new BadRequestException('请选择文件'), false);
           return;
         }
-        cb(null, true);
+        try {
+          assertAllowedUpload(file.originalname, file.mimetype);
+          cb(null, true);
+        } catch (err) {
+          cb(err as BadRequestException, false);
+        }
       },
     }),
   )
@@ -138,6 +233,7 @@ export class FilesController {
     if (!file) {
       throw new BadRequestException('文件上传失败');
     }
+    assertAllowedUpload(file.originalname, file.mimetype);
 
     const uniqueName = `${uuidv4()}${extname(file.originalname)}`;
 
@@ -156,7 +252,8 @@ export class FilesController {
     };
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('admin:access')
   @Get('migration-stats')
   async getMigrationStats() {
     const localDir = path.join(process.cwd(), 'oss');
@@ -175,7 +272,8 @@ export class FilesController {
     };
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('admin:access')
   @Post('migrate')
   async migrateStorage() {
     if (this.filesService.migrationState.isMigrating) {

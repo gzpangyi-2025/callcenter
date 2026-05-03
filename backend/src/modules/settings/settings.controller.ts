@@ -15,7 +15,10 @@ import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
-import { Permissions } from '../auth/permissions.decorator';
+import {
+  AllowExternalAccess,
+  Permissions,
+} from '../auth/permissions.decorator';
 import { SettingsService } from './settings.service';
 
 // 确保上传目录存在
@@ -129,6 +132,7 @@ export class SettingsController {
 
   /** 获取 WebRTC 配置 (供前端直调) */
   @Get('webrtc-config')
+  @AllowExternalAccess('webrtc')
   async getWebRtcConfig() {
     const data = await this.settingsService.getAll();
     const mode = data['webrtc.mode'] || 'auto';
