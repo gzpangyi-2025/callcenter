@@ -1,0 +1,131 @@
+****************************************
+Wed Sep 30 15:01:23 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 192.168.70.121 ...
+Multicast (IPv4) socket on 192.168.70.121 ready
+Unicast socket on 192.168.70.121 ready
+Listening on 192.168.70.5 ...
+Multicast (IPv4) socket on 192.168.70.5 ready
+Unicast socket on 192.168.70.5 ready
+Agent Interfaces = 192.168.70.121,192.168.70.5
+Startup complete entering main run loop ...
+
+****************************************
+Wed Sep 30 15:03:11 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 192.168.70.5 ...
+Multicast (IPv4) socket on 192.168.70.5 ready
+Unicast socket on 192.168.70.5 ready
+Agent Interfaces = 192.168.70.5
+Startup complete entering main run loop ...
+
+****************************************
+Wed Sep 30 15:33:29 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 192.168.70.5 ...
+Multicast (IPv4) socket on 192.168.70.5 ready
+Unicast socket on 192.168.70.5 ready
+Agent Interfaces = 192.168.70.5
+Startup complete entering main run loop ...
+
+****************************************
+Wed Sep 30 15:35:14 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 192.168.70.5 ...
+Multicast (IPv4) socket on 192.168.70.5 ready
+Unicast socket on 192.168.70.5 ready
+Agent Interfaces = 192.168.70.5
+Startup complete entering main run loop ...
+
+****************************************
+Tue Dec  8 19:21:06 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Agent Interfaces = (null)
+Startup complete entering main run loop ...
+
+****************************************
+Tue Dec  8 19:22:51 2015
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 140.2.253.224 ...
+Multicast (IPv4) socket on 140.2.253.224 ready
+Unicast socket on 140.2.253.224 ready
+Agent Interfaces = 140.2.253.224
+Startup complete entering main run loop ...
+
+****************************************
+Wed Mar  2 13:21:20 2016
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 140.2.253.222 ...
+Multicast (IPv4) socket on 140.2.253.222 ready
+Unicast socket on 140.2.253.222 ready
+Listening on 140.2.253.224 ...
+Multicast (IPv4) socket on 140.2.253.224 ready
+Unicast socket on 140.2.253.224 ready
+Agent Interfaces = 140.2.253.222,140.2.253.224
+Startup complete entering main run loop ...
+
+****************************************
+Wed Mar  2 13:23:05 2016
+SLPD daemon started
+****************************************
+Command line = /usr/sbin/slpd
+Using configuration file = /data/etc/slp.conf
+Using registration file = /etc/slp.reg
+Using SPI file = /etc/slp.spi
+Listening on loopback TCP...
+Listening on loopback UDP...
+Listening on 140.2.253.224 ...
+Multicast (IPv4) socket on 140.2.253.224 ready
+Unicast socket on 140.2.253.224 ready
+Agent Interfaces = 140.2.253.224
+Startup complete entering main run loop ...
+

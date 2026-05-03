@@ -1,0 +1,10 @@
+Dec  8 19:17:16 dnsmasq[30380]: started, version 2.48 cachesize 150
+Dec  8 19:17:16 dnsmasq[30380]: compile time options: IPv6 GNU-getopt DBus no-I18N DHCP TFTP "--bind-interfaces with SO_BINDTODEVICE"
+Dec  8 19:17:16 dnsmasq-dhcp[30380]: DHCP, IP range 192.168.0.2 -- 192.168.0.20, lease time 30m
+Dec  8 19:17:16 dnsmasq[30380]: cleared cache
+Dec  8 19:19:38 dnsmasq[30380]: exiting on receipt of SIGTERM
+Dec  8 19:20:51 dnsmasq[1058]: started, version 2.48 cachesize 150
+Dec  8 19:20:51 dnsmasq[1058]: compile time options: IPv6 GNU-getopt DBus no-I18N DHCP TFTP "--bind-interfaces with SO_BINDTODEVICE"
+Dec  8 19:20:51 dnsmasq-dhcp[1058]: DHCP, IP range 192.168.0.2 -- 192.168.0.20, lease time 30m
+Dec  8 19:20:51 dnsmasq[1058]: cleared cache
+Dec  8 19:22:23 dnsmasq[1058]: exiting on receipt of SIGTERM

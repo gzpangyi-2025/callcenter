@@ -1,0 +1,193 @@
+ecmon  413 2016-01-27 10:38:02 INFO: ========================================
+ecmon  414 2016-01-27 10:38:02 INFO: START
+ecmon  403 2016-01-27 10:38:02 INFO: Options:-
+ecmon  406 2016-01-27 10:38:02 INFO: --ign "test_sshd"
+ecmon  406 2016-01-27 10:38:02 INFO: --int "2"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxfh "50"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxfhdelay "3600"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxlogs "20"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxlogsize "1024"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxps "150"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxpsdelay "60"
+ecmon  406 2016-01-27 10:38:02 INFO: --maxsize "102400"
+ecmon  406 2016-01-27 10:38:02 INFO: --minfree "50"
+ecmon  406 2016-01-27 10:38:02 INFO: --minfreedelay "60"
+ecmon  406 2016-01-27 10:38:02 INFO: --minrss "20480"
+ecmon  406 2016-01-27 10:38:02 INFO: --minvsz "51200"
+ecmon  406 2016-01-27 10:38:02 INFO: --monitor "1"
+ecmon  406 2016-01-27 10:38:02 INFO: --mp "/mnt/ecmon"
+ecmon  406 2016-01-27 10:38:02 INFO: --norss "1"
+ecmon  406 2016-01-27 10:38:02 INFO: --pidfile "/var/run/ecmon.pid"
+ecmon  406 2016-01-27 10:38:02 INFO: --procs "/var/run/ecmon.pid"
+ecmon  406 2016-01-27 10:38:02 INFO: --rd "1"
+ecmon  406 2016-01-27 10:38:02 INFO: --rs "2"
+ecmon  406 2016-01-27 10:38:02 INFO: --td "/dumps/cimom"
+ecmon  406 2016-01-27 10:38:02 INFO: --tf "ecmon.78RE395-2.log"
+ecmon  406 2016-01-27 10:38:02 INFO: --tl "3"
+ecmon  416 2016-01-27 10:38:02 INFO: NOTE: RUNNING WITH RAMDISK
+ecmon  438 2016-01-27 10:38:02 INFO: SVC system monitor log start
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 764 comm rsyslogd has vsz 263496 rss 3544
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3915 comm ecmain has vsz 58828 rss 24308
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3942 comm crond has vsz 22464 rss 1268
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3953 comm sshd has vsz 51340 rss 1020
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3968 comm internal_sshd has vsz 53444 rss 1072
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3975 comm internal_sshd has vsz 76856 rss 3488
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 3999 comm ecfhmon has vsz 32512 rss 5100
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 4017 comm java_tomcat has vsz 263676 rss 227868
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 4063 comm curl has vsz 72388 rss 3488
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 4070 comm ecmon has vsz 54832 rss 13072
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 4088 comm rtc_racemqd has vsz 7206956 rss 7083152
+ecmon  490 2016-01-27 10:38:02 INFO: new pid 4152 comm plmain has vsz 302424 rss 327104
+ecmon  500 2016-01-27 10:38:04 INFO: pid 4017 comm java_tomcat vsz grown: old 263676 new 265220 rss 230368
+ecmon  500 2016-01-27 10:38:04 INFO: pid 4152 comm plmain vsz grown: old 302424 new 360636 rss 382016
+ecmon  555 2016-01-27 10:38:04 INFO: pid 4063 comm curl has exited
+ecmon  500 2016-01-27 10:38:06 INFO: pid 4152 comm plmain vsz grown: old 360636 new 1783840 rss 1796484
+ecmon  490 2016-01-27 10:38:06 INFO: new pid 4414 comm ietd has vsz 7596 rss 940
+ecmon  500 2016-01-27 10:38:22 INFO: pid 4152 comm plmain vsz grown: old 1783840 new 1787452 rss 1800096
+ecmon  490 2016-01-27 10:38:22 INFO: new pid 4738 comm rsyslogd has vsz 197956 rss 1476
+ecmon  490 2016-01-27 10:38:22 INFO: new pid 4759 comm crond has vsz 22468 rss 1264
+ecmon  555 2016-01-27 10:38:22 INFO: pid 3942 comm crond has exited
+ecmon  555 2016-01-27 10:38:22 INFO: pid 764 comm rsyslogd has exited
+ecmon  500 2016-01-27 10:38:26 INFO: pid 4152 comm plmain vsz grown: old 1787452 new 1799524 rss 1812096
+ecmon  500 2016-01-27 10:38:30 INFO: pid 4738 comm rsyslogd vsz grown: old 197956 new 263492 rss 1484
+ecmon  490 2016-01-27 10:38:43 INFO: new pid 4852 comm rsyslogd has vsz 197956 rss 1448
+ecmon  555 2016-01-27 10:38:43 INFO: pid 4738 comm rsyslogd has exited
+ecmon  490 2016-01-27 10:38:57 INFO: new pid 5618 comm plfsmain has vsz 24152 rss 772
+ecmon  490 2016-01-27 10:38:57 INFO: new pid 5676 comm slv_dpadmpd has vsz 5896 rss 4372
+ecmon  555 2016-01-27 10:38:57 INFO: pid 3975 comm internal_sshd has exited
+ecmon  555 2016-01-27 10:38:57 INFO: pid 3968 comm internal_sshd has exited
+ecmon  500 2016-01-27 10:38:59 INFO: pid 5618 comm plfsmain vsz grown: old 24152 new 43076 rss 900
+ecmon  500 2016-01-27 10:39:01 INFO: pid 5618 comm plfsmain vsz shrunk: old 43076 new 36580 rss 896
+ecmon  490 2016-01-27 10:39:03 INFO: new pid 5738 comm curl has vsz 76544 rss 3580
+ecmon  500 2016-01-27 10:39:09 INFO: pid 4017 comm java_tomcat vsz grown: old 265220 new 274988 rss 242256
+ecmon  555 2016-01-27 10:39:09 INFO: pid 5738 comm curl has exited
+ecmon  500 2016-01-27 10:39:11 INFO: pid 4017 comm java_tomcat vsz grown: old 274988 new 276524 rss 242504
+ecmon  490 2016-01-27 10:39:17 INFO: new pid 5916 comm internal_sshd has vsz 13460 rss 1492
+ecmon  490 2016-01-27 10:39:17 INFO: new pid 5928 comm internal_sshd has vsz 53444 rss 1080
+ecmon  490 2016-01-27 10:39:17 INFO: new pid 5935 comm internal_sshd has vsz 75536 rss 3456
+ecmon  490 2016-01-27 10:39:17 INFO: new pid 5936 comm internal_sshd has vsz 54788 rss 1444
+ecmon  500 2016-01-27 10:39:19 INFO: pid 5935 comm internal_sshd vsz grown: old 75536 new 76856 rss 3660
+ecmon  555 2016-01-27 10:39:19 INFO: pid 5936 comm internal_sshd has exited
+ecmon  555 2016-01-27 10:39:19 INFO: pid 5916 comm internal_sshd has exited
+ecmon  500 2016-01-27 10:39:39 INFO: pid 4017 comm java_tomcat vsz grown: old 276524 new 276812 rss 243020
+ecmon  490 2016-01-27 10:40:09 INFO: new pid 6062 comm cimserver has vsz 55036 rss 10384
+ecmon  500 2016-01-27 10:40:17 INFO: pid 6062 comm cimserver vsz grown: old 55036 new 56060 rss 14908
+ecmon  500 2016-01-27 10:40:25 INFO: pid 6062 comm cimserver vsz grown: old 56060 new 59644 rss 18492
+ecmon  490 2016-01-27 10:40:39 INFO: new pid 8334 comm slpd has vsz 21848 rss 724
+ecmon  500 2016-01-27 10:40:53 INFO: pid 4017 comm java_tomcat vsz grown: old 276812 new 278860 rss 246468
+ecmon  500 2016-01-27 10:40:55 INFO: pid 4017 comm java_tomcat vsz grown: old 278860 new 279884 rss 246660
+ecmon  500 2016-01-27 10:40:57 INFO: pid 4017 comm java_tomcat vsz grown: old 279884 new 280924 rss 247524
+ecmon  500 2016-01-27 10:40:59 INFO: pid 4017 comm java_tomcat vsz grown: old 280924 new 281948 rss 247732
+ecmon  500 2016-01-27 10:41:03 INFO: pid 4017 comm java_tomcat vsz grown: old 281948 new 282208 rss 247864
+ecmon  500 2016-01-27 10:41:44 INFO: pid 4017 comm java_tomcat vsz grown: old 282208 new 283232 rss 250232
+ecmon  500 2016-01-27 10:42:48 INFO: pid 4017 comm java_tomcat vsz grown: old 283232 new 284256 rss 251148
+ecmon  500 2016-01-27 10:43:26 INFO: pid 4017 comm java_tomcat vsz shrunk: old 284256 new 283232 rss 251132
+ecmon  500 2016-01-27 10:46:19 INFO: pid 4017 comm java_tomcat vsz grown: old 283232 new 284256 rss 251460
+ecmon  500 2016-01-27 10:46:32 INFO: pid 4017 comm java_tomcat vsz grown: old 284256 new 285464 rss 252632
+ecmon  500 2016-01-27 10:46:34 INFO: pid 4017 comm java_tomcat vsz grown: old 285464 new 286488 rss 253756
+ecmon  500 2016-01-27 10:50:35 INFO: pid 4017 comm java_tomcat vsz grown: old 286488 new 291632 rss 258616
+ecmon  500 2016-01-27 10:58:34 INFO: pid 6062 comm cimserver vsz grown: old 59644 new 59804 rss 18624
+ecmon  490 2016-01-27 10:58:38 INFO: new pid 11889 comm sw_snap has vsz 55708 rss 11636
+ecmon  500 2016-01-27 10:58:40 INFO: pid 11889 comm sw_snap vsz grown: old 55708 new 56736 rss 13000
+ecmon  500 2016-01-27 10:58:42 INFO: pid 4852 comm rsyslogd vsz grown: old 197956 new 263492 rss 1476
+ecmon  500 2016-01-27 10:58:42 INFO: pid 11889 comm sw_snap vsz grown: old 56736 new 59316 rss 15468
+ecmon  500 2016-01-27 10:58:44 INFO: pid 11889 comm sw_snap vsz grown: old 59316 new 64048 rss 20552
+ecmon  500 2016-01-27 10:59:24 INFO: pid 4017 comm java_tomcat vsz grown: old 291632 new 291892 rss 258588
+ecmon  500 2016-01-27 11:00:23 INFO: pid 4017 comm java_tomcat vsz grown: old 291892 new 292412 rss 258628
+ecmon  490 2016-01-27 11:01:01 INFO: new pid 17168 comm crond has vsz 41208 rss 1608
+ecmon  490 2016-01-27 11:01:01 INFO: new pid 17169 comm crond has vsz 41208 rss 1608
+ecmon  490 2016-01-27 11:01:03 INFO: new pid 17209 comm rsyslogd has vsz 197960 rss 1476
+ecmon  555 2016-01-27 11:01:03 INFO: pid 17168 comm crond has exited
+ecmon  555 2016-01-27 11:01:03 INFO: pid 4852 comm rsyslogd has exited
+ecmon  555 2016-01-27 11:01:03 INFO: pid 17169 comm crond has exited
+ecmon  555 2016-01-27 11:01:09 INFO: pid 11889 comm sw_snap has exited
+ecmon  490 2016-01-27 11:01:19 INFO: new pid 17281 comm rsyslogd has vsz 197960 rss 1448
+ecmon  555 2016-01-27 11:01:19 INFO: pid 17209 comm rsyslogd has exited
+ecmon  500 2016-01-27 11:21:21 INFO: pid 17281 comm rsyslogd vsz grown: old 197960 new 263496 rss 3492
+ecmon  500 2016-01-27 11:42:02 INFO: pid 4017 comm java_tomcat vsz grown: old 292412 new 292672 rss 258312
+ecmon  500 2016-01-27 11:45:46 INFO: pid 4017 comm java_tomcat vsz grown: old 292672 new 293444 rss 258764
+ecmon  500 2016-01-27 11:55:55 INFO: pid 4017 comm java_tomcat vsz grown: old 293444 new 294468 rss 259268
+ecmon  490 2016-01-27 11:56:16 INFO: new pid 22753 comm sw_snap has vsz 54944 rss 11636
+ecmon  500 2016-01-27 11:56:20 INFO: pid 22753 comm sw_snap vsz grown: old 54944 new 58364 rss 15468
+ecmon  500 2016-01-27 11:56:22 INFO: pid 22753 comm sw_snap vsz grown: old 58364 new 61972 rss 19092
+ecmon  500 2016-01-27 11:57:08 INFO: pid 4017 comm java_tomcat vsz grown: old 294468 new 294728 rss 259804
+ecmon  500 2016-01-27 11:58:04 INFO: pid 4017 comm java_tomcat vsz shrunk: old 294728 new 293704 rss 259220
+ecmon  555 2016-01-27 11:58:29 INFO: pid 22753 comm sw_snap has exited
+ecmon  500 2016-01-27 11:58:31 INFO: pid 4017 comm java_tomcat vsz grown: old 293704 new 294728 rss 259952
+ecmon  500 2016-01-27 11:59:41 INFO: pid 4017 comm java_tomcat vsz shrunk: old 294728 new 293704 rss 258468
+ecmon  500 2016-01-27 13:17:16 INFO: pid 6062 comm cimserver vsz shrunk: old 59804 new 59792 rss 9768
+ecmon  500 2016-01-27 13:17:18 INFO: pid 6062 comm cimserver vsz grown: old 59792 new 59804 rss 9772
+ecmon  500 2016-01-27 13:29:54 INFO: pid 17281 comm rsyslogd vsz grown: old 263496 new 329032 rss 3336
+ecmon  500 2016-01-27 13:57:12 INFO: pid 4017 comm java_tomcat vsz grown: old 293704 new 294728 rss 260664
+ecmon  500 2016-01-27 14:07:04 INFO: pid 4017 comm java_tomcat vsz shrunk: old 294728 new 293704 rss 258964
+ecmon  500 2016-01-27 14:14:11 INFO: pid 4017 comm java_tomcat vsz grown: old 293704 new 294728 rss 259872
+ecmon  500 2016-01-27 14:16:11 INFO: pid 4017 comm java_tomcat vsz shrunk: old 294728 new 293704 rss 259104
+ecmon  500 2016-01-27 14:21:11 INFO: pid 4017 comm java_tomcat vsz grown: old 293704 new 294728 rss 259792
+ecmon  490 2016-01-27 14:22:34 INFO: new pid 12653 comm sshd has vsz 54788 rss 3120
+ecmon  490 2016-01-27 14:22:34 INFO: new pid 12654 comm sshd has vsz 54788 rss 1248
+ecmon  500 2016-01-27 14:22:42 INFO: pid 12653 comm sshd vsz grown: old 54788 new 75524 rss 3356
+ecmon  500 2016-01-27 14:22:48 INFO: pid 12653 comm sshd vsz grown: old 75524 new 76844 rss 3544
+ecmon  490 2016-01-27 14:22:48 INFO: new pid 12680 comm sshd has vsz 76844 rss 1776
+ecmon  555 2016-01-27 14:22:48 INFO: pid 12654 comm sshd has exited
+ecmon  500 2016-01-27 14:24:02 INFO: pid 4017 comm java_tomcat vsz grown: old 294728 new 294860 rss 259904
+ecmon  500 2016-01-27 14:24:14 INFO: pid 4017 comm java_tomcat vsz shrunk: old 294860 new 293836 rss 259384
+ecmon  500 2016-01-27 14:41:41 INFO: pid 4017 comm java_tomcat vsz grown: old 293836 new 294348 rss 259620
+ecmon  500 2016-01-27 14:42:15 INFO: pid 4017 comm java_tomcat vsz grown: old 294348 new 295372 rss 260252
+ecmon  490 2016-01-27 14:43:56 INFO: new pid 17159 comm sw_snap has vsz 54944 rss 11636
+ecmon  500 2016-01-27 14:43:58 INFO: pid 17159 comm sw_snap vsz grown: old 54944 new 55800 rss 12996
+ecmon  500 2016-01-27 14:44:00 INFO: pid 17159 comm sw_snap vsz grown: old 55800 new 58364 rss 15464
+ecmon  500 2016-01-27 14:44:02 INFO: pid 17159 comm sw_snap vsz grown: old 58364 new 61972 rss 19088
+ecmon  500 2016-01-27 14:45:44 INFO: pid 4017 comm java_tomcat vsz shrunk: old 295372 new 294348 rss 260244
+ecmon  500 2016-01-27 14:45:46 INFO: pid 4017 comm java_tomcat vsz grown: old 294348 new 295372 rss 260312
+ecmon  555 2016-01-27 14:46:29 INFO: pid 17159 comm sw_snap has exited
+ecmon  500 2016-01-27 14:46:31 INFO: pid 4017 comm java_tomcat vsz shrunk: old 295372 new 294348 rss 259260
+ecmon  500 2016-01-27 14:48:34 INFO: pid 4017 comm java_tomcat vsz grown: old 294348 new 295372 rss 261096
+ecmon  500 2016-01-27 14:48:36 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 262052
+ecmon  500 2016-01-27 14:48:48 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261052
+ecmon  500 2016-01-27 14:49:59 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261064
+ecmon  500 2016-01-27 14:50:01 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 260996
+ecmon  500 2016-01-27 14:50:07 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261064
+ecmon  500 2016-01-27 14:50:09 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 260936
+ecmon  500 2016-01-27 14:50:37 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 297420 rss 262240
+ecmon  500 2016-01-27 14:50:39 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262172
+ecmon  500 2016-01-27 14:50:57 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261456
+ecmon  500 2016-01-27 14:51:07 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261528
+ecmon  500 2016-01-27 14:51:09 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261800
+ecmon  500 2016-01-27 14:51:37 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261832
+ecmon  500 2016-01-27 14:52:06 INFO: pid 4152 comm plmain vsz grown: old 1799524 new 1800044 rss 1812628
+ecmon  500 2016-01-27 14:52:35 INFO: pid 4152 comm plmain vsz shrunk: old 1800044 new 1799524 rss 1812112
+ecmon  500 2016-01-27 14:52:37 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261288
+ecmon  500 2016-01-27 14:52:51 INFO: pid 4152 comm plmain vsz grown: old 1799524 new 1800804 rss 1813392
+ecmon  500 2016-01-27 14:53:07 INFO: pid 4017 comm java_tomcat vsz shrunk: old 295372 new 294348 rss 259688
+ecmon  500 2016-01-27 14:54:07 INFO: pid 4017 comm java_tomcat vsz grown: old 294348 new 295372 rss 259840
+ecmon  500 2016-01-27 14:54:09 INFO: pid 4017 comm java_tomcat vsz shrunk: old 295372 new 294348 rss 259708
+ecmon  555 2016-01-27 15:00:03 INFO: pid 12680 comm sshd has exited
+ecmon  555 2016-01-27 15:00:03 INFO: pid 12653 comm sshd has exited
+ecmon  490 2016-01-27 15:01:02 INFO: new pid 26638 comm rsyslogd has vsz 197956 rss 1472
+ecmon  555 2016-01-27 15:01:02 INFO: pid 17281 comm rsyslogd has exited
+ecmon  490 2016-01-27 15:01:20 INFO: new pid 26692 comm rsyslogd has vsz 197960 rss 1444
+ecmon  555 2016-01-27 15:01:20 INFO: pid 26638 comm rsyslogd has exited
+ecmon  500 2016-01-27 15:05:09 INFO: pid 4017 comm java_tomcat vsz grown: old 294348 new 295372 rss 259940
+ecmon  500 2016-01-27 15:05:11 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 262316
+ecmon  500 2016-01-27 15:05:54 INFO: pid 26692 comm rsyslogd vsz grown: old 197960 new 263496 rss 1452
+ecmon  500 2016-01-27 15:08:45 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261632
+ecmon  500 2016-01-27 15:10:15 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261704
+ecmon  500 2016-01-27 15:10:17 INFO: pid 4017 comm java_tomcat vsz shrunk: old 296396 new 295372 rss 261632
+ecmon  500 2016-01-27 15:11:26 INFO: pid 4017 comm java_tomcat vsz grown: old 295372 new 296396 rss 261720
+ecmon  500 2016-01-27 15:11:44 INFO: pid 4017 comm java_tomcat vsz grown: old 296396 new 297420 rss 262780
+ecmon  500 2016-01-27 15:20:49 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262432
+ecmon  500 2016-01-27 15:21:21 INFO: pid 26692 comm rsyslogd vsz grown: old 263496 new 329032 rss 1456
+ecmon  490 2016-01-27 15:22:46 INFO: new pid 30832 comm sshd has vsz 54788 rss 3120
+ecmon  490 2016-01-27 15:22:46 INFO: new pid 30833 comm sshd has vsz 54788 rss 1248
+ecmon  500 2016-01-27 15:22:52 INFO: pid 30832 comm sshd vsz grown: old 54788 new 75524 rss 3356
+ecmon  500 2016-01-27 15:22:54 INFO: pid 30832 comm sshd vsz grown: old 75524 new 76844 rss 3544
+ecmon  490 2016-01-27 15:22:54 INFO: new pid 30864 comm sshd has vsz 76844 rss 1776
+ecmon  555 2016-01-27 15:22:54 INFO: pid 30833 comm sshd has exited
+ecmon  500 2016-01-27 15:23:16 INFO: pid 4017 comm java_tomcat vsz grown: old 296396 new 297420 rss 262516
+ecmon  500 2016-01-27 15:23:18 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262432
+ecmon  500 2016-01-27 15:23:46 INFO: pid 4017 comm java_tomcat vsz grown: old 296396 new 297420 rss 262516
+ecmon  500 2016-01-27 15:23:48 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262432
+ecmon  500 2016-01-27 15:28:20 INFO: pid 4017 comm java_tomcat vsz grown: old 296396 new 297420 rss 262412
+ecmon  500 2016-01-27 15:28:22 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262268
+ecmon  500 2016-01-27 15:31:49 INFO: pid 4017 comm java_tomcat vsz grown: old 296396 new 297420 rss 262056
+ecmon  500 2016-01-27 15:34:26 INFO: pid 4017 comm java_tomcat vsz shrunk: old 297420 new 296396 rss 262440

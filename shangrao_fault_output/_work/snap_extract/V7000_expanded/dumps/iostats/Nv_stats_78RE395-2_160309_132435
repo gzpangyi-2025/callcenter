@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+xmlns="http://ibm.com/storage/management/performance/api/2005/08/vDiskStats"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2005/08/vDiskStats schema/SVCPerfStatsV.xsd" scope="node" id="node2" cluster="v7000_3" node_id="0x0000000000000002" cluster_id="0x00000200a0a2c618" sizeUnits="512B" timeUnits="msec" contains="virtualDiskStats" timestamp="2016-03-09 13:24:35" timezone="GMT+8:00">
+<vdsk idx="0"
+ctps="0" ctrhs="0" ctrhps="0" ctds="27860364"
+ctwfts="4612" ctwwts="0" ctwfws="27854217" ctwhs="2"
+cv="0" cm="0" ctws="27858829" ctrs="12"
+ctr="12" ctw="439824" ctp="0" ctrh="0"
+ctrhp="0" ctd="59056" ctwft="76" ctwwt="0"
+ctwfw="439748" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol1"
+ro="12" wo="59033" wou="4614" rb="12" wb="27858829"
+rl="7359" wl="5151562" rlw="0" wlw="0" xl="31289">
+<ca rh="0" d="27860364" ft="4612" wt="0"
+fw="27854217" wh="2" v="0" m="0"
+ri="12" wi="59033" r="12" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="4" ph="0" d="27859336"
+ft="5635" wt="0" fw="27855241" wh="2580"
+v="0" m="0" pm="0" ri="12"
+wi="59056" r="8" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="1"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol2"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="0" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="2"
+ctps="0" ctrhs="0" ctrhps="0" ctds="27021826"
+ctwfts="1028" ctwwts="0" ctwfws="27019776" ctwhs="2"
+cv="0" cm="0" ctws="27020804" ctrs="14"
+ctr="14" ctw="422204" ctp="0" ctrh="0"
+ctrhp="0" ctd="52812" ctwft="20" ctwwt="0"
+ctwfw="422184" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol3"
+ro="12" wo="52798" wou="4" rb="12" wb="27020804"
+rl="12075" wl="3730111" rlw="0" wlw="0" xl="33862">
+<ca rh="0" d="27021826" ft="1028" wt="0"
+fw="27019776" wh="2" v="0" m="0"
+ri="12" wi="52798" r="14" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="6" ph="0" d="27022850"
+ft="1538" wt="0" fw="27020800" wh="0"
+v="0" m="0" pm="0" ri="14"
+wi="52812" r="10" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="3"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol4"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="0" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="4"
+ctps="0" ctrhs="0" ctrhps="0" ctds="27981323"
+ctwfts="3588" ctwwts="0" ctwfws="27976713" ctwhs="2"
+cv="0" cm="0" ctws="27980301" ctrs="526"
+ctr="22" ctw="437202" ctp="0" ctrh="0"
+ctrhp="0" ctd="54689" ctwft="60" ctwwt="0"
+ctwfw="437142" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol5"
+ro="13" wo="54674" wou="10" rb="524" wb="27979789"
+rl="12828" wl="5140113" rlw="0" wlw="0" xl="33054">
+<ca rh="0" d="27981323" ft="3588" wt="0"
+fw="27976713" wh="2" v="0" m="0"
+ri="13" wi="54675" r="526" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="518" ph="0" d="27981835"
+ft="4098" wt="0" fw="27977737" wh="1024"
+v="0" m="0" pm="0" ri="15"
+wi="54689" r="10" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="5"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol6"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="0" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="6"
+ctps="0" ctrhs="0" ctrhps="0" ctds="1551940603"
+ctwfts="185090" ctwwts="0" ctwfws="1551602182" ctwhs="2"
+cv="0" cm="0" ctws="1551787272" ctrs="14"
+ctr="14" ctw="24380699" ctp="0" ctrh="0"
+ctrhp="0" ctd="3180797" ctwft="3657" ctwwt="0"
+ctwfw="24377042" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol7"
+ro="12" wo="3177815" wou="44645" rb="12" wb="1551787272"
+rl="13543" wl="12914951" rlw="0" wlw="360275" xl="1477657">
+<ca rh="0" d="1551940603" ft="185090" wt="0"
+fw="1551602182" wh="2" v="0" m="0"
+ri="12" wi="3177815" r="14" dav="56763" dcn="18" sav="0" scn="0" teav="6756" 
+tsav="0"  tav="240"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="6" ph="0" d="1550916538"
+ft="246076" wt="0" fw="1551694527" wh="1175973"
+v="395412" m="136" pm="0" ri="14"
+wi="3180797" r="10" dav="44271" dcn="26"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="7"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol8"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="334200" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="8"
+ctps="0" ctrhs="0" ctrhps="0" ctds="1545333584"
+ctwfts="62258" ctwwts="0" ctwfws="1545220373" ctwhs="2"
+cv="0" cm="0" ctws="1545282631" ctrs="12"
+ctr="12" ctw="24285595" ctp="0" ctrh="0"
+ctrhp="0" ctd="3178308" ctwft="1454" ctwwt="0"
+ctwfw="24284141" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol9"
+ro="12" wo="3177172" wou="14797" rb="12" wb="1545282631"
+rl="13580" wl="12442536" rlw="0" wlw="0" xl="1471377">
+<ca rh="0" d="1545333584" ft="62258" wt="0"
+fw="1545220373" wh="2" v="0" m="0"
+ri="12" wi="3177172" r="12" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="4" ph="0" d="1544937515"
+ft="85195" wt="0" fw="1545248901" wh="445696"
+v="368391" m="0" pm="0" ri="12"
+wi="3178308" r="8" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="9"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol10"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="118299" m="19" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="10"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol11"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="0" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="11"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol12"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="4666208" m="0" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="12"
+ctps="0" ctrhs="0" ctrhps="0" ctds="1613898299"
+ctwfts="349405" ctwwts="0" ctwfws="1613276087" ctwhs="2"
+cv="0" cm="0" ctws="1613625492" ctrs="12"
+ctr="12" ctw="25369899" ctp="0" ctrh="0"
+ctrhp="0" ctd="3304172" ctwft="8974" ctwwt="0"
+ctwfw="25360925" ctwfwsh="0" ctwfwshs="0" ctwh="2"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol13"
+ro="12" wo="3297741" wou="156128" rb="12" wb="1613625492"
+rl="11003" wl="30955138" rlw="0" wlw="69476" xl="1579707">
+<ca rh="0" d="1613898299" ft="349405" wt="0"
+fw="1613276087" wh="2" v="0" m="0"
+ri="12" wi="3297741" r="12" dav="711" dcn="158" sav="0" scn="0" teav="110" 
+tsav="0"  tav="141"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="4" ph="0" d="1613725752"
+ft="447175" wt="0" fw="1613451124" wh="433666"
+v="278058" m="6503" pm="0" ri="12"
+wi="3304172" r="8" dav="187049" dcn="123"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="13"
+ctps="0" ctrhs="0" ctrhps="0" ctds="0"
+ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"
+cv="0" cm="0" ctws="0" ctrs="0"
+ctr="0" ctw="0" ctp="0" ctrh="0"
+ctrhp="0" ctd="0" ctwft="0" ctwwt="0"
+ctwfw="0" ctwfwsh="0" ctwfwshs="0" ctwh="0"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol14"
+ro="0" wo="0" wou="0" rb="0" wb="0"
+rl="0" wl="0" rlw="0" wlw="0" xl="0">
+<ca rh="0" d="0" ft="0" wt="0"
+fw="0" wh="0" v="0" m="0"
+ri="0" wi="0" r="0" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="0" ph="0" d="0"
+ft="0" wt="0" fw="0" wh="0"
+v="10609" m="1590" pm="0" ri="0"
+wi="0" r="0" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+<vdsk idx="14"
+ctps="0" ctrhs="0" ctrhps="0" ctds="9427970"
+ctwfts="514" ctwwts="0" ctwfws="9426944" ctwhs="1"
+cv="0" cm="0" ctws="9427458" ctrs="6"
+ctr="6" ctw="147306" ctp="0" ctrh="0"
+ctrhp="0" ctd="18430" ctwft="10" ctwwt="0"
+ctwfw="147296" ctwfwsh="0" ctwfwshs="0" ctwh="1"
+gwot="0" gwo="0" gws="0" gwl="0"
+
+id="svc_vol15"
+ro="6" wo="18422" wou="2" rb="6" wb="9427458"
+rl="7666" wl="8341763" rlw="0" wlw="0" xl="12190">
+<ca rh="0" d="9427970" ft="514" wt="0"
+fw="9426944" wh="1" v="0" m="0"
+ri="6" wi="18422" r="6" dav="0" dcn="0" sav="0" scn="0" teav="0" 
+tsav="0"  tav="0"  pp="0"/>
+<cpy idx="0">
+<ca p="0" rh="2" ph="0" d="9427971"
+ft="514" wt="0" fw="9427456" wh="512"
+v="0" m="0" pm="0" ri="6"
+wi="18430" r="4" dav="0" dcn="0"
+sav="0" scn="0" pav="0" pcn="0"
+teav="0"  tsav="0"  tav="0"  pp="0"/>
+</cpy>
+</vdsk>
+</diskStatsColl>

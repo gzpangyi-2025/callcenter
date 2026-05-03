@@ -1,0 +1,70 @@
+AC POWER TRACE Rotate 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 1 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 1 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Refresh partner view: outbound 0 inbound 0 
+Sat Aug  9 14:00:18 2014- plic_ac_power Send success: outbound 0 resend required 0 
+AC POWER TRACE initialise 
+Wed Jan 27 10:38:04 2016- plic_ac_power Start up: outbound 1 inbound 1 
+Wed Jan 27 10:38:04 2016- plic_ac_power WWPN set: wwnn 50050CC1D62C57E 
+Wed Jan 27 10:38:06 2016- plic_ac_power Local changed: Powerlost 0 outbound 1 inbound 1 
+Wed Jan 27 10:38:06 2016- plic_ac_power Send Failed: outbound 0 resend required 0 
+Wed Jan 27 10:38:09 2016- plic_ac_power Refresh partner view: outbound 0 inbound 1 
+Wed Jan 27 10:38:09 2016- plic_ac_power Send success: outbound 0 resend required 0 
+Wed Jan 27 10:38:14 2016- plic_ac_power File create: outbound 0 inbound 1 
+Wed Jan 27 10:38:15 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 10:38:15 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 14:52:36 2016- plic_ac_power Partner Logout: outbound 0 inbound 0 
+Wed Jan 27 14:52:36 2016- plic_ac_power Remote changed: Powerlost 1 outbound 0 inbound 0 
+Wed Jan 27 14:52:36 2016- plic_ac_power File create: outbound 0 inbound 1 
+Wed Jan 27 15:05:28 2016- plic_ac_power Refresh partner view: outbound 0 inbound 1 
+Wed Jan 27 15:05:28 2016- plic_ac_power Send success: outbound 0 resend required 0 
+Wed Jan 27 15:05:29 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 15:05:29 2016- plic_ac_power File create: outbound 0 inbound 0 
+AC POWER TRACE initialise 
+Wed Jan 27 15:48:42 2016- plic_ac_power Start up: outbound 1 inbound 1 
+Wed Jan 27 15:48:42 2016- plic_ac_power WWPN set: wwnn 50050CC1D62C57E 
+Wed Jan 27 15:48:44 2016- plic_ac_power Refresh partner view: outbound 1 inbound 1 
+Wed Jan 27 15:48:44 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 1 
+Wed Jan 27 15:48:44 2016- plic_ac_power File create: outbound 1 inbound 0 
+Wed Jan 27 15:48:44 2016- plic_ac_power Send success: outbound 1 resend required 0 
+Wed Jan 27 15:48:44 2016- plic_ac_power Local changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 15:48:44 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 15:48:44 2016- plic_ac_power Send success: outbound 0 resend required 0 
+AC POWER TRACE initialise 
+Wed Jan 27 15:57:22 2016- plic_ac_power Start up: outbound 1 inbound 1 
+Wed Jan 27 15:57:22 2016- plic_ac_power WWPN set: wwnn 50050CC1D62C57E 
+Wed Jan 27 15:57:24 2016- plic_ac_power Refresh partner view: outbound 1 inbound 1 
+Wed Jan 27 15:57:24 2016- plic_ac_power Send success: outbound 1 resend required 0 
+Wed Jan 27 15:57:24 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 1 
+Wed Jan 27 15:57:24 2016- plic_ac_power File create: outbound 1 inbound 0 
+Wed Jan 27 15:57:24 2016- plic_ac_power Local changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 15:57:24 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 15:57:24 2016- plic_ac_power Send success: outbound 0 resend required 0 
+Wed Jan 27 16:28:03 2016- plic_ac_power Partner Logout: outbound 0 inbound 0 
+Wed Jan 27 16:28:03 2016- plic_ac_power Remote changed: Powerlost 1 outbound 0 inbound 0 
+Wed Jan 27 16:28:03 2016- plic_ac_power File create: outbound 0 inbound 1 
+Wed Jan 27 16:29:12 2016- plic_ac_power Refresh partner view: outbound 0 inbound 1 
+Wed Jan 27 16:29:12 2016- plic_ac_power Send success: outbound 0 resend required 0 
+Wed Jan 27 16:29:12 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 16:29:12 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 16:33:33 2016- plic_ac_power Remote changed: Powerlost 1 outbound 0 inbound 0 
+Wed Jan 27 16:33:33 2016- plic_ac_power File create: outbound 0 inbound 1 
+Wed Jan 27 16:33:38 2016- plic_ac_power Remote changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 16:33:38 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 16:51:45 2016- plic_ac_power Local changed: Powerlost 1 outbound 0 inbound 0 
+Wed Jan 27 16:51:45 2016- plic_ac_power File create: outbound 1 inbound 0 
+Wed Jan 27 16:51:45 2016- plic_ac_power Send success: outbound 1 resend required 0 
+Wed Jan 27 16:51:50 2016- plic_ac_power Local changed: Powerlost 0 outbound 1 inbound 0 
+Wed Jan 27 16:51:50 2016- plic_ac_power File create: outbound 0 inbound 0 
+Wed Jan 27 16:51:50 2016- plic_ac_power Send success: outbound 0 resend required 0 

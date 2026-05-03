@@ -1,0 +1,182 @@
+
+***************  KEYMGR INITIALISATION  ***************
+
+Timestamp  : Thu Oct  1 04:15:13 2015
+Host       : 78CHLX0
+PID        : 11799
+Parent PID : 1
+Thu Oct  1 04:15:13 2015: Running APT
+Thu Oct  1 04:15:16 2015: Passed APT
+Thu Oct  1 04:15:16 2015: MQ:Sending Initialization
+Thu Oct  1 04:15:16 2015: MQ:Sent init command using 150216AAE47
+Thu Oct  1 04:15:17 2015: MQ:Successfully initialized
+Thu Oct  1 04:15:17 2015: MQ:Registering with IO process
+Thu Oct  1 04:15:18 2015: MQ:-registered with IO process
+Thu Oct  1 04:15:18 2015: USB rescan init Front:0 Rear:0
+Thu Oct  1 04:15:18 2015: USB rescan init Front:0 Rear:0
+Thu Oct  1 04:50:16 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Thu Oct  1 04:50:16 2015: MQ:OP_PLMAIN_EXIT received
+Thu Oct  1 04:50:16 2015: MQ:Sending Initialization
+Thu Oct  1 04:50:16 2015: MQ:Sent init command using 150218A88D5
+Thu Oct  1 04:50:21 2015: MQ:Successfully initialized
+Thu Oct  1 04:50:21 2015: MQ:Registering with IO process
+Thu Oct  1 04:50:22 2015: MQ:-registered with IO process
+Thu Oct  1 04:50:22 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 14:48:58 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 14:48:58 2015: MQ:Sending Initialization
+Wed Sep 30 14:48:58 2015: MQ:Sent init command using 1501E50E9FA
+Wed Sep 30 14:49:09 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 14:49:09 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 14:49:54 2015: MQ:Successfully initialized
+Wed Sep 30 14:49:54 2015: MQ:Registering with IO process
+Wed Sep 30 14:49:55 2015: MQ:-registered with IO process
+Wed Sep 30 14:49:55 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 14:52:59 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 14:52:59 2015: MQ:Sending Initialization
+Wed Sep 30 14:52:59 2015: MQ:Sent init command using 1501E5257CC
+Wed Sep 30 14:53:15 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 14:53:15 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 14:53:20 2015: MQ:Successfully initialized
+Wed Sep 30 14:53:20 2015: MQ:Registering with IO process
+Wed Sep 30 14:53:21 2015: MQ:-registered with IO process
+Wed Sep 30 14:53:21 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 14:54:20 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 14:54:20 2015: MQ:Sending Initialization
+Wed Sep 30 14:54:20 2015: MQ:Sent init command using 1501E534210
+Wed Sep 30 14:54:29 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 14:54:29 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 14:54:33 2015: MQ:Successfully initialized
+Wed Sep 30 14:54:33 2015: MQ:Registering with IO process
+Wed Sep 30 14:54:34 2015: MQ:-registered with IO process
+Wed Sep 30 14:54:34 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 14:56:03 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 14:56:03 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 14:56:03 2015: MQ:Sending Initialization
+Wed Sep 30 14:56:03 2015: MQ:Sent init command using 1501E54B44F
+Wed Sep 30 14:56:07 2015: MQ:Successfully initialized
+Wed Sep 30 14:56:07 2015: MQ:Registering with IO process
+Wed Sep 30 14:56:08 2015: MQ:-registered with IO process
+Wed Sep 30 14:56:08 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 14:59:34 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 14:59:34 2015: MQ:Sending Initialization
+Wed Sep 30 14:59:34 2015: MQ:Sent init command using 1501E597BF2
+Wed Sep 30 14:59:36 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 14:59:36 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 14:59:40 2015: MQ:Successfully initialized
+Wed Sep 30 14:59:40 2015: MQ:Registering with IO process
+Wed Sep 30 14:59:41 2015: MQ:-registered with IO process
+Wed Sep 30 14:59:41 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 15:01:33 2015: MQ:OP_IS_CONFIG_NODE received
+Wed Sep 30 15:32:26 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 15:32:26 2015: MQ:Sending Initialization
+Wed Sep 30 15:32:26 2015: MQ:Sent init command using 1501E76B70D
+Wed Sep 30 15:32:44 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 15:32:44 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 15:32:48 2015: MQ:Successfully initialized
+Wed Sep 30 15:32:48 2015: MQ:Registering with IO process
+Wed Sep 30 15:32:49 2015: MQ:-registered with IO process
+Wed Sep 30 15:32:49 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 15:33:49 2015: MQ:OP_IS_CONFIG_NODE received
+Wed Sep 30 16:12:06 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 16:12:06 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 16:12:06 2015: MQ:Sending Initialization
+Wed Sep 30 16:12:06 2015: MQ:Sent init command using 1501E9BE565
+Wed Sep 30 16:12:10 2015: MQ:Successfully initialized
+Wed Sep 30 16:12:10 2015: MQ:Registering with IO process
+Wed Sep 30 16:12:11 2015: MQ:-registered with IO process
+Wed Sep 30 16:12:11 2015: USB rescan init Front:0 Rear:0
+Wed Sep 30 16:16:10 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Sep 30 16:16:10 2015: MQ:OP_PLMAIN_EXIT received
+Wed Sep 30 16:16:10 2015: MQ:Sending Initialization
+Wed Sep 30 16:16:10 2015: MQ:Sent init command using 1501E9C8190
+Wed Sep 30 16:16:58 2015: MQ:Consumed an EC command during INIT
+Wed Sep 30 16:16:58 2015: MQ:OP_SHUTDOWN received
+
+***************  KEYMGR INITIALISATION  ***************
+
+Timestamp  : Wed Nov 25 18:31:39 2015
+Host       : 78CHLX0
+PID        : 11749
+Parent PID : 1
+Wed Nov 25 18:31:39 2015: Running APT
+Wed Nov 25 18:31:41 2015: Passed APT
+Wed Nov 25 18:31:41 2015: MQ:Sending Initialization
+Wed Nov 25 18:31:41 2015: MQ:Sent init command using 1513FB4EF7D
+Wed Nov 25 18:31:46 2015: MQ:Successfully initialized
+Wed Nov 25 18:31:46 2015: MQ:Registering with IO process
+Wed Nov 25 18:31:47 2015: MQ:-registered with IO process
+Wed Nov 25 18:31:47 2015: USB rescan init Front:0 Rear:0
+Wed Nov 25 18:31:47 2015: USB rescan init Front:0 Rear:0
+Wed Nov 25 18:52:32 2015: MQ:OP_PLMAIN_EXIT received
+Wed Nov 25 18:52:32 2015: MQ:Sending Initialization
+Wed Nov 25 18:52:32 2015: MQ:Sent init command using 1513FC8BBF0
+Wed Nov 25 18:52:35 2015: MQ:Consumed an EC command during INIT
+Wed Nov 25 18:52:35 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Nov 25 18:52:39 2015: MQ:Successfully initialized
+Wed Nov 25 18:52:39 2015: MQ:Registering with IO process
+Wed Nov 25 18:52:40 2015: MQ:-registered with IO process
+Wed Nov 25 18:52:40 2015: USB rescan init Front:0 Rear:0
+Tue Dec  8 19:19:39 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Tue Dec  8 19:19:39 2015: MQ:OP_PLMAIN_EXIT received
+Tue Dec  8 19:19:39 2015: MQ:Sending Initialization
+Tue Dec  8 19:19:39 2015: MQ:Sent init command using 15182D7FD8C
+Tue Dec  8 19:19:43 2015: MQ:Successfully initialized
+Tue Dec  8 19:19:43 2015: MQ:Registering with IO process
+Tue Dec  8 19:19:44 2015: MQ:-registered with IO process
+Tue Dec  8 19:19:44 2015: USB rescan init Front:0 Rear:0
+Tue Dec  8 19:21:17 2015: MQ:OP_IS_CONFIG_NODE received
+Wed Dec  9 10:59:07 2015: MQ:OP_PLMAIN_EXIT received
+Wed Dec  9 10:59:07 2015: MQ:Sending Initialization
+Wed Dec  9 10:59:07 2015: MQ:Sent init command using 15184AFDB03
+Wed Dec  9 10:59:25 2015: MQ:Consumed an EC command during INIT
+Wed Dec  9 10:59:25 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Dec  9 10:59:25 2015: MQ:Consumed an EC command during INIT
+Wed Dec  9 10:59:25 2015: MQ:OP_SHUTDOWN received
+
+***************  KEYMGR INITIALISATION  ***************
+
+Timestamp  : Wed Dec  9 11:18:01 2015
+Host       : 78CHLX0
+PID        : 10969
+Parent PID : 1
+Wed Dec  9 11:18:01 2015: Running APT
+Wed Dec  9 11:18:02 2015: Passed APT
+Wed Dec  9 11:18:02 2015: MQ:Sending Initialization
+Wed Dec  9 11:18:02 2015: MQ:Sent init command using 15184C1544A
+Wed Dec  9 11:18:12 2015: MQ:Successfully initialized
+Wed Dec  9 11:18:12 2015: MQ:Registering with IO process
+Wed Dec  9 11:18:13 2015: MQ:-registered with IO process
+Wed Dec  9 11:18:13 2015: USB rescan init Front:0 Rear:0
+Wed Dec  9 11:18:13 2015: USB rescan init Front:0 Rear:0
+Mon Dec 28 14:49:15 2015: MQ:OP_PLMAIN_EXIT received
+Mon Dec 28 14:49:15 2015: MQ:Sending Initialization
+Mon Dec 28 14:49:15 2015: MQ:Sent init command using 151E76110A8
+Mon Dec 28 14:49:31 2015: MQ:Consumed an EC command during INIT
+Mon Dec 28 14:49:31 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Mon Dec 28 14:50:15 2015: MQ:Successfully initialized
+Mon Dec 28 14:50:15 2015: MQ:Registering with IO process
+Mon Dec 28 14:50:16 2015: MQ:-registered with IO process
+Mon Dec 28 14:50:16 2015: USB rescan init Front:0 Rear:0
+Wed Dec 30 14:11:05 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Wed Dec 30 14:11:08 2015: MQ:OP_PLMAIN_EXIT received
+Wed Dec 30 14:11:08 2015: MQ:Sending Initialization
+Wed Dec 30 14:11:08 2015: MQ:Sent init command using 151F1843C1A
+Wed Dec 30 14:11:11 2015: MQ:Consumed an EC command during INIT
+Wed Dec 30 14:11:11 2015: MQ:OP_SHUTDOWN received
+
+***************  KEYMGR INITIALISATION  ***************
+
+Timestamp  : Wed Dec 30 14:26:08 2015
+Host       : 78CHLX0
+PID        : 10583
+Parent PID : 1
+Wed Dec 30 14:26:08 2015: Running APT
+Wed Dec 30 14:26:09 2015: Passed APT
+Wed Dec 30 14:26:09 2015: MQ:Sending Initialization
+Wed Dec 30 14:26:09 2015: MQ:Sent init command using 151F1956484
+Wed Dec 30 14:26:19 2015: MQ:Successfully initialized
+Wed Dec 30 14:26:19 2015: MQ:Registering with IO process
+Wed Dec 30 14:26:20 2015: MQ:-registered with IO process
+Wed Dec 30 14:26:20 2015: USB rescan init Front:0 Rear:0
+Wed Dec 30 14:26:20 2015: USB rescan init Front:0 Rear:0
+Wed Mar  2 13:21:31 2016: MQ:OP_IS_CONFIG_NODE received

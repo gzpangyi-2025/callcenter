@@ -1,0 +1,6 @@
+NodeID  PanelID FileID     Name           Type  IOGID  IOGName  Status    Version                           
+1       78CHLX0 78CHLX0    SVC_1_78CHLX0  DH8   0      io_grp0  online    7.5.0.3 (build 115.51.1509171734000)  < config node
+2       78CHNG0 78CHNG0    SVC_2_78CHNG0  DH8   0      io_grp0  online    7.5.0.3 (build 115.51.1509171734000)  
+
+SVC Cluster Version : 7.5.0.3 (build 115.51.1509171734000)
+SVC Upgrade Status  : inactive 

@@ -1,0 +1,380 @@
+2015-12-08T19:22:44:592704 0xf759eb70  IBMTSSVC_StartupEnumInstances_0xf759eb70_2194985618 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T13:22:57:117987 0xf766cb70  IBMTSSVC_StartupEnumInstances_0xf766cb70_902263546 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:16:04:167350 0xf72ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf72ffb70_905450823 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-02T14:16:04:167850 0xf72ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf72ffb70_905450823 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:32:30:246673 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_906436902 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T14:32:30:252076 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_906436902 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:32:30:311115 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_906436967 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T14:32:30:311541 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_906436967 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:32:30:366373 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_906437022 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T14:32:30:366804 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_906437022 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:32:30:410444 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_906437066 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T14:32:30:508497 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_906437066 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:34:09:895296 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_906536551 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T14:34:09:895744 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_906536551 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:34:09:936430 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_906536592 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T14:34:09:936846 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_906536592 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:34:09:978708 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_906536634 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T14:34:09:979107 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_906536634 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:34:10:015678 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_906536671 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T14:34:10:114846 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_906536671 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:37:19:745948 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_906726401 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T14:37:19:746396 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_906726401 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:37:19:793948 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_906726449 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T14:37:19:794370 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_906726449 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:37:19:835541 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_906726491 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T14:37:19:835944 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_906726491 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T14:37:19:872589 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_906726528 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T14:37:19:970540 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_906726528 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T15:47:04:134840 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_910910790 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T15:47:04:135284 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_910910790 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T15:47:04:176377 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_910910832 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T15:47:04:176800 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_910910832 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T15:47:04:222316 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_910910878 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T15:47:04:222718 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_910910878 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T15:47:04:258084 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_910910914 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T15:47:04:356075 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_910910914 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:363681 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_913155019 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T16:24:28:364125 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_913155019 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:437503 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_913155093 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T16:24:28:437933 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_913155093 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:481137 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_913155137 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T16:24:28:481542 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_913155137 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:520824 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_913155176 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T16:24:28:620784 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_913155176 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:655647 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_913155311 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T16:24:28:656057 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_913155311 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:698021 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_913155354 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-02T16:24:28:850662 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_913155354 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:28:936468 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_913155592 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-02T16:24:29:106496 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_913155592 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:29:186966 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_913155842 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-02T16:24:31:868070 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_913155842 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:32:248837 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_913158904 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T16:24:32:256779 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_913158912 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T16:24:32:799064 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_913158912 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:33:296751 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_913158904 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:24:33:396014 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_913160052 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-02T16:24:33:561023 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_913160052 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:33:742898 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_913400398 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T16:28:33:772318 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_913400398 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:33:854779 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_913400510 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T16:28:33:855215 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_913400510 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:33:931129 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_913400587 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T16:28:33:931539 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_913400587 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:33:976380 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_913400632 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T16:28:34:117228 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_913400632 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:34:180866 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_913400836 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T16:28:34:181273 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_913400836 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:34:224353 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_913400880 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-02T16:28:34:443391 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_913400880 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:34:502249 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_913401158 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-02T16:28:34:939956 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_913401158 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:35:022767 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_913401678 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-02T16:28:39:607556 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_913401678 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:39:966940 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_913406622 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T16:28:39:971857 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_913406627 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T16:28:40:422995 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_913406627 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:40:946347 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_913406622 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:28:41:043405 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_913407699 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-02T16:28:41:206506 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_913407699 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T16:53:33:585481 0xf766cb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf766cb70_914900241 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-02T16:53:33:585916 0xf766cb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf766cb70_914900241 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:14:966611 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_916021622 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T17:12:14:967072 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_916021622 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:039208 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_916021695 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T17:12:15:039629 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_916021695 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:089397 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_916021745 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T17:12:15:089790 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_916021745 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:130210 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_916021786 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T17:12:15:229088 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_916021786 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:263806 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_916021919 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T17:12:15:264201 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_916021919 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:299739 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_916021955 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-02T17:12:15:444377 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_916021955 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:500755 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_916022156 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-02T17:12:15:667778 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_916022156 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:15:732150 0xf689eb70  IBMTSSVC_StorageVolumeEnumInstances_0xf689eb70_916022388 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-02T17:12:18:338808 0xf689eb70  IBMTSSVC_StorageVolumeEnumInstances_0xf689eb70_916022388 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:18:816823 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_916025472 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T17:12:18:818492 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_916025474 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T17:12:19:252753 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_916025474 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:19:774210 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_916025472 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T17:12:19:869135 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_916026525 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-02T17:12:20:031401 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_916026525 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:16:892647 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_927123548 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T20:17:16:893090 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_927123548 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:16:955771 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_927123611 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T20:17:16:956199 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_927123611 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:006818 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_927123662 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T20:17:17:007221 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_927123662 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:042513 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_927123698 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T20:17:17:141684 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_927123698 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:175591 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_927123831 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T20:17:17:175995 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_927123831 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:212327 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_927123868 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-02T20:17:17:390786 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_927123868 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:447752 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_927124103 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-02T20:17:17:609385 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_927124103 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:17:657868 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_927124313 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T20:17:17:785171 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_927124313 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:19:962580 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_927126618 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-02T20:17:19:963029 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_927126618 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:026328 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_927126682 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-02T20:17:20:026755 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_927126682 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:069022 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_927126725 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T20:17:20:069424 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_927126725 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:102362 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_927126758 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-02T20:17:20:200886 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_927126758 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:234795 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_927126890 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-02T20:17:20:235196 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_927126890 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:270236 0xf66ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf66ffb70_927126926 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-02T20:17:20:415360 0xf66ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf66ffb70_927126926 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:458664 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_927127114 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-02T20:17:20:626996 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_927127114 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:20:675722 0xf66ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf66ffb70_927127331 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-02T20:17:23:235997 0xf66ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf66ffb70_927127331 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:23:774941 0xf68ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf68ffb70_927130430 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T20:17:23:780515 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_927130436 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-02T20:17:24:211147 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_927130436 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:24:733182 0xf68ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf68ffb70_927130430 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:17:24:822510 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_927131478 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-02T20:17:24:983963 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_927131478 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:25:01:989689 0xf68ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf68ffb70_927588645 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-02T20:25:01:990130 0xf68ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf68ffb70_927588645 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:28:42:472174 0xf72ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf72ffb70_927809128 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-02T20:28:42:472630 0xf72ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf72ffb70_927809128 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-02T20:28:42:580568 0xf68ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf68ffb70_927809236 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-02T20:28:42:580971 0xf68ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf68ffb70_927809236 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:479042 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1013534135 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-03T20:17:27:479496 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1013534135 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:549571 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1013534205 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-03T20:17:27:549993 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1013534205 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:599032 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1013534255 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-03T20:17:27:599432 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1013534255 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:636024 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1013534292 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-03T20:17:27:752308 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1013534292 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:787553 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1013534443 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-03T20:17:27:787961 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1013534443 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:27:828665 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_1013534484 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-03T20:17:27:996809 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_1013534484 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:28:065079 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_1013534721 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-03T20:17:28:210071 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_1013534721 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:28:257825 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1013534913 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-03T20:17:28:385403 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1013534913 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:30:732230 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_1013537388 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-03T20:17:30:732670 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_1013537388 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:30:800983 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1013537456 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-03T20:17:30:801412 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1013537456 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:30:846714 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1013537502 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-03T20:17:30:847125 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1013537502 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:30:881952 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1013537537 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-03T20:17:30:980252 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1013537537 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:31:014450 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1013537670 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-03T20:17:31:014857 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1013537670 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:31:049743 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1013537705 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-03T20:17:31:195239 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1013537705 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:31:243374 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_1013537899 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-03T20:17:31:410716 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_1013537899 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:31:470214 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1013538126 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-03T20:17:34:065307 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1013538126 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:34:398985 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_1013541054 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-03T20:17:34:405265 0xf68ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf68ffb70_1013541061 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-03T20:17:35:216479 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_1013541054 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:35:319308 0xf68ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf68ffb70_1013541061 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-03T20:17:35:402774 0xf66ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf66ffb70_1013542058 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-03T20:17:35:574959 0xf66ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf66ffb70_1013542058 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:37:970960 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_1099944626 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-04T20:17:37:971400 0xf68ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf68ffb70_1099944626 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:042211 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1099944698 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-04T20:17:38:042636 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1099944698 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:110054 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1099944766 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-04T20:17:38:110461 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1099944766 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:149292 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1099944805 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-04T20:17:38:247734 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1099944805 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:285410 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1099944941 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-04T20:17:38:285816 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1099944941 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:325506 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_1099944981 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-04T20:17:38:492624 0xf766cb70  IBMTSSVC_ClusterEnumInstances_0xf766cb70_1099944981 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:566348 0xf66ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf66ffb70_1099945222 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-04T20:17:38:711175 0xf66ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf66ffb70_1099945222 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:38:766135 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1099945422 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-04T20:17:38:893595 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1099945422 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:208521 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_1099947864 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-04T20:17:41:208956 0xf66ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf66ffb70_1099947864 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:275875 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_1099947931 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-04T20:17:41:276299 0xf766cb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf766cb70_1099947931 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:323485 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1099947979 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-04T20:17:41:323891 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1099947979 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:362845 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1099948018 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-04T20:17:41:461615 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1099948018 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:509222 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1099948165 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-04T20:17:41:509633 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1099948165 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:547975 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_1099948203 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-04T20:17:41:692548 0xf68ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf68ffb70_1099948203 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:742805 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_1099948398 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-04T20:17:41:910546 0xf689eb70  IBMTSSVC_ClusterEnumInstances_0xf689eb70_1099948398 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:41:975730 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_1099948631 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-04T20:17:44:522868 0xf68ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf68ffb70_1099948631 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:44:884200 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_1099951540 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-04T20:17:44:885817 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1099951541 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-04T20:17:45:316638 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1099951541 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:45:841593 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_1099951540 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-04T20:17:45:933157 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_1099952589 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-04T20:17:46:095773 0xf72ffb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf72ffb70_1099952589 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:475466 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_1186355131 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-05T20:17:48:475904 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_1186355131 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:555451 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_1186355211 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-05T20:17:48:555882 0xf72ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf72ffb70_1186355211 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:605722 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1186355261 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-05T20:17:48:606126 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1186355261 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:646088 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1186355302 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-05T20:17:48:744358 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1186355302 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:783326 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1186355439 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-05T20:17:48:783731 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1186355439 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:48:833382 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1186355489 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-05T20:17:49:002270 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1186355489 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:49:059242 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1186355715 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-05T20:17:49:204438 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1186355715 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:49:253542 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1186355909 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-05T20:17:49:380359 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1186355909 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:51:676868 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1186358332 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-05T20:17:51:677303 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1186358332 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:51:745021 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1186358401 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-05T20:17:51:745443 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1186358401 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:51:793517 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1186358449 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-05T20:17:51:793923 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1186358449 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:51:833054 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1186358489 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-05T20:17:51:931488 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1186358489 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:51:965504 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1186358621 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-05T20:17:51:965911 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1186358621 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:52:001936 0xf766cb70  IBMTSSVC_RemoteClusterEnumInstances_0xf766cb70_1186358657 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-05T20:17:52:147793 0xf766cb70  IBMTSSVC_RemoteClusterEnumInstances_0xf766cb70_1186358657 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:52:205830 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1186358861 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-05T20:17:52:373674 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1186358861 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:52:439021 0xf766cb70  IBMTSSVC_StorageVolumeEnumInstances_0xf766cb70_1186359095 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-05T20:17:55:061502 0xf766cb70  IBMTSSVC_StorageVolumeEnumInstances_0xf766cb70_1186359095 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:55:486950 0xf689eb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf689eb70_1186362142 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-05T20:17:55:493432 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1186362149 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-05T20:17:56:313140 0xf689eb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf689eb70_1186362142 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:56:414994 0xf72ffb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1186362149 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-05T20:17:56:507866 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1186363163 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-05T20:17:56:669179 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1186363163 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:088318 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1272765744 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-06T20:17:59:088758 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1272765744 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:162225 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1272765818 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-06T20:17:59:162649 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1272765818 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:215088 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1272765871 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-06T20:17:59:215482 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1272765871 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:255141 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1272765911 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-06T20:17:59:353507 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1272765911 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:395147 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1272766051 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-06T20:17:59:395544 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1272766051 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:433040 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1272766089 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-06T20:17:59:603033 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1272766089 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:675832 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1272766331 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-06T20:17:59:821127 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1272766331 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:17:59:863064 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1272766519 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-06T20:17:59:990060 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1272766519 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:336481 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1272768992 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-06T20:18:02:336922 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1272768992 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:403095 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1272769059 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-06T20:18:02:403518 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1272769059 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:444237 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1272769100 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-06T20:18:02:444639 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1272769100 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:479793 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1272769135 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-06T20:18:02:578372 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1272769135 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:612076 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1272769268 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-06T20:18:02:612471 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1272769268 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:651320 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1272769307 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-06T20:18:02:796584 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1272769307 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:02:847134 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1272769503 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-06T20:18:03:014697 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1272769503 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:03:077986 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1272769733 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-06T20:18:05:623411 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1272769733 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:05:974961 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_1272772630 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-06T20:18:05:979801 0xf689eb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf689eb70_1272772635 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-06T20:18:06:471041 0xf689eb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf689eb70_1272772635 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:06:995609 0xf766cb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf766cb70_1272772630 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-06T20:18:07:091616 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1272773747 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-06T20:18:07:253242 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1272773747 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:608723 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_1359176264 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-07T20:18:09:609171 0xf766cb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf766cb70_1359176264 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:678137 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1359176334 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-07T20:18:09:678569 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1359176334 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:721405 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1359176377 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-07T20:18:09:721809 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1359176377 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:776777 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1359176432 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-07T20:18:09:875657 0xf72ffb70  IBMTSSVC_FeaturesEnumInstances_0xf72ffb70_1359176432 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:913991 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1359176569 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-07T20:18:09:914391 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1359176569 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:09:954833 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1359176610 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-07T20:18:10:123284 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1359176610 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:10:192027 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1359176848 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-07T20:18:10:337511 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1359176848 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:10:387508 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1359177043 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-07T20:18:10:516003 0xf68ffb70  IBMTSSVC_FeaturesEnumInstances_0xf68ffb70_1359177043 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:12:919605 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1359179575 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-07T20:18:12:920050 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1359179575 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:12:981160 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1359179637 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-07T20:18:12:981585 0xf68ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf68ffb70_1359179637 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:023106 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1359179679 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-07T20:18:13:023503 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1359179679 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:059290 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1359179715 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-07T20:18:13:157923 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1359179715 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:192673 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1359179848 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-07T20:18:13:193072 0xf66ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf66ffb70_1359179848 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:232416 0xf766cb70  IBMTSSVC_RemoteClusterEnumInstances_0xf766cb70_1359179888 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-07T20:18:13:378613 0xf766cb70  IBMTSSVC_RemoteClusterEnumInstances_0xf766cb70_1359179888 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:423615 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1359180079 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-07T20:18:13:589065 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1359180079 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:13:665189 0xf766cb70  IBMTSSVC_StorageVolumeEnumInstances_0xf766cb70_1359180321 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-07T20:18:16:333999 0xf766cb70  IBMTSSVC_StorageVolumeEnumInstances_0xf766cb70_1359180321 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:16:678955 0xf72ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1359183334 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-07T20:18:16:688192 0xf689eb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf689eb70_1359183344 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-07T20:18:17:465180 0xf689eb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf689eb70_1359183344 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:17:595742 0xf72ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf72ffb70_1359183334 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-07T20:18:17:695778 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1359184351 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-07T20:18:17:874672 0xf689eb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf689eb70_1359184351 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:207907 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1445586863 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-08T20:18:20:208340 0xf72ffb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf72ffb70_1445586863 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:277739 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1445586933 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-08T20:18:20:278163 0xf689eb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf689eb70_1445586933 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:321878 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1445586977 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-08T20:18:20:322276 0xf766cb70  IBMTSSVC_ObjectManagerEnumInstances_0xf766cb70_1445586977 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:358047 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1445587014 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-08T20:18:20:456704 0xf766cb70  IBMTSSVC_FeaturesEnumInstances_0xf766cb70_1445587014 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:492216 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1445587148 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-08T20:18:20:492618 0xf689eb70  IBMTSSVC_ObjectManagerEnumInstances_0xf689eb70_1445587148 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:531529 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1445587187 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-08T20:18:20:699080 0xf66ffb70  IBMTSSVC_ClusterEnumInstances_0xf66ffb70_1445587187 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:770353 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1445587426 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-08T20:18:20:916238 0xf689eb70  IBMTSSVC_RemoteClusterEnumInstances_0xf689eb70_1445587426 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:20:965979 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1445587621 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-08T20:18:21:091303 0xf66ffb70  IBMTSSVC_FeaturesEnumInstances_0xf66ffb70_1445587621 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:520612 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1445590176 CIM | glue/ibmtssvc/HostedStorageConfigurationServiceGlue.cpp:IBMTSSVC_HostedStorageConfigurationServiceEnumInstances:782 ENTER
+2016-03-08T20:18:23:521048 0xf689eb70  IBMTSSVC_HostedStorageConfigurationServiceEnumInstances_0xf689eb70_1445590176 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:586723 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1445590242 CIM | glue/ibmtssvc/ControllerConfigurationServiceGlue.cpp:IBMTSSVC_ControllerConfigurationServiceEnumInstances:1877 ENTER
+2016-03-08T20:18:23:587144 0xf66ffb70  IBMTSSVC_ControllerConfigurationServiceEnumInstances_0xf66ffb70_1445590242 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:628921 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1445590284 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-08T20:18:23:629314 0xf72ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf72ffb70_1445590284 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:664749 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1445590320 CIM | glue/ibmtssvc/FeaturesGlue.cpp:IBMTSSVC_FeaturesEnumInstances:1333 ENTER
+2016-03-08T20:18:23:763933 0xf689eb70  IBMTSSVC_FeaturesEnumInstances_0xf689eb70_1445590320 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:798610 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1445590454 CIM | glue/ibmtssvc/ObjectManagerGlue.cpp:IBMTSSVC_ObjectManagerEnumInstances:1394 ENTER
+2016-03-08T20:18:23:799022 0xf68ffb70  IBMTSSVC_ObjectManagerEnumInstances_0xf68ffb70_1445590454 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:23:835050 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1445590491 CIM | glue/ibmtssvc/RemoteClusterGlue.cpp:IBMTSSVC_RemoteClusterEnumInstances:986 ENTER
+2016-03-08T20:18:23:980064 0xf72ffb70  IBMTSSVC_RemoteClusterEnumInstances_0xf72ffb70_1445590491 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:24:031523 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1445590687 CIM | glue/ibmtssvc/ClusterGlue.cpp:IBMTSSVC_ClusterEnumInstances:2649 ENTER
+2016-03-08T20:18:24:221454 0xf68ffb70  IBMTSSVC_ClusterEnumInstances_0xf68ffb70_1445590687 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:24:282462 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1445590938 CIM | glue/ibmtssvc/StorageVolumeGlue.cpp:IBMTSSVC_StorageVolumeEnumInstances:3170 ENTER
+2016-03-08T20:18:26:811907 0xf72ffb70  IBMTSSVC_StorageVolumeEnumInstances_0xf72ffb70_1445590938 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:27:180871 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_1445593836 CIM | glue/ibmtssvc/MasterRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-08T20:18:27:182478 0xf766cb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf766cb70_1445593838 CIM | glue/ibmtssvc/AuxRemoteStorageSynchronizedGlue.cpp:IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances:1570 ENTER
+2016-03-08T20:18:27:614359 0xf766cb70  IBMTSSVC_AuxRemoteStorageSynchronizedEnumInstances_0xf766cb70_1445593838 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:28:155810 0xf66ffb70  IBMTSSVC_MasterRemoteStorageSynchronizedEnumInstances_0xf66ffb70_1445593836 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-08T20:18:28:249945 0xf766cb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf766cb70_1445594905 CIM | glue/ibmtssvc/LocalStorageSynchronizedGlue.cpp:IBMTSSVC_LocalStorageSynchronizedEnumInstances:1741 ENTER
+2016-03-08T20:18:28:411677 0xf766cb70  IBMTSSVC_LocalStorageSynchronizedEnumInstances_0xf766cb70_1445594905 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-09T11:34:06:170116 0xf66ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf66ffb70_1500532826 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-09T11:34:06:170551 0xf66ffb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf66ffb70_1500532826 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK
+2016-03-09T16:40:20:822483 0xf766cb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf766cb70_1518907478 CIM | glue/ibmtssvc/ProviderConfigurationGlue.cpp:IBMTSSVC_ProviderConfigurationEnumInstances:1230 ENTER
+2016-03-09T16:40:20:822929 0xf766cb70  IBMTSSVC_ProviderConfigurationEnumInstances_0xf766cb70_1518907478 CIM | glue/cpa/cpalog.cpp:~audit_enter_exit:825 Return with: CMPI_RC_OK

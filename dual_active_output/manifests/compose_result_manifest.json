@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-05-03T00:10:57.488Z",
+  "projectDir": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output",
+  "count": 5,
+  "contactSheet": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/previews/compose_contact_sheet.png",
+  "results": [
+    {
+      "slide": 1,
+      "title": "华为分布式新核心双活数据中心架构",
+      "mode": "body-region",
+      "input": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png_raw/slide_01_raw.png",
+      "output": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png/slide_01_final.png",
+      "width": 1920,
+      "height": 1080,
+      "stdev": 78.96
+    },
+    {
+      "slide": 2,
+      "title": "金融级双活的核心能力栈",
+      "mode": "body-region",
+      "input": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png_raw/slide_02_raw.png",
+      "output": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png/slide_02_final.png",
+      "width": 1920,
+      "height": 1080,
+      "stdev": 96.82
+    },
+    {
+      "slide": 3,
+      "title": "多层级可靠性设计",
+      "mode": "body-region",
+      "input": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png_raw/slide_03_raw.png",
+      "output": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png/slide_03_final.png",
+      "width": 1920,
+      "height": 1080,
+      "stdev": 79.86
+    },
+    {
+      "slide": 4,
+      "title": "迁移演练与切换逻辑",
+      "mode": "body-region",
+      "input": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png_raw/slide_04_raw.png",
+      "output": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png/slide_04_final.png",
+      "width": 1920,
+      "height": 1080,
+      "stdev": 73.24
+    },
+    {
+      "slide": 5,
+      "title": "双活架构的业务价值",
+      "mode": "body-region",
+      "input": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png_raw/slide_05_raw.png",
+      "output": "/Users/yipang/Documents/Antigravity/callcenter/dual_active_output/slides_png/slide_05_final.png",
+      "width": 1920,
+      "height": 1080,
+      "stdev": 94.05
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+xmlns="http://ibm.com/storage/management/performance/api/2003/04/diskStats"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2003/04/diskStats schema/SVCPerfStats.xsd" scope="node" id="node2" cluster="v7000_3" node_id="0x0000000000000002" cluster_id="0x00000200a0a2c618" sizeUnits="512B" timeUnits="msec" contains="managedDiskStats" timestamp="2014-08-09 10:43:54" timezone="GMT+8:00">
+<mdsk idx="0"
+ id="mdisk1" ro="46" wo="59892" rb="2094" wb="1010077" re="147" we="352951" rq="147" wq="352951"
+ ure="147046" uwe="352951571" urq="147046" uwq="352951571"
+ pre="0" pwe="59201" pro="0" pwo="59201">
+</mdsk>
+<mdsk idx="1"
+ id="mdisk0" ro="429" wo="153320" rb="20775" wb="282660" re="450" we="766464" rq="450" wq="766464"
+ ure="450023" uwe="766464345" urq="450023" uwq="766464345"
+ pre="0" pwe="75594" pro="0" pwo="75594">
+</mdsk>
+<mdsk idx="2"
+ id="mdisk2" ro="727" wo="159448" rb="37213" wb="340353" re="1376" we="877994" rq="1376" wq="877994"
+ ure="1376871" uwe="877994232" urq="1376871" uwq="877994232"
+ pre="26" pwe="77755" pro="26" pwo="77755">
+</mdsk>
+<mdsk idx="3"
+ id="mdisk3" ro="1105" wo="1178553" rb="64149" wb="30673342" re="4438" we="9554083" rq="4438" wq="9554083"
+ ure="4438997" uwe="9554083043" urq="4438997" uwq="9554083043"
+ pre="0" pwe="175224" pro="0" pwo="175224">
+</mdsk>
+<mdsk idx="4"
+ id="mdisk4" ro="365" wo="243384" rb="20386" wb="8815552" re="646" we="1393252" rq="646" wq="1393252"
+ ure="646913" uwe="1393252442" urq="646913" uwq="1393252442"
+ pre="0" pwe="77244" pro="0" pwo="77244">
+</mdsk>
+<mdsk idx="5"
+ id="mdisk5" ro="886" wo="998188" rb="136324" wb="11839610" re="1389" we="4671660" rq="1389" wq="4671660"
+ ure="1389925" uwe="4671660911" urq="1389925" uwq="4671660911"
+ pre="0" pwe="73807" pro="0" pwo="73807">
+</mdsk>
+<mdsk idx="6"
+ id="mdisk7" ro="3920" wo="638071" rb="912919" wb="9634431" re="24322" we="13388996" rq="24322" wq="13388996"
+ ure="24322488" uwe="13388996128" urq="24322488" uwq="13388996128"
+ pre="147" pwe="838507" pro="147" pwo="838507">
+</mdsk>
+<mdsk idx="7"
+ id="mdisk6" ro="15083" wo="267191" rb="901011" wb="12282507" re="31830" we="2586243" rq="31830" wq="2586243"
+ ure="31830106" uwe="2586243470" urq="31830106" uwq="2586243470"
+ pre="0" pwe="125726" pro="0" pwo="125726">
+</mdsk>
+<mdsk idx="8"
+ id="mdisk9" ro="17147" wo="1447863" rb="1837409" wb="23802692" re="51091" we="13941276" rq="51091" wq="13941276"
+ ure="51091511" uwe="13941276469" urq="51091511" uwq="13941276469"
+ pre="0" pwe="104505" pro="0" pwo="104505">
+</mdsk>
+</diskStatsColl>

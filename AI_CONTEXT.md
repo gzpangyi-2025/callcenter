@@ -11,19 +11,32 @@
 - **Root Password:** `matrox`
 - **Nginx Config:** `/opt/homebrew/etc/nginx/servers/callcenter.conf` (Reload with `sudo nginx -s reload`)
 
-### 1.2 Remote Production Server (App & DB)
-- **IP Address:** `192.168.50.51`
+### 1.2 Shanghai Production Node (Frontend/App/TURN)
+- **Public IP:** `101.43.59.206`
+- **Internal IP:** `10.0.0.17`
 - **SSH User:** `root`
-- **SSH Password:** `matrox123`
+- **SSH Password:** `Matrox123#`
+- **OS:** OpenCloudOS 9.4 (2C2G)
+- **Role:** Main business server, runs CallCenter backend/frontend, and **coturn** service.
+- **coturn Credentials:** User `callcenter`, Password `Trustfar2026!`
 - **Project Directory:** `/var/www/callcenter`
-- **Backend Service:** Managed by PM2. Process name: `callcenter-backend` (To view logs: `pm2 logs callcenter-backend`, to restart: `pm2 restart callcenter-backend --update-env`)
+- **Backend Service:** Managed by PM2. Process name: `callcenter-backend`
 
-### 1.3 Tencent Cloud TURN Server (WebRTC)
-- **IP Address:** `43.137.62.159`
+### 1.3 Tokyo AI & Proxy Node (Worker/Large Model/Proxy)
+- **Public IP:** `43.130.240.106`
+- **Internal IP:** `10.7.0.17`
 - **SSH User:** `root`
-- **SSH Password:** `Matrox1234$`
-- **OS:** CentOS 7
-- **Tools Installed:** `sysstat` (sar) is installed for performance monitoring. Use `sar -n DEV 1 3` for network or `sar -u` for CPU.
+- **SSH Password:** `Matrox12345%`
+- **OS:** OpenCloudOS 9.4 (2C4G)
+- **Role:** AI Task Worker, Global AI Model Access, Private Proxy Server.
+- **BBR Enabled:** TCP BBR congestion control is enabled for maximum cross-border speed.
+- **3X-UI Panel:** `http://43.130.240.106:2053` (Admin/Admin), managed via Docker.
+- **Elasticsearch:** Dedicated ES 8 instance with **IK Chinese Analyzer** (Port 9200).
+- **Future Plan:** Will run a background Worker to poll tasks from Shanghai node and process via OpenAI/Gemini/Claude.
+
+### 1.4 Network Diagnostics
+- **Diagnostic Tool:** Both nodes have `/root/check_ai_network.sh` installed.
+- **Usage:** Run `./check_ai_network.sh` to verify public IP, latency to AI APIs, and local service (ES) health.
 
 ---
 
@@ -66,6 +79,7 @@ There is a fundamental difference between the local and production Elasticsearch
 
 ### 3.1 The Sync Script (`sync.sh`)
 - Code is pushed to production using the `/Users/yipang/Documents/Antigravity/callcenter/sync.sh` script.
+- **Note:** The script has been updated to sync to BOTH the local production node (`192.168.50.51`) and the Shanghai node (`101.43.59.206`) simultaneously.
 - **NEVER** remove the `--exclude '.env'` flag from this script. A past incident occurred where the local `.env` overwrote the production `.env`, bringing down the production Elasticsearch connection.
 
 ### 3.2 Frontend Compilation

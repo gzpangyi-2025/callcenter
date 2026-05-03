@@ -1,0 +1,13 @@
+svcinfo lssasfabric
+
+svcinfo lsdrive -delim :
+
+svcinfo lsenclosure -delim :
+
+'svcinfo lsenclosure' failed with no output
+'svcinfo lsenclosure' failed with no output
+'svcinfo lsenclosure' failed with no output
+'svcinfo lsenclosure' failed with no output
+'svcinfo lsenclosure' failed with no output
+svcinfo lsarray -delim :
+

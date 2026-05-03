@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+xmlns="http://ibm.com/storage/management/performance/api/2010/03/driveStats"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2010/03/driveStats schema/SVCPerfStatsD.xsd" scope="node" id="SVC_2_78CHNG0" cluster="SVC_140.2.253.224" node_id="0x0000000000000002" cluster_id="0x000002032000888a" sizeUnits="512B" timeUnits="msec" contains="driveStats" timestamp="2016-03-09 16:35:30" timezone="GMT+8:00">
+</diskStatsColl>

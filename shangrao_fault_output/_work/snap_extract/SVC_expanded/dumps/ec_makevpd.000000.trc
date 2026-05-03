@@ -1,0 +1,1123 @@
+Thu Oct 1 04:06:44 BST 2015
+ls: cannot access /data/vpd_node: No such file or directory
+ls: cannot access /data/vpd_node.old: No such file or directory
+ls: cannot access /data/enc.sav: No such file or directory
+Entry AA : PL_VPD_NODE_SYSTEM_FRU_PN (SINGLE REPLACE )
+	new value : 00Y8457
+Writing out new list : AA00Y8457
+Entry AB : PL_VPD_NODE_SYSTEM_SN (SINGLE REPLACE )
+	new value : 78CHLX0
+Writing out new list : AB78CHLX0
+Entry AC : PL_VPD_NODE_SYSTEM_PLANAR_SN (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry AD : PL_VPD_NODE_SYSTEM_NUM_PROCESSORS (SINGLE REPLACE )
+	new value : 8
+Writing out new list : AD8
+Entry AE : PL_VPD_NODE_SYSTEM_NUM_MEM_MODULES (SINGLE REPLACE )
+	new value : 4
+Writing out new list : AE4
+Entry AF : PL_VPD_NODE_SYSTEM_NUM_FANS (SINGLE REPLACE )
+	new value : 4
+Writing out new list : AF4
+Entry AG : PL_VPD_NODE_SYSTEM_NUM_FC_CARDS (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry AH : PL_VPD_NODE_SYSTEM_NUM_DEVICES (SINGLE REPLACE )
+	new value : 2
+Writing out new list : AH2
+Entry AI : PL_VPD_NODE_SYSTEM_BIOS_MANU (SINGLE REPLACE )
+	new value : IBM
+Writing out new list : AIIBM
+Entry AJ : PL_VPD_NODE_SYSTEM_BIOS_VERSION (SINGLE REPLACE )
+	new value : -[VVE142AUS-1.70]-
+Writing out new list : AJ-[VVE142AUS-1.70]-
+Entry AK : PL_VPD_NODE_SYSTEM_BIOS_REL_DATE (SINGLE REPLACE )
+	new value : 06/04/2014
+Writing out new list : AK06/04/2014
+Entry AL : PL_VPD_NODE_SYSTEM_MANU (SINGLE REPLACE )
+	new value : IBM
+Writing out new list : ALIBM
+Entry AM : PL_VPD_NODE_SYSTEM_PRODUCT (SINGLE REPLACE )
+	new value : System x3650 M4 -[2145DH8]-
+Writing out new list : AMSystem x3650 M4 -[2145DH8]-
+Entry AN : PL_VPD_NODE_SYSTEM_VERSION (SINGLE REPLACE )
+	new value : 0C
+Writing out new list : AN0C
+Entry AO : PL_VPD_NODE_SYSTEM_PLANAR_MANU (MULTI REPLACE )
+	new value (entry 1) : IBM
+Writing out new list : AOIBM
+Entry AP : PL_VPD_NODE_SYSTEM_PLANAR_PRODUCT (MULTI REPLACE )
+	new value (entry 1) : 00MV214
+Writing out new list : AP00MV214
+Entry AQ : PL_VPD_NODE_SYSTEM_PLANAR_VERSION (MULTI REPLACE )
+	new value (entry 1) : Not Specified
+Writing out new list : AQNot Specified
+Entry AR : PL_VPD_NODE_POWER_SUPPLY_FRU_PN (SINGLE REPLACE )
+	new value : 94Y8071
+Writing out new list : AR94Y8071
+Entry AS : PL_VPD_NODE_CMOS_BATTERY_FRU_PN (SINGLE REPLACE )
+	new value : 33F8354
+Writing out new list : AS33F8354
+Entry AT : PL_VPD_NODE_FRAME_ASSEMBLY_FRU_PN (SINGLE REPLACE )
+	new value :
+Writing out new list : AT
+Entry AU : PL_VPD_NODE_POWER_CABLE_ASSEMBLY_FRU_PN (SINGLE REPLACE )
+	new value : 31P1862
+Writing out new list : AU31P1862
+Entry AV : PL_VPD_NODE_ETHERNET_CABLE_FRU_PN (SINGLE REPLACE )
+	new value :
+Writing out new list : AV
+Entry AW : PL_VPD_NODE_SERVICE_PROCESSOR_FIRMWARE (SINGLE REPLACE )
+	new value : 4.31
+Writing out new list : AW4.31
+Entry AX : PL_VPD_NODE_HARDWARE_LEVEL (SINGLE REPLACE )
+	new value : 0
+Writing out new list : AX0
+Entry AY : PL_VPD_NODE_POWER_BACKPLANE_FRU_PN (SINGLE REPLACE )
+	new value : N/A
+Writing out new list : AYN/A
+Entry AZ : PL_VPD_NODE_SYSTEM_NUM_SAS_CARDS (SINGLE REPLACE )
+	new value : 0
+Writing out new list : AZ0
+Entry A0 : PL_VPD_NODE_SYSTEM_SAS_CONTROLLER_FRU_PN (SINGLE REPLACE )
+	new value : 00Y8457
+Writing out new list : A000Y8457
+Entry A1 : PL_VPD_NODE_SYSTEM_NUM_POWER_SUPPLIES (SINGLE REPLACE )
+	new value : 2
+Writing out new list : A12
+Entry A2 : PL_VPD_NODE_SYSTEM_NUM_LOCAL_DISKS (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry A3 : PL_VPD_NODE_ENCLOSURE_SERIAL_NUMBER (SINGLE REPLACE )
+	new value :
+Writing out new list : A3
+Entry A4 : PL_VPD_NODE_CANISTER_ID (SINGLE REPLACE )
+	new value : 1
+Writing out new list : A41
+Entry A5 : PL_VPD_NODE_ENCLOSURE_FRU_IDENTITY (SINGLE KEEP [0-9A-Z]+)
+	no new value
+Writing out new list :
+Entry Aa : PL_VPD_NODE_SYSTEM_NUM_FC_ADAPTERS (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry Ab : PL_VPD_NODE_SYSTEM_NUM_ETH_ADAPTERS (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry Ac : PL_VPD_NODE_SYSTEM_NUM_SAS_ADAPTERS (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry Ad : PL_VPD_NODE_SYSTEM_NUM_BUS_ADAPTERS (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry Ae : PL_VPD_NODE_SYSTEM_NUM_IB_ADAPTERS (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry Af : PL_VPD_NODE_HAS_IDENTIFY_LED (SINGLE REPLACE )
+	new value : 1
+Writing out new list : Af1
+Entry BA : PL_VPD_NODE_PROCESSOR_LOCATION (MULTI REPLACE )
+	new value (entry 1) : 1
+Writing out new list : BA1
+Entry BB : PL_VPD_NODE_PROCESSOR_NUM_CACHES (MULTI REPLACE )
+	new value (entry 1) : 3
+Writing out new list : BB3
+Entry BC : PL_VPD_NODE_PROCESSOR_MANU (MULTI REPLACE )
+	new value (entry 1) : Intel(R) Corporation
+	new value (entry 2) : Intel(R) Corporation
+Writing out new list : BCIntel(R) Corporation BCIntel(R) Corporation
+Entry BD : PL_VPD_NODE_PROCESSOR_VERSION (MULTI REPLACE )
+	new value (entry 1) : Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
+	new value (entry 2) : Not Specified
+Writing out new list : BDIntel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz BDNot Specified
+Entry BE : PL_VPD_NODE_PROCESSOR_SPEED (MULTI REPLACE )
+	new value (entry 1) : 2600
+Writing out new list : BE2600
+Entry BF : PL_VPD_NODE_PROCESSOR_STATUS (MULTI REPLACE )
+	new value (entry 1) : Enabled
+	new value (entry 2) : Unpopulated
+Writing out new list : BFEnabled BFUnpopulated
+Entry BG : PL_VPD_NODE_PROCESSOR_FRU_PN (MULTI REPLACE )
+	new value (entry 1) : 00Y2783
+Writing out new list : BG00Y2783
+Entry CA : PL_VPD_NODE_PROCESSOR_CACHE_TYPE (MULTI REPLACE )
+	new value (entry 1) : L1
+	new value (entry 2) : L2
+	new value (entry 3) : L3
+Writing out new list : CAL1 CAL2 CAL3
+Entry CB : PL_VPD_NODE_PROCESSOR_CACHE_SIZE (MULTI REPLACE )
+	new value (entry 1) : 64 kB
+	new value (entry 2) : 256 kB
+	new value (entry 3) : 20480 kB
+Writing out new list : CB64 kB CB256 kB CB20480 kB
+Entry CP : PL_VPD_NODE_CHARACTERISTICS_PRESENT (SINGLE REPLACE )
+	new value :
+Writing out new list : CP
+Entry DA : PL_VPD_NODE_MEMORY_FRU_PN (MULTI REPLACE )
+	new value (entry 1) : 00D5034
+	new value (entry 2) : 00D5034
+	new value (entry 3) : 00D5034
+	new value (entry 4) : 00D5034
+	new value (entry 5) : 00D5034
+	new value (entry 6) : 00D5034
+	new value (entry 7) : 00D5034
+	new value (entry 8) : 00D5034
+	new value (entry 9) : 00D5034
+	new value (entry 10) : 00D5034
+	new value (entry 11) : 00D5034
+	new value (entry 12) : 00D5034
+	new value (entry 13) : 00D5034
+	new value (entry 14) : 00D5034
+	new value (entry 15) : 00D5034
+	new value (entry 16) : 00D5034
+	new value (entry 17) : 00D5034
+	new value (entry 18) : 00D5034
+	new value (entry 19) : 00D5034
+	new value (entry 20) : 00D5034
+	new value (entry 21) : 00D5034
+	new value (entry 22) : 00D5034
+	new value (entry 23) : 00D5034
+	new value (entry 24) : 00D5034
+Writing out new list : DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034 DA00D5034
+Entry DB : PL_VPD_NODE_MEMORY_DEVICE_LOCATION (MULTI REPLACE )
+	new value (entry 1) : 1
+	new value (entry 2) : 2
+	new value (entry 3) : 3
+	new value (entry 4) : 4
+	new value (entry 5) : 5
+	new value (entry 6) : 6
+	new value (entry 7) : 7
+	new value (entry 8) : 8
+	new value (entry 9) : 9
+	new value (entry 10) : 10
+	new value (entry 11) : 11
+	new value (entry 12) : 12
+	new value (entry 13) : 13
+	new value (entry 14) : 14
+	new value (entry 15) : 15
+	new value (entry 16) : 16
+	new value (entry 17) : 17
+	new value (entry 18) : 18
+	new value (entry 19) : 19
+	new value (entry 20) : 20
+	new value (entry 21) : 21
+	new value (entry 22) : 22
+	new value (entry 23) : 23
+	new value (entry 24) : 24
+Writing out new list : DB1 DB2 DB3 DB4 DB5 DB6 DB7 DB8 DB9 DB10 DB11 DB12 DB13 DB14 DB15 DB16 DB17 DB18 DB19 DB20 DB21 DB22 DB23 DB24
+Entry DC : PL_VPD_NODE_MEMORY_BANK_LOCATION (MULTI REPLACE )
+	new value (entry 1) : 1
+	new value (entry 2) : 2
+	new value (entry 3) : 3
+	new value (entry 4) : 4
+	new value (entry 5) : 5
+	new value (entry 6) : 6
+	new value (entry 7) : 7
+	new value (entry 8) : 8
+	new value (entry 9) : 9
+	new value (entry 10) : 10
+	new value (entry 11) : 11
+	new value (entry 12) : 12
+	new value (entry 13) : 13
+	new value (entry 14) : 14
+	new value (entry 15) : 15
+	new value (entry 16) : 16
+	new value (entry 17) : 17
+	new value (entry 18) : 18
+	new value (entry 19) : 19
+	new value (entry 20) : 20
+	new value (entry 21) : 21
+	new value (entry 22) : 22
+	new value (entry 23) : 23
+	new value (entry 24) : 24
+Writing out new list : DC1 DC2 DC3 DC4 DC5 DC6 DC7 DC8 DC9 DC10 DC11 DC12 DC13 DC14 DC15 DC16 DC17 DC18 DC19 DC20 DC21 DC22 DC23 DC24
+Entry DD : PL_VPD_NODE_MEMORY_SIZE (MULTI REPLACE )
+	new value (entry 1) : 8192
+	new value (entry 2) : N/A
+	new value (entry 3) : N/A
+	new value (entry 4) : 8192
+	new value (entry 5) : N/A
+	new value (entry 6) : N/A
+	new value (entry 7) : N/A
+	new value (entry 8) : N/A
+	new value (entry 9) : 8192
+	new value (entry 10) : N/A
+	new value (entry 11) : N/A
+	new value (entry 12) : 8192
+	new value (entry 13) : N/A
+	new value (entry 14) : N/A
+	new value (entry 15) : N/A
+	new value (entry 16) : N/A
+	new value (entry 17) : N/A
+	new value (entry 18) : N/A
+	new value (entry 19) : N/A
+	new value (entry 20) : N/A
+	new value (entry 21) : N/A
+	new value (entry 22) : N/A
+	new value (entry 23) : N/A
+	new value (entry 24) : N/A
+Writing out new list : DD8192 DDN/A DDN/A DD8192 DDN/A DDN/A DDN/A DDN/A DD8192 DDN/A DDN/A DD8192 DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A DDN/A
+Entry DE : PL_VPD_NODE_MEMORY_MANU (MULTI REPLACE )
+	new value (entry 1) : Micron
+	new value (entry 2) : N/A
+	new value (entry 3) : N/A
+	new value (entry 4) : Micron
+	new value (entry 5) : N/A
+	new value (entry 6) : N/A
+	new value (entry 7) : N/A
+	new value (entry 8) : N/A
+	new value (entry 9) : Hynix
+	new value (entry 10) : N/A
+	new value (entry 11) : N/A
+	new value (entry 12) : Micron
+	new value (entry 13) : N/A
+	new value (entry 14) : N/A
+	new value (entry 15) : N/A
+	new value (entry 16) : N/A
+	new value (entry 17) : N/A
+	new value (entry 18) : N/A
+	new value (entry 19) : N/A
+	new value (entry 20) : N/A
+	new value (entry 21) : N/A
+	new value (entry 22) : N/A
+	new value (entry 23) : N/A
+	new value (entry 24) : N/A
+Writing out new list : DEMicron DEN/A DEN/A DEMicron DEN/A DEN/A DEN/A DEN/A DEHynix DEN/A DEN/A DEMicron DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A DEN/A
+Entry DF : PL_VPD_NODE_MEMORY_SN (MULTI REPLACE )
+	new value (entry 1) : E1A77A9
+	new value (entry 2) : N/A
+	new value (entry 3) : N/A
+	new value (entry 4) : E1A77A8
+	new value (entry 5) : N/A
+	new value (entry 6) : N/A
+	new value (entry 7) : N/A
+	new value (entry 8) : N/A
+	new value (entry 9) : 50D28D07
+	new value (entry 10) : N/A
+	new value (entry 11) : N/A
+	new value (entry 12) : E1A7734
+	new value (entry 13) : N/A
+	new value (entry 14) : N/A
+	new value (entry 15) : N/A
+	new value (entry 16) : N/A
+	new value (entry 17) : N/A
+	new value (entry 18) : N/A
+	new value (entry 19) : N/A
+	new value (entry 20) : N/A
+	new value (entry 21) : N/A
+	new value (entry 22) : N/A
+	new value (entry 23) : N/A
+	new value (entry 24) : N/A
+Writing out new list : DFE1A77A9 DFN/A DFN/A DFE1A77A8 DFN/A DFN/A DFN/A DFN/A DF50D28D07 DFN/A DFN/A DFE1A7734 DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A DFN/A
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	no new values
+Writing out new list :
+Entry EA : PL_VPD_NODE_FAN_FRU_PN (MULTI REPLACE )
+	new value (entry 1) : 94Y6620
+	new value (entry 2) : 94Y6620
+	new value (entry 3) : 94Y6620
+	new value (entry 4) : 94Y6620
+Writing out new list : EA94Y6620 EA94Y6620 EA94Y6620 EA94Y6620
+Entry EB : PL_VPD_NODE_FAN_LOCATION (MULTI REPLACE )
+	new value (entry 1) : location1
+	new value (entry 2) : location2
+	new value (entry 3) : location3
+	new value (entry 4) : location4
+Writing out new list : EBlocation1 EBlocation2 EBlocation3 EBlocation4
+Entry GA : PL_VPD_NODE_DEVICE_FRU_PN (MULTI REPLACE )
+	new value (entry 1) : 90Y8879
+	new value (entry 2) : 90Y8879
+Writing out new list : GA90Y8879 GA90Y8879
+Entry GB : PL_VPD_NODE_DEVICE_BUS (MULTI REPLACE )
+	new value (entry 1) : scsi
+	new value (entry 2) : scsi
+Writing out new list : GBscsi GBscsi
+Entry GC : PL_VPD_NODE_DEVICE_DEVICE (MULTI REPLACE )
+	new value (entry 1) : 8
+	new value (entry 2) : 9
+Writing out new list : GC8 GC9
+Entry GD : PL_VPD_NODE_DEVICE_MANU (MULTI REPLACE )
+	no new values
+Writing out new list :
+Entry GE : PL_VPD_NODE_DEVICE_MODEL (MULTI REPLACE )
+	new value (entry 1) : AL13SEB300
+	new value (entry 2) : AL13SEB300
+Writing out new list : GEAL13SEB300 GEAL13SEB300
+Entry GF : PL_VPD_NODE_DEVICE_REVISION (MULTI REPLACE )
+	new value (entry 1) : SB35
+	new value (entry 2) : SB35
+Writing out new list : GFSB35 GFSB35
+Entry GG : PL_VPD_NODE_DEVICE_SN (MULTI REPLACE )
+	new value (entry 1) : Y4P0A0HHFTH5
+	new value (entry 2) : Y4Q0A0EEFTH5
+Writing out new list : GGY4P0A0HHFTH5 GGY4Q0A0EEFTH5
+Entry GH : PL_VPD_NODE_DEVICE_CAPACITY (MULTI REPLACE )
+	new value (entry 1) : 279
+	new value (entry 2) : 279
+Writing out new list : GH279 GH279
+Entry GI : PL_VPD_NODE_DEVICE_REVISION2 (MULTI REPLACE )
+	new value (entry 1) :
+	new value (entry 2) :
+Writing out new list : GI GI
+Entry HA : PL_VPD_NODE_INTERNAL_SOFTWARE_VERSION (SINGLE KEEP )
+	new value : 115.51.1507081154000
+Writing out new list : HA115.51.1507081154000
+Entry HB : PL_VPD_NODE_SOFTWARE_NODE_NAME (SINGLE KEEP )
+	new value : 000000
+Writing out new list : HB000000
+Entry HC : PL_VPD_NODE_ETHERNET_PORT_STATUS (MULTI KEEP [0|1])
+	no new values
+Writing out new list :
+Entry HD : PL_VPD_NODE_SOFTWARE_WWNN (SINGLE KEEP 0x[0-9a-f]{16})
+	no new value
+Writing out new list :
+Entry HE : PL_VPD_NODE_ID (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry HF : PL_VPD_NODE_FCPORT_SPEED (SINGLE KEEP (N/A)|([0-9]+Gb))
+	no new value
+Writing out new list :
+Entry HG : PL_VPD_NODE_HWS (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HH : PL_VPD_NODE_UNPENDED (SINGLE KEEP [0|1])
+	no new value
+Writing out new list :
+Entry HI : PL_VPD_NODE_SOFTWARE_VERSION (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HJ : PL_VPD_NODE_ETHERNET_PORT_MAC_ADDRESS (SINGLE KEEP ([0-9a-f]{2}:){5}([0-9a-f]{2}))
+	no new value
+Writing out new list :
+Entry HK : PL_VPD_NODE_TIMER_OFFSET (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry HL : PL_VPD_NODE_CLUSTERING_SUBCLASS (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HM : PL_VPD_NODE_PLIC_SLANDER_MASK (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HN : PL_VPD_NODE_PLIC_PARTNERSHIP_STOP_MASK_LEGACY (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HO : PL_VPD_NODE_CANDIDATE_IN_SERVICE (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HP : PL_VPD_NODE_ETHERNET_PORT_SPEED (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry HQ : PL_VPD_NODE_ETHERNET_PORT_DUPLEX (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry HR : PL_VPD_NODE_ERROR (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry HS : PL_VPD_NODE_DUMPSTATUS_ERROR (SINGLE KEEP (TRUE)|(FALSE))
+	no new value
+Writing out new list :
+Entry HT : PL_VPD_PLID_BM_RECOVER (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HU : PL_VPD_NODE_SUPPORT_COMPRESSION (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HV : PL_VPD_NODE_NEW_CACHE_CCU (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry HW : PL_VPD_NODE_LV_PATH_COUNT (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry HX : PL_VPD_NODE_VOLUMES_PER_HOST_LIMIT (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry HY : PL_VPD_NODE_HOSTS_PER_IOGRP_LIMIT (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry HZ : PL_VPD_NODE_ERROR_REAL (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry H0 : PL_VPD_NODE_SITE_NAME (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry H1 : PL_VPD_NODE_HAS_PDPS (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry H3 : PL_VPD_NODE_MANAGING_CLUSTER_ID (SINGLE KEEP [0-9a-f]{16})
+	no new value
+Writing out new list :
+Entry H4 : PL_VPD_NODE_IS_64BIT (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry H5 : PL_VPD_NODE_CAN_64BIT (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry H6 : PL_VPD_NODE_SUPPORTS_NUM_COMPRESSION_ENGINES (SINGLE KEEP [0-9]+)
+	no new value
+Writing out new list :
+Entry H7 : PL_VPD_NODE_FOOTPRINT_FLEXHW (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry H8 : PL_VPD_NODE_FOOTPRINT_GA (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry H9 : PL_VPD_NODE_FOOTPRINT_LINUX (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry IA : PL_VPD_NODE_FRONT_PANEL_FRU_PN (SINGLE REPLACE )
+	new value : N/A
+Writing out new list : IAN/A
+Entry IB : PL_VPD_NODE_FRONT_PANEL_ID (SINGLE KEEP )
+	new value : 000000
+Writing out new list : IB000000
+Entry IC : PL_VPD_NODE_FRONT_PANEL_LOCALE (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry ID : PL_VPD_NODE_DUMP_NAME (SINGLE REPLACE )
+	new value : 000000
+Writing out new list : ID000000
+Entry IZ : PL_VPD_NODE_FRU_PACKAGE_LEVEL (SINGLE REPLACE )
+	new value : 99
+Writing out new list : IZ99
+Entry JA : PL_VPD_NODE_UPS_ELECTRONICS_ASSEMBLY_FRU_PN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JB : PL_VPD_NODE_UPS_BATTERY_FRU_PN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JC : PL_VPD_NODE_UPS_FRAME_ASSEMBLE_FRU_PN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JD : PL_VPD_NODE_UPS_INPUT_POWER_CABLE_FRU_PN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JE : PL_VPD_NODE_UPS_SN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JF : PL_VPD_NODE_UPS_TYPE (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JG : PL_VPD_NODE_UPS_INTERNAL_PN (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JH : PL_VPD_NODE_UPS_UNIQUE_ID (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JI : PL_VPD_NODE_UPS_MAIN_FIRMWARE (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry JJ : PL_VPD_NODE_UPS_COMMS_FIRMWARE (SINGLE KEEP )
+	no new value
+Writing out new list :
+Start block K1
+Entry KA : PL_VPD_NODE_FC_PORT_WWPN (MULTI KEEP [0-9a-f]{16})
+	no new values
+Entry KB : PL_VPD_NODE_FC_PORT_STATUS (MULTI KEEP [0-9])
+	no new values
+Entry KC : PL_VPD_NODE_FC_PORT_AUTO_SPEED (MULTI KEEP )
+	no new values
+Entry KD : PL_VPD_NODE_HARDWARE_TYPE (SINGLE KEEP [0-9A-Z]+)
+	no new value
+Entry KE : PL_VPD_NODE_FC_PORT_NUM (MULTI KEEP )
+	no new values
+Entry KF : PL_VPD_NODE_FC_PORT_SFP_FRU_PN (MULTI KEEP )
+	no new values
+Entry KG : PL_VPD_NODE_FC_PORT_SFP_CONNECTOR (MULTI KEEP )
+	no new values
+Entry KH : PL_VPD_NODE_FC_PORT_SFP_TRANSMITTER (MULTI KEEP )
+	no new values
+Entry KI : PL_VPD_NODE_FC_PORT_SFP_LASER_WAVELENGTH (MULTI KEEP )
+	no new values
+Entry KJ : PL_VPD_NODE_FC_PORT_SFP_MEDIUM_MAX_LENGTH (MULTI KEEP )
+	no new values
+Entry KK : PL_VPD_NODE_FC_PORT_SFP_SPEEDS (MULTI KEEP )
+	no new values
+Entry KL : PL_VPD_NODE_FC_PORT_SFP_VENDOR_NAME (MULTI KEEP )
+	no new values
+Entry KM : PL_VPD_NODE_FC_PORT_SFP_VENDOR_PN (MULTI KEEP )
+	no new values
+Entry KN : PL_VPD_NODE_FC_PORT_SFP_VENDOR_REV (MULTI KEEP )
+	no new values
+Entry KO : PL_VPD_NODE_FC_PORT_SFP_VENDOR_SER_NUM (MULTI KEEP )
+	no new values
+End block K1
+Writing out new list :
+Start block K2
+Entry KP : PL_VPD_NODE_FCIO_PORT_WWPN (MULTI KEEP )
+	no new values
+Entry KQ : PL_VPD_NODE_FCIO_PORT_SPEED (MULTI KEEP )
+	no new values
+Entry KR : PL_VPD_NODE_FCIO_PORT_BURN_MAC (MULTI KEEP )
+	no new values
+Entry KS : PL_VPD_NODE_FCIO_PORT_FPMA (MULTI KEEP )
+	no new values
+Entry KT : PL_VPD_NODE_FCIO_PORT_FCF_MAC (MULTI KEEP )
+	no new values
+Entry KU : PL_VPD_NODE_FCIO_PORT_VLANID (MULTI KEEP )
+	no new values
+Entry KV : PL_VPD_NODE_FCIO_PORT_STATE (MULTI KEEP )
+	no new values
+Entry KW : PL_VPD_NODE_FCIO_PORT_SWITCH_WWPN (MULTI KEEP )
+	no new values
+Entry KX : PL_VPD_NODE_FCIO_PORT_NPORTID (MULTI KEEP )
+	no new values
+Entry KY : PL_VPD_NODE_HARDWARE_TYPE_REAL (SINGLE KEEP [0-9A-Z]+)
+	no new value
+End block K2
+Writing out new list :
+Entry LA : PL_VPD_NODE_PSU_FRU_PN (MULTI REPLACE )
+	new value (entry 1) : 94Y8071
+	new value (entry 2) : 94Y8071
+Writing out new list : LA94Y8071 LA94Y8071
+Entry LB : PL_VPD_NODE_PSU_SERIAL_NUMBER (MULTI REPLACE )
+	no new values
+Writing out new list :
+Entry LC : PL_VPD_NODE_PSU_SLOT (MULTI REPLACE )
+	new value (entry 1) : 1
+	new value (entry 2) : 2
+Writing out new list : LC1 LC2
+Start block M
+Entry MA : PL_VPD_NODE_MERCURY_DRIVE_LOCATION (MULTI KEEP )
+	no new values
+Entry MB : PL_VPD_NODE_MERCURY_DRIVE_CODE_MODIFICATION (MULTI KEEP )
+	no new values
+Entry MC : PL_VPD_NODE_MERCURY_DRIVE_SERIAL_NUMBER (MULTI KEEP )
+	no new values
+Entry MD : PL_VPD_NODE_MERCURY_DRIVE_LABEL_SERIAL_NUMBER (MULTI KEEP )
+	no new values
+Entry ME : PL_VPD_NODE_MERCURY_DRIVE_SUPPLIER_SERIAL_NUMBER (MULTI KEEP )
+	no new values
+Entry MF : PL_VPD_NODE_MERCURY_DRIVE_PART_NUMBER (MULTI KEEP )
+	no new values
+Entry MG : PL_VPD_NODE_MERCURY_DRIVE_FPGA_REVISION (MULTI KEEP )
+	no new values
+Entry MH : PL_VPD_NODE_MERCURY_VENDOR_ID (MULTI KEEP )
+	no new values
+Entry MI : PL_VPD_NODE_MERCURY_PRODUCT_ID (MULTI KEEP )
+	no new values
+Entry MJ : PL_VPD_NODE_MERCURY_CAPACITY (MULTI KEEP )
+	no new values
+Entry MK : PL_VPD_NODE_MERCURY_TYPE (MULTI KEEP )
+	no new values
+Entry ML : PL_VPD_NODE_MERCURY_SPEED (MULTI KEEP )
+	no new values
+Entry MN : PL_VPD_NODE_MERCURY_ENCLOSURE (MULTI KEEP )
+	no new values
+Entry MO : PL_VPD_NODE_MERCURY_CONNECTION_TYPE (MULTI KEEP )
+	no new values
+Entry MP : PL_VPD_NODE_MERCURY_WWPN (MULTI KEEP )
+	no new values
+Entry MQ : PL_VPD_NODE_MERCURY_UNIQUE_IDENTIFIER (MULTI KEEP )
+	no new values
+Entry MR : PL_VPD_NODE_MERCURY_DRIVE_FRU_PN (MULTI KEEP )
+	no new values
+End block M
+Writing out new list :
+Start block N1
+Entry NA : PL_VPD_NODE_SERVICE_IP4 (SINGLE KEEP_SUSPECT ([0-9]{1,3}.){3}[0-9]{1,3})
+	no new value
+Entry NB : PL_VPD_NODE_SERVICE_GW4 (SINGLE KEEP_SUSPECT ([0-9]{1,3}.){3}[0-9]{1,3})
+	no new value
+Entry NC : PL_VPD_NODE_SERVICE_MASK (SINGLE KEEP_SUSPECT ([0-9]{1,3}.){3}[0-9]{1,3})
+	no new value
+Entry ND : PL_VPD_NODE_SERVICE_DHCP4 (SINGLE KEEP_SUSPECT (TRUE)|(FALSE))
+	no new value
+End block N1
+Writing out new list :
+Start block N2
+Entry NE : PL_VPD_NODE_SERVICE_IP6 (SINGLE KEEP_SUSPECT ([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4})
+	no new value
+Entry NF : PL_VPD_NODE_SERVICE_GW6 (SINGLE KEEP_SUSPECT ([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4})
+	no new value
+Entry NG : PL_VPD_NODE_SERVICE_PREFIX (SINGLE KEEP_SUSPECT ([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4})
+	no new value
+Entry NH : PL_VPD_NODE_SERVICE_DHCP6 (SINGLE KEEP_SUSPECT (TRUE)|(FALSE))
+	no new value
+End block N2
+Writing out new list :
+Entry NI : PL_VPD_NODE_SERVICE_IP_MODE (SINGLE KEEP_SUSPECT (static)|(dhcp)|(dhcpfallback))
+	no new value
+Writing out new list :
+Entry NJ : PL_VPD_NODE_SERVICE_IP6_MODE (SINGLE KEEP_SUSPECT (static)|(dhcp)|(dhcpfallback))
+	no new value
+Writing out new list :
+Entry OA : PL_VPD_NODE_EXPECTED_ENCLOSURE_CANISTER_ID (SINGLE KEEP_SUSPECT [0-9])
+	no new value
+Writing out new list :
+Entry OB : PL_VPD_NODE_EXPECTED_ENCLOSURE_WWNN1 (SINGLE KEEP_SUSPECT [0-9a-f]{16})
+	no new value
+Writing out new list :
+Entry OC : PL_VPD_NODE_EXPECTED_ENCLOSURE_WWNN2 (SINGLE KEEP_SUSPECT [0-9a-f]{16})
+	no new value
+Writing out new list :
+Entry OD : PL_VPD_NODE_EXPECTED_ENCLOSURE_MTM (SINGLE KEEP_SUSPECT )
+	no new value
+Writing out new list :
+Entry OE : PL_VPD_NODE_EXPECTED_ENCLOSURE_SERIAL (SINGLE KEEP_SUSPECT )
+	no new value
+Writing out new list :
+Entry OF : PL_VPD_NODE_ENCLOSURE_CLUSTERID (SINGLE KEEP [0-9a-f]+)
+	no new value
+Writing out new list :
+Entry OG : PL_VPD_NODE_EXPECTED_ENCLOSURE_MACHINE_PART_NUM (SINGLE KEEP_SUSPECT )
+	no new value
+Writing out new list :
+Entry OH : PL_VPD_NODE_EXPECTED_ADAPTER_CONFIG (SINGLE KEEP_SUSPECT [0-9]+)
+	no new value
+Writing out new list :
+Entry OI : PL_VPD_NODE_EXPECTED_GID (SINGLE KEEP_SUSPECT [0-9a-fA-F]{32})
+	no new value
+Writing out new list :
+Entry OJ : PL_VPD_NODE_EXPECTED_PRODUCT_SUBTYPE (SINGLE KEEP [0-9a-f]+)
+	no new value
+Writing out new list :
+Entry OK : PL_VPD_NODE_ENCLOSURE_CONTROL (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry PT : PL_VPD_NODE_FLEXHW_FIRST_ISCSI_PORT (SINGLE REPLACE )
+	new value : 0
+Writing out new list : PT0
+Entry PU : PL_VPD_NODE_FLEXHW_FOOTPRINT_DELTA (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry PV : PL_VPD_NODE_FLEXHW_SOCKET_COUNT_CONFIG (SINGLE REPLACE )
+	no new value
+Writing out new list :
+Entry QK : PL_VPD_NODE_QUORUM_AVAILABLE (MULTI KEEP_SUSPECT (Created)|(Deleted)|(online)|(offline))
+	no new values
+Writing out new list :
+Entry RA : PL_VPD_NODE_SASIO_PORT_WWPN (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry RB : PL_VPD_NODE_SASIO_PORT_SWITCH_WWPN (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry RC : PL_VPD_NODE_SASIO_PORT_SPEED (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry RD : PL_VPD_NODE_SASIO_PORT_STATE (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SA : PL_VPD_NODE_ISCSI_ALIAS (SINGLE KEEP )
+	no new value
+Writing out new list :
+Entry SB : PL_VPD_NODE_ETHERNET_PORT_DCBX_STATE (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SC : PL_VPD_NODE_ETHERNET_PORT_ISCSI_PRIORITY_TAG (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SD : PL_VPD_NODE_ETHERNET_PORT_FCOE_PRIORITY_TAG (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SE : PL_VPD_NODE_ETHERNET_PORT_PFC_ENABLED_TAGS (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SF : PL_VPD_NODE_ETHERNET_PORT_PFC_DISABLED_TAGS (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SG : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_0 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SH : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_1 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SI : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_2 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SJ : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_3 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SK : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_4 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SL : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_5 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SM : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_6 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SN : PL_VPD_NODE_ETHERNET_PORT_PRIORITY_GROUP_7 (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SO : PL_VPD_NODE_ETHERNET_PORT_BANDWIDTH_ALLOCATION (MULTI KEEP )
+	no new values
+Writing out new list :
+Entry SQ : PL_VPD_NODE_ETHERNET_PORT_LOSSLESS_ISCSI (MULTI KEEP )
+	no new values
+Writing out new list :
+Start block T
+Entry TA : PL_VPD_NODE_IB_PORT_SFP_FRU_PN (MULTI KEEP )
+	no new values
+Entry TB : PL_VPD_NODE_IB_PORT_SFP_VENDOR_NAME (MULTI KEEP )
+	no new values
+Entry TC : PL_VPD_NODE_IB_PORT_SFP_VENDOR_PN (MULTI KEEP )
+	no new values
+Entry TD : PL_VPD_NODE_IB_PORT_SFP_VENDOR_SER_NUM (MULTI KEEP )
+	no new values
+Entry TE : PL_VPD_NODE_IB_PORT_SFP_SPEEDS (MULTI KEEP )
+	no new values
+Entry TF : PL_VPD_NODE_IB_PORT_SFP_CONNECTOR (MULTI KEEP )
+	no new values
+Entry TG : PL_VPD_NODE_IB_PORT_SFP_MEDIUM_MAX_LENGTH (MULTI KEEP )
+	no new values
+Entry TH : PL_VPD_NODE_IB_PORT_SFP_VENDOR_REV (MULTI KEEP )
+	no new values
+Entry TI : PL_VPD_NODE_IB_PORT_NUM (MULTI KEEP [0-9]+)
+	no new values
+End block T
+Writing out new list :
+Entry UA : PL_VPD_NODE_BATTERY_MIDPLANE_FRU_PN (SINGLE KEEP )
+	new value : 31P1824
+Writing out new list : UA31P1824
+Entry UB : PL_VPD_NODE_BATTERY_MIDPLANE_PART_IDENTITY (SINGLE KEEP )
+	new value :
+Writing out new list : UB
+Entry UC : PL_VPD_NODE_BATTERY_MIDPLANE_FW_VERSION (SINGLE KEEP )
+	new value :
+Writing out new list : UC
+Entry UD : PL_VPD_NODE_BATTERY_POWER_CABLE_FRU_PN (SINGLE KEEP )
+	new value : 31P1826
+Writing out new list : UD31P1826
+Entry UE : PL_VPD_NODE_BATTERY_POWER_SENSE_CABLE_FRU_PN (SINGLE KEEP )
+	new value : 31P1827
+Writing out new list : UE31P1827
+Entry UF : PL_VPD_NODE_BATTERY_COMMS_CABLE_FRU_PN (SINGLE KEEP )
+	new value : 31P1828
+Writing out new list : UF31P1828
+Entry UG : PL_VPD_NODE_BATTERY_EPOW_CABLE_FRU_PN (SINGLE KEEP )
+	new value : 00FK346
+Writing out new list : UG00FK346
+Entry VA : PL_VPD_NODE_SUPPORT_FC_OVERALL_POOL (SINGLE KEEP )
+	no new value
+Writing out new list :
+Start block Y
+Entry YA : PL_VPD_LSNODEVPD_ETHERNET_PORT_NUMBER (MULTI KEEP [0-9]+)
+	no new values
+Entry YB : PL_VPD_LSNODEVPD_ETHERNET_STATUS (MULTI KEEP [0-9]+)
+	no new values
+Entry YC : PL_VPD_LSNODEVPD_ETHERNET_MAC_ADDRESS (MULTI KEEP ([0-9a-f]{2}:){5}([0-9a-f]{2}))
+	no new values
+Entry YD : PL_VPD_LSNODEVPD_ETHERNET_SUPPORTED_SPEEDS (MULTI KEEP )
+	no new values
+Entry YE : PL_VPD_NODE_ETHERNET_PORT_SFP_FRU_PN (MULTI KEEP )
+	no new values
+Entry YF : PL_VPD_NODE_ETHERNET_PORT_SFP_VENDOR_NAME (MULTI KEEP )
+	no new values
+Entry YG : PL_VPD_NODE_ETHERNET_PORT_SFP_VENDOR_PN (MULTI KEEP )
+	no new values
+Entry YH : PL_VPD_NODE_ETHERNET_PORT_SFP_VENDOR_SER_NUM (MULTI KEEP )
+	no new values
+Entry YI : PL_VPD_NODE_ETHERNET_PORT_SFP_SPEEDS (MULTI KEEP )
+	no new values
+Entry YJ : PL_VPD_NODE_ETHERNET_PORT_SFP_CONNECTOR (MULTI KEEP )
+	no new values
+Entry YK : PL_VPD_NODE_ETHERNET_PORT_SFP_TRANSMITTER (MULTI KEEP )
+	no new values
+Entry YL : PL_VPD_NODE_ETHERNET_PORT_SFP_MEDIUM_MAX_LENGTH (MULTI KEEP )
+	no new values
+Entry YM : PL_VPD_NODE_ETHERNET_PORT_SFP_VENDOR_REV (MULTI KEEP )
+	no new values
+Entry YN : PL_VPD_NODE_ETHERNET_PORT_SFP_LASER_WAVELENGTH (MULTI KEEP )
+	no new values
+End block Y
+Writing out new list :
+calling /compass/flexhw makevpd
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 0
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 22890
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 1411
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 0
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 0
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 12949
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 67
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 33475
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 1539
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 21446
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 5157
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 7362
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 0
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 98756
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 704
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 18920
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 151
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 954
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 8845
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 14017
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 8053
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 1189
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 38492
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 105224
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 7522
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 4594
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 21810
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 1901
+Entry DG : PL_VPD_NODE_MEMORY_COMPONENT (MULTI REPLACE )
+	Written value : 29062
+Entry FA : PL_VPD_NODE_ADAPTER_FRU_PN (MULTI SPECIAL )
+	Written value : 00Y8457
+Entry FA : PL_VPD_NODE_ADAPTER_FRU_PN (MULTI SPECIAL )
+	Written value : 00RY004
+Entry FA : PL_VPD_NODE_ADAPTER_FRU_PN (MULTI SPECIAL )
+	Written value : 00RY004
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value : 1 2 3
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value : 1 2
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value : 3 4
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value :
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value :
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value :
+Entry FB : PL_VPD_NODE_ADAPTER_PORT_NUMBERS (MULTI SPECIAL )
+	Written value :
+Entry FC : PL_VPD_NODE_ADAPTER_DEVICE_SN (MULTI SPECIAL )
+	Written value : Unknown
+Entry FC : PL_VPD_NODE_ADAPTER_DEVICE_SN (MULTI SPECIAL )
+	Written value : Unknown
+Entry FC : PL_VPD_NODE_ADAPTER_DEVICE_SN (MULTI SPECIAL )
+	Written value : Unknown
+Entry FD : PL_VPD_NODE_ADAPTER_MANU (MULTI SPECIAL )
+	Written value : Unknown
+Entry FD : PL_VPD_NODE_ADAPTER_MANU (MULTI SPECIAL )
+	Written value : Emulex Corp
+Entry FD : PL_VPD_NODE_ADAPTER_MANU (MULTI SPECIAL )
+	Written value : Emulex Corp
+Entry FE : PL_VPD_NODE_ADAPTER_DEVICE (MULTI SPECIAL )
+	Written value : I350 Ethernet
+Entry FE : PL_VPD_NODE_ADAPTER_DEVICE (MULTI SPECIAL )
+	Written value : XE201 16G FC
+Entry FE : PL_VPD_NODE_ADAPTER_DEVICE (MULTI SPECIAL )
+	Written value : XE201 16G FC
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 0
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 1
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 2
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 3
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 4
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 5
+Entry FF : PL_VPD_NODE_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 6
+Entry FG : PL_VPD_NODE_ADAPTER_CHIP_REVISION (MULTI SPECIAL )
+	Written value : 0.1
+Entry FG : PL_VPD_NODE_ADAPTER_CHIP_REVISION (MULTI SPECIAL )
+	Written value : Unknown
+Entry FG : PL_VPD_NODE_ADAPTER_CHIP_REVISION (MULTI SPECIAL )
+	Written value : Unknown
+Entry FH : PL_VPD_NODE_ADAPTER_CARD_REVISION (MULTI SPECIAL )
+	Written value : Unknown
+Entry FH : PL_VPD_NODE_ADAPTER_CARD_REVISION (MULTI SPECIAL )
+	Written value : 1.0
+Entry FH : PL_VPD_NODE_ADAPTER_CARD_REVISION (MULTI SPECIAL )
+	Written value : 1.0
+Entry FI : PL_VPD_NODE_ADAPTER_TYPE (MULTI SPECIAL )
+	Written value : Ethernet
+Entry FI : PL_VPD_NODE_ADAPTER_TYPE (MULTI SPECIAL )
+	Written value : FC
+Entry FI : PL_VPD_NODE_ADAPTER_TYPE (MULTI SPECIAL )
+	Written value : FC
+Entry FJ : PL_VPD_NODE_ADAPTER_TOTAL (MULTI SPECIAL )
+	Written value : 7
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 3
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 2
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 2
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 0
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 0
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 0
+Entry FK : PL_VPD_NODE_ADAPTER_NUM_PORTS (MULTI SPECIAL )
+	Written value : 0
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 1ETH4x1
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 2FC2x16
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 3FC2x16
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 4NONE
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 5NONE
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 6NONE
+Entry FL : PL_VPD_NODE_ADAPTER_MARKER (MULTI SPECIAL )
+	Written value : 7NONE
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : ETH4x1
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : FC2x16
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : FC2x16
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : NONE
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : NONE
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : NONE
+Entry FM : PL_VPD_NODE_ADAPTER_HWTYPE (MULTI SPECIAL )
+	Written value : NONE
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 0
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 1
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 2
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 3
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 4
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 5
+Entry FN : PL_VPD_NODE_ADAPTER_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 6
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 0
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 1
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 2
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 3
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 4
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 5
+Entry FO : PL_VPD_NODE_ADAPTER_LEGACY_WWPN_SLOT (MULTI SPECIAL )
+	Written value : 6
+Entry H5 : PL_VPD_NODE_CAN_64BIT (SINGLE REPLACE )
+	Written value : 1
+Entry H7 : PL_VPD_NODE_FOOTPRINT_FLEXHW (SINGLE REPLACE )
+	Written value : 711107
+Entry H8 : PL_VPD_NODE_FOOTPRINT_GA (SINGLE REPLACE )
+	Written value : 244617
+Entry H9 : PL_VPD_NODE_FOOTPRINT_LINUX (SINGLE REPLACE )
+	Written value : 156672
+Entry PA : PL_VPD_NODE_FLEXHW_ACTUAL_DIFFERENT (SINGLE SPECIAL )
+	Written value : 0
+Entry PB : PL_VPD_NODE_FLEXHW_ACTUAL_VALID (SINGLE SPECIAL )
+	Written value : 1
+Entry PC : PL_VPD_NODE_FLEXHW_MEMORY_CONFIG (SINGLE SPECIAL )
+	Written value : 32
+Entry PD : PL_VPD_NODE_FLEXHW_MEMORY_ACTUAL (SINGLE SPECIAL )
+	Written value : 32
+Entry PE : PL_VPD_NODE_FLEXHW_MEMORY_VALID (SINGLE SPECIAL )
+	Written value : 1
+Entry PF : PL_VPD_NODE_FLEXHW_SOCKET_COUNT_ACTUAL (SINGLE SPECIAL )
+	Written value : 1
+Entry PG : PL_VPD_NODE_FLEXHW_SOCKET_CONFIG (SINGLE SPECIAL )
+	Written value : 8 core Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
+Entry PH : PL_VPD_NODE_FLEXHW_SOCKET_ACTUAL (SINGLE SPECIAL )
+	Written value : 8 core Intel(R) Xeon(R) CPU E5-2650 v2 @ 2.60GHz
+Entry PI : PL_VPD_NODE_FLEXHW_SOCKET_VALID (SINGLE SPECIAL )
+	Written value : 1
+Entry PJ : PL_VPD_NODE_FLEXHW_ADAPTER_COUNT (SINGLE SPECIAL )
+	Written value : 7
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 0
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 1
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 2
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 3
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 4
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 5
+Entry PK : PL_VPD_NODE_FLEXHW_ADAPTER_LOCATION (MULTI SPECIAL )
+	Written value : 6
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 11
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 15
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 15
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 0
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 0
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 0
+Entry PL : PL_VPD_NODE_FLEXHW_ADAPTER_CONFIG (MULTI SPECIAL )
+	Written value : 0
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 11
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 15
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 15
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 0
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 0
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 0
+Entry PM : PL_VPD_NODE_FLEXHW_ADAPTER_ACTUAL (MULTI SPECIAL )
+	Written value : 0
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PN : PL_VPD_NODE_FLEXHW_ADAPTER_VALID (MULTI SPECIAL )
+	Written value : 1
+Entry PO : PL_VPD_NODE_FLEXHW_PLPORTS_ACTUAL (SINGLE SPECIAL )
+	Written value : 4 3 0 0 0 0 1
+Entry PP : PL_VPD_NODE_FLEXHW_IOPORTS_ACTUAL (SINGLE SPECIAL )
+	Written value : 4 2 0 0 1 0
+Entry PQ : PL_VPD_NODE_FLEXHW_PORTS_DIFFERENT (SINGLE SPECIAL )
+	Written value : 0
+Entry PU : PL_VPD_NODE_FLEXHW_FOOTPRINT_DELTA (SINGLE REPLACE )
+	Written value : 0
+Entry PV : PL_VPD_NODE_FLEXHW_SOCKET_COUNT_CONFIG (SINGLE REPLACE )
+	Written value : 1
+Entry PW : PL_VPD_NODE_FLEXHW_COMP_HW_REMOVED (SINGLE SPECIAL )
+	Written value : 0
+finalising vpd as /data/vpd_node and backing up previous to /data/vpd_node.old
+making dummy /data/vpd_node.old

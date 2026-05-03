@@ -1,0 +1,59 @@
+
+##### svcupgradetest started at Wed Dec  9 10:04:41 2015 #####
+
+*** Current software version is 7.5.0.2
+*** Running script /home/utilities/svcupgradetest/check_for_hardware_model.pl 8F2
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_for_hardware_model.pl 8F4
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_remote_clusters.pl partnership 4.3.1.0
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_remote_clusters.pl partnership 5.1.0.0
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_remote_clusters.pl partnership 6.1.0.0
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_remote_clusters.pl partnership 6.3.0.0
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_remote_clusters.pl gmcv 7.2.0.0
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/check_online_disks.pl
+*** Return code from script: 0
+*** *** Captured output from /tmp/online_disks.log
+*** Found 0 vdisks not online
+*** - 0 formatting vdisks ignored
+*** - 0 inconsistent RC secondary volumes ignored
+*** - 0 hyperswap aux volumes ignored
+*** 0 volumes are unexpectedly not online
+*** 
+*** Found 0 mdisks not online
+*** *** END OF Captured output from /tmp/online_disks.log
+*** Running script /home/utilities/svcupgradetest/check_for_vdisk_recovery_iogrps.pl
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/callhome_enabled.pl
+*** Return code from script: 0
+
+******************* Warning found *******************
+
+The upgrade utility has detected that email notifications for error
+reporting have either not been configured or that the Call Home function
+has not been enabled. Configuring and enabling the Call Home function is
+highly recommended. Please review the following technote to understand the benefits
+of enabling call home and inventory emails
+http://www.ibm.com/support/docview.wss?rs=591&uid=ssg1S1004537
+*** Running script /home/utilities/svcupgradetest/check_vdisk_throttling.pl
+*** Return code from script: 0
+*** Running script /home/utilities/svcupgradetest/internal_disk_checks.pl
+*** Return code from script: 0
+
+Results of running svcupgradetest:
+==================================
+
+The tool has found 0 errors and 1 warnings.
+
+*** Creating /tmp/ALLOW_UPGRADE_TO_730
+
+*** The tool ran 12 tests, and skipped 61 tests due to not
+*** matching the characteristics of the system
+
+##### svcupgradetest finished at Wed Dec  9 10:04:43 2015 #####
+

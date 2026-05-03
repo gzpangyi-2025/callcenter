@@ -1,0 +1,34 @@
+# 上饶银行存储中断故障日志分析报告20160311.docx
+
+上饶银行存储中断故障日志分析报告
+一、操作日志截图
+2.1、存储审计日志截图1
+以下截图来自于存储管理软件中的审计日志：
+2.3、存储审计日志截图2
+以下截图为3月2日开始对存储操作的时间点：
+2.4、存储审计日志截图3
+以下截图为2月29日对磁盘镜像进行测试的操作：
+三、日志说明
+3.1、故障时间段存储日志截图说明
+3.2、创建镜像卷开始时间截图说明
+3.3、测试磁盘镜像操作截图说明
+
+## Table 1
+序号	时间	执行命令	操作说明
+1	12:10	svctask addvdiskcopy -mdiskgrp 8 68	创建磁盘镜像任务
+2	12:49	svctask chvdisk -syncrate 50 47	修改磁盘镜像同步速率为50
+3	13:34	svctask rmvdiskcopy -copy 1 31	删除磁盘镜像拷贝关系，此时由于删除镜像拷贝关系超时，后断开存储端mapping。相应的卷出现“脱机”
+4	14:37	svctask recovervdisk 31	使卷状态联机，执行失败
+5	14:59	svctask rmvdiskcopy -copy 1 22	删除磁盘镜像拷贝关系
+6	15:01	svctask detectmdisk	发现存储mapping，重新发现存储mapping后，所有卷自动“联机”，相应的业务系统卷可以被访问。
+7	15:08	svctask migratevdisk -vdisk Test_Vol1_20G -mdiskgrp V7K_4_VM_Test_Pool -copy 0	Test_Vol1_20G卷迁移至其他存储池，通过测试卷迁移，确定存储可用。
+
+## Table 2
+序号	时间	执行命令	操作说明
+1	11:20	svctask chmdiskgrp -name V7K_3_VM_Test_Mirror 9	对存储池标识名称进行修改。
+2	11:22	svctask addvdiskcopy -mdiskgrp 5 13	开始对卷进行镜像操作
+
+## Table 3
+序号	时间	执行命令	操作说明
+1	2.29 16:18	svctask addvdiskcopy -mdiskgrp 6 22	对测试卷进行磁盘镜像操作。并以默认50的镜像同步速率进行。
+2	2.29 16:29	svctask chvdisk -syncrate 90 22	修改测试卷的镜像同步速率为90，观察同步性能。

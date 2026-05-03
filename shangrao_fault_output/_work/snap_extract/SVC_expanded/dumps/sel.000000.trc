@@ -1,0 +1,27 @@
+Thu Oct 1 04:05:12 BST 2015 SEL list 
+   1 | 10/01/2015 | 01:37:52 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 10/01/2015 | 02:10:33 | Power Unit #0x01 | Power off/down | Asserted
+   3 | 10/01/2015 | 02:12:52 | Entity Presence #0x8a | Absent | Deasserted
+   4 | 10/01/2015 | 02:12:52 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   5 | 10/01/2015 | 02:12:58 | Entity Presence #0x89 | Absent | Deasserted
+   6 | 10/01/2015 | 02:14:35 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+   7 | 10/01/2015 | 02:29:08 | Power Unit #0x01 | Power off/down | Asserted
+   8 | 10/01/2015 | 02:29:18 | Power Unit #0x01 | Power off/down | Deasserted
+   9 | 10/01/2015 | 02:29:31 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   a | 10/01/2015 | 02:31:23 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+   b | 10/01/2015 | 03:00:32 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   c | 10/01/2015 | 03:02:35 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 010002708e0c5620000410f66f02ffff
+SEL Entry: 02000219960c5620000409016f00ffff
+SEL Entry: 030002a4960c56200004258aef01ffff
+SEL Entry: 040002a4960c562000040ff56fc200ff
+SEL Entry: 050002aa960c562000042589ef01ffff
+SEL Entry: 0600020b970c562000040ff56fc213ff
+SEL Entry: 070002749a0c5620000409016f00ffff
+SEL Entry: 0800027e9a0c562000040901ef00ffff
+SEL Entry: 0900028b9a0c562000040ff56fc200ff
+SEL Entry: 0a0002fb9a0c562000040ff56fc213ff
+SEL Entry: 0b0002d0a10c562000040ff56fc200ff
+SEL Entry: 0c00024ba20c562000040ff56fc213ff
+-------------------------------------------------------------------

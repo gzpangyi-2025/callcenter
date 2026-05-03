@@ -1,0 +1,780 @@
+2016/03/09 01:00:01 SVCCONFIG cron
+2016/03/09 01:00:01 +svcinfo lsnode -svcconfig -delim=',' -nohdr -bytes
+2016/03/09 01:00:01 +svcinfo lsnodevpd -svcconfig -delim=',' -- 'node2'
+2016/03/09 01:00:01 (SVCCONFIG running on node with wwnn: 500507680205CCE4)
+2016/03/09 01:00:01 +svcinfo lsdiscoverystatus -svcconfig -delim : -nohdr
+2016/03/09 01:00:02 +svcinfo lscontroller -svcconfig -nohdr
+2016/03/09 01:00:02 +svcinfo lsmdisk -svcconfig -nohdr
+2016/03/09 01:00:02 +svctask detectmdisk
+2016/03/09 01:00:02 +svcinfo lsdiscoverystatus -svcconfig -delim : -nohdr
+2016/03/09 01:00:03 +svcinfo lscontroller -svcconfig -nohdr
+2016/03/09 01:00:03 +svcinfo lsmdisk -svcconfig -nohdr
+2016/03/09 01:00:08 +svcinfo lsnode -svcconfig -delim : -nohdr
+2016/03/09 01:00:08 Writing /tmp/svc.config.cron.xml
+2016/03/09 01:00:09 Writing object(s) cluster:
+2016/03/09 01:00:09 +svcinfo lssystem -svcconfig -delim=','
+2016/03/09 01:00:09 Writing object(s) clusterip:
+2016/03/09 01:00:09 +svcinfo lsclusterip -svcconfig -delim=',' -nohdr
+2016/03/09 01:00:09 + (2 object(s) of type clusterip)
+2016/03/09 01:00:09 +svcinfo lsclusterip -svcconfig -delim=',' -port='1' -- '00000200A0A2C618'
+2016/03/09 01:00:09 +svcinfo lsclusterip -svcconfig -delim=',' -port='2' -- '00000200A0A2C618'
+2016/03/09 01:00:09 Writing object(s) controller:
+2016/03/09 01:00:09 +svcinfo lscontroller -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:09 + (0 object(s) of type controller)
+2016/03/09 01:00:09 Writing object(s) drive:
+2016/03/09 01:00:09 +svcinfo lsdrive -svcconfig -delim=':' -nohdr -bytes -gui
+2016/03/09 01:00:09 + (168 object(s) of type drive)
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '15'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '16'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '17'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '18'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '19'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '20'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '21'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '22'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '23'
+2016/03/09 01:00:09 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '24'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '25'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '26'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '27'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '28'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '29'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '30'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '31'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '32'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '33'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '34'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '35'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '36'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '37'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '38'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '39'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '40'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '41'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '42'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '43'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '44'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '45'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '46'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '47'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '48'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '49'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '50'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '51'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '52'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '53'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '54'
+2016/03/09 01:00:10 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '55'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '56'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '57'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '58'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '59'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '60'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '61'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '62'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '63'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '64'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '65'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '66'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '67'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '68'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '69'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '70'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '71'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '72'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '73'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '74'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '75'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '76'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '77'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '78'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '79'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '80'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '81'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '82'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '83'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '84'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '85'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '86'
+2016/03/09 01:00:11 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '87'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '88'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '89'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '90'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '91'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '92'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '93'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '94'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '95'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '96'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '97'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '98'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '99'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '100'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '101'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '102'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '103'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '104'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '105'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '106'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '107'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '108'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '109'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '110'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '111'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '112'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '113'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '114'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '115'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '116'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '117'
+2016/03/09 01:00:12 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '118'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '119'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '120'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '121'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '122'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '123'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '124'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '125'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '126'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '127'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '128'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '129'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '130'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '131'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '132'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '133'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '134'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '135'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '136'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '137'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '138'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '139'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '140'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '141'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '142'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '143'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '144'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '145'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '146'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '147'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '148'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '149'
+2016/03/09 01:00:13 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '150'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '151'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '152'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '153'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '154'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '155'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '156'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '157'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '158'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '159'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '160'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '161'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '162'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '163'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '164'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '165'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '166'
+2016/03/09 01:00:14 +svcinfo lsdrive -bytes -gui -svcconfig -delim=':' -- '167'
+2016/03/09 01:00:14 Writing object(s) emailserver:
+2016/03/09 01:00:14 +svcinfo lsemailserver -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:14 + (0 object(s) of type emailserver)
+2016/03/09 01:00:14 Writing object(s) emailuser:
+2016/03/09 01:00:14 +svcinfo lsemailuser -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:14 + (0 object(s) of type emailuser)
+2016/03/09 01:00:14 Writing object(s) enclosure:
+2016/03/09 01:00:14 +svcinfo lsenclosure -svcconfig -delim=':' -nohdr -gui
+2016/03/09 01:00:14 + (7 object(s) of type enclosure)
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:14 +svcinfo lsenclosure -gui -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:14 Writing object(s) enclosure_canister:
+2016/03/09 01:00:14 +svcinfo lsenclosurecanister -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:14 + (14 object(s) of type enclosure_canister)
+2016/03/09 01:00:14 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:14 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:14 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:14 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:15 +svcinfo lsenclosurecanister -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:15 Writing object(s) enclosure_psu:
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:15 + (14 object(s) of type enclosure_psu)
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:15 +svcinfo lsenclosurepsu -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:15 Writing object(s) enclosure_slot:
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:15 + (168 object(s) of type enclosure_slot)
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:15 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:16 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:17 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:18 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:19 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:20 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 +svcinfo lsenclosureslot -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 Writing object(s) encryption:
+2016/03/09 01:00:21 +svcinfo lsencryption -svcconfig -delim=':' -gui
+2016/03/09 01:00:21 Writing object(s) fcconsistgrp:
+2016/03/09 01:00:21 +svcinfo lsfcconsistgrp -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:21 + (0 object(s) of type fcconsistgrp)
+2016/03/09 01:00:21 Writing object(s) fcmap:
+2016/03/09 01:00:21 +svcinfo lsfcmap -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:21 + (0 object(s) of type fcmap)
+2016/03/09 01:00:21 Writing object(s) guicapabilities:
+2016/03/09 01:00:21 +svcinfo lsguicapabilities -svcconfig -delim=','
+2016/03/09 01:00:21 Writing object(s) host:
+2016/03/09 01:00:21 +svcinfo lshost -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:21 + (13 object(s) of type host)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:21 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:21 +svcinfo lshost -bytes -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:21 +svcinfo lshostiogrp -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:22 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:22 +svcinfo lshost -bytes -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:22 +svcinfo lshostiogrp -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:22 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:22 +svcinfo lshost -bytes -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:22 +svcinfo lshostiogrp -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:22 + (4 object(s) of type hostio_grp)
+2016/03/09 01:00:22 Writing object(s) io_grp:
+2016/03/09 01:00:22 +svcinfo lsiogrp -svcconfig -delim=':' -nohdr -noconv
+2016/03/09 01:00:22 + (5 object(s) of type io_grp)
+2016/03/09 01:00:22 +svcinfo lsiogrp -noconv -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:22 +svcinfo lsiogrp -noconv -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:22 +svcinfo lsiogrp -noconv -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:22 +svcinfo lsiogrp -noconv -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:22 +svcinfo lsiogrp -noconv -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:22 Writing object(s) io_grpcandidate:
+2016/03/09 01:00:22 +svcinfo lsiogrpcandidate -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:22 + (3 object(s) of type io_grpcandidate)
+2016/03/09 01:00:22 Writing object(s) license:
+2016/03/09 01:00:22 +svcinfo lslicense -svcconfig -delim=':'
+2016/03/09 01:00:22 Writing object(s) limit:
+2016/03/09 01:00:22 +svcinfo lslimits -svcconfig -delim=':'
+2016/03/09 01:00:22 Writing object(s) mdisk:
+2016/03/09 01:00:22 +svcinfo lsmdisk -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:22 + (17 object(s) of type mdisk)
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:22 + mdisk 0 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '0'
+2016/03/09 01:00:22 + (8 array members for mdisk 0 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:22 + mdisk 1 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '1'
+2016/03/09 01:00:22 + (8 array members for mdisk 1 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:22 + mdisk 2 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '2'
+2016/03/09 01:00:22 + (8 array members for mdisk 2 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:22 + mdisk 3 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '3'
+2016/03/09 01:00:22 + (8 array members for mdisk 3 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:22 + mdisk 4 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '4'
+2016/03/09 01:00:22 + (8 array members for mdisk 4 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:22 + mdisk 5 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '5'
+2016/03/09 01:00:22 + (8 array members for mdisk 5 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:22 + mdisk 6 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '6'
+2016/03/09 01:00:22 + (8 array members for mdisk 6 )
+2016/03/09 01:00:22 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:22 + mdisk 7 is an array!!!!
+2016/03/09 01:00:22 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '7'
+2016/03/09 01:00:23 + (8 array members for mdisk 7 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:23 + mdisk 8 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '8'
+2016/03/09 01:00:23 + (8 array members for mdisk 8 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:23 + mdisk 9 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '9'
+2016/03/09 01:00:23 + (8 array members for mdisk 9 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:23 + mdisk 10 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '10'
+2016/03/09 01:00:23 + (8 array members for mdisk 10 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:23 + mdisk 11 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '11'
+2016/03/09 01:00:23 + (8 array members for mdisk 11 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:23 + mdisk 12 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '12'
+2016/03/09 01:00:23 + (8 array members for mdisk 12 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:23 + mdisk 13 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '13'
+2016/03/09 01:00:23 + (8 array members for mdisk 13 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:23 + mdisk 14 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '14'
+2016/03/09 01:00:23 + (8 array members for mdisk 14 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '15'
+2016/03/09 01:00:23 + mdisk 15 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '15'
+2016/03/09 01:00:23 + (8 array members for mdisk 15 )
+2016/03/09 01:00:23 +svcinfo lsmdisk -bytes -svcconfig -delim=':' -- '16'
+2016/03/09 01:00:23 + mdisk 16 is an array!!!!
+2016/03/09 01:00:23 +svcinfo lsarraymember -svcconfig -delim=':' -nohdr -- '16'
+2016/03/09 01:00:23 + (8 array members for mdisk 16 )
+2016/03/09 01:00:23 Writing object(s) mdisk_grp:
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:23 + (14 object(s) of type mdisk_grp)
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:23 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:24 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:24 +svcinfo lsmdiskgrp -gui -bytes -svcconfig -delim=':' -- '15'
+2016/03/09 01:00:24 Writing object(s) node_ethernet_portip_ip:
+2016/03/09 01:00:24 +svcinfo lsportip -gui -svcconfig -delim=','
+ 1
+ 1
+ 2
+ 2
+ 1
+ 1
+ 2
+ 2
+2016/03/09 01:00:24 Writing object(s) node:
+2016/03/09 01:00:24 +svcinfo lsnode -svcconfig -delim=',' -nohdr -bytes
+2016/03/09 01:00:24 + (2 object(s) of type node)
+2016/03/09 01:00:24 +svcinfo lsnode -bytes -svcconfig -delim=',' -- '1'
+2016/03/09 01:00:24 +svcinfo lsnode -bytes -svcconfig -delim=',' -- '2'
+2016/03/09 01:00:24 Writing object(s) quorum:
+2016/03/09 01:00:24 +svcinfo lsquorum -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:24 + (3 object(s) of type quorum)
+2016/03/09 01:00:24 +svcinfo lsquorum -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:24 +svcinfo lsquorum -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:24 +svcinfo lsquorum -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:24 Writing object(s) plfsbackup:
+2016/03/09 01:00:24 plfs backup
+2016/03/09 01:00:25 Set file owner on /tmp/plfs.tar.gz
+2016/03/09 01:00:25 Set file owner on /tmp/plfs.tar.gz.uuc
+2016/03/09 01:00:25 Writing object(s) rcconsistgrp:
+2016/03/09 01:00:25 +svcinfo lsrcconsistgrp -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:25 + (0 object(s) of type rcconsistgrp)
+2016/03/09 01:00:25 Writing object(s) rcrelationship:
+2016/03/09 01:00:25 +svcinfo lsrcrelationship -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:25 + (0 object(s) of type rcrelationship)
+2016/03/09 01:00:25 Writing object(s) sevdiskcopy:
+2016/03/09 01:00:25 +svcinfo lssevdiskcopy -svcconfig -delim=':' -bytes
+2016/03/09 01:00:25 Writing object(s) security:
+2016/03/09 01:00:25 +svcinfo lssecurity -svcconfig -delim=':'
+2016/03/09 01:00:26 Writing object(s) site:
+2016/03/09 01:00:26 +svcinfo lssite -svcconfig -delim=':'
+ 1
+ 2
+ 3
+2016/03/09 01:00:26 Writing object(s) snmpserver:
+2016/03/09 01:00:26 +svcinfo lssnmpserver -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:26 + (0 object(s) of type snmpserver)
+2016/03/09 01:00:26 Writing object(s) sslcert:
+2016/03/09 01:00:26 Writing object(s) ldap_sslcert:2016/03/09 01:00:26 Writing object(s) syslogserver:
+2016/03/09 01:00:26 +svcinfo lssyslogserver -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:26 + (0 object(s) of type syslogserver)
+2016/03/09 01:00:26 Writing object(s) user:
+2016/03/09 01:00:26 +svcinfo lsuser -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:26 + (1 object(s) of type user)
+2016/03/09 01:00:26 +svcinfo lsuser -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:26 Writing object(s) usergrp:
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:26 + (5 object(s) of type usergrp)
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:26 +svcinfo lsusergrp -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:26 Writing object(s) vdisk:
+2016/03/09 01:00:26 +svcinfo lsvdisk -svcconfig -delim=':' -nohdr -bytes
+2016/03/09 01:00:26 + (15 object(s) of type vdisk)
+2016/03/09 01:00:26 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:26 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:26 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:26 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '0'
+2016/03/09 01:00:26 + (2 object(s) of type vdiskextent)
+2016/03/09 01:00:26 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:26 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:26 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:26 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '1'
+2016/03/09 01:00:26 + (2 object(s) of type vdiskextent)
+2016/03/09 01:00:26 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:26 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:26 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:26 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '2'
+2016/03/09 01:00:26 + (2 object(s) of type vdiskextent)
+2016/03/09 01:00:26 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:26 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:26 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:26 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:26 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '3'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '4'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '4'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '5'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '5'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '6'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '7'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '8'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '8'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:27 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '9'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:27 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '9'
+2016/03/09 01:00:27 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:27 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:27 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:28 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '10'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:28 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '10'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:28 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:28 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:28 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '11'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:28 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '11'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:28 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:28 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:28 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '12'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:28 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '12'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:28 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:28 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:28 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '13'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:28 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '13'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:28 +svcinfo lsvdisk -bytes -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:28 +svcinfo lsvdiskhostmap -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskhostmap)
+2016/03/09 01:00:28 +svcinfo lsvdiskaccess -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskaccess)
+2016/03/09 01:00:28 +svcinfo lsvdiskextent -svcconfig -delim=':' -copy='0' -- '14'
+2016/03/09 01:00:28 + (1 object(s) of type vdiskextent)
+2016/03/09 01:00:28 Writing object(s) iscsiauth:
+2016/03/09 01:00:28 +svcinfo lsiscsiauth -svcconfig -delim=':'
+2016/03/09 01:00:28 Writing object(s) ldap:
+2016/03/09 01:00:28 +svcinfo lsldap -svcconfig -delim=':'
+2016/03/09 01:00:28 Writing object(s) ldapserver:
+2016/03/09 01:00:28 +svcinfo lsldapserver -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:28 + (0 object(s) of type ldapserver)
+2016/03/09 01:00:28 Writing object(s) portfc:
+2016/03/09 01:00:28 +svcinfo lsportfc -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:28 + (8 object(s) of type portfc)
+2016/03/09 01:00:28 +svcinfo lsportfc -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:28 +svcinfo lsportfc -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:28 +svcinfo lsportfc -svcconfig -delim=':' -- '2'
+2016/03/09 01:00:28 +svcinfo lsportfc -svcconfig -delim=':' -- '3'
+2016/03/09 01:00:29 +svcinfo lsportfc -svcconfig -delim=':' -- '14'
+2016/03/09 01:00:29 +svcinfo lsportfc -svcconfig -delim=':' -- '15'
+2016/03/09 01:00:29 +svcinfo lsportfc -svcconfig -delim=':' -- '16'
+2016/03/09 01:00:29 +svcinfo lsportfc -svcconfig -delim=':' -- '17'
+2016/03/09 01:00:29 Writing object(s) feature:
+2016/03/09 01:00:29 +svcinfo lsfeature -svcconfig -delim=':'
+ 0
+2016/03/09 01:00:29 Writing object(s) portusb:
+2016/03/09 01:00:29 +svcinfo lsportusb -svcconfig -delim=':' -nohdr
+2016/03/09 01:00:29 + (4 object(s) of type portusb)
+2016/03/09 01:00:29 +svcinfo lsportusb -svcconfig -delim=':' -- '0'
+2016/03/09 01:00:29 +svcinfo lsportusb -svcconfig -delim=':' -- '1'
+2016/03/09 01:00:29 +svcinfo lsportusb -svcconfig -delim=':' -- '6'
+2016/03/09 01:00:29 +svcinfo lsportusb -svcconfig -delim=':' -- '7'
+2016/03/09 01:00:29 Set file owner on /tmp/svc.config.cron.sh
+2016/03/09 01:00:29 Set file owner on /tmp/svc.config.cron.xml
+2016/03/09 01:00:29 Finished writing /tmp/svc.config.cron.xml, 599 objects
+2016/03/09 01:00:29 +svcinfo lsnode -svcconfig -delim=',' -nohdr -bytes
+2016/03/09 01:00:29 +svcinfo lsnodevpd -svcconfig -delim=',' -- 'node2'
+2016/03/09 01:00:29 Erasing file /dumps/svc.config.cron.bak_78RE395-2
+2016/03/09 01:00:29 Renamed /dumps/svc.config.cron.xml_78RE395-2 to /dumps/svc.config.cron.bak_78RE395-2
+2016/03/09 01:00:29 Erasing file /home/admin/data/svc.config.latest.xml
+2016/03/09 01:00:29 Created link from /home/admin/data/svc.config.latest.xml to /dumps/svc.config.cron.bak_78RE395-2
+2016/03/09 01:00:29 Erasing file /dumps/svc.config.cron.log_78RE395-2
+2016/03/09 01:00:29 Erasing file /dumps/svc.config.cron.sh_78RE395-2
+2016/03/09 01:00:29 Copying /tmp/svc.config.cron.xml to /dumps/svc.config.cron.xml_78RE395-2
+2016/03/09 01:00:29 Set file owner on /dumps/svc.config.cron.xml_78RE395-2
+2016/03/09 01:00:29 Copying /tmp/svc.config.cron.sh to /dumps/svc.config.cron.sh_78RE395-2
+2016/03/09 01:00:29 Set file owner on /dumps/svc.config.cron.sh_78RE395-2

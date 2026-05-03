@@ -1,0 +1,1383 @@
+Mar  4 21:01:02 newinstall kernel: imklog 5.8.10, log source = /proc/kmsg started.
+Mar  4 21:01:02 newinstall rsyslogd: [origin software="rsyslogd" swVersion="5.8.10" x-pid="14540" x-info="http://www.rsyslog.com"] start
+Mar  4 21:01:02 newinstall rsyslogd: WARNING: rsyslogd is running in compatibility mode. Automatically generated config directives may interfer with your rsyslog.conf settings. We suggest upgrading your config and adding -c5 as the first rsyslogd option.
+Mar  4 21:01:02 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: ModLoad immark
+Mar  4 21:01:02 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: MarkMessagePeriod 1200
+Mar  4 21:01:02 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: ModLoad imuxsock
+Mar  4 21:01:02 newinstall run-parts(/etc/cron.hourly)[14547]: finished logrotate
+Mar  4 21:01:02 newinstall run-parts(/etc/cron.hourly)[14497]: starting mcelog.cron
+Mar  4 21:01:02 newinstall run-parts(/etc/cron.hourly)[14563]: finished mcelog.cron
+Mar  4 21:01:15 newinstall kernel: Kernel logging (proc) stopped.
+Mar  4 21:01:15 newinstall rsyslogd: [origin software="rsyslogd" swVersion="5.8.10" x-pid="14540" x-info="http://www.rsyslog.com"] exiting on signal 15.
+Mar  4 21:01:15 newinstall kernel: imklog 5.8.10, log source = /proc/kmsg started.
+Mar  4 21:01:15 newinstall rsyslogd: [origin software="rsyslogd" swVersion="5.8.10" x-pid="14592" x-info="http://www.rsyslog.com"] start
+Mar  4 21:01:15 newinstall rsyslogd: WARNING: rsyslogd is running in compatibility mode. Automatically generated config directives may interfer with your rsyslog.conf settings. We suggest upgrading your config and adding -c5 as the first rsyslogd option.
+Mar  4 21:01:15 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: ModLoad immark
+Mar  4 21:01:15 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: MarkMessagePeriod 1200
+Mar  4 21:01:15 newinstall rsyslogd: Warning: backward compatibility layer added to following directive to rsyslog.conf: ModLoad imuxsock
+Mar  4 21:21:15 newinstall rsyslogd: -- MARK --
+Mar  4 21:31:01 newinstall /USR/SBIN/CROND[17901]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  4 21:41:15 newinstall rsyslogd: -- MARK --
+Mar  4 22:01:01 newinstall /USR/SBIN/CROND[21634]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  4 22:01:01 newinstall /USR/SBIN/CROND[21635]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21634]: starting 0anacron
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21646]: finished 0anacron
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21634]: starting logrotate
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21669]: finished logrotate
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21634]: starting mcelog.cron
+Mar  4 22:01:01 newinstall run-parts(/etc/cron.hourly)[21685]: finished mcelog.cron
+Mar  4 22:21:16 newinstall rsyslogd: -- MARK --
+Mar  4 22:31:01 newinstall /USR/SBIN/CROND[24796]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  4 22:41:16 newinstall rsyslogd: -- MARK --
+Mar  4 23:01:01 newinstall /USR/SBIN/CROND[27808]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  4 23:01:01 newinstall /USR/SBIN/CROND[27813]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27813]: starting 0anacron
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27822]: finished 0anacron
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27813]: starting logrotate
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27845]: finished logrotate
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27813]: starting mcelog.cron
+Mar  4 23:01:01 newinstall run-parts(/etc/cron.hourly)[27861]: finished mcelog.cron
+Mar  4 23:21:16 newinstall rsyslogd: -- MARK --
+Mar  4 23:31:01 newinstall /USR/SBIN/CROND[30987]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  4 23:41:16 newinstall rsyslogd: -- MARK --
+Mar  5 00:01:01 newinstall /USR/SBIN/CROND[2209]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 00:01:01 newinstall /USR/SBIN/CROND[2210]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2210]: starting 0anacron
+Mar  5 00:01:01 newinstall anacron[2221]: Anacron started on 2016-03-05
+Mar  5 00:01:01 newinstall anacron[2221]: Jobs will be executed sequentially
+Mar  5 00:01:01 newinstall anacron[2221]: Normal exit (0 jobs run)
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2223]: finished 0anacron
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2210]: starting logrotate
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2246]: finished logrotate
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2210]: starting mcelog.cron
+Mar  5 00:01:01 newinstall run-parts(/etc/cron.hourly)[2262]: finished mcelog.cron
+Mar  5 00:21:16 newinstall rsyslogd: -- MARK --
+Mar  5 00:31:01 newinstall /USR/SBIN/CROND[6171]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 00:41:16 newinstall rsyslogd: -- MARK --
+Mar  5 01:00:01 newinstall /USR/SBIN/CROND[9734]: (admin) CMD (/compass/svc_config_push >/dev/null 2>&1)
+Mar  5 01:01:01 newinstall /USR/SBIN/CROND[10565]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 01:01:01 newinstall /USR/SBIN/CROND[10570]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10570]: starting 0anacron
+Mar  5 01:01:01 newinstall anacron[10579]: Anacron started on 2016-03-05
+Mar  5 01:01:01 newinstall anacron[10579]: Jobs will be executed sequentially
+Mar  5 01:01:01 newinstall anacron[10579]: Normal exit (0 jobs run)
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10581]: finished 0anacron
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10570]: starting logrotate
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10604]: finished logrotate
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10570]: starting mcelog.cron
+Mar  5 01:01:01 newinstall run-parts(/etc/cron.hourly)[10620]: finished mcelog.cron
+Mar  5 01:21:17 newinstall rsyslogd: -- MARK --
+Mar  5 01:25:01 newinstall /USR/SBIN/CROND[13652]: (root) CMD (( [ -f /compass/ec_sel ] && /compass/ec_sel ) > /dev/null 2>&1)
+Mar  5 01:31:01 newinstall /USR/SBIN/CROND[14369]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 01:41:17 newinstall rsyslogd: -- MARK --
+Mar  5 02:00:01 newinstall /USR/SBIN/CROND[17673]: (root) CMD (([ -f /compass/ec_audit.pl] && /compass/ec_audit.pl ) > /dev/null 2>&1)
+Mar  5 02:01:01 newinstall /USR/SBIN/CROND[17795]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 02:01:01 newinstall /USR/SBIN/CROND[17796]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17796]: starting 0anacron
+Mar  5 02:01:01 newinstall anacron[17807]: Anacron started on 2016-03-05
+Mar  5 02:01:01 newinstall anacron[17807]: Jobs will be executed sequentially
+Mar  5 02:01:01 newinstall anacron[17807]: Normal exit (0 jobs run)
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17809]: finished 0anacron
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17796]: starting logrotate
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17832]: finished logrotate
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17796]: starting mcelog.cron
+Mar  5 02:01:01 newinstall run-parts(/etc/cron.hourly)[17848]: finished mcelog.cron
+Mar  5 02:21:17 newinstall rsyslogd: -- MARK --
+Mar  5 02:31:01 newinstall /USR/SBIN/CROND[21730]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 02:41:17 newinstall rsyslogd: -- MARK --
+Mar  5 03:01:01 newinstall /USR/SBIN/CROND[24741]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 03:01:01 newinstall /USR/SBIN/CROND[24746]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24741]: starting 0anacron
+Mar  5 03:01:01 newinstall anacron[24755]: Anacron started on 2016-03-05
+Mar  5 03:01:01 newinstall anacron[24755]: Will run job `cron.daily' in 39 min.
+Mar  5 03:01:01 newinstall anacron[24755]: Jobs will be executed sequentially
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24757]: finished 0anacron
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24741]: starting logrotate
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24780]: finished logrotate
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24741]: starting mcelog.cron
+Mar  5 03:01:01 newinstall run-parts(/etc/cron.hourly)[24796]: finished mcelog.cron
+Mar  5 03:13:01 newinstall /USR/SBIN/CROND[26354]: (root) CMD (( [ -f /compass/ec_disksweep ] && /compass/ec_disksweep ) > /dev/null 2>&1)
+Mar  5 03:31:02 newinstall /USR/SBIN/CROND[27919]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 03:40:01 newinstall anacron[24755]: Job `cron.daily' started
+Mar  5 03:40:01 newinstall run-parts(/etc/cron.daily)[29015]: starting logrotate
+Mar  5 03:40:01 newinstall run-parts(/etc/cron.daily)[29029]: finished logrotate
+Mar  5 03:40:01 newinstall anacron[24755]: Job `cron.daily' terminated
+Mar  5 03:40:01 newinstall anacron[24755]: Normal exit (1 job run)
+Mar  5 04:01:02 newinstall /USR/SBIN/CROND[31575]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 04:01:02 newinstall /USR/SBIN/CROND[31580]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31580]: starting 0anacron
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31589]: finished 0anacron
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31580]: starting logrotate
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31612]: finished logrotate
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31580]: starting mcelog.cron
+Mar  5 04:01:02 newinstall run-parts(/etc/cron.hourly)[31628]: finished mcelog.cron
+Mar  5 04:21:17 newinstall rsyslogd: -- MARK --
+Mar  5 04:31:02 newinstall /USR/SBIN/CROND[2750]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 04:41:18 newinstall rsyslogd: -- MARK --
+Mar  5 05:01:02 newinstall /USR/SBIN/CROND[6396]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 05:01:02 newinstall /USR/SBIN/CROND[6401]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6401]: starting 0anacron
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6412]: finished 0anacron
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6401]: starting logrotate
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6435]: finished logrotate
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6401]: starting mcelog.cron
+Mar  5 05:01:02 newinstall run-parts(/etc/cron.hourly)[6451]: finished mcelog.cron
+Mar  5 05:21:18 newinstall rsyslogd: -- MARK --
+Mar  5 05:31:02 newinstall /USR/SBIN/CROND[9991]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 05:41:18 newinstall rsyslogd: -- MARK --
+Mar  5 06:01:02 newinstall /USR/SBIN/CROND[13976]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 06:01:02 newinstall /USR/SBIN/CROND[13977]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[13977]: starting 0anacron
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[13988]: finished 0anacron
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[13977]: starting logrotate
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[14011]: finished logrotate
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[13977]: starting mcelog.cron
+Mar  5 06:01:02 newinstall run-parts(/etc/cron.hourly)[14027]: finished mcelog.cron
+Mar  5 06:21:18 newinstall rsyslogd: -- MARK --
+Mar  5 06:31:01 newinstall /USR/SBIN/CROND[17031]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 06:41:18 newinstall rsyslogd: -- MARK --
+Mar  5 07:01:01 newinstall /USR/SBIN/CROND[19828]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 07:01:01 newinstall /USR/SBIN/CROND[19833]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19833]: starting 0anacron
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19842]: finished 0anacron
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19833]: starting logrotate
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19865]: finished logrotate
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19833]: starting mcelog.cron
+Mar  5 07:01:01 newinstall run-parts(/etc/cron.hourly)[19881]: finished mcelog.cron
+Mar  5 07:21:18 newinstall rsyslogd: -- MARK --
+Mar  5 07:31:01 newinstall /USR/SBIN/CROND[22515]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 07:41:18 newinstall rsyslogd: -- MARK --
+Mar  5 08:01:01 newinstall /USR/SBIN/CROND[25190]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25190]: starting 0anacron
+Mar  5 08:01:01 newinstall /USR/SBIN/CROND[25199]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25204]: finished 0anacron
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25190]: starting logrotate
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25227]: finished logrotate
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25190]: starting mcelog.cron
+Mar  5 08:01:01 newinstall run-parts(/etc/cron.hourly)[25243]: finished mcelog.cron
+Mar  5 08:21:19 newinstall rsyslogd: -- MARK --
+Mar  5 08:31:01 newinstall /USR/SBIN/CROND[28494]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 08:41:19 newinstall rsyslogd: -- MARK --
+Mar  5 09:01:01 newinstall /USR/SBIN/CROND[31651]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 09:01:01 newinstall /USR/SBIN/CROND[31652]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31652]: starting 0anacron
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31663]: finished 0anacron
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31652]: starting logrotate
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31686]: finished logrotate
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31652]: starting mcelog.cron
+Mar  5 09:01:01 newinstall run-parts(/etc/cron.hourly)[31702]: finished mcelog.cron
+Mar  5 09:21:19 newinstall rsyslogd: -- MARK --
+Mar  5 09:31:01 newinstall /USR/SBIN/CROND[2425]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 09:41:19 newinstall rsyslogd: -- MARK --
+Mar  5 10:01:01 newinstall /USR/SBIN/CROND[5780]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 10:01:01 newinstall /USR/SBIN/CROND[5785]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5785]: starting 0anacron
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5794]: finished 0anacron
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5785]: starting logrotate
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5817]: finished logrotate
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5785]: starting mcelog.cron
+Mar  5 10:01:01 newinstall run-parts(/etc/cron.hourly)[5833]: finished mcelog.cron
+Mar  5 10:21:19 newinstall rsyslogd: -- MARK --
+Mar  5 10:31:01 newinstall /USR/SBIN/CROND[9885]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 10:41:19 newinstall rsyslogd: -- MARK --
+Mar  5 11:01:01 newinstall /USR/SBIN/CROND[13744]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 11:01:01 newinstall /USR/SBIN/CROND[13745]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13744]: starting 0anacron
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13756]: finished 0anacron
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13744]: starting logrotate
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13780]: finished logrotate
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13744]: starting mcelog.cron
+Mar  5 11:01:01 newinstall run-parts(/etc/cron.hourly)[13796]: finished mcelog.cron
+Mar  5 11:21:20 newinstall rsyslogd: -- MARK --
+Mar  5 11:31:01 newinstall /USR/SBIN/CROND[17568]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 11:41:20 newinstall rsyslogd: -- MARK --
+Mar  5 12:01:01 newinstall /USR/SBIN/CROND[20948]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 12:01:01 newinstall run-parts(/etc/cron.hourly)[20948]: starting 0anacron
+Mar  5 12:01:01 newinstall run-parts(/etc/cron.hourly)[20957]: finished 0anacron
+Mar  5 12:01:01 newinstall run-parts(/etc/cron.hourly)[20948]: starting logrotate
+Mar  5 12:01:01 newinstall /USR/SBIN/CROND[20966]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 12:01:01 newinstall run-parts(/etc/cron.hourly)[20985]: finished logrotate
+Mar  5 12:01:01 newinstall run-parts(/etc/cron.hourly)[20948]: starting mcelog.cron
+Mar  5 12:01:02 newinstall run-parts(/etc/cron.hourly)[21001]: finished mcelog.cron
+Mar  5 12:21:20 newinstall rsyslogd: -- MARK --
+Mar  5 12:31:01 newinstall /USR/SBIN/CROND[25094]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 12:41:20 newinstall rsyslogd: -- MARK --
+Mar  5 13:01:01 newinstall /USR/SBIN/CROND[28737]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 13:01:01 newinstall /USR/SBIN/CROND[28738]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28737]: starting 0anacron
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28749]: finished 0anacron
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28737]: starting logrotate
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28772]: finished logrotate
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28737]: starting mcelog.cron
+Mar  5 13:01:02 newinstall run-parts(/etc/cron.hourly)[28788]: finished mcelog.cron
+Mar  5 13:21:20 newinstall rsyslogd: -- MARK --
+Mar  5 13:31:02 newinstall /USR/SBIN/CROND[32313]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 13:41:20 newinstall rsyslogd: -- MARK --
+Mar  5 14:01:02 newinstall /USR/SBIN/CROND[3010]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 14:01:02 newinstall /USR/SBIN/CROND[3011]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3011]: starting 0anacron
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3022]: finished 0anacron
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3011]: starting logrotate
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3045]: finished logrotate
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3011]: starting mcelog.cron
+Mar  5 14:01:02 newinstall run-parts(/etc/cron.hourly)[3061]: finished mcelog.cron
+Mar  5 14:21:20 newinstall rsyslogd: -- MARK --
+Mar  5 14:31:02 newinstall /USR/SBIN/CROND[6333]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 14:41:21 newinstall rsyslogd: -- MARK --
+Mar  5 15:01:01 newinstall /USR/SBIN/CROND[10286]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 15:01:01 newinstall /USR/SBIN/CROND[10291]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10291]: starting 0anacron
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10300]: finished 0anacron
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10291]: starting logrotate
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10325]: finished logrotate
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10291]: starting mcelog.cron
+Mar  5 15:01:01 newinstall run-parts(/etc/cron.hourly)[10341]: finished mcelog.cron
+Mar  5 15:21:21 newinstall rsyslogd: -- MARK --
+Mar  5 15:31:01 newinstall /USR/SBIN/CROND[14432]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 15:41:21 newinstall rsyslogd: -- MARK --
+Mar  5 16:01:01 newinstall /USR/SBIN/CROND[18016]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 16:01:01 newinstall /USR/SBIN/CROND[18017]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18016]: starting 0anacron
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18028]: finished 0anacron
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18016]: starting logrotate
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18051]: finished logrotate
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18016]: starting mcelog.cron
+Mar  5 16:01:01 newinstall run-parts(/etc/cron.hourly)[18067]: finished mcelog.cron
+Mar  5 16:21:21 newinstall rsyslogd: -- MARK --
+Mar  5 16:31:01 newinstall /USR/SBIN/CROND[21907]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 16:41:21 newinstall rsyslogd: -- MARK --
+Mar  5 17:01:01 newinstall /USR/SBIN/CROND[25656]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 17:01:01 newinstall /USR/SBIN/CROND[25660]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25656]: starting 0anacron
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25670]: finished 0anacron
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25656]: starting logrotate
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25693]: finished logrotate
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25656]: starting mcelog.cron
+Mar  5 17:01:01 newinstall run-parts(/etc/cron.hourly)[25709]: finished mcelog.cron
+Mar  5 17:21:21 newinstall rsyslogd: -- MARK --
+Mar  5 17:31:01 newinstall /USR/SBIN/CROND[28937]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 17:41:21 newinstall rsyslogd: -- MARK --
+Mar  5 18:01:01 newinstall /USR/SBIN/CROND[32466]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 18:01:01 newinstall /USR/SBIN/CROND[32467]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32466]: starting 0anacron
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32478]: finished 0anacron
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32466]: starting logrotate
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32501]: finished logrotate
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32466]: starting mcelog.cron
+Mar  5 18:01:01 newinstall run-parts(/etc/cron.hourly)[32517]: finished mcelog.cron
+Mar  5 18:21:22 newinstall rsyslogd: -- MARK --
+Mar  5 18:31:01 newinstall /USR/SBIN/CROND[3341]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 18:41:22 newinstall rsyslogd: -- MARK --
+Mar  5 19:01:01 newinstall /USR/SBIN/CROND[6942]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 19:01:01 newinstall /USR/SBIN/CROND[6943]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6942]: starting 0anacron
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6954]: finished 0anacron
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6942]: starting logrotate
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6977]: finished logrotate
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6942]: starting mcelog.cron
+Mar  5 19:01:01 newinstall run-parts(/etc/cron.hourly)[6993]: finished mcelog.cron
+Mar  5 19:21:22 newinstall rsyslogd: -- MARK --
+Mar  5 19:31:01 newinstall /USR/SBIN/CROND[10663]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 19:41:22 newinstall rsyslogd: -- MARK --
+Mar  5 20:01:01 newinstall /USR/SBIN/CROND[14061]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 20:01:01 newinstall /USR/SBIN/CROND[14062]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14062]: starting 0anacron
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14073]: finished 0anacron
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14062]: starting logrotate
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14096]: finished logrotate
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14062]: starting mcelog.cron
+Mar  5 20:01:01 newinstall run-parts(/etc/cron.hourly)[14112]: finished mcelog.cron
+Mar  5 20:21:22 newinstall rsyslogd: -- MARK --
+Mar  5 20:31:01 newinstall /USR/SBIN/CROND[17741]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 20:41:22 newinstall rsyslogd: -- MARK --
+Mar  5 21:01:01 newinstall /USR/SBIN/CROND[21686]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 21:01:01 newinstall /USR/SBIN/CROND[21687]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21686]: starting 0anacron
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21698]: finished 0anacron
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21686]: starting logrotate
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21721]: finished logrotate
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21686]: starting mcelog.cron
+Mar  5 21:01:01 newinstall run-parts(/etc/cron.hourly)[21737]: finished mcelog.cron
+Mar  5 21:21:23 newinstall rsyslogd: -- MARK --
+Mar  5 21:31:01 newinstall /USR/SBIN/CROND[25371]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 21:41:23 newinstall rsyslogd: -- MARK --
+Mar  5 22:01:01 newinstall /USR/SBIN/CROND[29120]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29120]: starting 0anacron
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29131]: finished 0anacron
+Mar  5 22:01:01 newinstall /USR/SBIN/CROND[29132]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29120]: starting logrotate
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29157]: finished logrotate
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29120]: starting mcelog.cron
+Mar  5 22:01:01 newinstall run-parts(/etc/cron.hourly)[29173]: finished mcelog.cron
+Mar  5 22:21:23 newinstall rsyslogd: -- MARK --
+Mar  5 22:31:01 newinstall /USR/SBIN/CROND[530]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 22:41:23 newinstall rsyslogd: -- MARK --
+Mar  5 23:01:01 newinstall /USR/SBIN/CROND[4484]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 23:01:01 newinstall /USR/SBIN/CROND[4485]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4485]: starting 0anacron
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4496]: finished 0anacron
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4485]: starting logrotate
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4519]: finished logrotate
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4485]: starting mcelog.cron
+Mar  5 23:01:01 newinstall run-parts(/etc/cron.hourly)[4535]: finished mcelog.cron
+Mar  5 23:21:23 newinstall rsyslogd: -- MARK --
+Mar  5 23:31:01 newinstall /USR/SBIN/CROND[9140]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  5 23:41:23 newinstall rsyslogd: -- MARK --
+Mar  6 00:01:01 newinstall /USR/SBIN/CROND[12747]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 00:01:01 newinstall /USR/SBIN/CROND[12748]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 00:01:01 newinstall run-parts(/etc/cron.hourly)[12748]: starting 0anacron
+Mar  6 00:01:01 newinstall anacron[12759]: Anacron started on 2016-03-06
+Mar  6 00:01:01 newinstall anacron[12759]: Jobs will be executed sequentially
+Mar  6 00:01:01 newinstall anacron[12759]: Normal exit (0 jobs run)
+Mar  6 00:01:01 newinstall run-parts(/etc/cron.hourly)[12762]: finished 0anacron
+Mar  6 00:01:01 newinstall run-parts(/etc/cron.hourly)[12748]: starting logrotate
+Mar  6 00:01:02 newinstall run-parts(/etc/cron.hourly)[12799]: finished logrotate
+Mar  6 00:01:02 newinstall run-parts(/etc/cron.hourly)[12748]: starting mcelog.cron
+Mar  6 00:01:02 newinstall run-parts(/etc/cron.hourly)[13031]: finished mcelog.cron
+Mar  6 00:21:23 newinstall rsyslogd: -- MARK --
+Mar  6 00:31:01 newinstall /USR/SBIN/CROND[16621]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 00:41:24 newinstall rsyslogd: -- MARK --
+Mar  6 01:00:01 newinstall /USR/SBIN/CROND[19822]: (admin) CMD (/compass/svc_config_push >/dev/null 2>&1)
+Mar  6 01:00:01 newinstall /USR/SBIN/CROND[19827]: (root) CMD (/usr/sbin/raid-check)
+Mar  6 01:01:01 newinstall /USR/SBIN/CROND[20604]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 01:01:01 newinstall /USR/SBIN/CROND[20605]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 01:01:01 newinstall run-parts(/etc/cron.hourly)[20605]: starting 0anacron
+Mar  6 01:01:01 newinstall anacron[20616]: Anacron started on 2016-03-06
+Mar  6 01:01:01 newinstall anacron[20616]: Jobs will be executed sequentially
+Mar  6 01:01:01 newinstall anacron[20616]: Normal exit (0 jobs run)
+Mar  6 01:01:01 newinstall run-parts(/etc/cron.hourly)[20618]: finished 0anacron
+Mar  6 01:01:01 newinstall run-parts(/etc/cron.hourly)[20605]: starting logrotate
+Mar  6 01:01:02 newinstall run-parts(/etc/cron.hourly)[20641]: finished logrotate
+Mar  6 01:01:02 newinstall run-parts(/etc/cron.hourly)[20605]: starting mcelog.cron
+Mar  6 01:01:02 newinstall run-parts(/etc/cron.hourly)[20657]: finished mcelog.cron
+Mar  6 01:21:24 newinstall rsyslogd: -- MARK --
+Mar  6 01:25:02 newinstall /USR/SBIN/CROND[23311]: (root) CMD (( [ -f /compass/ec_sel ] && /compass/ec_sel ) > /dev/null 2>&1)
+Mar  6 01:31:02 newinstall /USR/SBIN/CROND[23904]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 01:41:24 newinstall rsyslogd: -- MARK --
+Mar  6 02:00:02 newinstall /USR/SBIN/CROND[26873]: (root) CMD (([ -f /compass/ec_audit.pl] && /compass/ec_audit.pl ) > /dev/null 2>&1)
+Mar  6 02:01:01 newinstall /USR/SBIN/CROND[26997]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 02:01:01 newinstall /USR/SBIN/CROND[26998]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[26998]: starting 0anacron
+Mar  6 02:01:01 newinstall anacron[27009]: Anacron started on 2016-03-06
+Mar  6 02:01:01 newinstall anacron[27009]: Jobs will be executed sequentially
+Mar  6 02:01:01 newinstall anacron[27009]: Normal exit (0 jobs run)
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[27011]: finished 0anacron
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[26998]: starting logrotate
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[27034]: finished logrotate
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[26998]: starting mcelog.cron
+Mar  6 02:01:01 newinstall run-parts(/etc/cron.hourly)[27050]: finished mcelog.cron
+Mar  6 02:21:24 newinstall rsyslogd: -- MARK --
+Mar  6 02:31:01 newinstall /USR/SBIN/CROND[30222]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 02:41:24 newinstall rsyslogd: -- MARK --
+Mar  6 03:01:01 newinstall /USR/SBIN/CROND[1097]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1097]: starting 0anacron
+Mar  6 03:01:01 newinstall /USR/SBIN/CROND[1105]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 03:01:01 newinstall anacron[1111]: Anacron started on 2016-03-06
+Mar  6 03:01:01 newinstall anacron[1111]: Will run job `cron.daily' in 11 min.
+Mar  6 03:01:01 newinstall anacron[1111]: Jobs will be executed sequentially
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1113]: finished 0anacron
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1097]: starting logrotate
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1136]: finished logrotate
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1097]: starting mcelog.cron
+Mar  6 03:01:01 newinstall run-parts(/etc/cron.hourly)[1152]: finished mcelog.cron
+Mar  6 03:12:01 newinstall anacron[1111]: Job `cron.daily' started
+Mar  6 03:12:01 newinstall run-parts(/etc/cron.daily)[2376]: starting logrotate
+Mar  6 03:12:01 newinstall run-parts(/etc/cron.daily)[2390]: finished logrotate
+Mar  6 03:12:01 newinstall anacron[1111]: Job `cron.daily' terminated
+Mar  6 03:12:01 newinstall anacron[1111]: Normal exit (1 job run)
+Mar  6 03:13:02 newinstall /USR/SBIN/CROND[2503]: (root) CMD (( [ -f /compass/ec_disksweep ] && /compass/ec_disksweep ) > /dev/null 2>&1)
+Mar  6 03:31:01 newinstall /USR/SBIN/CROND[4110]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 03:41:24 newinstall rsyslogd: -- MARK --
+Mar  6 04:01:01 newinstall /USR/SBIN/CROND[6987]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 04:01:01 newinstall /USR/SBIN/CROND[6992]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[6992]: starting 0anacron
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[7001]: finished 0anacron
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[6992]: starting logrotate
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[7024]: finished logrotate
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[6992]: starting mcelog.cron
+Mar  6 04:01:01 newinstall run-parts(/etc/cron.hourly)[7040]: finished mcelog.cron
+Mar  6 04:21:25 newinstall rsyslogd: -- MARK --
+Mar  6 04:31:01 newinstall /USR/SBIN/CROND[10601]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 04:41:25 newinstall rsyslogd: -- MARK --
+Mar  6 05:01:01 newinstall /USR/SBIN/CROND[14417]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 05:01:01 newinstall /USR/SBIN/CROND[14420]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14417]: starting 0anacron
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14431]: finished 0anacron
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14417]: starting logrotate
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14454]: finished logrotate
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14417]: starting mcelog.cron
+Mar  6 05:01:01 newinstall run-parts(/etc/cron.hourly)[14470]: finished mcelog.cron
+Mar  6 05:21:25 newinstall rsyslogd: -- MARK --
+Mar  6 05:31:01 newinstall /USR/SBIN/CROND[18029]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 05:41:25 newinstall rsyslogd: -- MARK --
+Mar  6 06:01:01 newinstall /USR/SBIN/CROND[21594]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 06:01:01 newinstall /USR/SBIN/CROND[21595]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21594]: starting 0anacron
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21606]: finished 0anacron
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21594]: starting logrotate
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21629]: finished logrotate
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21594]: starting mcelog.cron
+Mar  6 06:01:01 newinstall run-parts(/etc/cron.hourly)[21645]: finished mcelog.cron
+Mar  6 06:21:25 newinstall rsyslogd: -- MARK --
+Mar  6 06:31:01 newinstall /USR/SBIN/CROND[24711]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 06:41:25 newinstall rsyslogd: -- MARK --
+Mar  6 07:01:01 newinstall /USR/SBIN/CROND[27703]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 07:01:01 newinstall /USR/SBIN/CROND[27708]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 07:01:01 newinstall run-parts(/etc/cron.hourly)[27708]: starting 0anacron
+Mar  6 07:01:01 newinstall run-parts(/etc/cron.hourly)[27717]: finished 0anacron
+Mar  6 07:01:01 newinstall run-parts(/etc/cron.hourly)[27708]: starting logrotate
+Mar  6 07:01:02 newinstall run-parts(/etc/cron.hourly)[27740]: finished logrotate
+Mar  6 07:01:02 newinstall run-parts(/etc/cron.hourly)[27708]: starting mcelog.cron
+Mar  6 07:01:02 newinstall run-parts(/etc/cron.hourly)[27756]: finished mcelog.cron
+Mar  6 07:21:26 newinstall rsyslogd: -- MARK --
+Mar  6 07:31:01 newinstall /USR/SBIN/CROND[30618]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 07:41:26 newinstall rsyslogd: -- MARK --
+Mar  6 08:01:01 newinstall /USR/SBIN/CROND[895]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 08:01:01 newinstall /USR/SBIN/CROND[900]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 08:01:01 newinstall run-parts(/etc/cron.hourly)[895]: starting 0anacron
+Mar  6 08:01:01 newinstall run-parts(/etc/cron.hourly)[909]: finished 0anacron
+Mar  6 08:01:01 newinstall run-parts(/etc/cron.hourly)[895]: starting logrotate
+Mar  6 08:01:02 newinstall run-parts(/etc/cron.hourly)[936]: finished logrotate
+Mar  6 08:01:02 newinstall run-parts(/etc/cron.hourly)[895]: starting mcelog.cron
+Mar  6 08:01:02 newinstall run-parts(/etc/cron.hourly)[952]: finished mcelog.cron
+Mar  6 08:21:26 newinstall rsyslogd: -- MARK --
+Mar  6 08:31:02 newinstall /USR/SBIN/CROND[3566]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 08:41:26 newinstall rsyslogd: -- MARK --
+Mar  6 09:01:02 newinstall /USR/SBIN/CROND[6283]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 09:01:02 newinstall /USR/SBIN/CROND[6288]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6288]: starting 0anacron
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6297]: finished 0anacron
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6288]: starting logrotate
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6320]: finished logrotate
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6288]: starting mcelog.cron
+Mar  6 09:01:02 newinstall run-parts(/etc/cron.hourly)[6336]: finished mcelog.cron
+Mar  6 09:21:26 newinstall rsyslogd: -- MARK --
+Mar  6 09:31:02 newinstall /USR/SBIN/CROND[9145]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 09:41:26 newinstall rsyslogd: -- MARK --
+Mar  6 10:01:02 newinstall /USR/SBIN/CROND[12342]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 10:01:02 newinstall /USR/SBIN/CROND[12347]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12342]: starting 0anacron
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12356]: finished 0anacron
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12342]: starting logrotate
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12379]: finished logrotate
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12342]: starting mcelog.cron
+Mar  6 10:01:02 newinstall run-parts(/etc/cron.hourly)[12395]: finished mcelog.cron
+Mar  6 10:21:26 newinstall rsyslogd: -- MARK --
+Mar  6 10:31:01 newinstall /USR/SBIN/CROND[15908]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 10:41:27 newinstall rsyslogd: -- MARK --
+Mar  6 11:01:01 newinstall /USR/SBIN/CROND[19644]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19644]: starting 0anacron
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19653]: finished 0anacron
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19644]: starting logrotate
+Mar  6 11:01:01 newinstall /USR/SBIN/CROND[19660]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19681]: finished logrotate
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19644]: starting mcelog.cron
+Mar  6 11:01:01 newinstall run-parts(/etc/cron.hourly)[19697]: finished mcelog.cron
+Mar  6 11:21:27 newinstall rsyslogd: -- MARK --
+Mar  6 11:31:01 newinstall /USR/SBIN/CROND[23675]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 11:41:27 newinstall rsyslogd: -- MARK --
+Mar  6 12:01:01 newinstall /USR/SBIN/CROND[27447]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 12:01:01 newinstall /USR/SBIN/CROND[27452]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27452]: starting 0anacron
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27461]: finished 0anacron
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27452]: starting logrotate
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27484]: finished logrotate
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27452]: starting mcelog.cron
+Mar  6 12:01:01 newinstall run-parts(/etc/cron.hourly)[27500]: finished mcelog.cron
+Mar  6 12:21:27 newinstall rsyslogd: -- MARK --
+Mar  6 12:31:01 newinstall /USR/SBIN/CROND[31130]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 12:41:27 newinstall rsyslogd: -- MARK --
+Mar  6 13:01:01 newinstall /USR/SBIN/CROND[1810]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 13:01:01 newinstall /USR/SBIN/CROND[1815]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1815]: starting 0anacron
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1824]: finished 0anacron
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1815]: starting logrotate
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1847]: finished logrotate
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1815]: starting mcelog.cron
+Mar  6 13:01:01 newinstall run-parts(/etc/cron.hourly)[1863]: finished mcelog.cron
+Mar  6 13:21:27 newinstall rsyslogd: -- MARK --
+Mar  6 13:31:01 newinstall /USR/SBIN/CROND[5736]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 13:41:27 newinstall rsyslogd: -- MARK --
+Mar  6 14:01:01 newinstall /USR/SBIN/CROND[9217]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 14:01:01 newinstall /USR/SBIN/CROND[9218]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9218]: starting 0anacron
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9229]: finished 0anacron
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9218]: starting logrotate
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9252]: finished logrotate
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9218]: starting mcelog.cron
+Mar  6 14:01:01 newinstall run-parts(/etc/cron.hourly)[9268]: finished mcelog.cron
+Mar  6 14:21:28 newinstall rsyslogd: -- MARK --
+Mar  6 14:31:01 newinstall /USR/SBIN/CROND[12639]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 14:41:28 newinstall rsyslogd: -- MARK --
+Mar  6 15:01:01 newinstall /USR/SBIN/CROND[16365]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 15:01:01 newinstall /USR/SBIN/CROND[16366]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16366]: starting 0anacron
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16377]: finished 0anacron
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16366]: starting logrotate
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16400]: finished logrotate
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16366]: starting mcelog.cron
+Mar  6 15:01:01 newinstall run-parts(/etc/cron.hourly)[16416]: finished mcelog.cron
+Mar  6 15:21:28 newinstall rsyslogd: -- MARK --
+Mar  6 15:31:01 newinstall /USR/SBIN/CROND[19223]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 15:41:28 newinstall rsyslogd: -- MARK --
+Mar  6 16:01:01 newinstall /USR/SBIN/CROND[22606]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 16:01:01 newinstall /USR/SBIN/CROND[22611]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22611]: starting 0anacron
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22620]: finished 0anacron
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22611]: starting logrotate
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22643]: finished logrotate
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22611]: starting mcelog.cron
+Mar  6 16:01:01 newinstall run-parts(/etc/cron.hourly)[22659]: finished mcelog.cron
+Mar  6 16:21:28 newinstall rsyslogd: -- MARK --
+Mar  6 16:31:01 newinstall /USR/SBIN/CROND[26013]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 16:41:28 newinstall rsyslogd: -- MARK --
+Mar  6 17:01:01 newinstall /USR/SBIN/CROND[29483]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 17:01:01 newinstall /USR/SBIN/CROND[29487]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 17:01:01 newinstall run-parts(/etc/cron.hourly)[29483]: starting 0anacron
+Mar  6 17:01:01 newinstall run-parts(/etc/cron.hourly)[29497]: finished 0anacron
+Mar  6 17:01:01 newinstall run-parts(/etc/cron.hourly)[29483]: starting logrotate
+Mar  6 17:01:01 newinstall run-parts(/etc/cron.hourly)[29520]: finished logrotate
+Mar  6 17:01:01 newinstall run-parts(/etc/cron.hourly)[29483]: starting mcelog.cron
+Mar  6 17:01:02 newinstall run-parts(/etc/cron.hourly)[29536]: finished mcelog.cron
+Mar  6 17:21:29 newinstall rsyslogd: -- MARK --
+Mar  6 17:31:01 newinstall /USR/SBIN/CROND[946]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 17:41:29 newinstall rsyslogd: -- MARK --
+Mar  6 18:01:01 newinstall /USR/SBIN/CROND[4683]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 18:01:01 newinstall /USR/SBIN/CROND[4688]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 18:01:01 newinstall run-parts(/etc/cron.hourly)[4688]: starting 0anacron
+Mar  6 18:01:01 newinstall run-parts(/etc/cron.hourly)[4697]: finished 0anacron
+Mar  6 18:01:01 newinstall run-parts(/etc/cron.hourly)[4688]: starting logrotate
+Mar  6 18:01:02 newinstall run-parts(/etc/cron.hourly)[4720]: finished logrotate
+Mar  6 18:01:02 newinstall run-parts(/etc/cron.hourly)[4688]: starting mcelog.cron
+Mar  6 18:01:02 newinstall run-parts(/etc/cron.hourly)[4736]: finished mcelog.cron
+Mar  6 18:21:29 newinstall rsyslogd: -- MARK --
+Mar  6 18:31:02 newinstall /USR/SBIN/CROND[8104]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 18:41:29 newinstall rsyslogd: -- MARK --
+Mar  6 19:01:02 newinstall /USR/SBIN/CROND[11421]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11421]: starting 0anacron
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11430]: finished 0anacron
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11421]: starting logrotate
+Mar  6 19:01:02 newinstall /USR/SBIN/CROND[11439]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11458]: finished logrotate
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11421]: starting mcelog.cron
+Mar  6 19:01:02 newinstall run-parts(/etc/cron.hourly)[11474]: finished mcelog.cron
+Mar  6 19:21:29 newinstall rsyslogd: -- MARK --
+Mar  6 19:31:02 newinstall /USR/SBIN/CROND[14611]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 19:41:29 newinstall rsyslogd: -- MARK --
+Mar  6 20:01:02 newinstall /USR/SBIN/CROND[17272]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 20:01:02 newinstall /USR/SBIN/CROND[17277]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17277]: starting 0anacron
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17286]: finished 0anacron
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17277]: starting logrotate
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17309]: finished logrotate
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17277]: starting mcelog.cron
+Mar  6 20:01:02 newinstall run-parts(/etc/cron.hourly)[17325]: finished mcelog.cron
+Mar  6 20:21:29 newinstall rsyslogd: -- MARK --
+Mar  6 20:31:02 newinstall /USR/SBIN/CROND[20042]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 20:41:30 newinstall rsyslogd: -- MARK --
+Mar  6 21:01:02 newinstall /USR/SBIN/CROND[22957]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 21:01:02 newinstall /USR/SBIN/CROND[22961]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[22957]: starting 0anacron
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[22971]: finished 0anacron
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[22957]: starting logrotate
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[22994]: finished logrotate
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[22957]: starting mcelog.cron
+Mar  6 21:01:02 newinstall run-parts(/etc/cron.hourly)[23010]: finished mcelog.cron
+Mar  6 21:21:30 newinstall rsyslogd: -- MARK --
+Mar  6 21:31:01 newinstall /USR/SBIN/CROND[25786]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 21:41:30 newinstall rsyslogd: -- MARK --
+Mar  6 22:01:01 newinstall /USR/SBIN/CROND[28846]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 22:01:01 newinstall /USR/SBIN/CROND[28847]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28846]: starting 0anacron
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28858]: finished 0anacron
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28846]: starting logrotate
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28881]: finished logrotate
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28846]: starting mcelog.cron
+Mar  6 22:01:01 newinstall run-parts(/etc/cron.hourly)[28897]: finished mcelog.cron
+Mar  6 22:21:30 newinstall rsyslogd: -- MARK --
+Mar  6 22:31:01 newinstall /USR/SBIN/CROND[32095]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 22:41:30 newinstall rsyslogd: -- MARK --
+Mar  6 23:01:01 newinstall /USR/SBIN/CROND[3227]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3227]: starting 0anacron
+Mar  6 23:01:01 newinstall /USR/SBIN/CROND[3233]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3241]: finished 0anacron
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3227]: starting logrotate
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3264]: finished logrotate
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3227]: starting mcelog.cron
+Mar  6 23:01:01 newinstall run-parts(/etc/cron.hourly)[3280]: finished mcelog.cron
+Mar  6 23:21:30 newinstall rsyslogd: -- MARK --
+Mar  6 23:31:01 newinstall /USR/SBIN/CROND[6904]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  6 23:41:30 newinstall rsyslogd: -- MARK --
+Mar  7 00:01:01 newinstall /USR/SBIN/CROND[11035]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 00:01:01 newinstall /USR/SBIN/CROND[11040]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11040]: starting 0anacron
+Mar  7 00:01:01 newinstall anacron[11049]: Anacron started on 2016-03-07
+Mar  7 00:01:01 newinstall anacron[11049]: Jobs will be executed sequentially
+Mar  7 00:01:01 newinstall anacron[11049]: Normal exit (0 jobs run)
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11051]: finished 0anacron
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11040]: starting logrotate
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11074]: finished logrotate
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11040]: starting mcelog.cron
+Mar  7 00:01:01 newinstall run-parts(/etc/cron.hourly)[11090]: finished mcelog.cron
+Mar  7 00:21:31 newinstall rsyslogd: -- MARK --
+Mar  7 00:31:01 newinstall /USR/SBIN/CROND[14597]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 00:41:31 newinstall rsyslogd: -- MARK --
+Mar  7 01:00:01 newinstall /USR/SBIN/CROND[18374]: (admin) CMD (/compass/svc_config_push >/dev/null 2>&1)
+Mar  7 01:01:01 newinstall /USR/SBIN/CROND[19139]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 01:01:01 newinstall /USR/SBIN/CROND[19140]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19140]: starting 0anacron
+Mar  7 01:01:01 newinstall anacron[19151]: Anacron started on 2016-03-07
+Mar  7 01:01:01 newinstall anacron[19151]: Jobs will be executed sequentially
+Mar  7 01:01:01 newinstall anacron[19151]: Normal exit (0 jobs run)
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19153]: finished 0anacron
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19140]: starting logrotate
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19176]: finished logrotate
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19140]: starting mcelog.cron
+Mar  7 01:01:01 newinstall run-parts(/etc/cron.hourly)[19192]: finished mcelog.cron
+Mar  7 01:21:31 newinstall rsyslogd: -- MARK --
+Mar  7 01:25:02 newinstall /USR/SBIN/CROND[21283]: (root) CMD (( [ -f /compass/ec_sel ] && /compass/ec_sel ) > /dev/null 2>&1)
+Mar  7 01:31:02 newinstall /USR/SBIN/CROND[21875]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 01:41:31 newinstall rsyslogd: -- MARK --
+Mar  7 02:00:01 newinstall /USR/SBIN/CROND[25223]: (root) CMD (([ -f /compass/ec_audit.pl] && /compass/ec_audit.pl ) > /dev/null 2>&1)
+Mar  7 02:01:02 newinstall /USR/SBIN/CROND[25339]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 02:01:02 newinstall /USR/SBIN/CROND[25344]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25344]: starting 0anacron
+Mar  7 02:01:02 newinstall anacron[25353]: Anacron started on 2016-03-07
+Mar  7 02:01:02 newinstall anacron[25353]: Jobs will be executed sequentially
+Mar  7 02:01:02 newinstall anacron[25353]: Normal exit (0 jobs run)
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25355]: finished 0anacron
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25344]: starting logrotate
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25378]: finished logrotate
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25344]: starting mcelog.cron
+Mar  7 02:01:02 newinstall run-parts(/etc/cron.hourly)[25394]: finished mcelog.cron
+Mar  7 02:21:31 newinstall rsyslogd: -- MARK --
+Mar  7 02:31:01 newinstall /USR/SBIN/CROND[28784]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 02:41:31 newinstall rsyslogd: -- MARK --
+Mar  7 03:01:01 newinstall /USR/SBIN/CROND[32170]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 03:01:01 newinstall /USR/SBIN/CROND[32174]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32170]: starting 0anacron
+Mar  7 03:01:01 newinstall anacron[32184]: Anacron started on 2016-03-07
+Mar  7 03:01:01 newinstall anacron[32184]: Will run job `cron.daily' in 42 min.
+Mar  7 03:01:01 newinstall anacron[32184]: Jobs will be executed sequentially
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32186]: finished 0anacron
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32170]: starting logrotate
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32209]: finished logrotate
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32170]: starting mcelog.cron
+Mar  7 03:01:01 newinstall run-parts(/etc/cron.hourly)[32226]: finished mcelog.cron
+Mar  7 03:13:02 newinstall /USR/SBIN/CROND[966]: (root) CMD (( [ -f /compass/ec_disksweep ] && /compass/ec_disksweep ) > /dev/null 2>&1)
+Mar  7 03:31:01 newinstall /USR/SBIN/CROND[2707]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 03:41:32 newinstall rsyslogd: -- MARK --
+Mar  7 03:43:01 newinstall anacron[32184]: Job `cron.daily' started
+Mar  7 03:43:01 newinstall run-parts(/etc/cron.daily)[3750]: starting logrotate
+Mar  7 03:43:01 newinstall run-parts(/etc/cron.daily)[3764]: finished logrotate
+Mar  7 03:43:01 newinstall anacron[32184]: Job `cron.daily' terminated
+Mar  7 03:43:01 newinstall anacron[32184]: Normal exit (1 job run)
+Mar  7 04:01:01 newinstall /USR/SBIN/CROND[5650]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 04:01:01 newinstall /USR/SBIN/CROND[5654]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5650]: starting 0anacron
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5664]: finished 0anacron
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5650]: starting logrotate
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5687]: finished logrotate
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5650]: starting mcelog.cron
+Mar  7 04:01:01 newinstall run-parts(/etc/cron.hourly)[5703]: finished mcelog.cron
+Mar  7 04:21:32 newinstall rsyslogd: -- MARK --
+Mar  7 04:31:01 newinstall /USR/SBIN/CROND[8921]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 04:41:32 newinstall rsyslogd: -- MARK --
+Mar  7 05:01:01 newinstall /USR/SBIN/CROND[12178]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 05:01:01 newinstall /USR/SBIN/CROND[12183]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12183]: starting 0anacron
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12192]: finished 0anacron
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12183]: starting logrotate
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12215]: finished logrotate
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12183]: starting mcelog.cron
+Mar  7 05:01:01 newinstall run-parts(/etc/cron.hourly)[12231]: finished mcelog.cron
+Mar  7 05:21:32 newinstall rsyslogd: -- MARK --
+Mar  7 05:31:01 newinstall /USR/SBIN/CROND[15318]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 05:41:32 newinstall rsyslogd: -- MARK --
+Mar  7 06:01:01 newinstall /USR/SBIN/CROND[18386]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 06:01:01 newinstall /USR/SBIN/CROND[18389]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18386]: starting 0anacron
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18400]: finished 0anacron
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18386]: starting logrotate
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18423]: finished logrotate
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18386]: starting mcelog.cron
+Mar  7 06:01:01 newinstall run-parts(/etc/cron.hourly)[18439]: finished mcelog.cron
+Mar  7 06:21:32 newinstall rsyslogd: -- MARK --
+Mar  7 06:31:01 newinstall /USR/SBIN/CROND[21489]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 06:41:33 newinstall rsyslogd: -- MARK --
+Mar  7 07:01:01 newinstall /USR/SBIN/CROND[24346]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 07:01:01 newinstall /USR/SBIN/CROND[24347]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 07:01:01 newinstall run-parts(/etc/cron.hourly)[24347]: starting 0anacron
+Mar  7 07:01:01 newinstall run-parts(/etc/cron.hourly)[24358]: finished 0anacron
+Mar  7 07:01:01 newinstall run-parts(/etc/cron.hourly)[24347]: starting logrotate
+Mar  7 07:01:01 newinstall run-parts(/etc/cron.hourly)[24381]: finished logrotate
+Mar  7 07:01:01 newinstall run-parts(/etc/cron.hourly)[24347]: starting mcelog.cron
+Mar  7 07:01:02 newinstall run-parts(/etc/cron.hourly)[24397]: finished mcelog.cron
+Mar  7 07:21:33 newinstall rsyslogd: -- MARK --
+Mar  7 07:31:01 newinstall /USR/SBIN/CROND[27379]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 07:41:33 newinstall rsyslogd: -- MARK --
+Mar  7 08:01:01 newinstall /USR/SBIN/CROND[30137]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 08:01:01 newinstall /USR/SBIN/CROND[30142]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 08:01:01 newinstall run-parts(/etc/cron.hourly)[30137]: starting 0anacron
+Mar  7 08:01:01 newinstall run-parts(/etc/cron.hourly)[30151]: finished 0anacron
+Mar  7 08:01:01 newinstall run-parts(/etc/cron.hourly)[30137]: starting logrotate
+Mar  7 08:01:02 newinstall run-parts(/etc/cron.hourly)[30174]: finished logrotate
+Mar  7 08:01:02 newinstall run-parts(/etc/cron.hourly)[30137]: starting mcelog.cron
+Mar  7 08:01:02 newinstall run-parts(/etc/cron.hourly)[30190]: finished mcelog.cron
+Mar  7 08:21:33 newinstall rsyslogd: -- MARK --
+Mar  7 08:31:02 newinstall /USR/SBIN/CROND[994]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 08:41:33 newinstall rsyslogd: -- MARK --
+Mar  7 09:01:02 newinstall /USR/SBIN/CROND[4447]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 09:01:02 newinstall /USR/SBIN/CROND[4452]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4452]: starting 0anacron
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4461]: finished 0anacron
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4452]: starting logrotate
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4486]: finished logrotate
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4452]: starting mcelog.cron
+Mar  7 09:01:02 newinstall run-parts(/etc/cron.hourly)[4502]: finished mcelog.cron
+Mar  7 09:21:33 newinstall rsyslogd: -- MARK --
+Mar  7 09:31:02 newinstall /USR/SBIN/CROND[8198]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 09:41:33 newinstall rsyslogd: -- MARK --
+Mar  7 10:01:02 newinstall /USR/SBIN/CROND[11707]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 10:01:02 newinstall /USR/SBIN/CROND[11712]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11712]: starting 0anacron
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11721]: finished 0anacron
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11712]: starting logrotate
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11744]: finished logrotate
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11712]: starting mcelog.cron
+Mar  7 10:01:02 newinstall run-parts(/etc/cron.hourly)[11760]: finished mcelog.cron
+Mar  7 10:21:34 newinstall rsyslogd: -- MARK --
+Mar  7 10:31:01 newinstall /USR/SBIN/CROND[15295]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 10:41:34 newinstall rsyslogd: -- MARK --
+Mar  7 11:01:01 newinstall /USR/SBIN/CROND[19025]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 11:01:01 newinstall /USR/SBIN/CROND[19030]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19030]: starting 0anacron
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19039]: finished 0anacron
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19030]: starting logrotate
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19062]: finished logrotate
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19030]: starting mcelog.cron
+Mar  7 11:01:01 newinstall run-parts(/etc/cron.hourly)[19078]: finished mcelog.cron
+Mar  7 11:21:34 newinstall rsyslogd: -- MARK --
+Mar  7 11:31:01 newinstall /USR/SBIN/CROND[22679]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 11:41:34 newinstall rsyslogd: -- MARK --
+Mar  7 12:01:01 newinstall /USR/SBIN/CROND[26038]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26038]: starting 0anacron
+Mar  7 12:01:01 newinstall /USR/SBIN/CROND[26046]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26052]: finished 0anacron
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26038]: starting logrotate
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26075]: finished logrotate
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26038]: starting mcelog.cron
+Mar  7 12:01:01 newinstall run-parts(/etc/cron.hourly)[26091]: finished mcelog.cron
+Mar  7 12:21:34 newinstall rsyslogd: -- MARK --
+Mar  7 12:31:01 newinstall /USR/SBIN/CROND[29661]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 12:41:34 newinstall rsyslogd: -- MARK --
+Mar  7 13:01:01 newinstall /USR/SBIN/CROND[32503]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32503]: starting 0anacron
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32512]: finished 0anacron
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32503]: starting logrotate
+Mar  7 13:01:01 newinstall /USR/SBIN/CROND[32517]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32540]: finished logrotate
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32503]: starting mcelog.cron
+Mar  7 13:01:01 newinstall run-parts(/etc/cron.hourly)[32556]: finished mcelog.cron
+Mar  7 13:21:35 newinstall rsyslogd: -- MARK --
+Mar  7 13:31:01 newinstall /USR/SBIN/CROND[3942]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 13:41:35 newinstall rsyslogd: -- MARK --
+Mar  7 14:01:01 newinstall /USR/SBIN/CROND[7267]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7267]: starting 0anacron
+Mar  7 14:01:01 newinstall /USR/SBIN/CROND[7275]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7281]: finished 0anacron
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7267]: starting logrotate
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7304]: finished logrotate
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7267]: starting mcelog.cron
+Mar  7 14:01:01 newinstall run-parts(/etc/cron.hourly)[7320]: finished mcelog.cron
+Mar  7 14:21:35 newinstall rsyslogd: -- MARK --
+Mar  7 14:31:01 newinstall /USR/SBIN/CROND[10834]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 14:41:35 newinstall rsyslogd: -- MARK --
+Mar  7 15:01:01 newinstall /USR/SBIN/CROND[14226]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 15:01:01 newinstall /USR/SBIN/CROND[14227]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14226]: starting 0anacron
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14238]: finished 0anacron
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14226]: starting logrotate
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14261]: finished logrotate
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14226]: starting mcelog.cron
+Mar  7 15:01:01 newinstall run-parts(/etc/cron.hourly)[14277]: finished mcelog.cron
+Mar  7 15:21:35 newinstall rsyslogd: -- MARK --
+Mar  7 15:31:01 newinstall /USR/SBIN/CROND[17409]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 15:41:35 newinstall rsyslogd: -- MARK --
+Mar  7 16:01:01 newinstall /USR/SBIN/CROND[20281]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 16:01:01 newinstall /USR/SBIN/CROND[20286]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20286]: starting 0anacron
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20295]: finished 0anacron
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20286]: starting logrotate
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20319]: finished logrotate
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20286]: starting mcelog.cron
+Mar  7 16:01:01 newinstall run-parts(/etc/cron.hourly)[20335]: finished mcelog.cron
+Mar  7 16:21:35 newinstall rsyslogd: -- MARK --
+Mar  7 16:31:01 newinstall /USR/SBIN/CROND[24172]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 16:41:36 newinstall rsyslogd: -- MARK --
+Mar  7 17:01:01 newinstall /USR/SBIN/CROND[27457]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 17:01:01 newinstall /USR/SBIN/CROND[27462]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 17:01:01 newinstall run-parts(/etc/cron.hourly)[27462]: starting 0anacron
+Mar  7 17:01:01 newinstall run-parts(/etc/cron.hourly)[27471]: finished 0anacron
+Mar  7 17:01:01 newinstall run-parts(/etc/cron.hourly)[27462]: starting logrotate
+Mar  7 17:01:02 newinstall run-parts(/etc/cron.hourly)[27494]: finished logrotate
+Mar  7 17:01:02 newinstall run-parts(/etc/cron.hourly)[27462]: starting mcelog.cron
+Mar  7 17:01:02 newinstall run-parts(/etc/cron.hourly)[27510]: finished mcelog.cron
+Mar  7 17:21:36 newinstall rsyslogd: -- MARK --
+Mar  7 17:31:01 newinstall /USR/SBIN/CROND[30984]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 17:41:36 newinstall rsyslogd: -- MARK --
+Mar  7 18:01:02 newinstall /USR/SBIN/CROND[2579]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 18:01:02 newinstall /USR/SBIN/CROND[2580]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2580]: starting 0anacron
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2591]: finished 0anacron
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2580]: starting logrotate
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2614]: finished logrotate
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2580]: starting mcelog.cron
+Mar  7 18:01:02 newinstall run-parts(/etc/cron.hourly)[2630]: finished mcelog.cron
+Mar  7 18:21:36 newinstall rsyslogd: -- MARK --
+Mar  7 18:31:02 newinstall /USR/SBIN/CROND[6285]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 18:41:36 newinstall rsyslogd: -- MARK --
+Mar  7 19:01:02 newinstall /USR/SBIN/CROND[10720]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 19:01:02 newinstall /USR/SBIN/CROND[10723]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10723]: starting 0anacron
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10734]: finished 0anacron
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10723]: starting logrotate
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10757]: finished logrotate
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10723]: starting mcelog.cron
+Mar  7 19:01:02 newinstall run-parts(/etc/cron.hourly)[10773]: finished mcelog.cron
+Mar  7 19:21:36 newinstall rsyslogd: -- MARK --
+Mar  7 19:31:02 newinstall /USR/SBIN/CROND[14380]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 19:41:36 newinstall rsyslogd: -- MARK --
+Mar  7 20:01:02 newinstall /USR/SBIN/CROND[17783]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 20:01:02 newinstall /USR/SBIN/CROND[17784]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17783]: starting 0anacron
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17795]: finished 0anacron
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17783]: starting logrotate
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17820]: finished logrotate
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17783]: starting mcelog.cron
+Mar  7 20:01:02 newinstall run-parts(/etc/cron.hourly)[17836]: finished mcelog.cron
+Mar  7 20:21:37 newinstall rsyslogd: -- MARK --
+Mar  7 20:31:02 newinstall /USR/SBIN/CROND[21469]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 20:41:37 newinstall rsyslogd: -- MARK --
+Mar  7 21:01:02 newinstall /USR/SBIN/CROND[24907]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 21:01:02 newinstall /USR/SBIN/CROND[24912]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24912]: starting 0anacron
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24921]: finished 0anacron
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24912]: starting logrotate
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24944]: finished logrotate
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24912]: starting mcelog.cron
+Mar  7 21:01:02 newinstall run-parts(/etc/cron.hourly)[24960]: finished mcelog.cron
+Mar  7 21:21:37 newinstall rsyslogd: -- MARK --
+Mar  7 21:31:01 newinstall /USR/SBIN/CROND[28788]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 21:41:37 newinstall rsyslogd: -- MARK --
+Mar  7 22:01:01 newinstall /USR/SBIN/CROND[32301]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 22:01:01 newinstall /USR/SBIN/CROND[32306]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32306]: starting 0anacron
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32315]: finished 0anacron
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32306]: starting logrotate
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32338]: finished logrotate
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32306]: starting mcelog.cron
+Mar  7 22:01:01 newinstall run-parts(/etc/cron.hourly)[32354]: finished mcelog.cron
+Mar  7 22:21:37 newinstall rsyslogd: -- MARK --
+Mar  7 22:31:01 newinstall /USR/SBIN/CROND[3331]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 22:41:37 newinstall rsyslogd: -- MARK --
+Mar  7 23:01:01 newinstall /USR/SBIN/CROND[6946]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  7 23:01:01 newinstall /USR/SBIN/CROND[6951]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6946]: starting 0anacron
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6960]: finished 0anacron
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6946]: starting logrotate
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6983]: finished logrotate
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6946]: starting mcelog.cron
+Mar  7 23:01:01 newinstall run-parts(/etc/cron.hourly)[6999]: finished mcelog.cron
+Mar  7 23:21:38 newinstall rsyslogd: -- MARK --
+Mar  7 23:31:01 newinstall /USR/SBIN/CROND[10436]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  7 23:41:38 newinstall rsyslogd: -- MARK --
+Mar  8 00:01:01 newinstall /USR/SBIN/CROND[13922]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 00:01:01 newinstall /USR/SBIN/CROND[13928]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13922]: starting 0anacron
+Mar  8 00:01:01 newinstall anacron[13936]: Anacron started on 2016-03-08
+Mar  8 00:01:01 newinstall anacron[13936]: Jobs will be executed sequentially
+Mar  8 00:01:01 newinstall anacron[13936]: Normal exit (0 jobs run)
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13938]: finished 0anacron
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13922]: starting logrotate
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13961]: finished logrotate
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13922]: starting mcelog.cron
+Mar  8 00:01:01 newinstall run-parts(/etc/cron.hourly)[13977]: finished mcelog.cron
+Mar  8 00:21:38 newinstall rsyslogd: -- MARK --
+Mar  8 00:31:01 newinstall /USR/SBIN/CROND[17315]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 00:41:38 newinstall rsyslogd: -- MARK --
+Mar  8 01:00:01 newinstall /USR/SBIN/CROND[20492]: (admin) CMD (/compass/svc_config_push >/dev/null 2>&1)
+Mar  8 01:01:01 newinstall /USR/SBIN/CROND[21340]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 01:01:01 newinstall /USR/SBIN/CROND[21345]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21345]: starting 0anacron
+Mar  8 01:01:01 newinstall anacron[21354]: Anacron started on 2016-03-08
+Mar  8 01:01:01 newinstall anacron[21354]: Jobs will be executed sequentially
+Mar  8 01:01:01 newinstall anacron[21354]: Normal exit (0 jobs run)
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21356]: finished 0anacron
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21345]: starting logrotate
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21381]: finished logrotate
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21345]: starting mcelog.cron
+Mar  8 01:01:01 newinstall run-parts(/etc/cron.hourly)[21397]: finished mcelog.cron
+Mar  8 01:21:38 newinstall rsyslogd: -- MARK --
+Mar  8 01:25:02 newinstall /USR/SBIN/CROND[24115]: (root) CMD (( [ -f /compass/ec_sel ] && /compass/ec_sel ) > /dev/null 2>&1)
+Mar  8 01:31:02 newinstall /USR/SBIN/CROND[24893]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 01:41:38 newinstall rsyslogd: -- MARK --
+Mar  8 02:00:02 newinstall /USR/SBIN/CROND[28175]: (root) CMD (([ -f /compass/ec_audit.pl] && /compass/ec_audit.pl ) > /dev/null 2>&1)
+Mar  8 02:01:01 newinstall /USR/SBIN/CROND[28333]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28333]: starting 0anacron
+Mar  8 02:01:01 newinstall /USR/SBIN/CROND[28344]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 02:01:01 newinstall anacron[28345]: Anacron started on 2016-03-08
+Mar  8 02:01:01 newinstall anacron[28345]: Jobs will be executed sequentially
+Mar  8 02:01:01 newinstall anacron[28345]: Normal exit (0 jobs run)
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28348]: finished 0anacron
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28333]: starting logrotate
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28372]: finished logrotate
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28333]: starting mcelog.cron
+Mar  8 02:01:01 newinstall run-parts(/etc/cron.hourly)[28388]: finished mcelog.cron
+Mar  8 02:21:38 newinstall rsyslogd: -- MARK --
+Mar  8 02:31:01 newinstall /USR/SBIN/CROND[31551]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 02:41:39 newinstall rsyslogd: -- MARK --
+Mar  8 03:01:01 newinstall /USR/SBIN/CROND[2447]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 03:01:01 newinstall /USR/SBIN/CROND[2452]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2447]: starting 0anacron
+Mar  8 03:01:01 newinstall anacron[2461]: Anacron started on 2016-03-08
+Mar  8 03:01:01 newinstall anacron[2461]: Will run job `cron.daily' in 35 min.
+Mar  8 03:01:01 newinstall anacron[2461]: Jobs will be executed sequentially
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2463]: finished 0anacron
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2447]: starting logrotate
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2486]: finished logrotate
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2447]: starting mcelog.cron
+Mar  8 03:01:01 newinstall run-parts(/etc/cron.hourly)[2502]: finished mcelog.cron
+Mar  8 03:13:02 newinstall /USR/SBIN/CROND[3746]: (root) CMD (( [ -f /compass/ec_disksweep ] && /compass/ec_disksweep ) > /dev/null 2>&1)
+Mar  8 03:31:01 newinstall /USR/SBIN/CROND[5542]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 03:36:01 newinstall anacron[2461]: Job `cron.daily' started
+Mar  8 03:36:01 newinstall run-parts(/etc/cron.daily)[6123]: starting logrotate
+Mar  8 03:36:01 newinstall run-parts(/etc/cron.daily)[6137]: finished logrotate
+Mar  8 03:36:01 newinstall anacron[2461]: Job `cron.daily' terminated
+Mar  8 03:36:01 newinstall anacron[2461]: Normal exit (1 job run)
+Mar  8 04:01:01 newinstall /USR/SBIN/CROND[9551]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 04:01:01 newinstall /USR/SBIN/CROND[9556]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9556]: starting 0anacron
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9565]: finished 0anacron
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9556]: starting logrotate
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9588]: finished logrotate
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9556]: starting mcelog.cron
+Mar  8 04:01:01 newinstall run-parts(/etc/cron.hourly)[9604]: finished mcelog.cron
+Mar  8 04:21:39 newinstall rsyslogd: -- MARK --
+Mar  8 04:31:01 newinstall /USR/SBIN/CROND[13290]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 04:41:39 newinstall rsyslogd: -- MARK --
+Mar  8 05:01:01 newinstall /USR/SBIN/CROND[16217]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 05:01:01 newinstall /USR/SBIN/CROND[16218]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16218]: starting 0anacron
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16229]: finished 0anacron
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16218]: starting logrotate
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16252]: finished logrotate
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16218]: starting mcelog.cron
+Mar  8 05:01:01 newinstall run-parts(/etc/cron.hourly)[16268]: finished mcelog.cron
+Mar  8 05:21:39 newinstall rsyslogd: -- MARK --
+Mar  8 05:31:01 newinstall /USR/SBIN/CROND[19285]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 05:41:39 newinstall rsyslogd: -- MARK --
+Mar  8 06:01:01 newinstall /USR/SBIN/CROND[22902]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 06:01:01 newinstall /USR/SBIN/CROND[22907]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22907]: starting 0anacron
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22916]: finished 0anacron
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22907]: starting logrotate
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22939]: finished logrotate
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22907]: starting mcelog.cron
+Mar  8 06:01:01 newinstall run-parts(/etc/cron.hourly)[22955]: finished mcelog.cron
+Mar  8 06:21:40 newinstall rsyslogd: -- MARK --
+Mar  8 06:31:01 newinstall /USR/SBIN/CROND[26008]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 06:41:40 newinstall rsyslogd: -- MARK --
+Mar  8 07:01:01 newinstall /USR/SBIN/CROND[28837]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 07:01:01 newinstall run-parts(/etc/cron.hourly)[28837]: starting 0anacron
+Mar  8 07:01:01 newinstall /USR/SBIN/CROND[28845]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 07:01:01 newinstall run-parts(/etc/cron.hourly)[28851]: finished 0anacron
+Mar  8 07:01:01 newinstall run-parts(/etc/cron.hourly)[28837]: starting logrotate
+Mar  8 07:01:02 newinstall run-parts(/etc/cron.hourly)[28874]: finished logrotate
+Mar  8 07:01:02 newinstall run-parts(/etc/cron.hourly)[28837]: starting mcelog.cron
+Mar  8 07:01:02 newinstall run-parts(/etc/cron.hourly)[28890]: finished mcelog.cron
+Mar  8 07:21:40 newinstall rsyslogd: -- MARK --
+Mar  8 07:31:01 newinstall /USR/SBIN/CROND[31939]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 07:41:40 newinstall rsyslogd: -- MARK --
+Mar  8 08:01:02 newinstall /USR/SBIN/CROND[2783]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 08:01:02 newinstall /USR/SBIN/CROND[2788]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2788]: starting 0anacron
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2797]: finished 0anacron
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2788]: starting logrotate
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2820]: finished logrotate
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2788]: starting mcelog.cron
+Mar  8 08:01:02 newinstall run-parts(/etc/cron.hourly)[2836]: finished mcelog.cron
+Mar  8 08:21:40 newinstall rsyslogd: -- MARK --
+Mar  8 08:31:02 newinstall /USR/SBIN/CROND[6119]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 08:41:40 newinstall rsyslogd: -- MARK --
+Mar  8 09:01:02 newinstall /USR/SBIN/CROND[9627]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 09:01:02 newinstall /USR/SBIN/CROND[9632]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9632]: starting 0anacron
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9641]: finished 0anacron
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9632]: starting logrotate
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9664]: finished logrotate
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9632]: starting mcelog.cron
+Mar  8 09:01:02 newinstall run-parts(/etc/cron.hourly)[9680]: finished mcelog.cron
+Mar  8 09:21:41 newinstall rsyslogd: -- MARK --
+Mar  8 09:31:02 newinstall /USR/SBIN/CROND[13390]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 09:41:41 newinstall rsyslogd: -- MARK --
+Mar  8 10:01:02 newinstall /USR/SBIN/CROND[16333]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 10:01:02 newinstall /USR/SBIN/CROND[16334]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16333]: starting 0anacron
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16345]: finished 0anacron
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16333]: starting logrotate
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16368]: finished logrotate
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16333]: starting mcelog.cron
+Mar  8 10:01:02 newinstall run-parts(/etc/cron.hourly)[16384]: finished mcelog.cron
+Mar  8 10:21:41 newinstall rsyslogd: -- MARK --
+Mar  8 10:31:01 newinstall /USR/SBIN/CROND[20001]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 10:41:41 newinstall rsyslogd: -- MARK --
+Mar  8 11:01:01 newinstall /USR/SBIN/CROND[23996]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 11:01:01 newinstall /USR/SBIN/CROND[24001]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24001]: starting 0anacron
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24010]: finished 0anacron
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24001]: starting logrotate
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24033]: finished logrotate
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24001]: starting mcelog.cron
+Mar  8 11:01:01 newinstall run-parts(/etc/cron.hourly)[24049]: finished mcelog.cron
+Mar  8 11:21:41 newinstall rsyslogd: -- MARK --
+Mar  8 11:31:01 newinstall /USR/SBIN/CROND[27436]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 11:41:41 newinstall rsyslogd: -- MARK --
+Mar  8 12:01:01 newinstall /USR/SBIN/CROND[31167]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 12:01:01 newinstall /USR/SBIN/CROND[31172]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31172]: starting 0anacron
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31181]: finished 0anacron
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31172]: starting logrotate
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31204]: finished logrotate
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31172]: starting mcelog.cron
+Mar  8 12:01:01 newinstall run-parts(/etc/cron.hourly)[31220]: finished mcelog.cron
+Mar  8 12:21:41 newinstall rsyslogd: -- MARK --
+Mar  8 12:31:01 newinstall /USR/SBIN/CROND[2257]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 12:41:42 newinstall rsyslogd: -- MARK --
+Mar  8 13:01:01 newinstall /USR/SBIN/CROND[5691]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 13:01:01 newinstall /USR/SBIN/CROND[5696]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5696]: starting 0anacron
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5705]: finished 0anacron
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5696]: starting logrotate
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5728]: finished logrotate
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5696]: starting mcelog.cron
+Mar  8 13:01:01 newinstall run-parts(/etc/cron.hourly)[5744]: finished mcelog.cron
+Mar  8 13:21:42 newinstall rsyslogd: -- MARK --
+Mar  8 13:31:01 newinstall /USR/SBIN/CROND[9197]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 13:41:42 newinstall rsyslogd: -- MARK --
+Mar  8 14:01:01 newinstall /USR/SBIN/CROND[13041]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 14:01:01 newinstall /USR/SBIN/CROND[13042]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13041]: starting 0anacron
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13053]: finished 0anacron
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13041]: starting logrotate
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13076]: finished logrotate
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13041]: starting mcelog.cron
+Mar  8 14:01:01 newinstall run-parts(/etc/cron.hourly)[13092]: finished mcelog.cron
+Mar  8 14:21:42 newinstall rsyslogd: -- MARK --
+Mar  8 14:31:01 newinstall /USR/SBIN/CROND[15916]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 14:41:42 newinstall rsyslogd: -- MARK --
+Mar  8 15:01:01 newinstall /USR/SBIN/CROND[18806]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 15:01:01 newinstall /USR/SBIN/CROND[18809]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18806]: starting 0anacron
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18820]: finished 0anacron
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18806]: starting logrotate
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18843]: finished logrotate
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18806]: starting mcelog.cron
+Mar  8 15:01:01 newinstall run-parts(/etc/cron.hourly)[18859]: finished mcelog.cron
+Mar  8 15:21:42 newinstall rsyslogd: -- MARK --
+Mar  8 15:31:01 newinstall /USR/SBIN/CROND[22009]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 15:41:42 newinstall rsyslogd: -- MARK --
+Mar  8 16:01:01 newinstall /USR/SBIN/CROND[25610]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 16:01:01 newinstall /USR/SBIN/CROND[25611]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25611]: starting 0anacron
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25622]: finished 0anacron
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25611]: starting logrotate
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25645]: finished logrotate
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25611]: starting mcelog.cron
+Mar  8 16:01:01 newinstall run-parts(/etc/cron.hourly)[25661]: finished mcelog.cron
+Mar  8 16:21:43 newinstall rsyslogd: -- MARK --
+Mar  8 16:31:01 newinstall /USR/SBIN/CROND[29704]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 16:41:43 newinstall rsyslogd: -- MARK --
+Mar  8 17:01:01 newinstall /USR/SBIN/CROND[550]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 17:01:01 newinstall /USR/SBIN/CROND[551]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 17:01:01 newinstall run-parts(/etc/cron.hourly)[551]: starting 0anacron
+Mar  8 17:01:01 newinstall run-parts(/etc/cron.hourly)[562]: finished 0anacron
+Mar  8 17:01:01 newinstall run-parts(/etc/cron.hourly)[551]: starting logrotate
+Mar  8 17:01:02 newinstall run-parts(/etc/cron.hourly)[585]: finished logrotate
+Mar  8 17:01:02 newinstall run-parts(/etc/cron.hourly)[551]: starting mcelog.cron
+Mar  8 17:01:02 newinstall run-parts(/etc/cron.hourly)[601]: finished mcelog.cron
+Mar  8 17:21:43 newinstall rsyslogd: -- MARK --
+Mar  8 17:31:01 newinstall /USR/SBIN/CROND[4411]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 17:41:43 newinstall rsyslogd: -- MARK --
+Mar  8 18:01:01 newinstall /USR/SBIN/CROND[7772]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 18:01:01 newinstall /USR/SBIN/CROND[7777]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 18:01:01 newinstall run-parts(/etc/cron.hourly)[7777]: starting 0anacron
+Mar  8 18:01:01 newinstall run-parts(/etc/cron.hourly)[7786]: finished 0anacron
+Mar  8 18:01:01 newinstall run-parts(/etc/cron.hourly)[7777]: starting logrotate
+Mar  8 18:01:02 newinstall run-parts(/etc/cron.hourly)[7809]: finished logrotate
+Mar  8 18:01:02 newinstall run-parts(/etc/cron.hourly)[7777]: starting mcelog.cron
+Mar  8 18:01:02 newinstall run-parts(/etc/cron.hourly)[7825]: finished mcelog.cron
+Mar  8 18:21:43 newinstall rsyslogd: -- MARK --
+Mar  8 18:31:02 newinstall /USR/SBIN/CROND[11281]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 18:41:43 newinstall rsyslogd: -- MARK --
+Mar  8 19:01:02 newinstall /USR/SBIN/CROND[15101]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15101]: starting 0anacron
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15110]: finished 0anacron
+Mar  8 19:01:02 newinstall /USR/SBIN/CROND[15114]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15101]: starting logrotate
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15138]: finished logrotate
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15101]: starting mcelog.cron
+Mar  8 19:01:02 newinstall run-parts(/etc/cron.hourly)[15154]: finished mcelog.cron
+Mar  8 19:21:44 newinstall rsyslogd: -- MARK --
+Mar  8 19:31:02 newinstall /USR/SBIN/CROND[18907]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 19:41:44 newinstall rsyslogd: -- MARK --
+Mar  8 20:01:02 newinstall /USR/SBIN/CROND[23030]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 20:01:02 newinstall /USR/SBIN/CROND[23031]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23031]: starting 0anacron
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23042]: finished 0anacron
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23031]: starting logrotate
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23065]: finished logrotate
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23031]: starting mcelog.cron
+Mar  8 20:01:02 newinstall run-parts(/etc/cron.hourly)[23081]: finished mcelog.cron
+Mar  8 20:21:44 newinstall rsyslogd: -- MARK --
+Mar  8 20:31:02 newinstall /USR/SBIN/CROND[26823]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 20:41:44 newinstall rsyslogd: -- MARK --
+Mar  8 21:01:02 newinstall /USR/SBIN/CROND[30938]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 21:01:02 newinstall /USR/SBIN/CROND[30943]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30938]: starting 0anacron
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30952]: finished 0anacron
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30938]: starting logrotate
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30975]: finished logrotate
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30938]: starting mcelog.cron
+Mar  8 21:01:02 newinstall run-parts(/etc/cron.hourly)[30991]: finished mcelog.cron
+Mar  8 21:21:44 newinstall rsyslogd: -- MARK --
+Mar  8 21:31:02 newinstall /USR/SBIN/CROND[2416]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 21:41:44 newinstall rsyslogd: -- MARK --
+Mar  8 22:01:02 newinstall /USR/SBIN/CROND[6056]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 22:01:02 newinstall /USR/SBIN/CROND[6057]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6057]: starting 0anacron
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6068]: finished 0anacron
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6057]: starting logrotate
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6091]: finished logrotate
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6057]: starting mcelog.cron
+Mar  8 22:01:02 newinstall run-parts(/etc/cron.hourly)[6107]: finished mcelog.cron
+Mar  8 22:21:44 newinstall rsyslogd: -- MARK --
+Mar  8 22:31:01 newinstall /USR/SBIN/CROND[9586]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 22:41:45 newinstall rsyslogd: -- MARK --
+Mar  8 23:01:01 newinstall /USR/SBIN/CROND[13451]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  8 23:01:01 newinstall /USR/SBIN/CROND[13454]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13451]: starting 0anacron
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13465]: finished 0anacron
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13451]: starting logrotate
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13488]: finished logrotate
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13451]: starting mcelog.cron
+Mar  8 23:01:01 newinstall run-parts(/etc/cron.hourly)[13504]: finished mcelog.cron
+Mar  8 23:21:45 newinstall rsyslogd: -- MARK --
+Mar  8 23:31:01 newinstall /USR/SBIN/CROND[16816]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  8 23:41:45 newinstall rsyslogd: -- MARK --
+Mar  9 00:01:01 newinstall /USR/SBIN/CROND[20621]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 00:01:01 newinstall /USR/SBIN/CROND[20626]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20621]: starting 0anacron
+Mar  9 00:01:01 newinstall anacron[20635]: Anacron started on 2016-03-09
+Mar  9 00:01:01 newinstall anacron[20635]: Jobs will be executed sequentially
+Mar  9 00:01:01 newinstall anacron[20635]: Normal exit (0 jobs run)
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20637]: finished 0anacron
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20621]: starting logrotate
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20660]: finished logrotate
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20621]: starting mcelog.cron
+Mar  9 00:01:01 newinstall run-parts(/etc/cron.hourly)[20676]: finished mcelog.cron
+Mar  9 00:21:45 newinstall rsyslogd: -- MARK --
+Mar  9 00:31:01 newinstall /USR/SBIN/CROND[24475]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 00:41:45 newinstall rsyslogd: -- MARK --
+Mar  9 01:00:01 newinstall /USR/SBIN/CROND[28031]: (admin) CMD (/compass/svc_config_push >/dev/null 2>&1)
+Mar  9 01:01:01 newinstall /USR/SBIN/CROND[28796]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 01:01:01 newinstall /USR/SBIN/CROND[28797]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28796]: starting 0anacron
+Mar  9 01:01:01 newinstall anacron[28808]: Anacron started on 2016-03-09
+Mar  9 01:01:01 newinstall anacron[28808]: Jobs will be executed sequentially
+Mar  9 01:01:01 newinstall anacron[28808]: Normal exit (0 jobs run)
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28810]: finished 0anacron
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28796]: starting logrotate
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28833]: finished logrotate
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28796]: starting mcelog.cron
+Mar  9 01:01:01 newinstall run-parts(/etc/cron.hourly)[28851]: finished mcelog.cron
+Mar  9 01:21:45 newinstall rsyslogd: -- MARK --
+Mar  9 01:25:01 newinstall /USR/SBIN/CROND[31334]: (root) CMD (( [ -f /compass/ec_sel ] && /compass/ec_sel ) > /dev/null 2>&1)
+Mar  9 01:31:01 newinstall /USR/SBIN/CROND[31963]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 01:41:45 newinstall rsyslogd: -- MARK --
+Mar  9 02:00:01 newinstall /USR/SBIN/CROND[2488]: (root) CMD (([ -f /compass/ec_audit.pl] && /compass/ec_audit.pl ) > /dev/null 2>&1)
+Mar  9 02:01:02 newinstall /USR/SBIN/CROND[2642]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 02:01:02 newinstall /USR/SBIN/CROND[2647]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2647]: starting 0anacron
+Mar  9 02:01:02 newinstall anacron[2656]: Anacron started on 2016-03-09
+Mar  9 02:01:02 newinstall anacron[2656]: Jobs will be executed sequentially
+Mar  9 02:01:02 newinstall anacron[2656]: Normal exit (0 jobs run)
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2658]: finished 0anacron
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2647]: starting logrotate
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2681]: finished logrotate
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2647]: starting mcelog.cron
+Mar  9 02:01:02 newinstall run-parts(/etc/cron.hourly)[2697]: finished mcelog.cron
+Mar  9 02:21:46 newinstall rsyslogd: -- MARK --
+Mar  9 02:31:02 newinstall /USR/SBIN/CROND[6321]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 02:41:46 newinstall rsyslogd: -- MARK --
+Mar  9 03:01:02 newinstall /USR/SBIN/CROND[9621]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9621]: starting 0anacron
+Mar  9 03:01:02 newinstall /USR/SBIN/CROND[9630]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 03:01:02 newinstall anacron[9635]: Anacron started on 2016-03-09
+Mar  9 03:01:02 newinstall anacron[9635]: Will run job `cron.daily' in 40 min.
+Mar  9 03:01:02 newinstall anacron[9635]: Will run job `cron.weekly' in 60 min.
+Mar  9 03:01:02 newinstall anacron[9635]: Jobs will be executed sequentially
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9637]: finished 0anacron
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9621]: starting logrotate
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9660]: finished logrotate
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9621]: starting mcelog.cron
+Mar  9 03:01:02 newinstall run-parts(/etc/cron.hourly)[9676]: finished mcelog.cron
+Mar  9 03:13:01 newinstall /USR/SBIN/CROND[11039]: (root) CMD (( [ -f /compass/ec_disksweep ] && /compass/ec_disksweep ) > /dev/null 2>&1)
+Mar  9 03:31:01 newinstall /USR/SBIN/CROND[12722]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 03:41:02 newinstall anacron[9635]: Job `cron.daily' started
+Mar  9 03:41:02 newinstall run-parts(/etc/cron.daily)[14006]: starting logrotate
+Mar  9 03:41:02 newinstall run-parts(/etc/cron.daily)[14020]: finished logrotate
+Mar  9 03:41:02 newinstall anacron[9635]: Job `cron.daily' terminated
+Mar  9 04:01:01 newinstall /USR/SBIN/CROND[16047]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 04:01:01 newinstall /USR/SBIN/CROND[16048]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16047]: starting 0anacron
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16059]: finished 0anacron
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16047]: starting logrotate
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16082]: finished logrotate
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16047]: starting mcelog.cron
+Mar  9 04:01:01 newinstall run-parts(/etc/cron.hourly)[16098]: finished mcelog.cron
+Mar  9 04:01:02 newinstall anacron[9635]: Job `cron.weekly' started
+Mar  9 04:01:02 newinstall anacron[9635]: Job `cron.weekly' terminated
+Mar  9 04:01:02 newinstall anacron[9635]: Normal exit (2 jobs run)
+Mar  9 04:21:46 newinstall rsyslogd: -- MARK --
+Mar  9 04:31:01 newinstall /USR/SBIN/CROND[18913]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 04:41:46 newinstall rsyslogd: -- MARK --
+Mar  9 05:01:01 newinstall /USR/SBIN/CROND[21665]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 05:01:01 newinstall /USR/SBIN/CROND[21668]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21665]: starting 0anacron
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21679]: finished 0anacron
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21665]: starting logrotate
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21702]: finished logrotate
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21665]: starting mcelog.cron
+Mar  9 05:01:01 newinstall run-parts(/etc/cron.hourly)[21718]: finished mcelog.cron
+Mar  9 05:21:47 newinstall rsyslogd: -- MARK --
+Mar  9 05:31:01 newinstall /USR/SBIN/CROND[24568]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 05:41:47 newinstall rsyslogd: -- MARK --
+Mar  9 06:01:01 newinstall /USR/SBIN/CROND[27625]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 06:01:01 newinstall /USR/SBIN/CROND[27630]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27630]: starting 0anacron
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27639]: finished 0anacron
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27630]: starting logrotate
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27662]: finished logrotate
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27630]: starting mcelog.cron
+Mar  9 06:01:01 newinstall run-parts(/etc/cron.hourly)[27680]: finished mcelog.cron
+Mar  9 06:21:47 newinstall rsyslogd: -- MARK --
+Mar  9 06:31:01 newinstall /USR/SBIN/CROND[30606]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 06:41:47 newinstall rsyslogd: -- MARK --
+Mar  9 07:01:01 newinstall /USR/SBIN/CROND[1003]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 07:01:01 newinstall /USR/SBIN/CROND[1004]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1003]: starting 0anacron
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1015]: finished 0anacron
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1003]: starting logrotate
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1038]: finished logrotate
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1003]: starting mcelog.cron
+Mar  9 07:01:01 newinstall run-parts(/etc/cron.hourly)[1054]: finished mcelog.cron
+Mar  9 07:21:47 newinstall rsyslogd: -- MARK --
+Mar  9 07:31:01 newinstall /USR/SBIN/CROND[3903]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 07:41:47 newinstall rsyslogd: -- MARK --
+Mar  9 08:01:01 newinstall /USR/SBIN/CROND[6788]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 08:01:01 newinstall /USR/SBIN/CROND[6789]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6788]: starting 0anacron
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6800]: finished 0anacron
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6788]: starting logrotate
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6823]: finished logrotate
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6788]: starting mcelog.cron
+Mar  9 08:01:01 newinstall run-parts(/etc/cron.hourly)[6839]: finished mcelog.cron
+Mar  9 08:21:47 newinstall rsyslogd: -- MARK --
+Mar  9 08:31:01 newinstall /USR/SBIN/CROND[10319]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 08:41:48 newinstall rsyslogd: -- MARK --
+Mar  9 09:01:01 newinstall /USR/SBIN/CROND[13732]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 09:01:01 newinstall /USR/SBIN/CROND[13733]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13733]: starting 0anacron
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13744]: finished 0anacron
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13733]: starting logrotate
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13770]: finished logrotate
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13733]: starting mcelog.cron
+Mar  9 09:01:01 newinstall run-parts(/etc/cron.hourly)[13792]: finished mcelog.cron
+Mar  9 09:21:48 newinstall rsyslogd: -- MARK --
+Mar  9 09:31:01 newinstall /USR/SBIN/CROND[17483]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 09:41:48 newinstall rsyslogd: -- MARK --
+Mar  9 10:01:01 newinstall /USR/SBIN/CROND[20767]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 10:01:01 newinstall /USR/SBIN/CROND[20772]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 10:01:01 newinstall run-parts(/etc/cron.hourly)[20772]: starting 0anacron
+Mar  9 10:01:01 newinstall run-parts(/etc/cron.hourly)[20781]: finished 0anacron
+Mar  9 10:01:01 newinstall run-parts(/etc/cron.hourly)[20772]: starting logrotate
+Mar  9 10:01:02 newinstall run-parts(/etc/cron.hourly)[20804]: finished logrotate
+Mar  9 10:01:02 newinstall run-parts(/etc/cron.hourly)[20772]: starting mcelog.cron
+Mar  9 10:01:02 newinstall run-parts(/etc/cron.hourly)[20820]: finished mcelog.cron
+Mar  9 10:21:48 newinstall rsyslogd: -- MARK --
+Mar  9 10:31:01 newinstall /USR/SBIN/CROND[24133]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 10:41:48 newinstall rsyslogd: -- MARK --
+Mar  9 11:01:01 newinstall /USR/SBIN/CROND[27338]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 11:01:01 newinstall /USR/SBIN/CROND[27339]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 11:01:01 newinstall run-parts(/etc/cron.hourly)[27339]: starting 0anacron
+Mar  9 11:01:01 newinstall run-parts(/etc/cron.hourly)[27350]: finished 0anacron
+Mar  9 11:01:01 newinstall run-parts(/etc/cron.hourly)[27339]: starting logrotate
+Mar  9 11:01:02 newinstall run-parts(/etc/cron.hourly)[27373]: finished logrotate
+Mar  9 11:01:02 newinstall run-parts(/etc/cron.hourly)[27339]: starting mcelog.cron
+Mar  9 11:01:02 newinstall run-parts(/etc/cron.hourly)[27389]: finished mcelog.cron
+Mar  9 11:21:48 newinstall rsyslogd: -- MARK --
+Mar  9 11:31:02 newinstall /USR/SBIN/CROND[31127]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 11:41:48 newinstall rsyslogd: -- MARK --
+Mar  9 12:01:02 newinstall /USR/SBIN/CROND[1522]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 12:01:02 newinstall /USR/SBIN/CROND[1523]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1523]: starting 0anacron
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1534]: finished 0anacron
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1523]: starting logrotate
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1557]: finished logrotate
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1523]: starting mcelog.cron
+Mar  9 12:01:02 newinstall run-parts(/etc/cron.hourly)[1573]: finished mcelog.cron
+Mar  9 12:21:49 newinstall rsyslogd: -- MARK --
+Mar  9 12:31:02 newinstall /USR/SBIN/CROND[5004]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 12:41:49 newinstall rsyslogd: -- MARK --
+Mar  9 13:01:02 newinstall /USR/SBIN/CROND[8823]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 13:01:02 newinstall /USR/SBIN/CROND[8824]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8823]: starting 0anacron
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8835]: finished 0anacron
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8823]: starting logrotate
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8858]: finished logrotate
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8823]: starting mcelog.cron
+Mar  9 13:01:02 newinstall run-parts(/etc/cron.hourly)[8874]: finished mcelog.cron
+Mar  9 13:21:49 newinstall rsyslogd: -- MARK --
+Mar  9 13:31:02 newinstall /USR/SBIN/CROND[12469]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 13:41:49 newinstall rsyslogd: -- MARK --
+Mar  9 14:01:02 newinstall /USR/SBIN/CROND[16122]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 14:01:02 newinstall /USR/SBIN/CROND[16123]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16122]: starting 0anacron
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16134]: finished 0anacron
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16122]: starting logrotate
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16157]: finished logrotate
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16122]: starting mcelog.cron
+Mar  9 14:01:02 newinstall run-parts(/etc/cron.hourly)[16173]: finished mcelog.cron
+Mar  9 14:21:49 newinstall rsyslogd: -- MARK --
+Mar  9 14:31:01 newinstall /USR/SBIN/CROND[19478]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 14:41:49 newinstall rsyslogd: -- MARK --
+Mar  9 15:01:01 newinstall /USR/SBIN/CROND[23061]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23061]: starting 0anacron
+Mar  9 15:01:01 newinstall /USR/SBIN/CROND[23069]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23075]: finished 0anacron
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23061]: starting logrotate
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23098]: finished logrotate
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23061]: starting mcelog.cron
+Mar  9 15:01:01 newinstall run-parts(/etc/cron.hourly)[23114]: finished mcelog.cron
+Mar  9 15:21:50 newinstall rsyslogd: -- MARK --
+Mar  9 15:31:01 newinstall /USR/SBIN/CROND[26607]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 15:41:50 newinstall rsyslogd: -- MARK --
+Mar  9 16:01:01 newinstall /USR/SBIN/CROND[29708]: (root) CMD (( [ -f /compass/ec_ntp ] && /compass/ec_ntp ) > /dev/null 2>&1)
+Mar  9 16:01:01 newinstall /USR/SBIN/CROND[29713]: (root) CMD (run-parts /etc/cron.hourly)
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29713]: starting 0anacron
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29722]: finished 0anacron
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29713]: starting logrotate
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29745]: finished logrotate
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29713]: starting mcelog.cron
+Mar  9 16:01:01 newinstall run-parts(/etc/cron.hourly)[29761]: finished mcelog.cron

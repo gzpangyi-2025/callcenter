@@ -1,0 +1,2453 @@
+ 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:27:57 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 10:27:57 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_6S
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:13093600 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:177140 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:2070665152 (1.9 GiB)  TX bytes:44858490 (42.7 MiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table sat
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 10:27:57 CST 2016 rc 0
+==== START: ec_ifdownall at Wed Jan 27 10:28:35 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+ethtool -t eth0 offline
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 4
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ethtool -t eth1 offline (may fail)
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 0
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ifconfig eth0 up
+ifconfig eth1 up
+ifconfig eth0 up
+ifconfig eth1 up
+ethtool -K eth0 tso off
+ethtool -K eth1 tso off
+ip -4 route flush table eth0
+ip -6 route flush table eth0
+ip -4 route flush table eth1
+ip -6 route flush table eth1
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip -4 route flush table sat
+ip -6 route flush table sat
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:13093604 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:177141 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:2070666664 (1.9 GiB)  TX bytes:44858580 (42.7 MiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:79319337 errors:38 dropped:0 overruns:0 frame:38
+          TX packets:477382 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6996156879 (6.5 GiB)  TX bytes:297422999 (283.6 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:7936720 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:7936720 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:714398316 (681.3 MiB)  TX bytes:714398316 (681.3 MiB)
+
+status: ip rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdownall at Wed Jan 27 10:29:06 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 10:29:06 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+SIOCDIFADDR: Cannot assign requested address
+FAILED: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:13093604 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:177141 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:2070666664 (1.9 GiB)  TX bytes:44858580 (42.7 MiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 10:29:06 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 10:29:06 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:29:06 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 10:29:06 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:79319339 errors:38 dropped:0 overruns:0 frame:38
+          TX packets:477382 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6996157031 (6.5 GiB)  TX bytes:297422999 (283.6 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 10:29:06 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 10:29:07 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:79319340 errors:38 dropped:0 overruns:0 frame:38
+          TX packets:477382 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6996157123 (6.5 GiB)  TX bytes:297422999 (283.6 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:29:07 CST 2016 rc 0
+==== START: ec_ifdownall at Wed Jan 27 10:37:02 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+ethtool -t eth0 offline
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 4
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ethtool -t eth1 offline (may fail)
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 0
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ifconfig eth0 up
+ifconfig eth1 up
+ifconfig eth0 up
+ifconfig eth1 up
+ethtool -K eth0 tso off
+ethtool -K eth1 tso off
+ip -4 route flush table eth0
+ip -6 route flush table eth0
+ip -4 route flush table eth1
+ip -6 route flush table eth1
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip -4 route flush table sat
+ip -6 route flush table sat
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:498 (498.0 b)  TX bytes:392 (392.0 b)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+
+status: ip rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdownall at Wed Jan 27 10:37:34 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 10:37:34 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+SIOCDIFADDR: Cannot assign requested address
+FAILED: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:498 (498.0 b)  TX bytes:392 (392.0 b)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 10:37:34 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 10:37:34 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:37:34 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 10:37:34 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 10:37:34 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 10:37:35 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:37:35 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 10:38:05 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:10 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0 up
+ip -4 route flush table sat
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 10:38:05 CST 2016 rc 0
+==== START: ec_ifup at Wed Jan 27 10:38:06 CST 2016
+parms: -a 192.168.93.211 -m 255.255.252.0 -g 0.0.0.0 -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0:10
+ifconfig eth0:10 0.0.0.0
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0
+ifconfig eth0:10 192.168.93.211 netmask 255.255.255.255 broadcast 192.168.95.255 up
+ip -4 route flush table sat
+ip -4 rule add from 192.168.93.211 table sat pref 100
+ip -4 rule add to 192.168.93.211 table sat pref 100
+route add -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+ip -4 route add 192.168.92.0/22 dev eth0 proto static src 192.168.93.211 table sat
+ip -4 route add default via 0.0.0.0 dev eth0 proto static src 192.168.93.211 table sat
+route del -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+arping -A -c 80 -I eth0 -s 192.168.93.211 192.168.95.255 &
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+192.168.92.0/22 dev eth0  proto static  scope link  src 192.168.93.211 
+default dev eth0  proto static  src 192.168.93.211 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 10:38:06 CST 2016 rc 0
+==== START: ec_cfgmtu_ioport at Wed Jan 27 10:38:36 CST 2016
+parms: link set eth0 mtu 1500 DO_NOT_FAILOVER_IP:
+ip link set eth0 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:34 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:42 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:3630 (3.5 KiB)  TX bytes:2120 (2.0 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:80 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:7336 (7.1 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:94 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:94 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:12953 (12.6 KiB)  TX bytes:12953 (12.6 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   27   756 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   17   476 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 10:38:36 CST 2016 rc
+==== START: ec_cfgmtu_ioport at Wed Jan 27 10:38:36 CST 2016
+parms: link set eth1 mtu 1500 DO_NOT_FAILOVER_IP:
+ip link set eth1 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:34 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:43 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:3630 (3.5 KiB)  TX bytes:2162 (2.1 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:80 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:7336 (7.1 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:94 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:94 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:12953 (12.6 KiB)  TX bytes:12953 (12.6 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   27   756 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   17   476 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 10:38:36 CST 2016 rc
+==== START: ec_ifup at Wed Jan 27 10:38:54 CST 2016
+parms: -a 192.168.128.25 -m 255.255.252.0 -g 0.0.0.0 -i eth0 DO_NOT_FAILOVER_IP:
+ifconfig eth0:20 192.168.128.25 netmask 255.255.255.255 broadcast 192.168.131.255 up
+ip -4 route flush table eth0
+ip -4 rule add from 192.168.128.25 table eth0 pref 100
+ip -4 rule add to 192.168.128.25 table eth0 pref 100
+route add -net 192.168.128.0 netmask 255.255.252.0 dev eth0
+ip -4 route add 192.168.128.0/22 dev eth0 proto static src 192.168.128.25 table eth0
+ip -4 route add default via 0.0.0.0 dev eth0 proto static src 192.168.128.25 table eth0
+route del -net 192.168.128.0 netmask 255.255.252.0 dev eth0
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule add lookup eth0 pref 200
+arping -A -c 60 -I eth0 -s 192.168.128.25 192.168.131.255 &
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.128.25  Bcast:192.168.131.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 192.168.128.25 lookup eth0 
+100:	from all to 192.168.128.25 lookup eth0 
+200:	from all lookup eth0 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+192.168.128.0/22 dev eth0  proto static  scope link  src 192.168.128.25 
+default dev eth0  proto static  src 192.168.128.25 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 10:38:54 CST 2016 rc 0
+==== START: ec_ifup_6 at Wed Jan 27 10:38:54 CST 2016
+parms: -a fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 -m 64 -g 0000:0000:0000:0000:0000:0000:0000:0000 -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 up
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 (may fail)
+SIOCDIFADDR: Cannot assign requested address
+WARNING: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ifconfig eth0 inet6 add fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 up
+ip -6 route flush table eth0
+ip -6 route add fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 dev eth0 table eth0
+ip -6 route add default via 0000:0000:0000:0000:0000:0000:0000:0000 dev eth0 table eth0
+RTNETLINK answers: Invalid argument
+FAILED: non-zero exit: 2 for ip -6 route add default via 0000:0000:0000:0000:0000:0000:0000:0000 dev eth0 table eth0
+ip -6 route add fe80::/64 dev eth0 table eth0
+ip -6 rule add from fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 pref 100
+ip -6 rule add to fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 pref 100
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+/bin/ping6 -c 2 -I fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 ff02::1 &
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 Scope:Global
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:56 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:62 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:5904 (5.7 KiB)  TX bytes:2960 (2.8 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+100:	from fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 
+100:	from all to fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+fd8c:215d:178e:c0de::/64 dev eth0  metric 1024  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  metric 1024  mtu 1500 advmss 1440 hoplimit 4294967295
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fd8c:215d:178e:c0de::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifup_6 at Wed Jan 27 10:38:55 CST 2016 rc 0
+==== START: ec_ifup at Wed Jan 27 10:38:55 CST 2016
+parms: -a 140.2.253.7 -m 255.255.255.0 -g 140.2.253.1 -i eth1 DO_NOT_FAILOVER_IP:
+ifconfig eth1 140.2.253.7 netmask 255.255.255.255 broadcast 140.2.253.255 up
+ip -4 route flush table eth1
+ip -4 rule add from 140.2.253.7 table eth1 pref 100
+ip -4 rule add to 140.2.253.7 table eth1 pref 100
+route add -net 140.2.253.0 netmask 255.255.255.0 dev eth1
+ip -4 route add 140.2.253.0/24 dev eth1 proto static src 140.2.253.7 table eth1
+ip -4 route add default via 140.2.253.1 dev eth1 proto static src 140.2.253.7 table eth1
+route del -net 140.2.253.0 netmask 255.255.255.0 dev eth1
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+arping -A -c 60 -I eth1 -s 140.2.253.7 140.2.253.255 &
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet addr:140.2.253.7  Bcast:140.2.253.255  Mask:255.255.255.255
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:101 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:9067 (8.8 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 192.168.128.25 lookup eth0 
+100:	from all to 192.168.128.25 lookup eth0 
+100:	from 140.2.253.7 lookup eth1 
+100:	from all to 140.2.253.7 lookup eth1 
+200:	from all lookup eth0 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+140.2.253.0/24 dev eth1  proto static  scope link  src 140.2.253.7 
+default via 140.2.253.1 dev eth1  proto static  src 140.2.253.7 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 10:38:55 CST 2016 rc 0
+==== START: ec_ifroute at Wed Jan 27 13:29:53 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Wed Jan 27 13:29:53 CST 2016 rc 0
+==== START: ec_ifroute at Wed Jan 27 14:58:09 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Wed Jan 27 14:58:09 CST 2016 rc 0
+==== START: ec_ifdown_all_ioport at Wed Jan 27 15:35:59 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 8 -U -I
+ifconfig eth0:2 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth0:2 down
+ifconfig eth0:1 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth0:1 down
+ifconfig eth1:2 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth1:2 down
+ifconfig eth1:1 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth1:1 down
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip link set eth0 mtu 1500
+ip link set eth1 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 Scope:Global
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2066 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:222 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:619770 (605.2 KiB)  TX bytes:13574 (13.2 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.128.25  Bcast:192.168.131.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet addr:140.2.253.7  Bcast:140.2.253.255  Mask:255.255.255.255
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627806 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246736 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820716670 (782.6 MiB)  TX bytes:50748404 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:4093 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4093 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:362576 (354.0 KiB)  TX bytes:362576 (354.0 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 192.168.128.25 lookup eth0 
+100:	from all to 192.168.128.25 lookup eth0 
+100:	from 140.2.253.7 lookup eth1 
+100:	from all to 140.2.253.7 lookup eth1 
+200:	from all lookup eth0 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown_all_ioport at Wed Jan 27 15:35:59 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:36:00 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+ip -6 rule del from fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 table eth0
+ip -6 rule del to fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 table eth0
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2066 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:224 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:619770 (605.2 KiB)  TX bytes:13718 (13.3 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:36:00 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:36:00 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet addr:140.2.253.7  Bcast:140.2.253.255  Mask:255.255.255.255
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627807 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246740 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820716744 (782.6 MiB)  TX bytes:50748640 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:36:00 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:36:00 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+ip -4 rule del from 192.168.128.25 table eth0
+ip -4 rule del to 192.168.128.25 table eth0
+ip -4 rule del lookup eth0
+Selected route default via 140.2.253.1 dev eth1 proto static src 140.2.253.7
+ip -4 rule add lookup eth1 pref 200
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 140.2.253.7 lookup eth1 
+100:	from all to 140.2.253.7 lookup eth1 
+200:	from all lookup eth1 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:36:00 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:36:01 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+ip -4 rule del from 140.2.253.7 table eth1
+ip -4 rule del to 140.2.253.7 table eth1
+ip -4 rule del lookup eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627809 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246740 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820716878 (782.6 MiB)  TX bytes:50748640 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:36:01 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:36:01 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:10 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0 up
+ip -4 route flush table sat
+ip -4 rule del from 192.168.93.211 table sat
+ip -4 rule del to 192.168.93.211 table sat
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:36:01 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:36:02 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_6S
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2066 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:224 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:619770 (605.2 KiB)  TX bytes:13718 (13.3 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table sat
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:36:02 CST 2016 rc 0
+==== START: ec_ifdownall at Wed Jan 27 15:36:35 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+ethtool -t eth0 offline
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 4
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ethtool -t eth1 offline (may fail)
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 0
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ifconfig eth0 up
+ifconfig eth1 up
+ifconfig eth0 up
+ifconfig eth1 up
+ethtool -K eth0 tso off
+ethtool -K eth1 tso off
+ip -4 route flush table eth0
+ip -6 route flush table eth0
+ip -4 route flush table eth1
+ip -6 route flush table eth1
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip -4 route flush table sat
+ip -6 route flush table sat
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2086 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:225 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:621924 (607.3 KiB)  TX bytes:13808 (13.4 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627900 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246740 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820733414 (782.7 MiB)  TX bytes:50748640 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:4202 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4202 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:374614 (365.8 KiB)  TX bytes:374614 (365.8 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdownall at Wed Jan 27 15:37:03 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:37:03 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+SIOCDIFADDR: Cannot assign requested address
+FAILED: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:2086 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:225 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:621924 (607.3 KiB)  TX bytes:13808 (13.4 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:37:03 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:37:04 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:37:04 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:37:04 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627901 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246740 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820733474 (782.7 MiB)  TX bytes:50748640 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:37:04 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:37:05 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:627901 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:246740 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:820733474 (782.7 MiB)  TX bytes:50748640 (48.3 MiB)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:37:05 CST 2016 rc 0
+==== START: ec_newsslcert at Wed Jan 27 15:47:31 CST 2016
+parms: internal DO_NOT_FAILOVER_IP:
+==== START: ec_ifdownall at Wed Jan 27 15:47:45 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+ethtool -t eth0 online
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 0
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ethtool -t eth1 offline (may fail)
+The test result is PASS
+The test extra info:
+Register test  (offline)	 0
+Eeprom test    (offline)	 0
+Interrupt test (offline)	 0
+Loopback test  (offline)	 0
+Link test   (on/offline)	 0
+
+ifconfig eth0 up
+ifconfig eth1 up
+ifconfig eth0 up
+ifconfig eth1 up
+ethtool -K eth0 tso off
+ethtool -K eth1 tso off
+ip -4 route flush table eth0
+ip -6 route flush table eth0
+ip -4 route flush table eth1
+ip -6 route flush table eth1
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip -4 route flush table sat
+ip -6 route flush table sat
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:17 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6782 (6.6 KiB)  TX bytes:636 (636.0 b)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+
+status: ip rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+169.254.0.0/16 dev eth0  scope link  metric 1003 
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdownall at Wed Jan 27 15:48:14 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:48:14 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+SIOCDIFADDR: Cannot assign requested address
+FAILED: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:17 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6782 (6.6 KiB)  TX bytes:636 (636.0 b)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:48:14 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:48:15 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+169.254.0.0/16 dev eth0  scope link  metric 1003 
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:48:15 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:48:15 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:48:15 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:48:16 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+169.254.0.0/16 dev eth0  scope link  metric 1003 
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:48:16 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:48:44 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:10 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0 up
+ip -4 route flush table sat
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+status: ip -4 route show table main
+169.254.0.0/16 dev eth0  scope link  metric 1003 
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:48:44 CST 2016 rc 0
+==== START: ec_ifup at Wed Jan 27 15:48:45 CST 2016
+parms: -a 192.168.93.211 -m 255.255.252.0 -g 0.0.0.0 -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0:10
+ifconfig eth0:10 0.0.0.0
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0
+ifconfig eth0:10 192.168.93.211 netmask 255.255.255.255 broadcast 192.168.95.255 up
+ip -4 route flush table sat
+ip -4 rule add from 192.168.93.211 table sat pref 100
+ip -4 rule add to 192.168.93.211 table sat pref 100
+route add -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+ip -4 route add 192.168.92.0/22 dev eth0 proto static src 192.168.93.211 table sat
+ip -4 route add default via 0.0.0.0 dev eth0 proto static src 192.168.93.211 table sat
+route del -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+arping -A -c 80 -I eth0 -s 192.168.93.211 192.168.95.255 &
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+192.168.92.0/22 dev eth0  proto static  scope link  src 192.168.93.211 
+default dev eth0  proto static  src 192.168.93.211 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 15:48:45 CST 2016 rc 0
+==== START: ec_cfgmtu_ioport at Wed Jan 27 15:49:13 CST 2016
+parms: -p 1 -m 1500 DO_NOT_FAILOVER_IP:
+ip link set eth0 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:21 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:43 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:8294 (8.0 KiB)  TX bytes:2022 (1.9 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:77 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6880 (6.7 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:122 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:122 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:16289 (15.9 KiB)  TX bytes:16289 (15.9 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   11   308 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 15:49:13 CST 2016 rc
+==== START: ec_cfgmtu_ioport at Wed Jan 27 15:49:13 CST 2016
+parms: -p 2 -m 1500 DO_NOT_FAILOVER_IP:
+ip link set eth1 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:21 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:43 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:8294 (8.0 KiB)  TX bytes:2022 (1.9 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:78 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6940 (6.7 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:122 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:122 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:16289 (15.9 KiB)  TX bytes:16289 (15.9 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   12   336 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 15:49:13 CST 2016 rc
+==== START: ec_ifdown_all_ioport at Wed Jan 27 15:56:25 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 8 -U -I
+ifconfig eth0:2 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth0:2 down
+ifconfig eth0:1 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth0:1 down
+ifconfig eth1:2 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth1:2 down
+ifconfig eth1:1 down (may fail)
+SIOCSIFFLAGS: Cannot assign requested address
+WARNING: non-zero exit: 255 for ifconfig eth1:1 down
+ip -4 route flush table eth0_1
+ip -6 route flush table eth0_1
+ip -4 route flush table eth0_2
+ip -6 route flush table eth0_2
+ip -4 route flush table eth1_1
+ip -6 route flush table eth1_1
+ip -4 route flush table eth1_2
+ip -6 route flush table eth1_2
+ip link set eth0 mtu 1500
+ip link set eth1 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:118 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:90 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:26434 (25.8 KiB)  TX bytes:3996 (3.9 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:670 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:58088 (56.7 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:176 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:176 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:21557 (21.0 KiB)  TX bytes:21557 (21.0 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown_all_ioport at Wed Jan 27 15:56:25 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:56:26 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+SIOCDIFADDR: Cannot assign requested address
+FAILED: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ip -6 route flush table eth0
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:118 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:90 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:26434 (25.8 KiB)  TX bytes:3996 (3.9 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:56:26 CST 2016 rc 0
+==== START: ec_ifdown_6 at Wed Jan 27 15:56:26 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+File not found /tmp/ec_ipaddr_61
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:670 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:58088 (56.7 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+status: ip -6 route show table eth1
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifdown_6 at Wed Jan 27 15:56:26 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:56:26 CST 2016
+parms: -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:20 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:20 0.0.0.0 up
+ip -4 route flush table eth0
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:56:26 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:56:27 CST 2016
+parms: -i eth1 DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 60 -I eth1
+killall -9 dhclient with arguments eth1
+ifconfig eth1 0.0.0.0 up
+ip -4 route flush table eth1
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:672 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:58240 (56.8 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:56:27 CST 2016 rc 0
+==== START: ec_ifdown at Wed Jan 27 15:57:24 CST 2016
+parms: -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0
+ifconfig eth0:10 0.0.0.0 up
+SIOCSIFFLAGS: Cannot assign requested address
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0 up
+ip -4 route flush table sat
+ip -4 rule del from 192.168.93.211 table sat
+ip -4 rule del to 192.168.93.211 table sat
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifdown at Wed Jan 27 15:57:25 CST 2016 rc 0
+==== START: ec_ifup at Wed Jan 27 15:57:25 CST 2016
+parms: -a 192.168.93.211 -m 255.255.252.0 -g 0.0.0.0 -i sat DO_NOT_FAILOVER_IP:
+killall -9 arping with arguments -c 80 -I eth0
+killall -9 dhclient with arguments eth0:10
+ifconfig eth0:10 0.0.0.0
+SIOCSIFFLAGS: Cannot assign requested address
+FAILED: non-zero exit: 255 for ifconfig eth0:10 0.0.0.0
+ifconfig eth0:10 192.168.93.211 netmask 255.255.255.255 broadcast 192.168.95.255 up
+ip -4 route flush table sat
+ip -4 rule add from 192.168.93.211 table sat pref 100
+ip -4 rule add to 192.168.93.211 table sat pref 100
+route add -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+ip -4 route add 192.168.92.0/22 dev eth0 proto static src 192.168.93.211 table sat
+ip -4 route add default via 0.0.0.0 dev eth0 proto static src 192.168.93.211 table sat
+route del -net 192.168.92.0 netmask 255.255.252.0 dev eth0
+arping -A -c 80 -I eth0 -s 192.168.93.211 192.168.95.255 &
+status: ifconfig eth0:10
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table sat
+192.168.92.0/22 dev eth0  proto static  scope link  src 192.168.93.211 
+default dev eth0  proto static  src 192.168.93.211 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 15:57:25 CST 2016 rc 0
+==== START: ec_cfgmtu_ioport at Wed Jan 27 15:57:57 CST 2016
+parms: -p 1 -m 1500 DO_NOT_FAILOVER_IP:
+ip link set eth0 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:127 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:122 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:29836 (29.1 KiB)  TX bytes:5340 (5.2 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:786 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:67718 (66.1 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:367 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:367 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:42329 (41.3 KiB)  TX bytes:42329 (41.3 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   19   532 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 15:57:57 CST 2016 rc
+==== START: ec_cfgmtu_ioport at Wed Jan 27 15:57:57 CST 2016
+parms: -p 2 -m 1500 DO_NOT_FAILOVER_IP:
+ip link set eth1 mtu 1500
+status: ifconfig
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:127 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:122 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:29836 (29.1 KiB)  TX bytes:5340 (5.2 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth0:10   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.93.211  Bcast:192.168.95.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:787 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:67810 (66.2 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:367 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:367 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:42329 (41.3 KiB)  TX bytes:42329 (41.3 KiB)
+
+status: ip rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+   19   532 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_cfgmtu_ioport at Wed Jan 27 15:57:57 CST 2016 rc
+==== START: ec_ifup at Wed Jan 27 16:28:43 CST 2016
+parms: -a 192.168.128.25 -m 255.255.252.0 -g 0.0.0.0 -i eth0 DO_NOT_FAILOVER_IP:
+ifconfig eth0:20 192.168.128.25 netmask 255.255.255.255 broadcast 192.168.131.255 up
+ip -4 route flush table eth0
+ip -4 rule add from 192.168.128.25 table eth0 pref 100
+ip -4 rule add to 192.168.128.25 table eth0 pref 100
+route add -net 192.168.128.0 netmask 255.255.252.0 dev eth0
+ip -4 route add 192.168.128.0/22 dev eth0 proto static src 192.168.128.25 table eth0
+ip -4 route add default via 0.0.0.0 dev eth0 proto static src 192.168.128.25 table eth0
+route del -net 192.168.128.0 netmask 255.255.252.0 dev eth0
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule add lookup eth0 pref 200
+arping -A -c 60 -I eth0 -s 192.168.128.25 192.168.131.255 &
+status: ifconfig eth0:20
+eth0:20   Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet addr:192.168.128.25  Bcast:192.168.131.255  Mask:255.255.255.255
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 192.168.128.25 lookup eth0 
+100:	from all to 192.168.128.25 lookup eth0 
+200:	from all lookup eth0 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth0
+192.168.128.0/22 dev eth0  proto static  scope link  src 192.168.128.25 
+default dev eth0  proto static  src 192.168.128.25 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 DROP       *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 16:28:44 CST 2016 rc 0
+==== START: ec_ifup_6 at Wed Jan 27 16:28:44 CST 2016
+parms: -a fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 -m 64 -g 0000:0000:0000:0000:0000:0000:0000:0000 -i eth0 DO_NOT_FAILOVER_IP:
+killall -9 dh6client with arguments eth0
+ifconfig eth0 up
+ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 (may fail)
+SIOCDIFADDR: Cannot assign requested address
+WARNING: non-zero exit: 1 for ifconfig eth0 inet6 del fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64
+ifconfig eth0 inet6 add fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 up
+ip -6 route flush table eth0
+ip -6 route add fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 dev eth0 table eth0
+ip -6 route add default via 0000:0000:0000:0000:0000:0000:0000:0000 dev eth0 table eth0
+RTNETLINK answers: Invalid argument
+FAILED: non-zero exit: 2 for ip -6 route add default via 0000:0000:0000:0000:0000:0000:0000:0000 dev eth0 table eth0
+ip -6 route add fe80::/64 dev eth0 table eth0
+ip -6 rule add from fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 pref 100
+ip -6 rule add to fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 pref 100
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+/bin/ping6 -c 2 -I fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 ff02::1 &
+status: ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C9  
+          inet6 addr: fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9/64 Scope:Global
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:274 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:172 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:87538 (85.4 KiB)  TX bytes:7508 (7.3 KiB)
+          Interrupt:16 Memory:fb800000-fb820000 
+
+status: ip -6 rule show
+0:	from all lookup local 
+100:	from fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 
+100:	from all to fd8c:215d:178e:c0de:6eae:8bff:fe7e:4fd9 lookup eth0 
+32766:	from all lookup main 
+status: ip -6 route show table eth0
+fd8c:215d:178e:c0de::/64 dev eth0  metric 1024  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  metric 1024  mtu 1500 advmss 1440 hoplimit 4294967295
+status: ip -6 route show table main
+unreachable ::/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable ::ffff:0.0.0.0/96 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:7f00::/24 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:a9fe::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:ac10::/28 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:c0a8::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 2002:e000::/19 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+unreachable 3ffe:ffff::/32 dev lo  metric 1024  error -101 mtu 16436 advmss 16376 hoplimit 4294967295
+fd8c:215d:178e:c0de::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth0  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+fe80::/64 dev eth1  proto kernel  metric 256  mtu 1500 advmss 1440 hoplimit 4294967295
+==== END: ec_ifup_6 at Wed Jan 27 16:28:44 CST 2016 rc 0
+==== START: ec_ifup at Wed Jan 27 16:28:44 CST 2016
+parms: -a 140.2.253.7 -m 255.255.255.0 -g 140.2.253.1 -i eth1 DO_NOT_FAILOVER_IP:
+ifconfig eth1 140.2.253.7 netmask 255.255.255.255 broadcast 140.2.253.255 up
+ip -4 route flush table eth1
+ip -4 rule add from 140.2.253.7 table eth1 pref 100
+ip -4 rule add to 140.2.253.7 table eth1 pref 100
+route add -net 140.2.253.0 netmask 255.255.255.0 dev eth1
+ip -4 route add 140.2.253.0/24 dev eth1 proto static src 140.2.253.7 table eth1
+ip -4 route add default via 140.2.253.1 dev eth1 proto static src 140.2.253.7 table eth1
+route del -net 140.2.253.0 netmask 255.255.255.0 dev eth1
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+arping -A -c 60 -I eth1 -s 140.2.253.7 140.2.253.255 &
+status: ifconfig eth1
+eth1      Link encap:Ethernet  HWaddr 6C:AE:8B:7E:4F:C8  
+          inet addr:140.2.253.7  Bcast:140.2.253.255  Mask:255.255.255.255
+          inet6 addr: fe80::6eae:8bff:fe7e:4fc8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:3178 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:284296 (277.6 KiB)  TX bytes:468 (468.0 b)
+          Interrupt:16 Memory:fb900000-fb920000 
+
+status: ip -4 rule show
+0:	from all lookup local 
+100:	from 192.168.93.211 lookup sat 
+100:	from all to 192.168.93.211 lookup sat 
+100:	from 192.168.128.25 lookup eth0 
+100:	from all to 192.168.128.25 lookup eth0 
+100:	from 140.2.253.7 lookup eth1 
+100:	from all to 140.2.253.7 lookup eth1 
+200:	from all lookup eth0 
+32766:	from all lookup main 
+32767:	from all lookup default 
+status: ip -4 route show table eth1
+140.2.253.0/24 dev eth1  proto static  scope link  src 140.2.253.7 
+default via 140.2.253.1 dev eth1  proto static  src 140.2.253.7 
+status: ip -4 route show table main
+status: arptables -L -v -n
+Chain IN (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     lo     *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth0   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     eth1   *       0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain OUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+    0     0 ACCEPT     *      lo      0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth0    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+    0     0 ACCEPT     *      eth1    0.0.0.0/0            0.0.0.0/0            00/00              00/00              any    0000/0000  0000/0000  0000/0000 
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     in     out     source-ip            destination-ip       source-hw          destination-hw     hlen   op         hrd        pro       
+==== END: ec_ifup at Wed Jan 27 16:28:44 CST 2016 rc 0
+==== START: ec_ifroute at Thu Jan 28 10:09:03 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Thu Jan 28 10:09:03 CST 2016 rc 0
+==== START: ec_ifroute at Thu Jan 28 10:58:01 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Thu Jan 28 10:58:01 CST 2016 rc 0
+==== START: ec_ifroute at Fri Feb 26 14:33:32 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Route non-operational default dev eth0 proto static src 192.168.128.25
+Selected route default via 140.2.253.1 dev eth1 proto static src 140.2.253.7
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth1 pref 200
+==== END: ec_ifroute at Fri Feb 26 14:33:32 CST 2016 rc 0
+==== START: ec_ifroute at Fri Feb 26 14:35:19 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Route non-operational default dev eth0 proto static src 192.168.128.25
+Selected route default via 140.2.253.1 dev eth1 proto static src 140.2.253.7
+ip -4 rule del lookup eth1 pref 200
+ip -4 rule add lookup eth1 pref 200
+==== END: ec_ifroute at Fri Feb 26 14:35:19 CST 2016 rc 0
+==== START: ec_ifroute at Fri Feb 26 14:37:19 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth1 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Fri Feb 26 14:37:19 CST 2016 rc 0
+==== START: ec_ifroute at Fri Feb 26 14:39:27 CST 2016
+parms: DO_NOT_FAILOVER_IP:
+Selected route default dev eth0 proto static src 192.168.128.25
+ip -4 rule del lookup eth0 pref 200
+ip -4 rule add lookup eth0 pref 200
+==== END: ec_ifroute at Fri Feb 26 14:39:27 CST 2016 rc 0

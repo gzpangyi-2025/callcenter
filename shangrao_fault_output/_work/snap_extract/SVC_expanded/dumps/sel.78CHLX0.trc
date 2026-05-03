@@ -1,0 +1,495 @@
+Thu Oct 1 04:12:21 BST 2015 SEL list 
+   1 | 10/01/2015 | 03:04:47 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 10/01/2015 | 03:09:01 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   3 | 10/01/2015 | 03:10:53 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 010002cfa20c5620000410f66f02ffff
+SEL Entry: 020002cda30c562000040ff56fc200ff
+SEL Entry: 0300023da40c562000040ff56fc213ff
+-------------------------------------------------------------------
+Wed Nov 25 18:28:25 CET 2015 SEL list 
+   1 | 10/01/2015 | 03:11:54 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 10/01/2015 | 05:20:08 | Power Unit #0x01 | Power off/down | Asserted
+   3 | 11/25/2015 | 11:40:40 | Power Supply #0x7f | Redundancy Lost
+   4 | 11/25/2015 | 11:40:40 | Entity Presence #0x8a | Absent | Deasserted
+   5 | 11/25/2015 | 11:40:41 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   6 | 11/25/2015 | 11:40:46 | Power Supply #0x70 | Power Supply AC lost | Asserted
+   7 | 11/25/2015 | 11:40:47 | Entity Presence #0x89 | Absent | Deasserted
+   8 | 11/25/2015 | 11:40:48 | Power Unit #0x01 | Power off/down | Asserted
+   9 | 11/25/2015 | 11:41:47 | Power Supply #0x70 | Power Supply AC lost | Deasserted
+   a | 11/25/2015 | 11:41:51 | Power Supply #0x7f | Fully Redundant
+   b | 11/25/2015 | 11:41:58 | Power Supply #0x70 | Power Supply AC lost | Asserted
+   c | 11/25/2015 | 11:42:02 | Power Supply #0x7f | Redundancy Lost
+   d | 11/25/2015 | 11:42:42 | Power Supply #0x7f | Fully Redundant
+   e | 11/25/2015 | 11:42:48 | Power Supply #0x70 | Power Supply AC lost | Deasserted
+   f | 11/26/2015 | 08:27:02 | Power Unit #0x01 | Power off/down | Deasserted
+  10 | 11/26/2015 | 08:29:18 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 0100027aa40c5620000410f66f02ffff
+SEL Entry: 02000288c20c5620000409016f00ffff
+SEL Entry: 030002389e5556200004087f0b01ffff
+SEL Entry: 040002389e5556200004258aef01ffff
+SEL Entry: 050002399e55562000040ff56fc200ff
+SEL Entry: 0600023e9e555620000408706f03ffff
+SEL Entry: 0700023f9e55562000042589ef01ffff
+SEL Entry: 080002409e555620000409016f00ffff
+SEL Entry: 0900027b9e55562000040870ef03ffff
+SEL Entry: 0a00027f9e5556200004087f0b00ffff
+SEL Entry: 0b0002869e555620000408706f03ffff
+SEL Entry: 0c00028a9e5556200004087f0b01ffff
+SEL Entry: 0d0002b29e5556200004087f0b00ffff
+SEL Entry: 0e0002b89e55562000040870ef03ffff
+SEL Entry: 0f000256c256562000040901ef00ffff
+SEL Entry: 100002dec256562000040ff56fc213ff
+-------------------------------------------------------------------
+Thu Nov 26 01:25:01 CET 2015 SEL script capture 
+   1 | 11/26/2015 | 08:30:19 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100021bc3565620000410f66f02ffff
+-------------------------------------------
+Fri Nov 27 01:25:01 CET 2015 SEL script capture 
+   1 | 11/26/2015 | 15:26:56 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002c024575620000410f66f02ffff
+-------------------------------------------
+Sat Nov 28 01:25:02 CET 2015 SEL script capture 
+   1 | 11/27/2015 | 15:26:48 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023876585620000410f66f02ffff
+-------------------------------------------
+Sun Nov 29 01:25:02 CET 2015 SEL script capture 
+   1 | 11/28/2015 | 15:26:53 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002bdc7595620000410f66f02ffff
+-------------------------------------------
+Mon Nov 30 01:25:02 CET 2015 SEL script capture 
+   1 | 11/29/2015 | 15:26:53 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023d195b5620000410f66f02ffff
+-------------------------------------------
+Tue Dec 1 01:25:02 CET 2015 SEL script capture 
+   1 | 11/30/2015 | 15:26:50 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002ba6a5c5620000410f66f02ffff
+-------------------------------------------
+Wed Dec 2 01:25:02 CET 2015 SEL script capture 
+   1 | 12/01/2015 | 15:26:54 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023ebc5d5620000410f66f02ffff
+-------------------------------------------
+Thu Dec 3 01:25:01 CET 2015 SEL script capture 
+   1 | 12/02/2015 | 15:26:52 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002bc0d5f5620000410f66f02ffff
+-------------------------------------------
+Fri Dec 4 01:25:01 CET 2015 SEL script capture 
+   1 | 12/03/2015 | 15:26:55 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023f5f605620000410f66f02ffff
+-------------------------------------------
+Sat Dec 5 01:25:02 CET 2015 SEL script capture 
+   1 | 12/04/2015 | 15:26:48 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002b8b0615620000410f66f02ffff
+-------------------------------------------
+Sun Dec 6 01:25:02 CET 2015 SEL script capture 
+   1 | 12/05/2015 | 15:26:52 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023c02635620000410f66f02ffff
+-------------------------------------------
+Mon Dec 7 01:25:01 CET 2015 SEL script capture 
+   1 | 12/06/2015 | 15:26:46 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002b653645620000410f66f02ffff
+-------------------------------------------
+Tue Dec 8 01:25:01 CET 2015 SEL script capture 
+   1 | 12/07/2015 | 15:26:55 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100023fa5655620000410f66f02ffff
+-------------------------------------------
+Wed Dec 9 11:08:37 CST 2015 SEL list 
+   1 | 12/08/2015 | 15:26:47 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 12/09/2015 | 11:04:38 | Power Unit #0x01 | Power off/down | Asserted
+   3 | 12/09/2015 | 11:04:49 | Power Unit #0x01 | Power off/down | Deasserted
+   4 | 12/09/2015 | 11:05:01 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   5 | 12/09/2015 | 11:06:43 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 010002b7f6665620000410f66f02ffff
+SEL Entry: 020002c60a685620000409016f00ffff
+SEL Entry: 030002d10a68562000040901ef00ffff
+SEL Entry: 040002dd0a68562000040ff56fc200ff
+SEL Entry: 050002430b68562000040ff56fc213ff
+-------------------------------------------------------------------
+Wed Dec 9 11:14:01 CST 2015 SEL list 
+   1 | 12/09/2015 | 11:09:05 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 12/09/2015 | 11:11:38 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   3 | 12/09/2015 | 11:13:20 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 010002d10b685620000410f66f02ffff
+SEL Entry: 0200026a0c68562000040ff56fc200ff
+SEL Entry: 030002d00c68562000040ff56fc213ff
+-------------------------------------------------------------------
+Thu Dec 10 01:25:02 CST 2015 SEL script capture 
+   1 | 12/09/2015 | 11:14:31 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002170d685620000410f66f02ffff
+-------------------------------------------
+Fri Dec 11 01:25:02 CST 2015 SEL script capture 
+   1 | 12/10/2015 | 01:25:28 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000288d4685620000410f66f02ffff
+-------------------------------------------
+Sat Dec 12 01:25:01 CST 2015 SEL script capture 
+   1 | 12/11/2015 | 01:25:28 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000208266a5620000410f66f02ffff
+-------------------------------------------
+Sun Dec 13 01:25:01 CST 2015 SEL script capture 
+   1 | 12/12/2015 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000289776b5620000410f66f02ffff
+-------------------------------------------
+Mon Dec 14 01:25:02 CST 2015 SEL script capture 
+   1 | 12/13/2015 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000207c96c5620000410f66f02ffff
+-------------------------------------------
+Tue Dec 15 01:25:01 CST 2015 SEL script capture 
+   1 | 12/14/2015 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028a1a6e5620000410f66f02ffff
+-------------------------------------------
+Wed Dec 16 01:25:01 CST 2015 SEL script capture 
+   1 | 12/15/2015 | 01:25:36 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002106c6f5620000410f66f02ffff
+-------------------------------------------
+Thu Dec 17 01:25:01 CST 2015 SEL script capture 
+   1 | 12/16/2015 | 01:25:35 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028fbd705620000410f66f02ffff
+-------------------------------------------
+Fri Dec 18 01:25:01 CST 2015 SEL script capture 
+   1 | 12/17/2015 | 01:25:28 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002080f725620000410f66f02ffff
+-------------------------------------------
+Sat Dec 19 01:25:01 CST 2015 SEL script capture 
+   1 | 12/18/2015 | 01:25:36 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100029060735620000410f66f02ffff
+-------------------------------------------
+Sun Dec 20 01:25:01 CST 2015 SEL script capture 
+   1 | 12/19/2015 | 01:25:32 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020cb2745620000410f66f02ffff
+-------------------------------------------
+Mon Dec 21 01:25:01 CST 2015 SEL script capture 
+   1 | 12/20/2015 | 01:25:31 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028b03765620000410f66f02ffff
+-------------------------------------------
+Tue Dec 22 01:25:01 CST 2015 SEL script capture 
+   1 | 12/21/2015 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020755775620000410f66f02ffff
+-------------------------------------------
+Wed Dec 23 01:25:01 CST 2015 SEL script capture 
+   1 | 12/22/2015 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028aa6785620000410f66f02ffff
+-------------------------------------------
+Thu Dec 24 01:25:01 CST 2015 SEL script capture 
+   1 | 12/23/2015 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000207f8795620000410f66f02ffff
+-------------------------------------------
+Fri Dec 25 01:25:01 CST 2015 SEL script capture 
+   1 | 12/24/2015 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000286497b5620000410f66f02ffff
+-------------------------------------------
+Sat Dec 26 01:25:02 CST 2015 SEL script capture 
+   1 | 12/25/2015 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020a9b7c5620000410f66f02ffff
+-------------------------------------------
+Sun Dec 27 01:25:02 CST 2015 SEL script capture 
+   1 | 12/26/2015 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000289ec7d5620000410f66f02ffff
+-------------------------------------------
+Mon Dec 28 01:25:02 CST 2015 SEL script capture 
+   1 | 12/27/2015 | 01:25:32 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020c3e7f5620000410f66f02ffff
+-------------------------------------------
+Tue Dec 29 01:25:01 CST 2015 SEL script capture 
+   1 | 12/28/2015 | 01:25:31 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028b8f805620000410f66f02ffff
+-------------------------------------------
+Wed Dec 30 01:25:02 CST 2015 SEL script capture 
+   1 | 12/29/2015 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000206e1815620000410f66f02ffff
+-------------------------------------------
+Wed Dec 30 14:22:01 CST 2015 SEL list 
+   1 | 12/30/2015 | 01:25:32 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+   2 | 12/30/2015 | 14:12:45 | Power Unit #0x01 | Power off/down | Asserted
+   3 | 12/30/2015 | 14:19:41 | Power Unit #0x01 | Power off/down | Deasserted
+   4 | 12/30/2015 | 14:19:53 | System Firmware Progress #0xf5 | Unspecified | Asserted
+   5 | 12/30/2015 | 14:21:35 | System Firmware Progress #0xf5 | System boot initiated | Asserted
+Entry data is
+SEL Entry: 0100028c32835620000410f66f02ffff
+SEL Entry: 0200025de6835620000409016f00ffff
+SEL Entry: 030002fde783562000040901ef00ffff
+SEL Entry: 04000209e883562000040ff56fc200ff
+SEL Entry: 0500026fe883562000040ff56fc213ff
+-------------------------------------------------------------------
+Thu Dec 31 01:25:02 CST 2015 SEL script capture 
+   1 | 12/30/2015 | 14:22:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002a2e8835620000410f66f02ffff
+-------------------------------------------
+Fri Jan 1 01:25:02 CST 2016 SEL script capture 
+   1 | 12/31/2015 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020a84845620000410f66f02ffff
+-------------------------------------------
+Sat Jan 2 01:25:02 CST 2016 SEL script capture 
+   1 | 01/01/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000285d5855620000410f66f02ffff
+-------------------------------------------
+Sun Jan 3 01:25:02 CST 2016 SEL script capture 
+   1 | 01/02/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020527875620000410f66f02ffff
+-------------------------------------------
+Mon Jan 4 01:25:01 CST 2016 SEL script capture 
+   1 | 01/03/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028578885620000410f66f02ffff
+-------------------------------------------
+Tue Jan 5 01:25:02 CST 2016 SEL script capture 
+   1 | 01/04/2016 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000206ca895620000410f66f02ffff
+-------------------------------------------
+Wed Jan 6 01:25:02 CST 2016 SEL script capture 
+   1 | 01/05/2016 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002891b8b5620000410f66f02ffff
+-------------------------------------------
+Thu Jan 7 01:25:02 CST 2016 SEL script capture 
+   1 | 01/06/2016 | 01:25:33 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020d6d8c5620000410f66f02ffff
+-------------------------------------------
+Fri Jan 8 01:25:02 CST 2016 SEL script capture 
+   1 | 01/07/2016 | 01:25:31 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028bbe8d5620000410f66f02ffff
+-------------------------------------------
+Sat Jan 9 01:25:02 CST 2016 SEL script capture 
+   1 | 01/08/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000204108f5620000410f66f02ffff
+-------------------------------------------
+Sun Jan 10 01:25:02 CST 2016 SEL script capture 
+   1 | 01/09/2016 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028961905620000410f66f02ffff
+-------------------------------------------
+Mon Jan 11 01:25:01 CST 2016 SEL script capture 
+   1 | 01/10/2016 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000206b3915620000410f66f02ffff
+-------------------------------------------
+Tue Jan 12 01:25:02 CST 2016 SEL script capture 
+   1 | 01/11/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028404935620000410f66f02ffff
+-------------------------------------------
+Wed Jan 13 01:25:02 CST 2016 SEL script capture 
+   1 | 01/12/2016 | 01:25:31 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020b56945620000410f66f02ffff
+-------------------------------------------
+Thu Jan 14 01:25:01 CST 2016 SEL script capture 
+   1 | 01/13/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000285a7955620000410f66f02ffff
+-------------------------------------------
+Fri Jan 15 01:25:02 CST 2016 SEL script capture 
+   1 | 01/14/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000204f9965620000410f66f02ffff
+-------------------------------------------
+Sat Jan 16 01:25:02 CST 2016 SEL script capture 
+   1 | 01/15/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002874a985620000410f66f02ffff
+-------------------------------------------
+Sun Jan 17 01:25:02 CST 2016 SEL script capture 
+   1 | 01/16/2016 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020a9c995620000410f66f02ffff
+-------------------------------------------
+Mon Jan 18 01:25:02 CST 2016 SEL script capture 
+   1 | 01/17/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000285ed9a5620000410f66f02ffff
+-------------------------------------------
+Tue Jan 19 01:25:02 CST 2016 SEL script capture 
+   1 | 01/18/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002053f9c5620000410f66f02ffff
+-------------------------------------------
+Wed Jan 20 01:25:01 CST 2016 SEL script capture 
+   1 | 01/19/2016 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000289909d5620000410f66f02ffff
+-------------------------------------------
+Thu Jan 21 01:25:02 CST 2016 SEL script capture 
+   1 | 01/20/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000202e29e5620000410f66f02ffff
+-------------------------------------------
+Fri Jan 22 01:25:02 CST 2016 SEL script capture 
+   1 | 01/21/2016 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028633a05620000410f66f02ffff
+-------------------------------------------
+Sat Jan 23 01:25:02 CST 2016 SEL script capture 
+   1 | 01/22/2016 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020a85a15620000410f66f02ffff
+-------------------------------------------
+Sun Jan 24 01:25:01 CST 2016 SEL script capture 
+   1 | 01/23/2016 | 01:25:23 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000283d6a25620000410f66f02ffff
+-------------------------------------------
+Mon Jan 25 01:25:02 CST 2016 SEL script capture 
+   1 | 01/24/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020228a45620000410f66f02ffff
+-------------------------------------------
+Tue Jan 26 01:25:01 CST 2016 SEL script capture 
+   1 | 01/25/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028579a55620000410f66f02ffff
+-------------------------------------------
+Wed Jan 27 01:25:02 CST 2016 SEL script capture 
+   1 | 01/26/2016 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020acba65620000410f66f02ffff
+-------------------------------------------
+Thu Jan 28 01:25:02 CST 2016 SEL script capture 
+   1 | 01/27/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002871ca85620000410f66f02ffff
+-------------------------------------------
+Fri Jan 29 01:25:02 CST 2016 SEL script capture 
+   1 | 01/28/2016 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020a6ea95620000410f66f02ffff
+-------------------------------------------
+Sat Jan 30 01:25:01 CST 2016 SEL script capture 
+   1 | 01/29/2016 | 01:25:28 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000288bfaa5620000410f66f02ffff
+-------------------------------------------
+Sun Jan 31 01:25:02 CST 2016 SEL script capture 
+   1 | 01/30/2016 | 01:25:21 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020111ac5620000410f66f02ffff
+-------------------------------------------
+Mon Feb 1 01:25:02 CST 2016 SEL script capture 
+   1 | 01/31/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028262ad5620000410f66f02ffff
+-------------------------------------------
+Tue Feb 2 01:25:01 CST 2016 SEL script capture 
+   1 | 02/01/2016 | 01:25:28 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000208b4ae5620000410f66f02ffff
+-------------------------------------------
+Wed Feb 3 01:25:01 CST 2016 SEL script capture 
+   1 | 02/02/2016 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028905b05620000410f66f02ffff
+-------------------------------------------
+Thu Feb 4 01:25:01 CST 2016 SEL script capture 
+   1 | 02/03/2016 | 01:25:26 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020657b15620000410f66f02ffff
+-------------------------------------------
+Fri Feb 5 01:25:02 CST 2016 SEL script capture 
+   1 | 02/04/2016 | 01:25:20 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000280a8b25620000410f66f02ffff
+-------------------------------------------
+Sat Feb 6 01:25:02 CST 2016 SEL script capture 
+   1 | 02/05/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000207fab35620000410f66f02ffff
+-------------------------------------------
+Sun Feb 7 01:25:01 CST 2016 SEL script capture 
+   1 | 02/06/2016 | 01:25:20 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002804bb55620000410f66f02ffff
+-------------------------------------------
+Mon Feb 8 01:25:02 CST 2016 SEL script capture 
+   1 | 02/07/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002049db65620000410f66f02ffff
+-------------------------------------------
+Tue Feb 9 01:25:02 CST 2016 SEL script capture 
+   1 | 02/08/2016 | 01:25:30 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028aeeb75620000410f66f02ffff
+-------------------------------------------
+Wed Feb 10 01:25:02 CST 2016 SEL script capture 
+   1 | 02/09/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020540b95620000410f66f02ffff
+-------------------------------------------
+Thu Feb 11 01:25:02 CST 2016 SEL script capture 
+   1 | 02/10/2016 | 01:25:20 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028091ba5620000410f66f02ffff
+-------------------------------------------
+Fri Feb 12 01:25:01 CST 2016 SEL script capture 
+   1 | 02/11/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000205e3bb5620000410f66f02ffff
+-------------------------------------------
+Sat Feb 13 01:25:01 CST 2016 SEL script capture 
+   1 | 02/12/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028434bd5620000410f66f02ffff
+-------------------------------------------
+Sun Feb 14 01:25:02 CST 2016 SEL script capture 
+   1 | 02/13/2016 | 01:25:23 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020386be5620000410f66f02ffff
+-------------------------------------------
+Mon Feb 15 01:25:01 CST 2016 SEL script capture 
+   1 | 02/14/2016 | 01:25:29 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000289d7bf5620000410f66f02ffff
+-------------------------------------------
+Tue Feb 16 01:25:02 CST 2016 SEL script capture 
+   1 | 02/15/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020229c15620000410f66f02ffff
+-------------------------------------------
+Wed Feb 17 01:25:02 CST 2016 SEL script capture 
+   1 | 02/16/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002877ac25620000410f66f02ffff
+-------------------------------------------
+Thu Feb 18 01:25:01 CST 2016 SEL script capture 
+   1 | 02/17/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000202ccc35620000410f66f02ffff
+-------------------------------------------
+Fri Feb 19 01:25:01 CST 2016 SEL script capture 
+   1 | 02/18/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002871dc55620000410f66f02ffff
+-------------------------------------------
+Sat Feb 20 01:25:01 CST 2016 SEL script capture 
+   1 | 02/19/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002026fc65620000410f66f02ffff
+-------------------------------------------
+Sun Feb 21 01:25:02 CST 2016 SEL script capture 
+   1 | 02/20/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000287c0c75620000410f66f02ffff
+-------------------------------------------
+Mon Feb 22 01:25:02 CST 2016 SEL script capture 
+   1 | 02/21/2016 | 01:25:19 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002ff11c95620000410f66f02ffff
+-------------------------------------------
+Tue Feb 23 01:25:01 CST 2016 SEL script capture 
+   1 | 02/22/2016 | 01:25:23 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028363ca5620000410f66f02ffff
+-------------------------------------------
+Wed Feb 24 01:25:01 CST 2016 SEL script capture 
+   1 | 02/23/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000207b5cb5620000410f66f02ffff
+-------------------------------------------
+Thu Feb 25 01:25:01 CST 2016 SEL script capture 
+   1 | 02/24/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028506cd5620000410f66f02ffff
+-------------------------------------------
+Fri Feb 26 01:25:02 CST 2016 SEL script capture 
+   1 | 02/25/2016 | 01:25:23 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020358ce5620000410f66f02ffff
+-------------------------------------------
+Sat Feb 27 01:25:02 CST 2016 SEL script capture 
+   1 | 02/26/2016 | 01:25:18 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100027ea9cf5620000410f66f02ffff
+-------------------------------------------
+Sun Feb 28 01:25:01 CST 2016 SEL script capture 
+   1 | 02/27/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000205fbd05620000410f66f02ffff
+-------------------------------------------
+Mon Feb 29 01:25:02 CST 2016 SEL script capture 
+   1 | 02/28/2016 | 01:25:21 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002814cd25620000410f66f02ffff
+-------------------------------------------
+Tue Mar 1 01:25:01 CST 2016 SEL script capture 
+   1 | 02/29/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002059ed35620000410f66f02ffff
+-------------------------------------------
+Wed Mar 2 01:25:02 CST 2016 SEL script capture 
+   1 | 03/01/2016 | 01:25:18 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100027eefd45620000410f66f02ffff
+-------------------------------------------
+Thu Mar 3 01:25:01 CST 2016 SEL script capture 
+   1 | 03/02/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020541d65620000410f66f02ffff
+-------------------------------------------
+Fri Mar 4 01:25:02 CST 2016 SEL script capture 
+   1 | 03/03/2016 | 01:25:22 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100028292d75620000410f66f02ffff
+-------------------------------------------
+Sat Mar 5 01:25:01 CST 2016 SEL script capture 
+   1 | 03/04/2016 | 01:25:27 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000207e4d85620000410f66f02ffff
+-------------------------------------------
+Sun Mar 6 01:25:01 CST 2016 SEL script capture 
+   1 | 03/05/2016 | 01:25:18 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100027e35da5620000410f66f02ffff
+-------------------------------------------
+Mon Mar 7 01:25:02 CST 2016 SEL script capture 
+   1 | 03/06/2016 | 01:25:24 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 0100020487db5620000410f66f02ffff
+-------------------------------------------
+Tue Mar 8 01:25:01 CST 2016 SEL script capture 
+   1 | 03/07/2016 | 01:25:25 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 01000285d8dc5620000410f66f02ffff
+-------------------------------------------
+Wed Mar 9 01:25:02 CST 2016 SEL script capture 
+   1 | 03/08/2016 | 01:25:21 | Event Logging Disabled #0xf6 | Log area reset/cleared | Asserted
+SEL Entry: 010002012ade5620000410f66f02ffff
+-------------------------------------------

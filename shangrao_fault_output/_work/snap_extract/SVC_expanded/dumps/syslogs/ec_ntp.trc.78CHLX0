@@ -1,0 +1,2 @@
+/compass/ec_ntp  701 2016-03-09 16:31:02 DEBUG: run_process_safe: launched pid 2278
+/compass/ec_ntp  262 2016-03-09 16:31:02 ABEND: (01) "/data/etc/ntp.conf not found"

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+xmlns="http://ibm.com/storage/management/performance/api/2006/01/nodeStats"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2006/01/nodeStats schema/SVCPerfStatsN.xsd" scope="node" id="SVC_1_78CHLX0" cluster="SVC_140.2.253.224" node_id="0x0000000000000001" cluster_id="0x000002032000888a" sizeUnits="1B" timeUnits="msec" contains="nodeStats" timestamp="2016-03-09 13:50:30" timezone="GMT+8:00">
+<cpu busy="221425042" limited="0" system="221425042" comp="0"/>
+<cpu_core id="0" system="243407675" comp="0"/>
+<cpu_core id="1" system="255739054" comp="0"/>
+<cpu_core id="2" system="244986034" comp="0"/>
+<cpu_core id="3" system="187413627" comp="0"/>
+<cpu_core id="4" system="206581782" comp="0"/>
+<cpu_core id="5" system="193565725" comp="0"/>
+<cpu_core id="6" system="218281269" comp="0"/>
+<cpu_core id="7" system="0" comp="0"/>
+<node id="SVC_2_78CHNG0" cluster="SVC_140.2.253.224" node_id="0x0000000000000002" cluster_id="0x000002032000888a" 
+ro="12034437278" wo="12395037112" rb="28522689564081" wb="54462661476485" 
+re="7046359" we="1219487041" rq="215028298" wq="1717902978"/>
+<node id="SVC_3_78CFWN0" cluster="TC_SVC_140.2.1.7" node_id="0x0000000000000001" cluster_id="0x0000020320208304" 
+ro="915510326" wo="890978979" rb="83201053285" wb="10096311801786" 
+re="1143568" we="399034767" rq="14141180" wq="494850296"/>
+<node id="SVC_4_78CFWC0" cluster="TC_SVC_140.2.1.7" node_id="0x0000000000000002" cluster_id="0x0000020320208304" 
+ro="922345519" wo="896670262" rb="148253362700" wb="10096714070304" 
+re="1152285" we="399630278" rq="13431688" wq="493133132"/>
+<uca><ca dav="245" dcn="130466" dmx="4426" dmn="74"
+sav="73" scn="95005" smx="158181" smn="3"
+pav="0" pcn="0" pmx="0" pmn="0"
+wfav="0" wfmx="2" wfmn="0"
+rfav="0" rfmx="1" rfmn="0"
+pp="0"
+hpt="0" ppt="0" opt="0" npt="0"
+apt="0" cpt="0" bpt="0" hrpt="0"
+/><partition id="0" mdg="6"><ca dav="159" dcn="44610" dmx="2297" dmn="76"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="1" mdg="3"><ca dav="371" dcn="51999" dmx="4426" dmn="74"
+fav="0" fmx="9" fmn="0"
+pp="0"/></partition>
+<partition id="2" mdg="2"><ca dav="181" dcn="25982" dmx="2886" dmn="85"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="3" mdg="1"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="4" mdg="4"><ca dav="114" dcn="7875" dmx="3365" dmn="77"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="5" mdg="5"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="6" mdg="0"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="7" mdg="7"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="8" mdg="8"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+<partition id="9" mdg="9"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+pp="0"/></partition>
+</uca><lca><ca dav="504" dcn="7267" dmx="58304" dmn="143"
+sav="763" scn="7053" smx="158166" smn="65"
+pav="1031" pcn="4739" pmx="24560" pmn="90"
+wfav="33" wfmx="35" wfmn="33"
+rfav="79" rfmx="80" rfmn="79"
+pp="0"
+hpt="0" ppt="0" opt="0" npt="0"
+apt="0" cpt="0" bpt="0" hrpt="0"
+/><partition id="0" mdg="6"><ca dav="556" dcn="1887" dmx="12133" dmn="155"
+fav="33" fmx="35" fmn="33"
+dfav="4" dfmx="12" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="1" mdg="3"><ca dav="448" dcn="3888" dmx="18541" dmn="143"
+fav="34" fmx="37" fmn="34"
+dfav="4" dfmx="12" dfmn="1"
+dtav="1" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="2" mdg="2"><ca dav="399" dcn="927" dmx="19059" dmn="149"
+fav="29" fmx="32" fmn="27"
+dfav="3" dfmx="12" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="3" mdg="1"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+dfav="0" dfmx="0" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="4" mdg="4"><ca dav="961" dcn="493" dmx="58304" dmn="144"
+fav="33" fmx="35" fmn="33"
+dfav="4" dfmx="12" dfmn="1"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="5" mdg="5"><ca dav="388" dcn="72" dmx="863" dmn="173"
+fav="0" fmx="0" fmn="0"
+dfav="3" dfmx="10" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="6" mdg="0"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+dfav="0" dfmx="0" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="7" mdg="7"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="3" fmx="4" fmn="3"
+dfav="0" dfmx="0" dfmn="0"
+dtav="0" dtmx="5" dtmn="0"
+pp="0"/></partition>
+<partition id="8" mdg="8"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+dfav="0" dfmx="0" dfmn="0"
+dtav="0" dtmx="0" dtmn="0"
+pp="0"/></partition>
+<partition id="9" mdg="9"><ca dav="0" dcn="0" dmx="0" dmn="0"
+fav="0" fmx="0" fmn="0"
+dfav="0" dfmx="0" dfmn="0"
+dtav="0" dtmx="0" dtmn="0"
+pp="0"/></partition>
+</lca><port id="1"
+type="FC"
+type_id="1"
+wwpn="0x500507680c114445"
+fc_wwpn="0x500507680c114445"
+fcoe_wwpn=""
+sas_wwn=""
+iqn=""
+hbt="10813448535804" hbr="4458945227360" het="0" her="433846716"
+cbt="7101833470008" cbr="8685737531706" cet="184925294" cer="0"
+lnbt="8559859869839" lnbr="4187419465272" lnet="4425610756" lner="4344394634"
+rmbt="0" rmbr="0" rmet="0" rmer="0"
+lf="0" lsy="0" lsi="0" pspe="0"
+itw="52" icrc="0" bbcz="80"
+/>
+<port id="2"
+type="FC"
+type_id="2"
+wwpn="0x500507680c124445"
+fc_wwpn="0x500507680c124445"
+fcoe_wwpn=""
+sas_wwn=""
+iqn=""
+hbt="8951037530280" hbr="5711816295680" het="0" her="631278665"
+cbt="8052259584512" cbr="9667713170747" cet="213412154" cer="0"
+lnbt="6520459901599" lnbr="4128723054233" lnet="2197603573" lner="1973388023"
+rmbt="8500614759604" rmbr="67039862924" rmet="3791706983" rmer="3792900664"
+lf="0" lsy="0" lsi="0" pspe="0"
+itw="190" icrc="0" bbcz="80"
+/>
+<port id="3"
+type="FC"
+type_id="3"
+wwpn="0x500507680c214445"
+fc_wwpn="0x500507680c214445"
+fcoe_wwpn=""
+sas_wwn=""
+iqn=""
+hbt="8140172805898" hbr="4927139001640" het="0" her="542329686"
+cbt="4424233558156" cbr="6493126472767" cet="132616575" cer="0"
+lnbt="6831470613495" lnbr="4645854118879" lnet="2246672798" lner="2014932482"
+rmbt="8753008198068" rmbr="63733286832" rmet="3775947493" rmer="3789857341"
+lf="1" lsy="286" lsi="1" pspe="0"
+itw="1208" icrc="0" bbcz="80"
+/>
+<port id="4"
+type="FC"
+type_id="4"
+wwpn="0x500507680c224445"
+fc_wwpn="0x500507680c224445"
+fcoe_wwpn=""
+sas_wwn=""
+iqn=""
+hbt="8673152477591" hbr="4463392144772" het="0" her="337164476"
+cbt="3472330609832" cbr="5512296009579" cet="104125001" cer="0"
+lnbt="4919714266309" lnbr="2729024254189" lnet="1038841903" lner="932445004"
+rmbt="0" rmbr="0" rmet="0" rmer="0"
+lf="1" lsy="199" lsi="1" pspe="0"
+itw="873" icrc="0" bbcz="80"
+/>
+<port id="5"
+type="iSCSI"
+type_id="1"
+wwpn="0x0000000000000000"
+fc_wwpn=""
+fcoe_wwpn=""
+sas_wwn=""
+iqn="iqn.1986-03.com.ibm:2145.svc140.2.253.224.svc178chlx0"
+hbt="0" hbr="0" het="0" her="0"
+cbt="0" cbr="0" cet="0" cer="0"
+lnbt="0" lnbr="0" lnet="0" lner="0"
+rmbt="0" rmbr="0" rmet="0" rmer="0"
+/>
+<port id="6"
+type="iSCSI"
+type_id="2"
+wwpn="0x0000000000000000"
+fc_wwpn=""
+fcoe_wwpn=""
+sas_wwn=""
+iqn="iqn.1986-03.com.ibm:2145.svc140.2.253.224.svc278chng0"
+hbt="0" hbr="0" het="0" her="0"
+cbt="0" cbr="0" cet="0" cer="0"
+lnbt="0" lnbr="0" lnet="0" lner="0"
+rmbt="0" rmbr="0" rmet="0" rmer="0"
+/>
+<port id="7"
+type="IPREP"
+type_id="1"
+wwpn="0x0000000000000000"
+fc_wwpn=""
+fcoe_wwpn=""
+sas_wwn=""
+iqn=""
+hbt="0" hbr="0" het="0" her="0"
+cbt="0" cbr="0" cet="0" cer="0"
+lnbt="0" lnbr="0" lnet="0" lner="0"
+rmbt="0" rmbr="0" rmet="0" rmer="0"
+iptx="0" iprx="0" ipre="0" ipsz="0"
+ipbz="0" iprt="0"
+/>
+</diskStatsColl>

@@ -1,0 +1,19 @@
+
+***************  KEYMGR INITIALISATION  ***************
+
+Timestamp  : Thu Oct  1 04:07:39 2015
+Host       : 000000
+PID        : 12550
+Parent PID : 1
+Thu Oct  1 04:07:39 2015: Running APT
+Thu Oct  1 04:07:42 2015: Passed APT
+Thu Oct  1 04:07:42 2015: MQ:Sending Initialization
+Thu Oct  1 04:07:42 2015: MQ:Sent init command using 15021687F9B
+Thu Oct  1 04:07:55 2015: MQ:Consumed an EC command during INIT
+Thu Oct  1 04:07:55 2015: MQ:OP_PLMAIN_EXIT received
+Thu Oct  1 04:07:55 2015: MQ:Sending Initialization
+Thu Oct  1 04:07:55 2015: MQ:Sent init command using 150216A6CA0
+Thu Oct  1 04:08:05 2015: MQ:Consumed an EC command during INIT
+Thu Oct  1 04:08:05 2015: MQ:OP_NO_LONGER_CONFIG_NODE received
+Thu Oct  1 04:08:27 2015: MQ:Consumed an EC command during INIT
+Thu Oct  1 04:08:27 2015: MQ:OP_SHUTDOWN received

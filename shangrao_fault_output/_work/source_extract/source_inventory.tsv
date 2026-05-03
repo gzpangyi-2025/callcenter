@@ -1,0 +1,15 @@
+source_file	relative_path	kind	output_file	chars	status
+snap.rar	snap.rar	archive-listing	extracted_text/snap.txt	113	ok
+上饶银行存储中断故障处理报告.docx	上饶银行存储中断故障处理报告.docx	docx-text	extracted_text/上饶银行存储中断故障处理报告.txt	2672	ok
+上饶银行存储中断故障处理报告1.docx	上饶银行存储中断故障处理报告1.docx	docx-text	extracted_text/上饶银行存储中断故障处理报告1.txt	1430	ok
+上饶银行存储中断故障日志分析报告.docx	上饶银行存储中断故障日志分析报告.docx	docx-text	extracted_text/上饶银行存储中断故障日志分析报告.txt	1568	ok
+上饶银行存储中断故障日志分析报告2.docx	上饶银行存储中断故障日志分析报告2.docx	docx-text	extracted_text/上饶银行存储中断故障日志分析报告2.txt	1569	ok
+上饶银行存储中断故障日志分析报告20160311.docx	上饶银行存储中断故障日志分析报告20160311.docx	docx-text	extracted_text/上饶银行存储中断故障日志分析报告20160311.txt	1082	ok
+关于上饶银行支付系统业务中断事件的报告-银监局.doc	关于上饶银行支付系统业务中断事件的报告-银监局.doc	doc-textutil	extracted_text/关于上饶银行支付系统业务中断事件的报告-银监局.txt	3555	ok
+关于上饶银行支付系统业务中断事件的报告-银监局徐冰.doc	关于上饶银行支付系统业务中断事件的报告-银监局徐冰.doc	doc-textutil	extracted_text/关于上饶银行支付系统业务中断事件的报告-银监局徐冰.txt	3108	ok
+关于上饶银行支付系统业务中断事件的报告20160304.doc	关于上饶银行支付系统业务中断事件的报告20160304.doc	doc-textutil	extracted_text/关于上饶银行支付系统业务中断事件的报告20160304.txt	3566	ok
+截图解释.pptx	截图解释.pptx	pptx-text	extracted_text/截图解释.txt	159	ok
+系统变更申请表.docx	系统变更申请表.docx	docx-text	extracted_text/系统变更申请表.txt	281	ok
+系统变更申请表_SVC磁盘镜像.docx	系统变更申请表_SVC磁盘镜像.docx	docx-text	extracted_text/系统变更申请表_SVC磁盘镜像.txt	942	ok
+（16）关于上饶银行付系统业务中断事件的报告-银监局.doc	（16）关于上饶银行付系统业务中断事件的报告-银监局.doc	doc-textutil	extracted_text/_16_关于上饶银行付系统业务中断事件的报告-银监局.txt	1952	ok
+（16）关于上饶银行支付系统业务中断事件的报告-银监局.doc	（16）关于上饶银行支付系统业务中断事件的报告-银监局.doc	doc-textutil	extracted_text/_16_关于上饶银行支付系统业务中断事件的报告-银监局.txt	3596	ok

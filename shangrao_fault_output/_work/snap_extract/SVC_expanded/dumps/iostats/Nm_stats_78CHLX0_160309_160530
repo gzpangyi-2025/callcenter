@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+xmlns="http://ibm.com/storage/management/performance/api/2003/04/diskStats"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2003/04/diskStats schema/SVCPerfStats.xsd" scope="node" id="SVC_1_78CHLX0" cluster="SVC_140.2.253.224" node_id="0x0000000000000001" cluster_id="0x000002032000888a" sizeUnits="512B" timeUnits="msec" contains="managedDiskStats" timestamp="2016-03-09 16:05:30" timezone="GMT+8:00">
+<mdsk idx="0"
+ id="VM_mdisk1" ro="37446529" wo="4379818" rb="1845742235" wb="1498540664" re="149433075" we="2585594" rq="149702850" wq="2640797"
+ ure="149606055105" uwe="2588587471" urq="149876142390" uwq="2643854659"
+ pre="264412" pwe="6923" pro="264424" pwo="6934">
+<ca dav="597" dtav="8" dfav="3" />
+</mdsk>
+<mdsk idx="1"
+ id="VM_mdisk2" ro="36711560" wo="3280199" rb="1787135996" wb="1218275119" re="148073475" we="2346059" rq="148322625" wq="2380526"
+ ure="148244881265" uwe="2348775421" urq="148494319675" uwq="2383282521"
+ pre="8778" pwe="19033" pro="8793" pwo="19040">
+<ca dav="574" dtav="9" dfav="3" />
+</mdsk>
+<mdsk idx="2"
+ id="VM_mdisk3" ro="38521239" wo="3958538" rb="2131788989" wb="1444727587" re="150086475" we="2723033" rq="150372750" wq="2766362"
+ ure="150260211465" uwe="2726185675" urq="150546817850" uwq="2769564858"
+ pre="9439" pwe="530" pro="9447" pwo="537">
+<ca dav="479" dtav="7" dfav="3" />
+</mdsk>
+<mdsk idx="3"
+ id="VM_mdisk4" ro="36666965" wo="3301789" rb="1829749431" wb="1271151693" re="147864750" we="2299979" rq="148138650" wq="2344601"
+ ure="148035914650" uwe="2302641745" urq="148310131710" uwq="2347315679"
+ pre="7492" pwe="432" pro="7495" pwo="437">
+<ca dav="302" dtav="7" dfav="1" />
+</mdsk>
+<mdsk idx="4"
+ id="VM_mdisk5" ro="37432958" wo="3878391" rb="1928421728" wb="1382571037" re="149810925" we="2502664" rq="150065850" wq="2549627"
+ ure="149984342495" uwe="2505561522" urq="150239562590" uwq="2552578714"
+ pre="209" pwe="7575" pro="217" pwo="7580">
+<ca dav="332" dtav="10" dfav="2" />
+</mdsk>
+<mdsk idx="5"
+ id="VM_mdisk6" ro="37396129" wo="3443259" rb="1877813134" wb="1238743134" re="147029850" we="2074625" rq="147308700" wq="2120045"
+ ure="147200048190" uwe="2077026896" urq="147479220980" uwq="2122499476"
+ pre="7301" pwe="2215" pro="7312" pwo="2226">
+<ca dav="335" dtav="10" dfav="2" />
+</mdsk>
+<mdsk idx="6"
+ id="DMZ_mdisk1" ro="57159155" wo="14588330" rb="9623904873" wb="5000472330" re="139137900" we="7650225" rq="139788000" wq="7844925"
+ ure="139298962660" uwe="7659080715" urq="139949815200" uwq="7854006095"
+ pre="11516" pwe="15373" pro="11523" pwo="15383">
+<ca dav="510" dtav="11" dfav="3" />
+</mdsk>
+<mdsk idx="7"
+ id="DMZ_mdisk2" ro="57360046" wo="14097520" rb="10938235943" wb="4868842118" re="137467275" we="7288050" rq="138203175" wq="7481100"
+ ure="137626403785" uwe="7296486470" urq="138363155645" uwq="7489759940"
+ pre="22117" pwe="2960" pro="22120" pwo="2964">
+<ca dav="307" dtav="9" dfav="1" />
+</mdsk>
+<mdsk idx="8"
+ id="DMZ_mdisk3" ro="52188644" wo="14474744" rb="8334817741" wb="5097116252" re="134381775" we="7599900" rq="135060750" wq="7806975"
+ ure="134537332085" uwe="7608697460" urq="135217093050" uwq="7816012165"
+ pre="142395" pwe="2990" pro="142406" pwo="2997">
+<ca dav="493" dtav="9" dfav="3" />
+</mdsk>
+<mdsk idx="9"
+ id="DMZ_mdisk4" ro="50185502" wo="14671349" rb="8030216267" wb="5230709088" re="132562650" we="7733550" rq="133372800" wq="7961250"
+ ure="132716101310" uwe="7742502170" urq="133527189120" uwq="7970465750"
+ pre="9991" pwe="0" pro="9998" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="10"
+ id="unused_mdisk1" ro="0" wo="0" rb="0" wb="0" re="0" we="0" rq="0" wq="0"
+ ure="0" uwe="0" urq="0" uwq="0"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="11"
+ id="Other_mdisk1" ro="11798367" wo="11131245" rb="1833575760" wb="4926164171" re="9378600" we="42876075" rq="9496575" wq="42978375"
+ ure="9389456440" uwe="42925707305" urq="9507568005" uwq="43028125725"
+ pre="9040" pwe="14784" pro="9054" pwo="14796">
+<ca dav="393" dtav="11" dfav="3" />
+</mdsk>
+<mdsk idx="12"
+ id="DB_mdisk1" ro="28393657" wo="9201592" rb="3380167731" wb="2866253434" re="19228275" we="11304975" rq="19530225" wq="11421300"
+ ure="19250533185" uwe="11318061365" urq="19552832715" uwq="11434521020"
+ pre="18323" pwe="11354" pro="18329" pwo="11365">
+<ca dav="342" dtav="12" dfav="4" />
+</mdsk>
+<mdsk idx="13"
+ id="DB_mdisk2" ro="27847216" wo="9369300" rb="3534086538" wb="2902577010" re="19102875" we="10900725" rq="19493925" wq="11013750"
+ ure="19124988025" uwe="10913343415" urq="19516490695" uwq="11026499250"
+ pre="20387" pwe="380" pro="20398" pwo="389">
+<ca dav="296" dtav="4" dfav="1" />
+</mdsk>
+<mdsk idx="14"
+ id="Test_mdisk1" ro="40960" wo="40960" rb="20971520" wb="20971520" re="25529" we="73461" rq="25949" wq="73819"
+ ure="25558932" uwe="73546654" urq="25979863" uwq="73905222"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="15"
+ id="v7k3_vm_mdisk1" ro="410307" wo="31639" rb="210012344" wb="15658683" re="261708" we="1108438" rq="265494" wq="1273439"
+ ure="262011381" uwe="1109721532" urq="265802306" uwq="1274914059"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="16"
+ id="v7k3_vm_mdisk2" ro="410418" wo="39962" rb="210080560" wb="18400292" re="266259" we="99448" rq="269844" wq="1082090"
+ ure="266567507" uwe="99563999" urq="270156529" uwq="1083342939"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="17"
+ id="v7k3_vm_mdisk4" ro="613921" wo="32302" rb="314312920" wb="16535552" re="388835" we="1127752" rq="393350" wq="1292283"
+ ure="389285712" uwe="1129057954" urq="393805860" uwq="1293779365"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="18"
+ id="v7k3_vm_mdisk3" ro="204213" wo="35066" rb="104532528" wb="17917618" re="132131" we="67323" rq="133704" wq="68586"
+ ure="132284772" uwe="67401581" urq="133859241" uwq="68665665"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="19"
+ id="v7k3_vm_mdisk6" ro="2357" wo="42080" rb="1152632" wb="21532169" re="23761" we="3995475" rq="23777" wq="4158825"
+ ure="23789226" uwe="4000100065" urq="23805460" uwq="4163639155"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="20"
+ id="v7k3_vm_mdisk5" ro="1632" wo="43566" rb="821456" wb="22298630" re="1296" we="149694" rq="1307" wq="1937235"
+ ure="1297681" uwe="149867523" urq="1308736" uwq="1939477525"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="21"
+ id="v7k3_DMZ_mdisk2" ro="2980" wo="1571342" rb="1478792" wb="804518912" re="1565" we="5170275" rq="1581" wq="5344350"
+ ure="1567056" uwe="5176259985" urq="1583693" uwq="5350536490"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="22"
+ id="v7k3_DMZ_mdisk1" ro="1531" wo="1566696" rb="445879" wb="800149427" re="865" we="1250580" rq="875" wq="2070127"
+ ure="866844" uwe="1252027902" urq="876475" uwq="2072523585"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="23"
+ id="v7k3_DMZ_mdisk4" ro="614969" wo="1572065" rb="314837752" wb="804411920" re="397960" we="6250200" rq="403493" wq="6260100"
+ ure="398421068" uwe="6257435080" urq="403961025" uwq="6267346540"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="24"
+ id="v7k3_DMZ_mdisk3" ro="0" wo="1572863" rb="0" wb="804680255" re="0" we="2354698" rq="0" wq="3012492"
+ ure="0" uwe="2357424165" urq="0" uwq="3015979616"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="25"
+ id="mdisk0" ro="0" wo="0" rb="0" wb="0" re="0" we="0" rq="0" wq="0"
+ ure="0" uwe="0" urq="0" uwq="0"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="26"
+ id="v7k3_other_mdisk1" ro="2067971" wo="2579841" rb="1058448409" wb="1320077254" re="3696825" we="27592950" rq="3789225" wq="27944400"
+ ure="3701104355" uwe="27624890930" urq="3793611315" uwq="27976747760"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+<mdsk idx="27"
+ id="v7k3_DB_mdisk1" ro="0" wo="1431542" rb="0" wb="708919650" re="0" we="15845775" rq="0" wq="16183200"
+ ure="0" uwe="15864117685" urq="0" uwq="16201933280"
+ pre="0" pwe="725" pro="0" pwo="729">
+<ca dav="411" dtav="6" dfav="2" />
+</mdsk>
+<mdsk idx="28"
+ id="v7k3_DB_mdisk2" ro="0" wo="1439788" rb="0" wb="713048623" re="0" we="15068625" rq="0" wq="15717900"
+ ure="0" uwe="15086068075" urq="0" uwq="15736094660"
+ pre="0" pwe="654" pro="0" pwo="656">
+<ca dav="333" dtav="5" dfav="2" />
+</mdsk>
+<mdsk idx="29"
+ id="v7k3_test_mdisk1" ro="0" wo="0" rb="0" wb="0" re="0" we="0" rq="0" wq="0"
+ ure="0" uwe="0" urq="0" uwq="0"
+ pre="0" pwe="0" pro="0" pwo="0">
+<ca dav="0" dtav="0" dfav="0" />
+</mdsk>
+</diskStatsColl>
