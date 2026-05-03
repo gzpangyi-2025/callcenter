@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { message } from 'antd';
+import COS from 'cos-js-sdk-v5';
 import type { ApiResponse, PaginatedData } from '../types/api';
 import type { User, UpdateUserInfoParam } from '../types/user';
 import type { Ticket, CreateTicketDto, UpdateTicketDto, TicketQueryParams, TicketBadgeSummary } from '../types/ticket';
@@ -97,12 +98,57 @@ export const ticketsAPI = {
 
 // Files API
 export const filesAPI = {
-  upload: (file: File): Promise<ApiResponse<any>> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    return api.post('/files/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+  upload: async (file: File): Promise<ApiResponse<any>> => {
+    try {
+      const { data: credResult } = await api.get('/files/upload-credentials', { params: { filename: file.name } });
+      const { provider, credentials, startTime, expiredTime, bucket, region, key } = credResult;
+
+      if (provider === 'local') {
+        const formData = new FormData();
+        formData.append('file', file);
+        return api.post('/files/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
+      const cos = new COS({
+        getAuthorization: (_options, callback) => {
+          callback({
+            TmpSecretId: credentials.tmpSecretId,
+            TmpSecretKey: credentials.tmpSecretKey,
+            SecurityToken: credentials.sessionToken,
+            StartTime: startTime,
+            ExpiredTime: expiredTime,
+          });
+        }
+      });
+
+      await new Promise((resolve, reject) => {
+        cos.putObject({
+          Bucket: bucket,
+          Region: region,
+          Key: key,
+          Body: file,
+        }, function(err, data) {
+           if (err) reject(err);
+           else resolve(data);
+        });
+      });
+
+      return await api.post('/files/confirm', {
+        key,
+        originalName: file.name,
+        size: file.size,
+        mimetype: file.type || 'application/octet-stream',
+      });
+    } catch (e) {
+      console.warn('COS direct upload failed, falling back to standard upload...', e);
+      const formData = new FormData();
+      formData.append('file', file);
+      return api.post('/files/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
   },
 };
 

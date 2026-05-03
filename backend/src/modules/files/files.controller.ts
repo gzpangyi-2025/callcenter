@@ -9,6 +9,7 @@ import {
   Param,
   Query,
   Res,
+  Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -83,6 +84,39 @@ export class FilesController {
     }
 
     res.redirect(302, url);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('upload-credentials')
+  async getUploadCredentials(@Query('filename') filename: string) {
+    if (!filename) {
+      throw new BadRequestException('请提供文件名');
+    }
+    const uniqueName = `${uuidv4()}${extname(filename)}`;
+    const result = await this.filesService.generateUploadCredentials(uniqueName);
+    return {
+      code: 0,
+      data: result,
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('confirm')
+  async confirmUpload(
+    @Body('key') key: string,
+    @Body('originalName') originalName: string,
+    @Body('size') size: number,
+    @Body('mimetype') mimetype: string,
+  ) {
+    if (!key || !originalName) {
+      throw new BadRequestException('参数不完整');
+    }
+    const result = await this.filesService.confirmUpload(key, originalName, size, mimetype);
+    return {
+      code: 0,
+      message: '确认成功',
+      data: result,
+    };
   }
 
   @UseGuards(AuthGuard('jwt'))

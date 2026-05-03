@@ -2,8 +2,10 @@ import {
   Injectable,
   Logger,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import COS = require('cos-nodejs-sdk-v5');
+import STS = require('qcloud-cos-sts');
 import { SettingsService } from '../settings/settings.service';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -386,5 +388,100 @@ export class FilesService {
       }
     }
     return { deleted, failed };
+  }
+
+  /**
+   * 生成前端直传 COS 的临时凭证
+   */
+  async generateUploadCredentials(filename: string) {
+    const config = await this.getStorageConfig();
+    if (config.provider === 'local') {
+      return { provider: 'local' };
+    }
+
+    if (!config.secretId || !config.secretKey || !config.bucket || !config.region) {
+      throw new InternalServerErrorException('COS 配置异常');
+    }
+
+    // 解析 appId
+    const shortBucketName = config.bucket.substr(0, config.bucket.lastIndexOf('-'));
+    const appId = config.bucket.substr(config.bucket.lastIndexOf('-') + 1);
+
+    const policy = {
+      version: '2.0',
+      statement: [
+        {
+          action: ['name/cos:PutObject'],
+          effect: 'allow',
+          resource: [
+            `qcs::cos:${config.region}:uid/${appId}:${config.bucket}/${filename}`,
+          ],
+        },
+      ],
+    };
+
+    return new Promise((resolve, reject) => {
+      STS.getCredential(
+        {
+          secretId: config.secretId,
+          secretKey: config.secretKey,
+          policy: policy,
+          durationSeconds: 1800, // 30 mins
+        },
+        (err: any, credential: any) => {
+          if (err) {
+            this.logger.error(`STS Error: ${err.message}`, err);
+            reject(new InternalServerErrorException('获取上传凭证失败'));
+          } else {
+            resolve({
+              provider: 'cos',
+              credentials: credential.credentials,
+              startTime: credential.startTime,
+              expiredTime: credential.expiredTime,
+              bucket: config.bucket,
+              region: config.region,
+              key: filename,
+            });
+          }
+        },
+      );
+    });
+  }
+
+  /**
+   * 确认 COS 直传文件
+   */
+  async confirmUpload(key: string, originalName: string, size: number, mimetype: string) {
+    const config = await this.getStorageConfig();
+    if (config.provider === 'local') {
+      throw new BadRequestException('本地存储不支持直传确认');
+    }
+
+    const cosContext = await this.getCosInstance();
+    if (!cosContext) throw new InternalServerErrorException('COS 配置异常');
+
+    return new Promise((resolve, reject) => {
+      cosContext.cos.headObject(
+        {
+          Bucket: cosContext.bucket,
+          Region: cosContext.region,
+          Key: key,
+        },
+        (err: any, _data: any) => {
+          if (err) {
+            this.logger.error(`COS HeadObject Error: ${err.message}`, err);
+            reject(new BadRequestException('未在云端找到该文件，上传可能未完成'));
+          } else {
+            resolve({
+              url: `/api/files/static/${key}`,
+              originalName: originalName,
+              filename: key,
+              size: size,
+              mimetype: mimetype,
+            });
+          }
+        },
+      );
+    });
   }
 }
