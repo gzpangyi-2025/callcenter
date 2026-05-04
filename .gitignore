@@ -33,3 +33,10 @@ coverage/
 # Temp
 *.tmp
 SecretKey.csv
+
+# Backups (may contain database dumps with API keys)
+backend/backups/
+backups/
+
+# Uploads (user-generated content, not for VCS)
+uploads/
