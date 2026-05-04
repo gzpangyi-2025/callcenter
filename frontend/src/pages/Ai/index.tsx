@@ -60,8 +60,11 @@ const AiPage: React.FC = () => {
     try {
       const res: any = await aiAPI.listTasks({ page: p, limit: 15, status: s });
       if (res?.data) {
-        setTasks(res.data.items || []);
-        setTotal(res.data.total || 0);
+        // Worker returns: { success, data: Task[], total, page, limit }
+        // Axios wraps it so the actual payload is in res.data
+        const payload = res.data;
+        setTasks(Array.isArray(payload.data) ? payload.data : (payload.items || []));
+        setTotal(payload.total || 0);
       }
     } catch {
       // global interceptor handles error display

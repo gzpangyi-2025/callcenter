@@ -348,7 +348,10 @@ export const aiAPI = {
     limit?: number;
     status?: string;
     all?: string;
-  }): Promise<any> => api.get('/ai/tasks', { params }),
+  }): Promise<any> => api.get('/ai/tasks', {
+    params: { ...params, _t: Date.now() },
+    headers: { 'Cache-Control': 'no-cache' },
+  }),
 
   /** 获取单个任务详情 */
   getTask: (id: string): Promise<any> => api.get(`/ai/tasks/${id}`),
