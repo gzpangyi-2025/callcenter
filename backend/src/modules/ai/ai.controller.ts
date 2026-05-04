@@ -114,4 +114,16 @@ export class AiController {
   ) {
     return this.aiService.proxyDownload(taskId, filename, res);
   }
+
+  /**
+   * GET /api/ai/tasks/:id/logs/stream
+   * SSE 代理 — 将 codex-worker 的实时日志流转发给前端。
+   */
+  @Get('tasks/:id/logs/stream')
+  async streamTaskLogs(
+    @Param('id') taskId: string,
+    @Res() res: express.Response,
+  ) {
+    return this.aiService.proxyLogStream(taskId, res);
+  }
 }

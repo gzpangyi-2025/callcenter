@@ -187,4 +187,51 @@ export class AiService {
     this.logger.error(`[${context}] Worker error: ${err.message}`);
     throw new ServiceUnavailableException('AI 服务请求失败');
   }
+
+  /**
+   * Proxy SSE log stream from codex-worker to the browser.
+   * Sets up proper SSE headers and pipes the upstream response directly.
+   */
+  async proxyLogStream(taskId: string, res: Response) {
+    res.set({
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no', // Disable Nginx buffering for SSE
+    });
+    res.flushHeaders();
+
+    try {
+      const baseURL = this.config.get<string>(
+        'CODEX_WORKER_URL',
+        'http://43.130.240.106:3100',
+      );
+      const apiKey = this.config.get<string>('CODEX_WORKER_API_KEY', '');
+
+      const upstream = await axios.get(
+        `${baseURL}/api/tasks/${taskId}/logs/stream`,
+        {
+          responseType: 'stream',
+          timeout: 0, // No timeout for SSE
+          headers: {
+            Accept: 'text/event-stream',
+            ...(apiKey ? { 'X-API-Key': apiKey } : {}),
+          },
+        },
+      );
+
+      // Pipe upstream SSE directly to the client
+      upstream.data.pipe(res);
+
+      // Clean up when client disconnects
+      res.on('close', () => {
+        upstream.data.destroy();
+      });
+    } catch (err: any) {
+      this.logger.error(`[proxyLogStream] Failed for task ${taskId}: ${err.message}`);
+      // Write an error event and close
+      res.write(`data: ${JSON.stringify({ error: 'Failed to connect to log stream' })}\n\n`);
+      res.end();
+    }
+  }
 }

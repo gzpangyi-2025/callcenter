@@ -11,6 +11,7 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { aiAPI } from '../../services/api';
+import TaskLogPanel from './components/TaskLogPanel';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/zh-cn';
@@ -527,7 +528,7 @@ const AiPage: React.FC = () => {
         open={detailOpen}
         onCancel={() => { setDetailOpen(false); setSelectedTask(null); setTaskFiles([]); }}
         footer={null}
-        width={640}
+        width={720}
       >
         {selectedTask && (
           <>
@@ -577,6 +578,9 @@ const AiPage: React.FC = () => {
                 </Paragraph>
               </Card>
             )}
+
+            {/* Real-time log panel — shown for running/pending tasks and completed tasks with detail */}
+            <TaskLogPanel taskId={selectedTask.id} taskStatus={selectedTask.status} />
 
             {/* Output files */}
             {selectedTask.status === 'completed' && (
