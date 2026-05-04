@@ -19,9 +19,17 @@ import { Permissions } from '../auth/permissions.decorator';
 import { AiService } from './ai.service';
 import type { AuthenticatedRequest } from '../../common/types/auth.types';
 
+import { IsString, IsObject, IsOptional } from 'class-validator';
+
 export class CreateAiTaskDto {
+  @IsString()
   type!: string;
+
+  @IsObject()
   params!: Record<string, unknown>;
+
+  @IsOptional()
+  @IsString()
   prompt?: string;
 }
 
