@@ -6,7 +6,7 @@ import {
   MenuFoldOutlined, MenuUnfoldOutlined,
   MenuOutlined, BookOutlined, EditOutlined, BgColorsOutlined,
   BarChartOutlined, FireOutlined, KeyOutlined,
-  BellOutlined, MessageOutlined, NotificationOutlined,
+  BellOutlined, MessageOutlined, NotificationOutlined, RobotOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
@@ -157,10 +157,19 @@ const MainLayout: React.FC = () => {
     return pCode === 'report:read';
   });
 
+  const hasAiAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
+    const pCode = p.code || `${p.resource}:${p.action}`;
+    return pCode === 'ai:access';
+  });
+
   const hasBbsAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
     const pCode = p.code || `${p.resource}:${p.action}`;
     return pCode === 'bbs:read';
   });
+
+  if (hasAiAccess) {
+    menuItems.push({ key: '/ai', icon: <RobotOutlined />, label: 'AI 协作' });
+  }
 
   if (hasBbsAccess) {
     menuItems.push({ key: '/bbs', icon: <FireOutlined />, label: '交流论坛' });

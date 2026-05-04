@@ -17,6 +17,7 @@ import BbsList from './pages/BBS';
 import BbsPostDetail from './pages/BBS/BbsPostDetail';
 import BbsPostForm from './pages/BBS/BbsPostForm';
 import GlobalSearch from './pages/GlobalSearch';
+import AiPage from './pages/Ai';
 import { useAuthStore } from './stores/authStore';
 import { useSocketStore } from './stores/socketStore';
 import { authAPI } from './services/api';
@@ -113,6 +114,11 @@ const AppContent: React.FC = () => {
             <Route path=":id" element={<BbsPostDetail />} />
             <Route path=":id/edit" element={<BbsPostForm />} />
           </Route>
+          <Route path="ai" element={
+            <RequirePermission permissions={['ai:access']}>
+              <AiPage />
+            </RequirePermission>
+          } />
           <Route path="search" element={<GlobalSearch />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

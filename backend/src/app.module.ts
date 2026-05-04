@@ -32,6 +32,7 @@ import { BbsModule } from './modules/bbs/bbs.module';
 import { SearchModule } from './modules/search/search.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { InfraModule } from './modules/infrastructure/infra.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { InfraModule } from './modules/infrastructure/infra.module';
     SearchModule,
     BackupModule,
     InfraModule,
+    AiModule,
   ],
 })
 export class AppModule {}

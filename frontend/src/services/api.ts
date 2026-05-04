@@ -327,4 +327,37 @@ export const infraAPI = {
   rebuildIndex: (): Promise<ApiResponse<void>> => api.post('/infra/rebuild-index', {}, { timeout: 300000 }),
 };
 
+// AI / Codex Worker API (proxied through CallCenter backend)
+export const aiAPI = {
+  /** 获取 Codex Worker 健康状态 */
+  health: (): Promise<any> => api.get('/ai/health'),
+
+  /** 获取可用任务模板列表 */
+  getTemplates: (): Promise<any> => api.get('/ai/templates'),
+
+  /** 提交新 AI 任务 */
+  createTask: (data: {
+    type: string;
+    params: Record<string, unknown>;
+    prompt?: string;
+  }): Promise<any> => api.post('/ai/tasks', data),
+
+  /** 任务列表（带分页/状态过滤） */
+  listTasks: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    all?: string;
+  }): Promise<any> => api.get('/ai/tasks', { params }),
+
+  /** 获取单个任务详情 */
+  getTask: (id: string): Promise<any> => api.get(`/ai/tasks/${id}`),
+
+  /** 取消任务 */
+  cancelTask: (id: string): Promise<any> => api.post(`/ai/tasks/${id}/cancel`),
+
+  /** 获取任务产物下载链接 */
+  getTaskFiles: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/files`),
+};
+
 export default api;
