@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Param,
   Body,
   UseGuards,
@@ -32,6 +33,15 @@ export class RolesController {
     return { code: 0, data };
   }
 
+  @Post()
+  @Permissions('admin:access')
+  async createRole(
+    @Body() body: { name: string; description?: string; permissionIds?: number[] },
+  ) {
+    const data = await this.rolesService.createRole(body);
+    return { code: 0, message: '角色创建成功', data };
+  }
+
   @Post(':id/permissions')
   @Permissions('admin:access')
   async updatePermissions(
@@ -44,4 +54,12 @@ export class RolesController {
     );
     return { code: 0, message: '权限更新成功', data };
   }
+
+  @Delete(':id')
+  @Permissions('admin:access')
+  async deleteRole(@Param('id', ParseIntPipe) id: number) {
+    const data = await this.rolesService.deleteRole(id);
+    return { code: 0, message: '角色删除成功', data };
+  }
 }
+

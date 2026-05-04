@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Role } from '../../entities/role.entity';
@@ -26,6 +30,64 @@ export class RolesService {
     return this.permissionRepository.find({
       order: { resource: 'ASC', action: 'ASC' },
     });
+  }
+
+  async createRole(data: {
+    name: string;
+    description?: string;
+    permissionIds?: number[];
+  }) {
+    const existing = await this.roleRepository.findOne({
+      where: { name: data.name },
+    });
+    if (existing) throw new BadRequestException('角色名称已存在');
+
+    const role = this.roleRepository.create({
+      name: data.name,
+      description: data.description || '',
+      isActive: true,
+    });
+
+    if (data.permissionIds && data.permissionIds.length > 0) {
+      role.permissions = await this.permissionRepository.findBy({
+        id: In(data.permissionIds),
+      });
+    } else {
+      role.permissions = [];
+    }
+
+    const saved = await this.roleRepository.save(role);
+
+    // 广播角色列表变更
+    this.chatGateway.server.emit('rolesUpdated', { type: 'created', roleId: saved.id, roleName: saved.name });
+
+    return saved;
+  }
+
+  async deleteRole(roleId: number) {
+    // 保护内置角色（id <= 4）
+    if (roleId <= 4) {
+      throw new BadRequestException('内置角色不允许删除');
+    }
+
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId },
+      relations: ['users'],
+    });
+    if (!role) throw new NotFoundException('角色不存在');
+
+    if (role.users && role.users.length > 0) {
+      throw new BadRequestException(
+        `该角色下还有 ${role.users.length} 个用户，请先重新分配角色后再删除`,
+      );
+    }
+
+    await this.roleRepository.remove(role);
+
+    // 广播角色列表变更
+    this.chatGateway.server.emit('rolesUpdated', { type: 'deleted', roleId, roleName: role.name });
+
+    return { success: true };
   }
 
   async updateRolePermissions(roleId: number, permissionIds: number[]) {

@@ -6,7 +6,11 @@ import type { User, Role } from '../../../types/user';
 
 const { Option } = Select;
 
-export const UserManageTab: React.FC = () => {
+interface UserManageTabProps {
+  externalRoles?: Role[];
+}
+
+export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,12 +30,20 @@ export const UserManageTab: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // 当父组件传入 externalRoles 时，同步到本地
+  useEffect(() => {
+    if (externalRoles && externalRoles.length > 0) {
+      setRoles(externalRoles);
+    }
+  }, [externalRoles]);
+
   const fetchData = async () => {
     setLoading(true);
     try {
       const [usersRes, rolesRes] = await Promise.all([
         usersAPI.getAll(),
-        rolesAPI.getAll()
+        // 仅在没有外部角色时才拉取角色列表
+        externalRoles ? Promise.resolve({ code: 0, data: externalRoles }) : rolesAPI.getAll(),
       ]);
       if ((usersRes as any).code === 0) setUsers((usersRes as any).data);
       if ((rolesRes as any).code === 0) setRoles((rolesRes as any).data);

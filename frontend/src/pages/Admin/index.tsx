@@ -27,6 +27,8 @@ const AdminPage: React.FC = () => {
   const [logoUploading, setLogoUploading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // 共享角色列表，用于跨组件实时同步
+  const [sharedRoles, setSharedRoles] = useState<any[]>([]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -148,12 +150,12 @@ const AdminPage: React.FC = () => {
             {
               key: 'users',
               label: <span><TeamOutlined /> 用户管理</span>,
-              children: <UserManageTab />
+              children: <UserManageTab externalRoles={sharedRoles.length > 0 ? sharedRoles : undefined} />
             },
             {
               key: 'roles',
               label: <span><SafetyCertificateOutlined /> 角色与权限</span>,
-              children: <RoleManageTab />
+              children: <RoleManageTab onRolesChange={(roles) => setSharedRoles(roles)} />
             },
             {
               key: 'ai',

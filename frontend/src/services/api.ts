@@ -174,6 +174,8 @@ export const rolesAPI = {
   getAll: (): Promise<ApiResponse<any[]>> => api.get('/roles'),
   getPermissions: (): Promise<ApiResponse<any[]>> => api.get('/roles/permissions'),
   updatePermissions: (id: number, permissionIds: number[]): Promise<ApiResponse<void>> => api.post(`/roles/${id}/permissions`, { permissionIds }),
+  create: (data: { name: string; description?: string; permissionIds?: number[] }): Promise<ApiResponse<any>> => api.post('/roles', data),
+  deleteRole: (id: number): Promise<ApiResponse<void>> => api.delete(`/roles/${id}`),
 };
 
 // Settings API
