@@ -59,15 +59,21 @@ const AiPage: React.FC = () => {
     setLoading(true);
     try {
       const res: any = await aiAPI.listTasks({ page: p, limit: 15, status: s });
-      if (res?.data) {
-        // Worker returns: { success, data: Task[], total, page, limit }
-        // Axios wraps it so the actual payload is in res.data
-        const payload = res.data;
-        setTasks(Array.isArray(payload.data) ? payload.data : (payload.items || []));
-        setTotal(payload.total || 0);
-      }
-    } catch {
-      // global interceptor handles error display
+      // Trace the full response shape to console for debugging
+      console.debug('[AI] listTasks raw response:', res);
+      // Axios response: res.data = what the backend returned
+      // Backend returns the Worker response directly: { success, data: Task[], total }
+      const payload = res?.data;
+      if (!payload) return;
+      // Handle both shapes: { data: [...] } and { items: [...] } and plain array
+      const list = Array.isArray(payload) ? payload
+        : Array.isArray(payload?.data) ? payload.data
+        : Array.isArray(payload?.items) ? payload.items
+        : [];
+      setTasks(list);
+      setTotal(payload?.total ?? list.length);
+    } catch (err) {
+      console.error('[AI] fetchTasks error:', err);
     } finally {
       setLoading(false);
     }
@@ -187,7 +193,12 @@ const AiPage: React.FC = () => {
       setFilesLoading(true);
       try {
         const res: any = await aiAPI.getTaskFiles(task.id);
-        setTaskFiles(res?.data || []);
+        console.debug('[AI] getTaskFiles raw response:', res);
+        // Worker returns { success, data: [{name, url, size}] }
+        const files = Array.isArray(res?.data) ? res.data
+          : Array.isArray(res?.data?.data) ? res.data.data
+          : [];
+        setTaskFiles(files);
       } catch {
         setTaskFiles([]);
       } finally {
