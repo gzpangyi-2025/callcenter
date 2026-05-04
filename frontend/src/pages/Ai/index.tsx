@@ -550,20 +550,26 @@ const AiPage: React.FC = () => {
                   <Empty description="暂无产物文件" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
                   <Space direction="vertical" style={{ width: '100%' }}>
-                    {taskFiles.map((f: any, i: number) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
-                        <Text style={{ fontSize: 13 }}>{f.name || f.key || `文件 ${i + 1}`}</Text>
-                        <Button
-                          size="small"
-                          type="link"
-                          icon={<DownloadOutlined />}
-                          href={f.url}
-                          target="_blank"
-                        >
-                          下载
-                        </Button>
-                      </div>
-                    ))}
+                    {taskFiles.map((f: any, i: number) => {
+                        const displayName = f.name || f.key || `文件 ${i + 1}`;
+                        // Use basename as filename for the proxy URL (handles nested paths)
+                        const basename = displayName.includes('/') ? displayName.split('/').pop() : displayName;
+                        // Proxy download URL — same-origin, Chrome-compatible
+                        const downloadUrl = `/api/ai/tasks/${selectedTask.id}/files/${encodeURIComponent(basename)}/download`;
+                        return (
+                          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
+                            <Text style={{ fontSize: 13 }}>{displayName}</Text>
+                            <Button
+                              size="small"
+                              type="link"
+                              icon={<DownloadOutlined />}
+                              href={downloadUrl}
+                            >
+                              下载
+                            </Button>
+                          </div>
+                        );
+                      })}
                   </Space>
                 )}
               </Card>

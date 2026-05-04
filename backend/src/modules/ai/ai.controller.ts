@@ -11,7 +11,9 @@ import {
   Query,
   UseGuards,
   Req,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -97,5 +99,19 @@ export class AiController {
   @Get('tasks/:id/files')
   getTaskFiles(@Param('id') id: string) {
     return this.aiService.getTaskFiles(id);
+  }
+
+  /**
+   * GET /api/ai/tasks/:id/files/:filename/download
+   * 代理下载 — 通过 CallCenter 后端流转发 COS 文件，
+   * 解决 Chrome 跨域下载限制问题。
+   */
+  @Get('tasks/:id/files/:filename/download')
+  async downloadFile(
+    @Param('id') taskId: string,
+    @Param('filename') filename: string,
+    @Res() res: Response,
+  ) {
+    return this.aiService.proxyDownload(taskId, filename, res);
   }
 }

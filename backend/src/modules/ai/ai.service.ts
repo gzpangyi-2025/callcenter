@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
+import { Response } from 'express';
+import * as path from 'path';
 
 export interface CreateAiTaskDto {
   type: string;
@@ -114,6 +116,59 @@ export class AiService {
       return res.data;
     } catch (err: any) {
       throw new ServiceUnavailableException('Codex Worker is unavailable');
+    }
+  }
+
+  /**
+   * Proxy-download a task output file through CallCenter backend.
+   * Resolves Chrome cross-origin download restrictions by serving the COS
+   * file as a same-origin response with correct Content-Disposition.
+   */
+  async proxyDownload(taskId: string, filename: string, res: Response) {
+    // 1. Get the presigned URL list from Worker
+    let files: Array<{ name: string; url: string; size: number }>;
+    try {
+      const filesRes = await this.worker.get(`/api/tasks/${taskId}/files`);
+      files = filesRes.data?.data ?? filesRes.data ?? [];
+    } catch (err: any) {
+      throw new NotFoundException(`Task ${taskId} files not found`);
+    }
+
+    // 2. Find the matching file by filename (decoded, handles URL-encoded names)
+    const decodedFilename = decodeURIComponent(filename);
+    const file = files.find(
+      (f) => path.basename(f.name) === decodedFilename || f.name === decodedFilename,
+    );
+    if (!file) {
+      throw new NotFoundException(`File "${filename}" not found in task ${taskId}`);
+    }
+
+    // 3. Stream COS → NestJS → Browser
+    try {
+      const upstream = await axios.get(file.url, { responseType: 'stream' });
+      const ext = path.extname(decodedFilename).toLowerCase();
+      const mimeMap: Record<string, string> = {
+        '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif', '.webp': 'image/webp',
+        '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        '.pdf': 'application/pdf', '.txt': 'text/plain',
+        '.py': 'text/x-python', '.js': 'text/javascript',
+        '.zip': 'application/zip',
+      };
+      const contentType = mimeMap[ext] ?? 'application/octet-stream';
+      const encodedName = encodeURIComponent(decodedFilename);
+
+      res.set({
+        'Content-Type': contentType,
+        'Content-Disposition': `attachment; filename*=UTF-8''${encodedName}`,
+        'Content-Length': upstream.headers['content-length'] ?? '',
+        'Cache-Control': 'no-cache',
+      });
+
+      upstream.data.pipe(res);
+    } catch (err: any) {
+      this.logger.error(`[proxyDownload] Failed to stream file: ${err.message}`);
+      throw new ServiceUnavailableException('文件下载失败，请重试');
     }
   }
 
