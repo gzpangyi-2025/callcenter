@@ -40,11 +40,10 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
       eventSourceRef.current.close();
     }
 
+    // EventSource doesn't support custom headers.
+    // JWT strategy already accepts ?token= query param (jwt.strategy.ts L23-25).
     const token = localStorage.getItem('accessToken') ?? '';
-    // Note: EventSource doesn't support custom headers natively.
-    // We pass the token as a query param; the backend should accept it.
-    // For now, the JWT guard reads from Authorization header set by cookie.
-    const url = `/api/ai/tasks/${taskId}/logs/stream`;
+    const url = `/api/ai/tasks/${taskId}/logs/stream?token=${encodeURIComponent(token)}`;
     const es = new EventSource(url);
 
     es.onopen = () => setConnected(true);
