@@ -52,6 +52,37 @@ const AiPage: React.FC = () => {
   const [filesLoading, setFilesLoading] = useState(false);
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
+
+  /**
+   * Force-download a file using fetch + Blob URL.
+   * This works in Chrome even when the page has an invalid certificate,
+   * because we fetch from the same-origin proxy endpoint and create a blob: URL
+   * with an explicit download attribute — bypassing Chrome's cross-origin filename stripping.
+   */
+  const handleFileDownload = useCallback(async (taskId: string, filename: string, displayName: string) => {
+    const key = `${taskId}/${filename}`;
+    setDownloadingFiles(prev => ({ ...prev, [key]: true }));
+    try {
+      const proxyUrl = `/api/ai/tasks/${taskId}/files/${encodeURIComponent(filename)}/download`;
+      const resp = await fetch(proxyUrl, { credentials: 'include' });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = displayName;   // filename with correct extension
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    } catch (err) {
+      message.error('文件下载失败，请重试');
+      console.error('[Download]', err);
+    } finally {
+      setDownloadingFiles(prev => ({ ...prev, [key]: false }));
+    }
+  }, []);
 
   // ── Fetch tasks ──────────────────────────────────────────────────────────
 
@@ -552,20 +583,20 @@ const AiPage: React.FC = () => {
                   <Space direction="vertical" style={{ width: '100%' }}>
                     {taskFiles.map((f: any, i: number) => {
                         const displayName = f.name || f.key || `文件 ${i + 1}`;
-                        // Use basename as filename for the proxy URL (handles nested paths)
-                        const basename = displayName.includes('/') ? displayName.split('/').pop() : displayName;
-                        // Proxy download URL — same-origin, Chrome-compatible
-                        const downloadUrl = `/api/ai/tasks/${selectedTask.id}/files/${encodeURIComponent(basename)}/download`;
+                        const basename = displayName.includes('/') ? displayName.split('/').pop()! : displayName;
+                        const fileKey = `${selectedTask.id}/${basename}`;
+                        const isDownloading = !!downloadingFiles[fileKey];
                         return (
                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
                             <Text style={{ fontSize: 13 }}>{displayName}</Text>
                             <Button
                               size="small"
                               type="link"
-                              icon={<DownloadOutlined />}
-                              href={downloadUrl}
+                              icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
+                              loading={isDownloading}
+                              onClick={() => handleFileDownload(selectedTask.id, basename, basename)}
                             >
-                              下载
+                              {isDownloading ? '下载中...' : '下载'}
                             </Button>
                           </div>
                         );
