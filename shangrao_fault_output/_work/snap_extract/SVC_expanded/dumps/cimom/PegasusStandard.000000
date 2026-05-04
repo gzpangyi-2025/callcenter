@@ -1,8 +1,0 @@
-12/08/2015-19:22:21 INFO    cimserver: Listening on HTTPS port 5989.
-12/08/2015-19:22:21 INFO    cimserver: Listening on local connection socket.
-12/08/2015-19:22:21 INFO    cimserver: Started CIM Server version 2.13.0.
-12/08/2015-19:22:44 INFO    cimserver: Provider providers initiated
-03/02/2016-13:22:35 INFO    cimserver: Listening on HTTPS port 5989.
-03/02/2016-13:22:35 INFO    cimserver: Listening on local connection socket.
-03/02/2016-13:22:35 INFO    cimserver: Started CIM Server version 2.13.0.
-03/02/2016-13:22:57 INFO    cimserver: Provider providers initiated

@@ -24,7 +24,7 @@ REMOTE_PASSWORD_1=""
 # 101.43.59.206 (Shanghai production node)
 REMOTE_USER_2="root"
 REMOTE_HOST_2="101.43.59.206"
-REMOTE_PASSWORD_2="Matrox123#"
+REMOTE_PASSWORD_2=""
 
 SSH_OPTS=(-o StrictHostKeyChecking=no)
 
@@ -139,9 +139,18 @@ remote_build_and_reload() {
     install_prefix="npm install && "
   fi
 
-  log "Building backend and reloading PM2 on $host"
+  # 先停止 PM2 进程，避免 build 期间 dist 被清空导致疯狂 restart
+  log "Stopping backend on $host before build"
   run_ssh "$user" "$host" "$password" \
-    "cd '$REMOTE_DIR/backend' && ${install_prefix}npm run build && if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 reload '$BACKEND_SERVICE'; else pm2 start dist/main.js --name '$BACKEND_SERVICE'; fi && pm2 save"
+    "pm2 stop '$BACKEND_SERVICE' 2>/dev/null || true"
+
+  log "Building backend on $host"
+  run_ssh "$user" "$host" "$password" \
+    "cd '$REMOTE_DIR/backend' && ${install_prefix}npm run build"
+
+  log "Starting backend on $host"
+  run_ssh "$user" "$host" "$password" \
+    "if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 restart '$BACKEND_SERVICE' --update-env; else pm2 start dist/main.js --name '$BACKEND_SERVICE' --max-memory-restart 250M --node-args='--max-old-space-size=200' --cwd '$REMOTE_DIR/backend'; fi && pm2 save"
 
   log "Building frontend on $host"
   run_ssh "$user" "$host" "$password" \

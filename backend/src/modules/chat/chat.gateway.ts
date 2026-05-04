@@ -270,7 +270,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const sockets = await this.server.in(roomName).fetchSockets();
     const targetSockets = sockets
       .map((s) => s as unknown as AuthenticatedRemoteSocket)
-      .filter((s) => s.userId === Number(targetUserId));
+      .filter((s) => String(s.userId) === String(targetUserId));
 
     if (targetSockets.length === 0) {
       client.emit('error', '目标用户不在该工单房间内');
@@ -468,7 +468,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       .then((sockets) => {
         for (const s of sockets) {
           if (
-            (s as unknown as AuthenticatedRemoteSocket).userId === targetUserId
+            String((s as unknown as AuthenticatedRemoteSocket).userId) === String(targetUserId)
           ) {
             s.leave(roomName);
           }

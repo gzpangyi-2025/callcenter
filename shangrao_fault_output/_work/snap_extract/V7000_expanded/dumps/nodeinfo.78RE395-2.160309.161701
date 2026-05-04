@@ -1,6 +1,0 @@
-NodeID  PanelID FileID     Name   Type  IOGID  IOGName  Status    Version                           
-1       01-1    78RE395-1  node1  100   0      io_grp0  online    7.4.0.7 (build 103.24.1511050000)  
-2       01-2    78RE395-2  node2  100   0      io_grp0  online    7.4.0.7 (build 103.24.1511050000)  < config node
-
-SVC Cluster Version : 7.4.0.7 (build 103.24.1511050000)
-SVC Upgrade Status  : inactive 

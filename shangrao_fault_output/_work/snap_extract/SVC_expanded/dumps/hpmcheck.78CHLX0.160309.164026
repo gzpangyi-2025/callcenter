@@ -1,2 +1,0 @@
-ipmitool hpm check 2>&1
-
