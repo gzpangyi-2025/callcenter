@@ -64,7 +64,13 @@ const AiPage: React.FC = () => {
     const key = `${taskId}/${filename}`;
     setDownloadingFiles(prev => ({ ...prev, [key]: true }));
     try {
-      const proxyUrl = `/api/ai/tasks/${taskId}/files/${encodeURIComponent(filename)}/download`;
+      // Double-encode any '/' in filename so Express router doesn't split on them.
+      // encodeURIComponent turns '/' -> '%2F'; a second pass turns '%2F' -> '%252F'.
+      // The backend controller reads req.params[0] (wildcard) which Express gives
+      // as the already-decoded '%2F', so we get back the original '/' after one
+      // decodeURIComponent call in proxyDownload.
+      const safeFilename = filename.split('/').map(encodeURIComponent).join('%2F');
+      const proxyUrl = `/api/ai/tasks/${taskId}/files/${safeFilename}/download`;
       const resp = await fetch(proxyUrl, { credentials: 'include' });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const blob = await resp.blob();
@@ -582,9 +588,12 @@ const AiPage: React.FC = () => {
                 ) : (
                   <Space direction="vertical" style={{ width: '100%' }}>
                     {taskFiles.map((f: any, i: number) => {
-                        const displayName = f.name || f.key || `文件 ${i + 1}`;
-                        const basename = displayName.includes('/') ? displayName.split('/').pop()! : displayName;
-                        const fileKey = `${selectedTask.id}/${basename}`;
+                        // f.name may contain subdirectory (e.g. "uuid/image.png")
+                        const fullName = f.name || f.key || `文件 ${i + 1}`;
+                        const displayName = fullName.includes('/')
+                          ? fullName.split('/').pop()!
+                          : fullName;
+                        const fileKey = `${selectedTask.id}/${fullName}`;
                         const isDownloading = !!downloadingFiles[fileKey];
                         return (
                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
@@ -594,7 +603,7 @@ const AiPage: React.FC = () => {
                               type="link"
                               icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
                               loading={isDownloading}
-                              onClick={() => handleFileDownload(selectedTask.id, basename, basename)}
+                              onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
                             >
                               {isDownloading ? '下载中...' : '下载'}
                             </Button>

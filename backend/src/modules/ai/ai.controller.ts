@@ -12,8 +12,9 @@ import {
   UseGuards,
   Req,
   Res,
+  Request as NestRequest,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -102,16 +103,18 @@ export class AiController {
   }
 
   /**
-   * GET /api/ai/tasks/:id/files/:filename/download
-   * 代理下载 — 通过 CallCenter 后端流转发 COS 文件，
-   * 解决 Chrome 跨域下载限制问题。
+   * GET /api/ai/tasks/:id/files/*/download
+   * 代理下载 — 通过 CallCenter 后端流转发 COS 文件。
+   * 使用通配符路由捕获包含 '/' 的文件名（如 subdir/file.png）。
    */
-  @Get('tasks/:id/files/:filename/download')
+  @Get('tasks/:id/files/*/download')
   async downloadFile(
     @Param('id') taskId: string,
-    @Param('filename') filename: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    // Express stores the wildcard match in req.params[0]
+    const filename = (req.params as any)[0] as string;
     return this.aiService.proxyDownload(taskId, filename, res);
   }
 }
