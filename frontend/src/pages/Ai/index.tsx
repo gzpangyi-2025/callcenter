@@ -64,10 +64,9 @@ const AiPage: React.FC = () => {
     const key = `${taskId}/${filename}`;
     setDownloadingFiles(prev => ({ ...prev, [key]: true }));
     try {
-      // Double-encode any '/' in filename so Express router doesn't split on them.
-      const safeFilename = filename.split('/').map(encodeURIComponent).join('%2F');
-      const proxyUrl = `/api/ai/tasks/${taskId}/files/${safeFilename}/download`;
-      // callcenter backend uses JWT Bearer auth, not cookies — must send the token manually.
+      // Pass filename as query parameter to avoid all URL path encoding issues.
+      const proxyUrl = `/api/ai/tasks/${taskId}/download?file=${encodeURIComponent(filename)}`;
+      // callcenter backend uses JWT Bearer auth — must send the token manually.
       const token = localStorage.getItem('accessToken') ?? '';
       const resp = await fetch(proxyUrl, {
         credentials: 'include',
