@@ -107,6 +107,9 @@ export class AiChatService {
       const model = genAI.getGenerativeModel({
         model: modelName,
         systemInstruction: this.buildSystemPrompt(settings),
+        tools: [
+          { googleSearchRetrieval: { dynamicRetrievalConfig: { mode: 'MODE_DYNAMIC', dynamicThreshold: 0.3 } } } as any,
+        ],
       });
 
       // Convert history to Gemini format
@@ -280,9 +283,19 @@ export class AiChatService {
 
   private buildSystemPrompt(settings: Record<string, string>): string {
     const customPrompt = settings['ai.systemPrompt'] || '';
-    return `你是 CallCenter 系统的智能 AI 助手。你可以帮助用户完成以下任务：
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
+    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    return `你是 CallCenter 系统的智能 AI 助手。
 
-1. **快速问答**：回答用户的各种问题，不仅限于技术或运维，可包含任何领域。
+## 当前时间
+今天是 ${dateStr}，星期${weekdays[now.getDay()]}，现在时间 ${timeStr}（北京时间）。请在回答时参考此时间。
+
+## 能力范围
+你可以帮助用户完成以下任务：
+
+1. **快速问答**：回答用户的各种问题，不仅限于技术或运维，可包含任何领域。你已启用 Google Search 联网搜索能力，当用户询问实时信息（如新闻、股市、天气等）时，你应当利用搜索结果来回答。
 2. **任务调度**：当用户明确要求 AI 生成文件、PPT、文档、代码项目等复杂任务时，你可以调度 Codex Worker 来执行。
 3. **任务迭代**：用户可以针对已完成的任务提出修改意见，你会帮助组装修改指令。
 
