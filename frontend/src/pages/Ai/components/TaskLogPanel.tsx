@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { Card, Badge, Typography, Switch, Space, Tooltip, Tag, Tabs, Image, Button, Empty, Row, Col } from 'antd';
+import { Card, Badge, Typography, Switch, Space, Tooltip, Tag, Tabs, Image, Button, Row, Col } from 'antd';
 import {
   CodeOutlined, PauseCircleOutlined, PlayCircleOutlined,
   ClearOutlined, FullscreenOutlined, FullscreenExitOutlined,
@@ -112,7 +112,7 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
   const [connected, setConnected] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [currentStep, setCurrentStep] = useState<string | null>(null);
+  const [, setCurrentStep] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
