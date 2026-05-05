@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Button, Typography, Spin, Empty, List, Popconfirm,
-  message, Tag,
+  message,
 } from 'antd';
 import {
   PlusOutlined, DeleteOutlined,
@@ -31,11 +31,10 @@ interface Props {
   /** Callback when a task is created from chat */
   onTaskCreated?: (taskId: string) => void;
   tasks?: any[];
-  onDownloadFile?: (taskId: string, filename: string, displayName: string) => void;
   onViewTaskDetail?: (task: any) => void;
 }
 
-const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onDownloadFile, onViewTaskDetail }) => {
+const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDetail }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | undefined>();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
