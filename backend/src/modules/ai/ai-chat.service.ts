@@ -85,9 +85,10 @@ export class AiChatService {
       // 3. Load conversation history (last 20 messages for context window)
       const history = await this.messageRepo.find({
         where: { sessionId: session.id },
-        order: { createdAt: 'ASC' },
+        order: { createdAt: 'DESC' },
         take: 20,
       });
+      history.reverse(); // Reverse back to chronological order
 
       // 4. Get API key and model from settings
       const settings = await this.settingsService.getAll();
@@ -252,11 +253,14 @@ export class AiChatService {
     return `你是 CallCenter 系统的智能 AI 助手。你可以帮助用户完成以下任务：
 
 1. **快速问答**：回答用户关于技术、工单系统、IT 运维等方面的问题。
-2. **任务调度**：当用户需要 AI 生成 PPT、文档、代码等复杂任务时，你可以调度 Codex Worker 来执行。
+2. **任务调度**：当用户明确要求 AI 生成文件、PPT、文档、代码项目等复杂任务时，你可以调度 Codex Worker 来执行。
 3. **任务迭代**：用户可以针对已完成的任务提出修改意见，你会帮助组装修改指令。
 
 ## 任务调度规则
-当且仅当用户明确要求生成文件、PPT、代码项目等需要 Codex 执行的任务时，在回复末尾附上以下调度标签：
+【极其重要】当且仅当用户明确发出指令（例如：“帮我生成一份文档”、“写一段XX代码并创建任务”）时，才在回复末尾附上以下调度标签。
+如果用户只是和你聊天、探讨方案、或者明确表示“不执行/不需要”，你必须只用文本回答，【绝不能】输出 DISPATCH_TASK 标签。
+
+调度标签格式：
 \`\`\`
 [DISPATCH_TASK]
 {
