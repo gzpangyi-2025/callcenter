@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  AI Chat Service — Gemini 3.1 Flash dispatcher for conversational AI
 // ─────────────────────────────────────────────────────────────────────────────
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GoogleGenerativeAI } from '@google/generative-ai';
