@@ -586,16 +586,25 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       'https://via.placeholder.com/600x300.png?text=Image+Generating';
 
     try {
-      const response = await axios.post(
+      const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:predict?key=${apiKey}`,
         {
-          instances: [{ prompt }],
-          parameters: { sampleCount: 1 },
-        },
-        { timeout: 60000 },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instances: [{ prompt }],
+            parameters: { sampleCount: 1 },
+          }),
+          signal: AbortSignal.timeout(60000),
+        }
       );
 
-      const b64 = response.data?.predictions?.[0]?.bytesBase64Encoded;
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
       if (!b64) {
         this.logger.warn('No base64 bytes returned from AI Image generation.');
         return defaultImg;
@@ -607,7 +616,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     } catch (error: any) {
       this.logger.error(
         'Failed to generate image via Google Google Generative AI API: ' +
-          (error.response?.data?.error?.message || error.message),
+          error.message,
       );
       throw error;
     }

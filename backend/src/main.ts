@@ -7,8 +7,16 @@ import * as express from 'express';
 
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { EnvHttpProxyAgent, setGlobalDispatcher } from 'undici';
 
 const logger = new Logger('Bootstrap');
+
+// 开启全局代理：自动读取环境中的 HTTP_PROXY / HTTPS_PROXY，不硬编码端口
+if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy || process.env.https_proxy) {
+  const envProxy = new EnvHttpProxyAgent();
+  setGlobalDispatcher(envProxy);
+  logger.log('🌐 Proxy Agent dynamically configured for global fetch.');
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
