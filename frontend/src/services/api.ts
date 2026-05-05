@@ -130,8 +130,6 @@ export const filesAPI = {
           Key: key,
           Body: file,
           ContentType: file.type || 'application/octet-stream',
-          // Use 5MB chunks for multipart upload
-          SliceSize: 5 * 1024 * 1024,
         }, function(err, data) {
            if (err) reject(err);
            else resolve(data);
