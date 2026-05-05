@@ -239,8 +239,26 @@ export class AiService {
         },
       );
 
-      // Pipe upstream SSE directly to the client
-      upstream.data.pipe(res);
+      // Pipe upstream SSE to client but DON'T auto-close when upstream ends.
+      // When Codex finishes (e.g. last image generated), the upstream stream naturally
+      // ends, but we want to keep the browser SSE alive until the worker completes
+      // upload + markCompleted and sends a final event.
+      upstream.data.pipe(res, { end: false });
+
+      upstream.data.on('end', () => {
+        // Upstream stream closed (codex-worker SSE ended). Give a short grace
+        // period for any in-flight final events, then cleanly close browser SSE.
+        setTimeout(() => {
+          if (!res.writableEnded) {
+            res.write(`data: ${JSON.stringify({ line: '', type: 'info', _streamEnd: true, timestamp: Date.now() })}\n\n`);
+            res.end();
+          }
+        }, 3000);
+      });
+
+      upstream.data.on('error', () => {
+        if (!res.writableEnded) res.end();
+      });
 
       // Clean up when client disconnects
       res.on('close', () => {

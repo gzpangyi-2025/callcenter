@@ -139,8 +139,9 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
             return [...prev, data as FileEvent];
           });
         } else {
-          // Log entry
-          const entry = data as LogEntry;
+          // Log entry — skip heartbeat pings and stream-end markers
+          const entry = data as LogEntry & { _heartbeat?: boolean; _streamEnd?: boolean };
+          if (entry._heartbeat || entry._streamEnd || entry.line === '') return;
           setLogs((prev) => {
             const next = [...prev, entry];
             return next.length > 1000 ? next.slice(-1000) : next;
