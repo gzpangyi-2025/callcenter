@@ -47,7 +47,7 @@ const AdminPage: React.FC = () => {
             visionModel: d['ai.visionModel'] || 'gemini-3.1-pro',
             visionApiKey: d['ai.visionApiKey'] || '',
             systemPrompt: d['ai.systemPrompt'] || '',
-            imageModel: d['ai.imageModel'] || 'gemini-3.1-flash-image-preview',
+            imageModel: d['ai.imageModel'] || 'imagen-3.0-generate-001',
             imageApiKey: d['ai.imageApiKey'] || '',
             chatModel: d['ai.chatModel'] || 'gemini-3.1-flash-lite-preview',
             chatApiKey: d['ai.chatApiKey'] || '',
@@ -202,8 +202,7 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="imageModel">
                             <Select>
-                              <Select.Option value="gemini-3.1-flash-image-preview">Gemini 3.1 Flash Image (中文支持好)</Select.Option>
-                              <Select.Option value="gemini-3-pro-image-preview">Gemini 3 Pro Image (高质量生图)</Select.Option>
+                              <Select.Option value="imagen-3.0-generate-001">Imagen 3.0 (原厂最新生图，完美支持中文)</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>
