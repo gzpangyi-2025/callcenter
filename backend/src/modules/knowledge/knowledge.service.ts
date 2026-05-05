@@ -587,15 +587,24 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       'https://via.placeholder.com/600x300.png?text=Image+Generating';
 
     try {
+      const isGeminiModel = modelToUse.startsWith('gemini');
+      const endpoint = isGeminiModel ? ':generateContent' : ':predict';
+      
+      const payload = isGeminiModel 
+        ? {
+            contents: [{ parts: [{ text: prompt }] }],
+          }
+        : {
+            instances: [{ prompt }],
+            parameters: { sampleCount: 1 },
+          };
+
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:predict?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}${endpoint}?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            instances: [{ prompt }],
-            parameters: { sampleCount: 1 },
-          }),
+          body: JSON.stringify(payload),
           signal: AbortSignal.timeout(60000),
         }
       );
@@ -605,9 +614,19 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       }
 
       const data = await response.json();
-      const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+      let b64: string | undefined;
+
+      if (isGeminiModel) {
+        // Parse Gemini generateContent response
+        b64 = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.inline_data || p.inlineData)?.inlineData?.data 
+              || data?.candidates?.[0]?.content?.parts?.find((p: any) => p.inline_data || p.inlineData)?.inline_data?.data;
+      } else {
+        // Parse legacy Imagen predict response
+        b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+      }
+
       if (!b64) {
-        this.logger.warn('No base64 bytes returned from AI Image generation.');
+        this.logger.warn(`No base64 bytes returned from AI Image generation (${modelToUse}).`);
         return defaultImg;
       }
 
