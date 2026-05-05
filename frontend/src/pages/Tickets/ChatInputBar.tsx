@@ -13,7 +13,7 @@ interface ChatInputBarProps {
   isMobile: boolean;
   enterToNewline: boolean;
   setEnterToNewline: (v: boolean) => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   onSendMessage: () => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onPaste: (e: React.ClipboardEvent) => void;

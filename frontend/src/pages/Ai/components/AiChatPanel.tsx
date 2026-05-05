@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Input, Button, Space, Typography, Spin, Empty, List, Popconfirm,
+  Button, Typography, Spin, Empty, List, Popconfirm,
   message, Tag,
 } from 'antd';
 import {
-  SendOutlined, PlusOutlined, DeleteOutlined,
+  PlusOutlined, DeleteOutlined,
   RobotOutlined, UserOutlined, LoadingOutlined,
   MessageOutlined, ThunderboltOutlined,
 } from '@ant-design/icons';
