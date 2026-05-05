@@ -47,9 +47,9 @@ const AdminPage: React.FC = () => {
             visionModel: d['ai.visionModel'] || 'gemini-3.1-pro',
             visionApiKey: d['ai.visionApiKey'] || '',
             systemPrompt: d['ai.systemPrompt'] || '',
-            imageModel: d['ai.imageModel'] || 'nano-banana-2',
+            imageModel: d['ai.imageModel'] || 'gemini-3.1-flash-image-preview',
             imageApiKey: d['ai.imageApiKey'] || '',
-            chatModel: d['ai.chatModel'] || 'gemini-3.1-flash',
+            chatModel: d['ai.chatModel'] || 'gemini-3.1-flash-lite-preview',
             chatApiKey: d['ai.chatApiKey'] || '',
           });
           bizForm.setFieldsValue({
@@ -177,6 +177,7 @@ const AdminPage: React.FC = () => {
                             <Select>
                               <Select.Option value="gemini-2.5-pro">Gemini 2.5 Pro（稳定版）</Select.Option>
                               <Select.Option value="gemini-3.1-pro-preview">Gemini 3.1 Pro（预览版）</Select.Option>
+                              <Select.Option value="gemini-3.1-flash">Gemini 3.1 Flash（稳定版）</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>
@@ -201,7 +202,6 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="imageModel">
                             <Select>
-                              <Select.Option value="nano-banana-2">Nano Banana 2</Select.Option>
                               <Select.Option value="gemini-3.1-flash-image-preview">Gemini 3.1 Flash Image (中文支持好)</Select.Option>
                               <Select.Option value="gemini-3-pro-image-preview">Gemini 3 Pro Image (高质量生图)</Select.Option>
                             </Select>
@@ -225,11 +225,7 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="chatModel">
                             <Select>
-                              <Select.Option value="gemini-3.1-flash">Gemini 3.1 Flash（稳定版）</Select.Option>
-                              <Select.Option value="gemini-3.1-flash-preview">Gemini 3.1 Flash（预览版）</Select.Option>
-                              <Select.Option value="gemini-2.5-flash">Gemini 2.5 Flash（稳定版）</Select.Option>
                               <Select.Option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite（预览版）</Select.Option>
-                              <Select.Option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>

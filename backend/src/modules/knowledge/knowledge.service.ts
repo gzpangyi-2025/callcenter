@@ -580,8 +580,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     apiKey: string,
     imageModel: string,
   ): Promise<string> {
-    // 动态使用数据库配置的生图模型，若前端选择nano-banana-2则映射回imagen-4.0
-    const modelToUse = imageModel === 'nano-banana-2' ? 'imagen-4.0-generate-001' : imageModel;
+    const modelToUse = imageModel;
 
     // Fallback placeholder
     const defaultImg =
