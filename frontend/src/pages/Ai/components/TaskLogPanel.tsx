@@ -148,14 +148,33 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
 
           // Try to extract progress info from log lines
           if (entry.type === 'info' || entry.type === 'output') {
-            // Parse step info from specific patterns
-            if (entry.line.includes('正在调用 Codex')) {
+            const line = entry.line;
+            // Parse step info from progress log entries
+            if (line.includes('准备执行环境') || line.includes('⚙️')) {
+              setCurrentStep('env');
+              setProgress(0);
+            } else if (line.includes('工作目录已创建')) {
+              setCurrentStep('env');
+              setProgress(5);
+            } else if (line.includes('正在下载') && line.includes('附件')) {
+              setCurrentStep('attachments');
+              setProgress(7);
+            } else if (line.includes('已下载') && line.includes('附件')) {
+              setCurrentStep('attachments');
+              setProgress(9);
+            } else if (line.includes('正在调用 Codex') || line.includes('🚀')) {
               setCurrentStep('codex');
               setProgress(10);
-            } else if (entry.line.includes('正在上传产物文件')) {
+            } else if (line.includes('文件就绪') || line.includes('📦') || line.includes('📃')) {
+              // File activity — still in codex stage, bump progress slightly
+              setProgress(prev => Math.min(prev + 1, 80));
+            } else if (line.includes('正在上传产物文件') || line.includes('☁️')) {
               setCurrentStep('upload');
               setProgress(85);
-            } else if (entry.line.includes('任务完成')) {
+            } else if (line.includes('正在保存结果') || line.includes('💾')) {
+              setCurrentStep('done');
+              setProgress(95);
+            } else if (line.includes('任务完成') || line.includes('✅')) {
               setCurrentStep('done');
               setProgress(100);
             }

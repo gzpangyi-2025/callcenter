@@ -214,7 +214,7 @@ export class FilesController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: multer.memoryStorage(), // 使用内存存储，随后流式推送到 COS/Local
-      limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+      limits: { fileSize: 200 * 1024 * 1024 }, // 200MB
       fileFilter: (_req, file, cb) => {
         if (!file) {
           cb(new BadRequestException('请选择文件'), false);
