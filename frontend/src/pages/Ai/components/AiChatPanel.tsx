@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { aiAPI } from '../../../services/api';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 interface ChatMessage {
   id?: number;
