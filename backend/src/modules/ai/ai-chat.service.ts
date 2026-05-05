@@ -213,7 +213,14 @@ export class AiChatService {
       send({ type: 'done', content: '', sessionId: session.id });
     } catch (err: any) {
       this.logger.error(`Chat stream error: ${err.message}`);
-      send({ type: 'error', content: `AI 服务出错: ${err.message}` });
+      // User-friendly error messages
+      let userMsg = `AI 服务出错: ${err.message}`;
+      if (err.message?.includes('429') || err.message?.includes('quota')) {
+        userMsg = 'AI 模型调用配额已耗尽，请稍后再试，或到后台切换模型（如 gemini-3.1-pro-preview）。';
+      } else if (err.message?.includes('404')) {
+        userMsg = '当前选择的 AI 模型不可用，请到后台 AI 设置中切换模型。';
+      }
+      send({ type: 'error', content: userMsg });
     } finally {
       res.end();
     }

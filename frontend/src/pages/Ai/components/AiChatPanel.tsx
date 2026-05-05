@@ -183,6 +183,7 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let fullText = '';
+      let errorText = '';
       let newSessionId = activeSessionId;
 
       if (reader) {
@@ -210,6 +211,8 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
                 message.success(`🚀 AI 任务已创建 (${data.taskId})`);
               } else if (data.type === 'error') {
                 message.error(data.content);
+                // Show error as an assistant message in the chat
+                errorText = data.content;
               }
             } catch { /* partial JSON, skip */ }
           }
@@ -217,8 +220,9 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
       }
 
       // Add final assistant message
-      if (fullText) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: fullText }]);
+      const displayText = fullText || (errorText ? `⚠️ ${errorText}` : '');
+      if (displayText) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: displayText }]);
       }
       setStreaming('');
 
