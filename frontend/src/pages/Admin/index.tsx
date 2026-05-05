@@ -49,7 +49,7 @@ const AdminPage: React.FC = () => {
             systemPrompt: d['ai.systemPrompt'] || '',
             imageModel: d['ai.imageModel'] || 'nano-banana-2',
             imageApiKey: d['ai.imageApiKey'] || '',
-            chatModel: d['ai.chatModel'] || 'gemini-2.5-flash',
+            chatModel: d['ai.chatModel'] || 'gemini-3.1-flash',
             chatApiKey: d['ai.chatApiKey'] || '',
           });
           bizForm.setFieldsValue({
@@ -223,6 +223,8 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="chatModel">
                             <Select>
+                              <Select.Option value="gemini-3.1-flash">Gemini 3.1 Flash（稳定版）</Select.Option>
+                              <Select.Option value="gemini-3.1-flash-preview">Gemini 3.1 Flash（预览版）</Select.Option>
                               <Select.Option value="gemini-2.5-flash">Gemini 2.5 Flash（稳定版）</Select.Option>
                               <Select.Option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite（预览版）</Select.Option>
                               <Select.Option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</Select.Option>
