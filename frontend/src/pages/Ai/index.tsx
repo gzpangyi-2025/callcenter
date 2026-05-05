@@ -8,7 +8,6 @@ import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
   StopOutlined, DownloadOutlined, ThunderboltOutlined, EditOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
-  ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
   LoadingOutlined, InboxOutlined,
 } from '@ant-design/icons';
 import { aiAPI, filesAPI } from '../../services/api';

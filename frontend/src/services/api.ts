@@ -343,6 +343,7 @@ export const aiAPI = {
     type: string;
     params: Record<string, unknown>;
     prompt?: string;
+    parentTaskId?: string;
     attachments?: Array<{ name: string; url: string; size: number }>;
   }): Promise<any> => api.post('/ai/tasks', data),
 
