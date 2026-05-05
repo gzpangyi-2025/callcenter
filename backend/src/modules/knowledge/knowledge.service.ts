@@ -178,8 +178,22 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       // Real integration for Nano Banana 2 (or standard Imagen models)
       if (imageApiKey) {
         try {
-          const analysisImgPrompt = `A simple, clean technical abstract system architecture diagram summarizing the issue: ${ticket.title}`;
-          const flowImgPrompt = `A simple, professional step-by-step flowchart or workflow diagram for solving the issue: ${ticket.title}`;
+          // 优化生图提示词：传入生成的文章上下文，并明确要求绘制与具体技术问题相关的图表，而非通用的工单处理流程
+          const analysisImgPrompt = `请绘制一张专业的技术架构图或概念原理解析图，用于解释以下IT故障的发生场景和根本原因。
+强烈要求：绝对不要画成通用的“用户提交->工单处理->反馈”这种无关流程图！必须针对以下故障的特定技术环境（如网络、数据库、操作系统等）进行制图。
+故障标题：${ticket.title}
+相关上下文摘要：${text.substring(0, 300).replace(/\n/g, ' ')}
+要求：图表风格科技感、清晰简洁，使用中文文本标注核心组件。`;
+
+          // 尝试提取解决方案部分的文本作为画图上下文
+          const solutionIndex = text.indexOf('解决方案');
+          const solutionContext = text.substring(solutionIndex > -1 ? solutionIndex : 0, (solutionIndex > -1 ? solutionIndex : 0) + 350).replace(/\n/g, ' ');
+
+          const flowImgPrompt = `请绘制一张专业的排错流程图或修复步骤执行图，展示解决该IT故障的具体技术操作路径。
+强烈要求：绝对不要画成通用的“工单分发处理流程”！必须画出具体的排查步骤和修复动作。
+故障标题：${ticket.title}
+解决方案执行摘要：${solutionContext}
+要求：节点逻辑清晰，带方向箭头，使用中文文本标注每个技术步骤。`;
 
           this.logger.log(`Generating images for ticket ${ticket.ticketNo}...`);
 
