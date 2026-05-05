@@ -108,7 +108,7 @@ export class AiChatService {
         model: modelName,
         systemInstruction: this.buildSystemPrompt(settings),
         tools: [
-          { googleSearchRetrieval: { dynamicRetrievalConfig: { mode: 'MODE_DYNAMIC', dynamicThreshold: 0.3 } } } as any,
+          { google_search: {} } as any,
         ],
       });
 
