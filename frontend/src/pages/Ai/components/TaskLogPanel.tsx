@@ -71,7 +71,7 @@ const STAGE_LABELS: Record<string, string> = {
   done: '完成',
 };
 
-function deriveStages(currentStep: string | null, progress: number, taskStatus: string): Stage[] {
+function deriveStages(_currentStep: string | null, progress: number, taskStatus: string): Stage[] {
   const stages: Stage[] = STAGE_KEYS.map(key => ({
     key,
     label: STAGE_LABELS[key],
@@ -112,7 +112,6 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
   const [connected, setConnected] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
