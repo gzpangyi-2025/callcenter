@@ -145,7 +145,7 @@ export class AiService {
 
     // 3. Stream COS → NestJS → Browser
     try {
-      const upstream = await axios.get(file.url, { responseType: 'stream' });
+      const upstream = await axios.get(file.url, { responseType: 'stream', proxy: false });
       const ext = path.extname(decodedFilename).toLowerCase();
       const mimeMap: Record<string, string> = {
         '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
