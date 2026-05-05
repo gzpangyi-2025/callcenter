@@ -632,7 +632,7 @@ const AiPage: React.FC = () => {
       >
         {selectedTask && (
           <Row gutter={16}>
-            <Col span={selectedTask.status === 'completed' ? 15 : 24}>
+            <Col span={15}>
             <Descriptions bordered size="small" column={2} style={{ marginBottom: 16 }}>
               <Descriptions.Item label="任务ID" span={2}>
                 <Text code style={{ fontSize: 11 }}>{selectedTask.id}</Text>
@@ -685,8 +685,9 @@ const AiPage: React.FC = () => {
             </Col>
 
             {/* Output files - Right Column */}
-            {selectedTask.status === 'completed' && (
+            {(selectedTask.status === 'completed' || selectedTask.status === 'running' || selectedTask.status === 'pending') && (
               <Col span={9}>
+                {selectedTask.status === 'completed' ? (
                 <Card size="small" title={`产物文件 (${taskFiles.length})`} style={{ borderRadius: 8, height: '100%' }} styles={{ body: { padding: '12px' } }}>
                 <div style={{ maxHeight: 'calc(80vh - 120px)', overflowY: 'auto', paddingRight: 4 }}>
                     {filesLoading ? (
@@ -800,6 +801,16 @@ const AiPage: React.FC = () => {
                     )}
                   </div>
                 </Card>
+                ) : (
+                  /* Running/Pending — show real-time status */
+                  <Card size="small" title="📡 实时产物" style={{ borderRadius: 8, height: '100%' }} styles={{ body: { padding: '16px 12px' } }}>
+                    <div style={{ textAlign: 'center', color: '#9ca3af' }}>
+                      <LoadingOutlined spin style={{ fontSize: 24, color: '#818cf8', marginBottom: 12 }} />
+                      <div style={{ fontSize: 13, marginBottom: 4 }}>任务执行中...</div>
+                      <div style={{ fontSize: 11 }}>文件生成后将在「进度概览」中实时展示</div>
+                    </div>
+                  </Card>
+                )}
               </Col>
             )}
           </Row>
