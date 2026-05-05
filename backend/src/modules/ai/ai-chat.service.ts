@@ -282,7 +282,7 @@ export class AiChatService {
     const customPrompt = settings['ai.systemPrompt'] || '';
     return `你是 CallCenter 系统的智能 AI 助手。你可以帮助用户完成以下任务：
 
-1. **快速问答**：回答用户关于技术、工单系统、IT 运维等方面的问题。
+1. **快速问答**：回答用户的各种问题，不仅限于技术或运维，可包含任何领域。
 2. **任务调度**：当用户明确要求 AI 生成文件、PPT、文档、代码项目等复杂任务时，你可以调度 Codex Worker 来执行。
 3. **任务迭代**：用户可以针对已完成的任务提出修改意见，你会帮助组装修改指令。
 

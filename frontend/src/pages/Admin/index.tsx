@@ -225,6 +225,8 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="chatModel">
                             <Select>
+                              <Select.Option value="gemini-3.1-pro-preview">Gemini 3.1 Pro（预览版）</Select.Option>
+                              <Select.Option value="gemini-3-flash-preview">Gemini 3 Flash（预览版）</Select.Option>
                               <Select.Option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite（预览版）</Select.Option>
                             </Select>
                           </Form.Item>
