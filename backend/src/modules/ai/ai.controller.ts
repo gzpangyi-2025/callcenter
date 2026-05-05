@@ -103,6 +103,12 @@ export class AiController {
     return this.aiService.cancelTask(id);
   }
 
+  /** POST /api/ai/tasks/:id/resume — 继续任务（审阅回复） */
+  @Post('tasks/:id/resume')
+  resumeTask(@Param('id') id: string, @Body('input') input: string) {
+    return this.aiService.resumeTask(id, input);
+  }
+
   /** GET /api/ai/tasks/:id/files — 获取任务产物下载链接 */
   @Get('tasks/:id/files')
   getTaskFiles(@Param('id') id: string) {

@@ -23,11 +23,12 @@ dayjs.locale('zh-cn');
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
-type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused';
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: React.ReactNode }> = {
   pending:   { label: '排队中', color: 'blue',    icon: <ClockCircleOutlined /> },
   running:   { label: '执行中', color: 'orange',  icon: <LoadingOutlined spin /> },
+  paused:    { label: '待确认', color: 'gold',    icon: <ExclamationCircleOutlined /> },
   completed: { label: '已完成', color: 'green',   icon: <CheckCircleOutlined /> },
   failed:    { label: '执行失败', color: 'red',   icon: <ExclamationCircleOutlined /> },
   cancelled: { label: '已取消', color: 'default', icon: <StopOutlined /> },
@@ -247,6 +248,19 @@ const AiPage: React.FC = () => {
       // global interceptor handles
     } finally {
       setCreating(false);
+    }
+  };
+
+  // ── Resume paused task ──────────────────────────────────────────────────
+
+  const handleResumeSubmit = async (values: { input: string }) => {
+    if (!selectedTask) return;
+    try {
+      await aiAPI.resumeTask(selectedTask.id, values.input);
+      message.success('审阅意见已提交，任务继续执行');
+      fetchTasks();
+    } catch {
+      // handled by global interceptor
     }
   };
 
@@ -745,6 +759,36 @@ const AiPage: React.FC = () => {
                 >
                   {selectedTask.prompt}
                 </Paragraph>
+              </Card>
+            )}
+
+            {/* Paused state - User Input Form */}
+            {selectedTask.status === 'paused' && (
+              <Card 
+                size="small" 
+                style={{ marginBottom: 16, borderRadius: 8, border: '1px solid #f59e0b', background: '#fffbeb' }}
+                title={<span style={{ color: '#d97706' }}><ExclamationCircleOutlined /> 任务已挂起，等待您的审核/回复</span>}
+              >
+                <Form onFinish={handleResumeSubmit} layout="vertical">
+                  <Form.Item 
+                    name="input" 
+                    rules={[{ required: true, message: '请输入您的意见或选择按默认继续' }]}
+                    style={{ marginBottom: 12 }}
+                  >
+                    <TextArea 
+                      rows={3} 
+                      placeholder="请参考下方的原始日志回答系统的问题，例如选定风格、提供大纲修改意见等..." 
+                    />
+                  </Form.Item>
+                  <Space>
+                    <Button type="primary" htmlType="submit">发送回复</Button>
+                    <Button 
+                      onClick={() => handleResumeSubmit({ input: '按默认继续' })}
+                    >
+                      按默认继续
+                    </Button>
+                  </Space>
+                </Form>
               </Card>
             )}
 

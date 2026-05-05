@@ -108,6 +108,16 @@ export class AiService {
     }
   }
 
+  /** Resume a paused task with input */
+  async resumeTask(taskId: string, input: string) {
+    try {
+      const res = await this.worker.post(`/api/tasks/${taskId}/resume`, { input });
+      return res.data;
+    } catch (err: any) {
+      this.handleWorkerError(err, 'resumeTask');
+    }
+  }
+
   /** Get download URLs for task output files */
   async getTaskFiles(taskId: string) {
     try {

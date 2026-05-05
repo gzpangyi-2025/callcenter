@@ -358,11 +358,14 @@ export const aiAPI = {
     headers: { 'Cache-Control': 'no-cache' },
   }),
 
-  /** 获取单个任务详情 */
+  /** 获取任务详情 */
   getTask: (id: string): Promise<any> => api.get(`/ai/tasks/${id}`),
 
   /** 取消任务 */
   cancelTask: (id: string): Promise<any> => api.post(`/ai/tasks/${id}/cancel`),
+
+  /** 恢复暂停的任务（提交审阅确认） */
+  resumeTask: (id: string, input: string): Promise<any> => api.post(`/ai/tasks/${id}/resume`, { input }),
 
   /** 获取任务产物下载链接 */
   getTaskFiles: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/files`),
