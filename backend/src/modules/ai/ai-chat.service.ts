@@ -91,7 +91,7 @@ export class AiChatService {
       // 4. Get API key and model from settings
       const settings = await this.settingsService.getAll();
       const apiKey = settings['ai.chatApiKey'] || settings['ai.visionApiKey'];
-      const modelName = settings['ai.chatModel'] || 'gemini-3.1-flash';
+      const modelName = settings['ai.chatModel'] || 'gemini-2.5-flash';
 
       if (!apiKey) {
         send({ type: 'error', content: '未配置 AI Chat API Key，请在管理后台 → AI 设置中配置。' });
