@@ -17,6 +17,8 @@ interface ChatInputBarProps {
   onSendMessage: () => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onPaste: (e: React.ClipboardEvent) => void;
+  onCompositionStart?: (e: React.CompositionEvent) => void;
+  onCompositionEnd?: (e: React.CompositionEvent) => void;
 }
 
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
@@ -32,6 +34,8 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
   onSendMessage,
   onKeyDown,
   onPaste,
+  onCompositionStart,
+  onCompositionEnd,
 }) => {
   const removePendingFile = (index: number) => {
     setPendingFiles(prev => prev.filter((_, i) => i !== index));
@@ -128,6 +132,8 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={onKeyDown}
           onPaste={onPaste}
+          onCompositionStart={onCompositionStart}
+          onCompositionEnd={onCompositionEnd}
           placeholder={
             enterToNewline
               ? (isMobile ? '输入消息... (回车换行)' : '输入消息... (回车换行，按 Ctrl+Enter 发送，可粘贴图片)')

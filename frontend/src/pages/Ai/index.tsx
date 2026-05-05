@@ -347,9 +347,9 @@ const AiPage: React.FC = () => {
   return (
     <div style={{ padding: 24 }}>
       {/* Header */}
-      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <Title level={3} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+          <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             <RobotOutlined style={{
               background: 'linear-gradient(135deg, #818cf8, #a78bfa)',
               WebkitBackgroundClip: 'text',
@@ -357,7 +357,7 @@ const AiPage: React.FC = () => {
             }} />
             AI 协作
           </Title>
-          <Text type="secondary">由 Codex Worker 驱动的智能任务引擎</Text>
+          <Text type="secondary" style={{ fontSize: 13 }}>由 Codex Worker 驱动的智能任务引擎</Text>
         </div>
         <Space>
           <Badge
@@ -383,7 +383,10 @@ const AiPage: React.FC = () => {
               </span>
             ),
             children: (
-              <Card style={{ borderRadius: 12, minHeight: 560 }} styles={{ body: { padding: 0 } }}>
+              <Card 
+                style={{ borderRadius: 12, height: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column' }} 
+                styles={{ body: { padding: 0, flex: 1, display: 'flex', overflow: 'hidden' } }}
+              >
                 <AiChatPanel onTaskCreated={() => fetchTasks(1, status)} />
               </Card>
             ),

@@ -368,7 +368,7 @@ export const aiAPI = {
   // ── Chat (Gemini Flash) ──────────────────────────────────────────────────
 
   /** 发送消息 (SSE 流式) — 返回的是 Response 对象而非 JSON */
-  chatStream: (data: { sessionId?: string; message: string }) => {
+  chatStream: (data: { sessionId?: string; message: string; images?: string[] }) => {
     const token = localStorage.getItem('accessToken') ?? '';
     return fetch('/api/ai/chat', {
       method: 'POST',

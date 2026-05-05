@@ -9,6 +9,7 @@ import {
   MessageOutlined, ThunderboltOutlined,
 } from '@ant-design/icons';
 import { aiAPI } from '../../../services/api';
+import ChatInputBar from '../../Tickets/ChatInputBar';
 
 const { Text } = Typography;
 
@@ -39,7 +40,14 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
   const [sending, setSending] = useState(false);
   const [streaming, setStreaming] = useState('');
   const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [enterToNewline, setEnterToNewline] = useState(
+    localStorage.getItem('aiChatEnterToNewline') === 'true'
+  );
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const isComposing = useRef(false);
 
   // Load sessions
   const loadSessions = useCallback(async () => {
@@ -69,23 +77,56 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streaming]);
 
+  // Auto-focus after sending
+  useEffect(() => {
+    if (!sending) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 50);
+    }
+  }, [sending]);
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   // Send message with SSE streaming
   const handleSend = async () => {
     const text = input.trim();
-    if (!text || sending) return;
+    if ((!text && pendingFiles.length === 0) || sending) return;
 
     setInput('');
+    const currentFiles = [...pendingFiles];
+    setPendingFiles([]);
     setSending(true);
     setStreaming('');
 
     // Optimistically add user message
-    const userMsg: ChatMessage = { role: 'user', content: text };
+    let displayContent = text;
+    if (currentFiles.length > 0) {
+      displayContent += (displayContent ? '\n\n' : '') + `[已附加 ${currentFiles.length} 个文件]`;
+    }
+
+    const userMsg: ChatMessage = { role: 'user', content: displayContent };
     setMessages((prev) => [...prev, userMsg]);
 
     try {
+      const images: string[] = [];
+      for (const file of currentFiles) {
+        if (file.type.startsWith('image/')) {
+          images.push(await fileToBase64(file));
+        }
+      }
+
       const response = await aiAPI.chatStream({
         sessionId: activeSessionId,
         message: text,
+        images,
       });
 
       if (!response.ok) {
@@ -167,8 +208,37 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (isComposing.current) return;
+    
+    if (enterToNewline) {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    } else {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+        e.preventDefault();
+        handleSend();
+      } else if (e.key === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        setInput(prev => prev + '\n');
+      }
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) setPendingFiles(prev => [...prev, file]);
+      }
+    }
+  };
+
   return (
-    <div style={{ display: 'flex', height: '100%', minHeight: 500, gap: 0 }}>
+    <div style={{ display: 'flex', height: '100%', width: '100%', minHeight: 0, gap: 0 }}>
       {/* Left: Session List */}
       <div
         style={{
@@ -333,30 +403,29 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
         <div
           style={{
             borderTop: '1px solid var(--border, #e5e7eb)',
-            padding: '12px 16px',
             background: 'var(--bg-secondary, #fafafa)',
           }}
         >
-          <Space.Compact style={{ width: '100%' }}>
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onPressEnter={handleSend}
-              placeholder="输入消息... (Enter 发送)"
-              disabled={sending}
-              style={{ borderRadius: '8px 0 0 8px' }}
-              size="large"
-            />
-            <Button
-              type="primary"
-              icon={sending ? <LoadingOutlined spin /> : <SendOutlined />}
-              onClick={handleSend}
-              disabled={!input.trim() || sending}
-              size="large"
-              style={{ borderRadius: '0 8px 8px 0' }}
-            />
-          </Space.Compact>
-          <div style={{ marginTop: 6, fontSize: 11, color: '#9ca3af' }}>
+          <ChatInputBar
+            inputValue={input}
+            setInputValue={setInput}
+            pendingFiles={pendingFiles}
+            setPendingFiles={setPendingFiles}
+            uploading={sending}
+            isMobile={false}
+            enterToNewline={enterToNewline}
+            setEnterToNewline={(v) => {
+              setEnterToNewline(v);
+              localStorage.setItem('aiChatEnterToNewline', String(v));
+            }}
+            textareaRef={textareaRef}
+            onSendMessage={handleSend}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            onCompositionStart={() => { isComposing.current = true; }}
+            onCompositionEnd={() => { isComposing.current = false; }}
+          />
+          <div style={{ padding: '0 16px 8px', fontSize: 11, color: '#9ca3af', textAlign: 'center' }}>
             Powered by Gemini 3.1 Flash · 简单问答秒回，复杂任务自动调度 Codex
           </div>
         </div>

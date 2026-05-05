@@ -137,12 +137,12 @@ export class AiController {
   /** POST /api/ai/chat — 发送消息 (SSE 流式返回) */
   @Post('chat')
   async chat(
-    @Body() body: { sessionId?: string; message: string },
+    @Body() body: { sessionId?: string; message: string; images?: string[] },
     @Req() req: AuthenticatedRequest,
     @Res() res: express.Response,
   ) {
     return this.aiChatService.chatStream(
-      { sessionId: body.sessionId, message: body.message, userId: req.user.id },
+      { sessionId: body.sessionId, message: body.message, images: body.images, userId: req.user.id },
       res,
     );
   }

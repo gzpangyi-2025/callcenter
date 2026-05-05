@@ -16,6 +16,7 @@ interface ChatRequest {
   sessionId?: string;
   message: string;
   userId: number;
+  images?: string[];
 }
 
 interface ChatStreamChunk {
@@ -123,9 +124,24 @@ export class AiChatService {
       });
 
       // 6. Stream response
-      const result = await chat.sendMessageStream(
-        currentMessage?.parts?.[0]?.text ?? req.message,
-      );
+      const messageParts: any[] = [{ text: currentMessage?.parts?.[0]?.text ?? req.message }];
+
+      if (req.images && req.images.length > 0) {
+        for (const base64Image of req.images) {
+          // base64Image is typically "data:image/png;base64,iVBORw0K..."
+          const match = base64Image.match(/^data:(image\/\w+);base64,(.*)$/);
+          if (match) {
+            messageParts.push({
+              inlineData: {
+                mimeType: match[1],
+                data: match[2],
+              },
+            });
+          }
+        }
+      }
+
+      const result = await chat.sendMessageStream(messageParts);
 
       let fullResponse = '';
       for await (const chunk of result.stream) {
