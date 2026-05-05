@@ -688,29 +688,32 @@ const AiPage: React.FC = () => {
             {selectedTask.status === 'completed' && (
               <Col span={9}>
                 <Card size="small" title={`产物文件 (${taskFiles.length})`} style={{ borderRadius: 8, height: '100%' }} styles={{ body: { padding: '12px' } }}>
-                  <div style={{ maxHeight: 'calc(80vh - 120px)', overflowY: 'auto', paddingRight: 4 }}>
+                <div style={{ maxHeight: 'calc(80vh - 120px)', overflowY: 'auto', paddingRight: 4 }}>
                     {filesLoading ? (
                       <div style={{ textAlign: 'center', padding: 16 }}><Spin /></div>
                     ) : taskFiles.length === 0 ? (
                       <Empty description="暂无产物文件" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     ) : (
                       (() => {
-                        const coreExts = ['.pptx', '.ppt', '.docx', '.doc', '.xlsx', '.xls', '.pdf', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
                         const coreFiles: any[] = [];
-                        const otherFiles: any[] = [];
+                        const processFiles: any[] = [];
                         let hiddenCount = 0;
+
+                        // Junk extensions to hide completely
+                        const junkExts = new Set(['.py', '.pyc', '.js', '.cjs', '.mjs', '.ts', '.so', '.h', '.c', '.cpp', '.lock', '.sh', '.bat', '.yml', '.yaml', '.toml', '.cfg']);
 
                         taskFiles.forEach((f: any) => {
                           const fullName = f.name || f.key || '';
                           const ext = fullName.includes('.') ? fullName.substring(fullName.lastIndexOf('.')).toLowerCase() : '';
                           
-                          // Hide historical junk that shouldn't be shown
+                          // Hide junk files completely
                           if (
                             fullName.includes('node_modules/') || 
                             fullName.includes('venv/') || 
                             fullName.includes('__pycache__/') ||
-                            ['.py', '.pyc', '.js', '.cjs', '.mjs', '.ts', '.so', '.h', '.c', '.cpp', '.json', '.lock'].includes(ext) ||
+                            junkExts.has(ext) ||
                             fullName.endsWith('package.json') ||
+                            fullName.endsWith('LICENSE') ||
                             fullName.endsWith('LICENSE.md') ||
                             fullName.endsWith('README.md')
                           ) {
@@ -718,32 +721,31 @@ const AiPage: React.FC = () => {
                             return;
                           }
 
-                          if (coreExts.includes(ext) || fullName.endsWith('response.md')) {
+                          // Use backend category if available (new tasks)
+                          if (f.category === 'core') {
                             coreFiles.push(f);
+                          } else if (f.category === 'process') {
+                            processFiles.push(f);
                           } else {
-                            otherFiles.push(f);
+                            // Fallback for historical tasks without category:
+                            // Files in output/ path or response.md are core
+                            if (fullName.startsWith('output/') || fullName === 'response.md') {
+                              coreFiles.push(f);
+                            } else {
+                              processFiles.push(f);
+                            }
                           }
                         });
 
-                        // Sort core files to put response.md first
-                        coreFiles.sort((a, b) => {
-                          const aName = a.name || a.key || '';
-                          const bName = b.name || b.key || '';
-                          if (aName.endsWith('response.md')) return -1;
-                          if (bName.endsWith('response.md')) return 1;
-                          return aName.localeCompare(bName);
-                        });
-
-                        const renderFileItem = (f: any, i: number) => {
+                        const renderFileItem = (f: any, i: number, isCore: boolean) => {
                           const fullName = f.name || f.key || `文件 ${i + 1}`;
                           const displayName = fullName.includes('/') ? fullName.split('/').pop()! : fullName;
                           const fileKey = `${selectedTask.id}/${fullName}`;
                           const isDownloading = !!downloadingFiles[fileKey];
                           return (
-                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
+                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 8px', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
                               <Text style={{ fontSize: 13, wordBreak: 'break-all', paddingRight: 8 }} ellipsis={{ tooltip: displayName }}>
-                                {fullName.endsWith('response.md') ? '💡 ' : (coreExts.includes(fullName.substring(fullName.lastIndexOf('.')).toLowerCase()) ? '📄 ' : '📃 ')}
-                                {displayName}
+                                {isCore ? '📦 ' : '📃 '}{displayName}
                               </Text>
                               <Button
                                 size="small"
@@ -751,7 +753,7 @@ const AiPage: React.FC = () => {
                                 icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
                                 loading={isDownloading}
                                 onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
-                                style={{ padding: '0 4px' }}
+                                style={{ padding: '0 4px', flexShrink: 0 }}
                               >
                                 {isDownloading ? '下载中' : '下载'}
                               </Button>
@@ -759,34 +761,36 @@ const AiPage: React.FC = () => {
                           );
                         };
 
-                        if (coreFiles.length === 0 && otherFiles.length === 0) {
+                        if (coreFiles.length === 0 && processFiles.length === 0) {
                           return <Empty description={`所有产物已被过滤（隐藏了 ${hiddenCount} 个无关文件）`} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
                         }
 
                         return (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {/* Core outputs - highlighted */}
                             {coreFiles.length > 0 && (
-                              <div>
-                                <Text type="secondary" strong style={{ fontSize: 12, borderBottom: '1px solid #f0f0f0', display: 'block', paddingBottom: 4, marginBottom: 8 }}>
-                                  核心产物
-                                </Text>
-                                <Space direction="vertical" style={{ width: '100%' }} size={0}>
-                                  {coreFiles.map((f, i) => renderFileItem(f, i))}
-                                </Space>
-                              </div>
+                              <Card
+                                size="small"
+                                title={<Text strong style={{ fontSize: 13 }}>🎯 核心产物 ({coreFiles.length})</Text>}
+                                style={{ borderRadius: 8, border: '1px solid #818cf8', background: 'rgba(129, 140, 248, 0.04)' }}
+                                styles={{ body: { padding: '4px 0' } }}
+                              >
+                                {coreFiles.map((f, i) => renderFileItem(f, i, true))}
+                              </Card>
                             )}
-                            {otherFiles.length > 0 && (
-                              <div>
-                                <Text type="secondary" strong style={{ fontSize: 12, borderBottom: '1px solid #f0f0f0', display: 'block', paddingBottom: 4, marginBottom: 8 }}>
-                                  过程材料
-                                </Text>
-                                <Space direction="vertical" style={{ width: '100%' }} size={0}>
-                                  {otherFiles.map((f, i) => renderFileItem(f, i + coreFiles.length))}
-                                </Space>
-                              </div>
+                            {/* Process materials - secondary */}
+                            {processFiles.length > 0 && (
+                              <Card
+                                size="small"
+                                title={<Text type="secondary" strong style={{ fontSize: 12 }}>过程材料 ({processFiles.length})</Text>}
+                                style={{ borderRadius: 8 }}
+                                styles={{ body: { padding: '4px 0' } }}
+                              >
+                                {processFiles.map((f, i) => renderFileItem(f, i + coreFiles.length, false))}
+                              </Card>
                             )}
                             {hiddenCount > 0 && (
-                              <Text type="secondary" style={{ fontSize: 11, textAlign: 'center', display: 'block', marginTop: 8 }}>
+                              <Text type="secondary" style={{ fontSize: 11, textAlign: 'center', display: 'block' }}>
                                 已隐藏 {hiddenCount} 个构建/依赖文件
                               </Text>
                             )}
