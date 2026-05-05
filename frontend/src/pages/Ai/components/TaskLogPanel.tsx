@@ -112,7 +112,8 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
   const [connected, setConnected] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [, setCurrentStep] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
