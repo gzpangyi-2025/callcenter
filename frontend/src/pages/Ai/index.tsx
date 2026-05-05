@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
@@ -210,6 +210,11 @@ const AiPage: React.FC = () => {
       // Include uploaded attachments
       if (uploadedAttachments.length > 0) {
         payload.attachments = uploadedAttachments;
+      }
+
+      // Include review mode
+      if (values.reviewMode) {
+        payload.reviewMode = values.reviewMode;
       }
 
       await aiAPI.createTask(payload);
@@ -639,6 +644,19 @@ const AiPage: React.FC = () => {
             )}
           </div>
 
+          {/* Review Mode */}
+          <div style={{ borderTop: '1px dashed var(--border, #e5e7eb)', paddingTop: 12, marginTop: 4 }}>
+            <Form.Item name="reviewMode" label="执行模式" initialValue="auto">
+              <Radio.Group>
+                <Radio.Button value="auto">🚀 直通模式</Radio.Button>
+                <Radio.Button value="review">🔍 审阅模式</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              直通模式：全程自动执行，适合不想等待确认的场景。审阅模式：先生成大纲和样图，确认后再执行。
+            </Text>
+          </div>
+
           {/* Attachments */}
           <div style={{ borderTop: '1px dashed var(--border, #e5e7eb)', paddingTop: 12, marginTop: 4 }}>
             <Form.Item label={`附件（${uploadedAttachments.length} 个已上传）`}>
@@ -769,6 +787,16 @@ const AiPage: React.FC = () => {
                 style={{ marginBottom: 16, borderRadius: 8, border: '1px solid #f59e0b', background: '#fffbeb' }}
                 title={<span style={{ color: '#d97706' }}><ExclamationCircleOutlined /> 任务已挂起，等待您的审核/回复</span>}
               >
+                {/* Show agent's last message (outline / questions) */}
+                {selectedTask.lastAgentMessage && (
+                  <div style={{ 
+                    marginBottom: 12, padding: 12, background: '#fff', borderRadius: 6, 
+                    border: '1px solid #e5e7eb', maxHeight: 300, overflow: 'auto',
+                    fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap',
+                  }}>
+                    {selectedTask.lastAgentMessage}
+                  </div>
+                )}
                 <Form onFinish={handleResumeSubmit} layout="vertical">
                   <Form.Item 
                     name="input" 
@@ -777,7 +805,7 @@ const AiPage: React.FC = () => {
                   >
                     <TextArea 
                       rows={3} 
-                      placeholder="请参考下方的原始日志回答系统的问题，例如选定风格、提供大纲修改意见等..." 
+                      placeholder="请参考上方的大纲和样图回答系统的问题，例如选定风格、提供大纲修改意见等..." 
                     />
                   </Form.Item>
                   <Space>

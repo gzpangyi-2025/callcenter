@@ -38,6 +38,14 @@ export class CreateAiTaskDto {
 
   @IsOptional()
   attachments?: Array<{ name: string; url: string; size: number }>;
+
+  @IsOptional()
+  @IsString()
+  reviewMode?: 'review' | 'auto';
+
+  @IsOptional()
+  @IsString()
+  parentTaskId?: string;
 }
 
 @Controller('ai')

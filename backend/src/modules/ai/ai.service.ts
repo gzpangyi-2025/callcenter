@@ -16,6 +16,8 @@ export interface CreateAiTaskDto {
   params: Record<string, unknown>;
   prompt?: string;
   attachments?: Array<{ name: string; url: string; size: number }>;
+  reviewMode?: 'review' | 'auto';
+  parentTaskId?: string;
 }
 
 @Injectable()
