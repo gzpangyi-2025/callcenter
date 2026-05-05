@@ -217,8 +217,18 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     const core: FileEvent[] = [];
     const proc: FileEvent[] = [];
     for (const f of files) {
-      if (f.category === 'core') core.push(f);
-      else proc.push(f);
+      if (f.category === 'core') {
+        core.push(f);
+      } else if (f.category === 'process') {
+        proc.push(f);
+      } else {
+        const fullName = f.name || '';
+        if (fullName.endsWith('response.md') || fullName.endsWith('manifest.json') || fullName.includes('live/')) {
+          proc.push(f);
+        } else {
+          core.push(f);
+        }
+      }
     }
     return { coreFiles: core, processFiles: proc };
   }, [files]);

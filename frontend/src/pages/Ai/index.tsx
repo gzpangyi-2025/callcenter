@@ -6,7 +6,8 @@ import {
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
-  StopOutlined, DownloadOutlined, ThunderboltOutlined,
+  StopOutlined, DownloadOutlined, ThunderboltOutlined, EditOutlined,
+  ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
   LoadingOutlined, InboxOutlined,
 } from '@ant-design/icons';
@@ -57,6 +58,10 @@ const AiPage: React.FC = () => {
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
   const [uploadedAttachments, setUploadedAttachments] = useState<Array<{ name: string; url: string; size: number }>>([]);
   const [uploadingCount, setUploadingCount] = useState(0);
+
+  const [modifyOpen, setModifyOpen] = useState(false);
+  const [modifyTarget, setModifyTarget] = useState<any>(null);
+  const [modifyForm] = Form.useForm();
 
   /**
    * Force-download a file using fetch + Blob URL.
@@ -222,6 +227,30 @@ const AiPage: React.FC = () => {
     }
   };
 
+  // ── Modify task ──────────────────────────────────────────────────────────
+
+  const handleModifySubmit = async (values: any) => {
+    setCreating(true);
+    try {
+      await aiAPI.createTask({
+        type: 'modify_task',
+        prompt: values.prompt,
+        parentTaskId: modifyTarget.id,
+        params: modifyTarget.params || {},
+      });
+      message.success('增量修改任务已提交，正在排队执行');
+      setModifyOpen(false);
+      setDetailOpen(false);
+      modifyForm.resetFields();
+      setModifyTarget(null);
+      fetchTasks(1, status);
+    } catch {
+      // global interceptor handles
+    } finally {
+      setCreating(false);
+    }
+  };
+
   // ── Cancel task ──────────────────────────────────────────────────────────
 
   const handleCancel = async (taskId: string) => {
@@ -234,28 +263,49 @@ const AiPage: React.FC = () => {
 
   // ── View task detail + files ──────────────────────────────────────────────
 
+  const fetchTaskFiles = useCallback(async (taskId: string) => {
+    setFilesLoading(true);
+    try {
+      const res: any = await aiAPI.getTaskFiles(taskId);
+      console.debug('[AI] getTaskFiles raw response:', res);
+      const files = Array.isArray(res?.data) ? res.data
+        : Array.isArray(res?.data?.data) ? res.data.data
+        : [];
+      setTaskFiles(files);
+    } catch {
+      setTaskFiles([]);
+    } finally {
+      setFilesLoading(false);
+    }
+  }, []);
+
   const handleViewDetail = async (task: any) => {
     setSelectedTask(task);
     setDetailOpen(true);
     if (task.status === 'completed') {
-      setFilesLoading(true);
-      try {
-        const res: any = await aiAPI.getTaskFiles(task.id);
-        console.debug('[AI] getTaskFiles raw response:', res);
-        // Worker returns { success, data: [{name, url, size}] }
-        const files = Array.isArray(res?.data) ? res.data
-          : Array.isArray(res?.data?.data) ? res.data.data
-          : [];
-        setTaskFiles(files);
-      } catch {
-        setTaskFiles([]);
-      } finally {
-        setFilesLoading(false);
-      }
+      fetchTaskFiles(task.id);
     } else {
       setTaskFiles([]);
     }
   };
+
+  // Sync selectedTask with tasks array updates
+  useEffect(() => {
+    if (detailOpen && selectedTask) {
+      const updated = tasks.find(t => t.id === selectedTask.id);
+      if (updated && (
+        updated.status !== selectedTask.status ||
+        updated.progress !== selectedTask.progress ||
+        updated.currentStep !== selectedTask.currentStep
+      )) {
+        setSelectedTask(updated);
+        // If task just transitioned to completed, fetch output files
+        if (updated.status === 'completed' && selectedTask.status !== 'completed') {
+          fetchTaskFiles(updated.id);
+        }
+      }
+    }
+  }, [tasks, detailOpen, selectedTask, fetchTaskFiles]);
 
   // ── Table columns ─────────────────────────────────────────────────────────
 
@@ -336,6 +386,15 @@ const AiPage: React.FC = () => {
                 danger
                 icon={<StopOutlined />}
                 onClick={() => handleCancel(record.id)}
+              />
+            </Tooltip>
+          )}
+          {record.status === 'completed' && (
+            <Tooltip title="基于此任务进行增量修改">
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => { setModifyTarget(record); setModifyOpen(true); }}
               />
             </Tooltip>
           )}
@@ -627,7 +686,17 @@ const AiPage: React.FC = () => {
         title={<Space><ThunderboltOutlined style={{ color: '#818cf8' }} />任务详情</Space>}
         open={detailOpen}
         onCancel={() => { setDetailOpen(false); setSelectedTask(null); setTaskFiles([]); }}
-        footer={null}
+        footer={
+          selectedTask?.status === 'completed' ? (
+            <Button 
+              type="primary" 
+              icon={<EditOutlined />} 
+              onClick={() => { setModifyTarget(selectedTask); setModifyOpen(true); }}
+            >
+              基于此任务进行增量修改
+            </Button>
+          ) : null
+        }
         width={1000}
       >
         {selectedTask && (
@@ -729,11 +798,11 @@ const AiPage: React.FC = () => {
                             processFiles.push(f);
                           } else {
                             // Fallback for historical tasks without category:
-                            // Only files in an output/ subdirectory are core deliverables
-                            if (fullName.includes('output/') && fullName !== 'response.md') {
-                              coreFiles.push(f);
-                            } else {
+                            // response.md, manifest.json, and live/ directory files are process materials
+                            if (fullName.endsWith('response.md') || fullName.endsWith('manifest.json') || fullName.includes('live/')) {
                               processFiles.push(f);
+                            } else {
+                              coreFiles.push(f);
                             }
                           }
                         });
@@ -815,6 +884,36 @@ const AiPage: React.FC = () => {
             )}
           </Row>
         )}
+      </Modal>
+
+      {/* ── Modify Task Modal ──────────────────────────────────────────── */}
+      <Modal
+        title={<Space><EditOutlined style={{ color: '#8b5cf6' }} />基于当前任务修改</Space>}
+        open={modifyOpen}
+        onCancel={() => { setModifyOpen(false); modifyForm.resetFields(); setModifyTarget(null); }}
+        onOk={() => modifyForm.submit()}
+        confirmLoading={creating}
+        okText="提交修改"
+        cancelText="取消"
+        width={500}
+        destroyOnClose
+      >
+        {modifyTarget && (
+          <div style={{ marginBottom: 16, padding: 12, background: '#f8fafc', borderRadius: 8 }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>原任务 ID: {modifyTarget.id}</Text><br/>
+            <Text type="secondary" style={{ fontSize: 12 }}>类型: {modifyTarget.type}</Text>
+          </div>
+        )}
+        <Form form={modifyForm} layout="vertical" onFinish={handleModifySubmit}>
+          <Form.Item 
+            name="prompt" 
+            label="增量修改需求" 
+            rules={[{ required: true, message: '请输入您需要修改的内容' }]}
+            extra="例如：将背景颜色改为蓝色、将第二页的标题修改为'架构总结'等"
+          >
+            <TextArea rows={4} placeholder="描述你想如何修改原有的生成产物..." />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
