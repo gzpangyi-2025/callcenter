@@ -628,10 +628,11 @@ const AiPage: React.FC = () => {
         open={detailOpen}
         onCancel={() => { setDetailOpen(false); setSelectedTask(null); setTaskFiles([]); }}
         footer={null}
-        width={720}
+        width={1000}
       >
         {selectedTask && (
-          <>
+          <Row gutter={16}>
+            <Col span={selectedTask.status === 'completed' ? 15 : 24}>
             <Descriptions bordered size="small" column={2} style={{ marginBottom: 16 }}>
               <Descriptions.Item label="任务ID" span={2}>
                 <Text code style={{ fontSize: 11 }}>{selectedTask.id}</Text>
@@ -681,44 +682,49 @@ const AiPage: React.FC = () => {
 
             {/* Real-time log panel — shown for running/pending tasks and completed tasks with detail */}
             <TaskLogPanel taskId={selectedTask.id} taskStatus={selectedTask.status} />
+            </Col>
 
-            {/* Output files */}
+            {/* Output files - Right Column */}
             {selectedTask.status === 'completed' && (
-              <Card size="small" title="产物文件" style={{ borderRadius: 8 }}>
-                {filesLoading ? (
-                  <div style={{ textAlign: 'center', padding: 16 }}><Spin /></div>
-                ) : taskFiles.length === 0 ? (
-                  <Empty description="暂无产物文件" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                ) : (
-                  <Space direction="vertical" style={{ width: '100%' }}>
-                    {taskFiles.map((f: any, i: number) => {
-                        // f.name may contain subdirectory (e.g. "uuid/image.png")
-                        const fullName = f.name || f.key || `文件 ${i + 1}`;
-                        const displayName = fullName.includes('/')
-                          ? fullName.split('/').pop()!
-                          : fullName;
-                        const fileKey = `${selectedTask.id}/${fullName}`;
-                        const isDownloading = !!downloadingFiles[fileKey];
-                        return (
-                          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
-                            <Text style={{ fontSize: 13 }}>{displayName}</Text>
-                            <Button
-                              size="small"
-                              type="link"
-                              icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
-                              loading={isDownloading}
-                              onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
-                            >
-                              {isDownloading ? '下载中...' : '下载'}
-                            </Button>
-                          </div>
-                        );
-                      })}
-                  </Space>
-                )}
-              </Card>
+              <Col span={9}>
+                <Card size="small" title={`产物文件 (${taskFiles.length})`} style={{ borderRadius: 8, height: '100%' }} styles={{ body: { padding: '12px' } }}>
+                  <div style={{ maxHeight: 'calc(80vh - 120px)', overflowY: 'auto', paddingRight: 4 }}>
+                    {filesLoading ? (
+                      <div style={{ textAlign: 'center', padding: 16 }}><Spin /></div>
+                    ) : taskFiles.length === 0 ? (
+                      <Empty description="暂无产物文件" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                    ) : (
+                      <Space direction="vertical" style={{ width: '100%' }} size="small">
+                        {taskFiles.map((f: any, i: number) => {
+                            const fullName = f.name || f.key || `文件 ${i + 1}`;
+                            const displayName = fullName.includes('/')
+                              ? fullName.split('/').pop()!
+                              : fullName;
+                            const fileKey = `${selectedTask.id}/${fullName}`;
+                            const isDownloading = !!downloadingFiles[fileKey];
+                            return (
+                              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
+                                <Text style={{ fontSize: 13, wordBreak: 'break-all', paddingRight: 8 }} ellipsis={{ tooltip: displayName }}>{displayName}</Text>
+                                <Button
+                                  size="small"
+                                  type="link"
+                                  icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
+                                  loading={isDownloading}
+                                  onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
+                                  style={{ padding: '0 4px' }}
+                                >
+                                  {isDownloading ? '下载中' : '下载'}
+                                </Button>
+                              </div>
+                            );
+                          })}
+                      </Space>
+                    )}
+                  </div>
+                </Card>
+              </Col>
             )}
-          </>
+          </Row>
         )}
       </Modal>
     </div>
