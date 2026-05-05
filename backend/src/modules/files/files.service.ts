@@ -411,7 +411,15 @@ export class FilesService {
       version: '2.0',
       statement: [
         {
-          action: ['name/cos:PutObject'],
+          action: [
+            'name/cos:PutObject',
+            'name/cos:InitiateMultipartUpload',
+            'name/cos:ListMultipartUploads',
+            'name/cos:ListParts',
+            'name/cos:UploadPart',
+            'name/cos:CompleteMultipartUpload',
+            'name/cos:AbortMultipartUpload',
+          ],
           effect: 'allow',
           resource: [
             `qcs::cos:${config.region}:uid/${appId}:${config.bucket}/${filename}`,
@@ -427,6 +435,7 @@ export class FilesService {
           secretKey: config.secretKey,
           policy: policy,
           durationSeconds: 1800, // 30 mins
+          proxy: '', // Bypass system HTTP_PROXY to avoid "plain HTTP sent to HTTPS port" errors
         },
         (err: any, credential: any) => {
           if (err) {
