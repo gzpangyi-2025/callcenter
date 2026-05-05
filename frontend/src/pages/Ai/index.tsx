@@ -63,6 +63,11 @@ const AiPage: React.FC = () => {
   const [modifyTarget, setModifyTarget] = useState<any>(null);
   const [modifyForm] = Form.useForm();
 
+  // Text file preview state
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewContent, setPreviewContent] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
+
   /**
    * Force-download a file using fetch + Blob URL.
    * This works in Chrome even when the page has an invalid certificate,
@@ -96,6 +101,28 @@ const AiPage: React.FC = () => {
       console.error('[Download]', err);
     } finally {
       setDownloadingFiles(prev => ({ ...prev, [key]: false }));
+    }
+  }, []);
+
+  /**
+   * Preview a text file (.md, .txt, .json) inline.
+   */
+  const handleFilePreview = useCallback(async (taskId: string, filename: string, displayName: string) => {
+    try {
+      const proxyUrl = `/api/ai/tasks/${taskId}/download?file=${encodeURIComponent(filename)}`;
+      const token = localStorage.getItem('accessToken') ?? '';
+      const resp = await fetch(proxyUrl, {
+        credentials: 'include',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      setPreviewContent(text);
+      setPreviewTitle(displayName);
+      setPreviewOpen(true);
+    } catch (err) {
+      message.error('文件预览失败');
+      console.error('[Preview]', err);
     }
   }, []);
 
@@ -151,8 +178,8 @@ const AiPage: React.FC = () => {
   const startPolling = useCallback(() => {
     if (pollingRef.current) return;
     pollingRef.current = setInterval(() => {
-      const hasRunning = tasks.some(t => t.status === 'pending' || t.status === 'running');
-      if (hasRunning) {
+      const hasActive = tasks.some(t => t.status === 'pending' || t.status === 'running');
+      if (hasActive) {
         fetchTasks();
       } else {
         clearInterval(pollingRef.current!);
@@ -162,8 +189,8 @@ const AiPage: React.FC = () => {
   }, [tasks, fetchTasks]);
 
   useEffect(() => {
-    const hasRunning = tasks.some(t => t.status === 'pending' || t.status === 'running');
-    if (hasRunning) {
+    const hasActive = tasks.some(t => t.status === 'pending' || t.status === 'running');
+    if (hasActive) {
       startPolling();
     } else {
       if (pollingRef.current) {
@@ -314,11 +341,16 @@ const AiPage: React.FC = () => {
       if (updated && (
         updated.status !== selectedTask.status ||
         updated.progress !== selectedTask.progress ||
-        updated.currentStep !== selectedTask.currentStep
+        updated.currentStep !== selectedTask.currentStep ||
+        updated.lastAgentMessage !== selectedTask.lastAgentMessage
       )) {
         setSelectedTask(updated);
         // If task just transitioned to completed, fetch output files
         if (updated.status === 'completed' && selectedTask.status !== 'completed') {
+          fetchTaskFiles(updated.id);
+        }
+        // If task transitioned to paused, also fetch files (phase1 artifacts)
+        if (updated.status === 'paused' && selectedTask.status !== 'paused') {
           fetchTaskFiles(updated.id);
         }
       }
@@ -883,21 +915,46 @@ const AiPage: React.FC = () => {
                           const displayName = fullName.includes('/') ? fullName.split('/').pop()! : fullName;
                           const fileKey = `${selectedTask.id}/${fullName}`;
                           const isDownloading = !!downloadingFiles[fileKey];
+                          const ext = displayName.split('.').pop()?.toLowerCase() ?? '';
+                          const isPreviewable = ['md', 'txt', 'json', 'csv'].includes(ext);
+                          const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);
                           return (
                             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 8px', borderBottom: '1px dashed var(--border, #e5e7eb)' }}>
                               <Text style={{ fontSize: 13, wordBreak: 'break-all', paddingRight: 8 }} ellipsis={{ tooltip: displayName }}>
                                 {isCore ? '📦 ' : '📃 '}{displayName}
                               </Text>
-                              <Button
-                                size="small"
-                                type="link"
-                                icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
-                                loading={isDownloading}
-                                onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
-                                style={{ padding: '0 4px', flexShrink: 0 }}
-                              >
-                                {isDownloading ? '下载中' : '下载'}
-                              </Button>
+                              <Space size={4} style={{ flexShrink: 0 }}>
+                                {isPreviewable && (
+                                  <Button
+                                    size="small"
+                                    type="link"
+                                    icon={<EyeOutlined />}
+                                    onClick={() => handleFilePreview(selectedTask.id, fullName, displayName)}
+                                    style={{ padding: '0 4px' }}
+                                  >
+                                    预览
+                                  </Button>
+                                )}
+                                {isImage && f.url && (
+                                  <Image
+                                    src={f.url}
+                                    width={24}
+                                    height={24}
+                                    style={{ objectFit: 'cover', borderRadius: 4, cursor: 'pointer' }}
+                                    preview={{ mask: <EyeOutlined /> }}
+                                  />
+                                )}
+                                <Button
+                                  size="small"
+                                  type="link"
+                                  icon={isDownloading ? <LoadingOutlined spin /> : <DownloadOutlined />}
+                                  loading={isDownloading}
+                                  onClick={() => handleFileDownload(selectedTask.id, fullName, displayName)}
+                                  style={{ padding: '0 4px' }}
+                                >
+                                  {isDownloading ? '下载中' : '下载'}
+                                </Button>
+                              </Space>
                             </div>
                           );
                         };
@@ -985,6 +1042,31 @@ const AiPage: React.FC = () => {
             <TextArea rows={4} placeholder="描述你想如何修改原有的生成产物..." />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* ── Text File Preview Modal ───────────────────────────────────── */}
+      <Modal
+        title={<Space><EyeOutlined style={{ color: '#818cf8' }} />{previewTitle}</Space>}
+        open={previewOpen}
+        onCancel={() => { setPreviewOpen(false); setPreviewContent(''); }}
+        footer={null}
+        width={800}
+      >
+        <div style={{
+          maxHeight: 600,
+          overflow: 'auto',
+          padding: 16,
+          background: '#f8fafc',
+          borderRadius: 8,
+          border: '1px solid #e5e7eb',
+          fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+          fontSize: 13,
+          lineHeight: 1.6,
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+        }}>
+          {previewContent}
+        </div>
       </Modal>
     </div>
   );
