@@ -594,7 +594,15 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     apiKey: string,
     imageModel: string,
   ): Promise<string> {
-    const modelToUse = imageModel;
+    // 映射遗留的内部代号 (Nano Banana) 到官方 Gemini 模型名称
+    let modelToUse = imageModel;
+    if (modelToUse === 'nano-banana-2') {
+      modelToUse = 'gemini-3.1-flash-image-preview';
+    } else if (modelToUse === 'nano-banana-pro') {
+      modelToUse = 'gemini-3-pro-image-preview';
+    } else if (modelToUse === 'nano-banana') {
+      modelToUse = 'gemini-2.5-flash-image';
+    }
 
     // Fallback placeholder
     const defaultImg =
