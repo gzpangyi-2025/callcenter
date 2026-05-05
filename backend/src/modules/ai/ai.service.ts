@@ -1,6 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-//  AI Service — forwards requests to the codex-worker sidecar service
-// ─────────────────────────────────────────────────────────────────────────────
 import {
   Injectable,
   Logger,
@@ -12,11 +9,13 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { Response } from 'express';
 import * as path from 'path';
+import { FilesService } from '../files/files.service';
 
 export interface CreateAiTaskDto {
   type: string;
   params: Record<string, unknown>;
   prompt?: string;
+  attachments?: Array<{ name: string; url: string; size: number }>;
 }
 
 @Injectable()
@@ -24,7 +23,10 @@ export class AiService {
   private readonly logger = new Logger(AiService.name);
   private readonly worker: AxiosInstance;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly filesService: FilesService,
+  ) {
     const baseURL = this.config.get<string>(
       'CODEX_WORKER_URL',
       'http://43.130.240.106:3100',
@@ -46,8 +48,25 @@ export class AiService {
   /** Submit a new AI task */
   async createTask(dto: CreateAiTaskDto, userId: number) {
     try {
+      // Resolve attachment URLs to absolute COS presigned URLs
+      // (worker runs on a different server and can't access relative paths)
+      let resolvedAttachments = dto.attachments;
+      if (dto.attachments && dto.attachments.length > 0) {
+        resolvedAttachments = await Promise.all(
+          dto.attachments.map(async (att) => {
+            if (att.url.startsWith('http')) return att; // Already absolute
+            // Extract COS key from relative path like /api/files/static/<key>
+            const cosKey = att.url.replace('/api/files/static/', '');
+            const absoluteUrl = await this.filesService.getPresignedUrl(cosKey, att.name, false);
+            return { ...att, url: absoluteUrl };
+          }),
+        );
+        this.logger.log(`Resolved ${resolvedAttachments.length} attachment URLs for task`);
+      }
+
       const res = await this.worker.post('/api/tasks', {
         ...dto,
+        attachments: resolvedAttachments,
         userId,
       });
       return res.data;

@@ -9,11 +9,13 @@ import { AiChatService } from './ai-chat.service';
 import { AiChatSession } from '../../entities/ai-chat-session.entity';
 import { AiChatMessage } from '../../entities/ai-chat-message.entity';
 import { SettingsModule } from '../settings/settings.module';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AiChatSession, AiChatMessage]),
     SettingsModule,
+    FilesModule,
   ],
   providers: [AiService, AiChatService],
   controllers: [AiController],

@@ -2,15 +2,15 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs,
+  Row, Col, Statistic, Progress, Tabs, Upload,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
   StopOutlined, DownloadOutlined, ThunderboltOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
-  LoadingOutlined,
+  LoadingOutlined, InboxOutlined,
 } from '@ant-design/icons';
-import { aiAPI } from '../../services/api';
+import { aiAPI, filesAPI } from '../../services/api';
 import TaskLogPanel from './components/TaskLogPanel';
 import AiChatPanel from './components/AiChatPanel';
 import dayjs from 'dayjs';
@@ -55,6 +55,8 @@ const AiPage: React.FC = () => {
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
+  const [uploadedAttachments, setUploadedAttachments] = useState<Array<{ name: string; url: string; size: number }>>([]);
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   /**
    * Force-download a file using fetch + Blob URL.
@@ -185,6 +187,7 @@ const AiPage: React.FC = () => {
         params: {},
       };
 
+      // Build payload with template params or raw prompt
       if (useRawPrompt) {
         payload.prompt = values.rawPrompt;
       } else {
@@ -199,12 +202,18 @@ const AiPage: React.FC = () => {
         }
       }
 
+      // Include uploaded attachments
+      if (uploadedAttachments.length > 0) {
+        payload.attachments = uploadedAttachments;
+      }
+
       await aiAPI.createTask(payload);
       message.success('任务已提交，正在排队执行');
       setCreateOpen(false);
       form.resetFields();
       setSelectedTemplate(null);
       setUseRawPrompt(false);
+      setUploadedAttachments([]);
       fetchTasks(1, status);
     } catch {
       // global interceptor handles
@@ -556,6 +565,59 @@ const AiPage: React.FC = () => {
                 <TextArea rows={6} placeholder="直接描述你需要 AI 完成的任务..." />
               </Form.Item>
             )}
+          </div>
+
+          {/* Attachments */}
+          <div style={{ borderTop: '1px dashed var(--border, #e5e7eb)', paddingTop: 12, marginTop: 4 }}>
+            <Form.Item label={`附件（${uploadedAttachments.length} 个已上传）`}>
+              <Upload.Dragger
+                multiple
+                fileList={[]}
+                showUploadList={false}
+                beforeUpload={() => false}
+                onChange={async (info) => {
+                  const file = info.file as any;
+                  if (file.status) return; // Skip antd-triggered events
+                  setUploadingCount(c => c + 1);
+                  try {
+                    // Use existing filesAPI.upload which handles COS STS + fallback
+                    const res: any = await filesAPI.upload(file);
+                    const url = res?.data?.url || res?.url || '';
+                    setUploadedAttachments(prev => [...prev, { name: file.name, url, size: file.size }]);
+                    message.success(`附件 ${file.name} 上传成功`);
+                  } catch (err: any) {
+                    message.error(`上传失败: ${err.message || '未知错误'}`);
+                  } finally {
+                    setUploadingCount(c => c - 1);
+                  }
+                }}
+              >
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined style={{ color: '#818cf8' }} />
+                </p>
+                <p className="ant-upload-text">点击或拖拽文件到此区域上传</p>
+                <p className="ant-upload-hint">支持上传参考资料、模板文件等，Codex 可直接读取</p>
+              </Upload.Dragger>
+              {uploadedAttachments.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  {uploadedAttachments.map((att, i) => (
+                    <Tag
+                      key={i}
+                      closable
+                      onClose={() => setUploadedAttachments(prev => prev.filter((_, idx) => idx !== i))}
+                      style={{ marginBottom: 4 }}
+                    >
+                      📎 {att.name} ({(att.size / 1024).toFixed(1)} KB)
+                    </Tag>
+                  ))}
+                </div>
+              )}
+              {uploadingCount > 0 && (
+                <div style={{ marginTop: 4 }}>
+                  <LoadingOutlined spin /> 正在上传 {uploadingCount} 个文件...
+                </div>
+              )}
+            </Form.Item>
           </div>
         </Form>
       </Modal>

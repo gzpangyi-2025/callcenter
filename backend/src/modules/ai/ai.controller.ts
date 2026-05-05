@@ -35,6 +35,9 @@ export class CreateAiTaskDto {
   @IsOptional()
   @IsString()
   prompt?: string;
+
+  @IsOptional()
+  attachments?: Array<{ name: string; url: string; size: number }>;
 }
 
 @Controller('ai')
