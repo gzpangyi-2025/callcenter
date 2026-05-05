@@ -49,6 +49,8 @@ const AdminPage: React.FC = () => {
             systemPrompt: d['ai.systemPrompt'] || '',
             imageModel: d['ai.imageModel'] || 'nano-banana-2',
             imageApiKey: d['ai.imageApiKey'] || '',
+            chatModel: d['ai.chatModel'] || 'gemini-3.1-flash',
+            chatApiKey: d['ai.chatApiKey'] || '',
           });
           bizForm.setFieldsValue({
             companyName: d['biz.companyName'] || '',
@@ -210,8 +212,31 @@ const AdminPage: React.FC = () => {
                       </Row>
                     </Card>
 
+                    {/* Chat 调度模型 */}
+                    <Card
+                      size="small"
+                      title={<span style={{ fontWeight: 600 }}>💬 Chat 调度模型（AI 对话 + 任务调度）</span>}
+                      style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
+                    >
+                      <Row gutter={16}>
+                        <Col xs={24} sm={12}>
+                          <Form.Item label="模型" name="chatModel">
+                            <Select>
+                              <Select.Option value="gemini-3.1-flash">Gemini 3.1 Flash</Select.Option>
+                              <Select.Option value="gemini-3.1-pro">Gemini 3.1 Pro</Select.Option>
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={12}>
+                          <Form.Item label="API Key" name="chatApiKey" extra="用于 AI 对话和任务调度，留空则复用多模态 API Key">
+                            <Input.Password placeholder="留空复用多模态 Key" />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Card>
+
                     <div style={{ background: 'var(--bg-primary)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 13, color: 'var(--text-secondary)' }}>
-                      💡 两个模型将在「AI 生成知识库」功能中协同工作：Gemini 3.1 Pro 负责阅读聊天记录和图片、生成文字; Nano Banana 2 负责生成配图和流程图。
+                      💡 三个模型分工：Gemini Pro 负责阅读理解、知识总结; Flash 负责 AI 对话和任务调度（低 Token 消耗）; Nano Banana 负责生图。
                     </div>
 
                     <Form.Item>

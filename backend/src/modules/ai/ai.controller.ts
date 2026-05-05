@@ -12,6 +12,7 @@ import {
   UseGuards,
   Req,
   Res,
+  Delete,
 } from '@nestjs/common';
 import * as express from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,6 +20,7 @@ import { PermissionsGuard } from '../auth/permissions.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Permissions } from '../auth/permissions.decorator';
 import { AiService } from './ai.service';
+import { AiChatService } from './ai-chat.service';
 import type { AuthenticatedRequest } from '../../common/types/auth.types';
 
 import { IsString, IsObject, IsOptional } from 'class-validator';
@@ -39,7 +41,10 @@ export class CreateAiTaskDto {
 @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
 @Permissions('ai:access')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly aiChatService: AiChatService,
+  ) {}
 
   /** GET /api/ai/health — Codex Worker 健康检查 */
   @Get('health')
@@ -125,5 +130,47 @@ export class AiController {
     @Res() res: express.Response,
   ) {
     return this.aiService.proxyLogStream(taskId, res);
+  }
+
+  // ── Chat Endpoints (Gemini Flash) ─────────────────────────────────────────
+
+  /** POST /api/ai/chat — 发送消息 (SSE 流式返回) */
+  @Post('chat')
+  async chat(
+    @Body() body: { sessionId?: string; message: string },
+    @Req() req: AuthenticatedRequest,
+    @Res() res: express.Response,
+  ) {
+    return this.aiChatService.chatStream(
+      { sessionId: body.sessionId, message: body.message, userId: req.user.id },
+      res,
+    );
+  }
+
+  /** GET /api/ai/chat/sessions — 会话列表 */
+  @Get('chat/sessions')
+  async chatSessions(@Req() req: AuthenticatedRequest) {
+    const sessions = await this.aiChatService.listSessions(req.user.id);
+    return { code: 0, data: sessions };
+  }
+
+  /** GET /api/ai/chat/sessions/:id — 会话详情（含消息） */
+  @Get('chat/sessions/:id')
+  async chatSessionDetail(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const data = await this.aiChatService.getSession(id, req.user.id);
+    return { code: 0, data };
+  }
+
+  /** DELETE /api/ai/chat/sessions/:id — 删除会话 */
+  @Delete('chat/sessions/:id')
+  async deleteChatSession(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    await this.aiChatService.deleteSession(id, req.user.id);
+    return { code: 0, message: '会话已删除' };
   }
 }

@@ -184,6 +184,7 @@ export const settingsAPI = {
   saveAi: (data: {
     visionModel?: string; visionApiKey?: string;
     systemPrompt?: string; imageModel?: string; imageApiKey?: string;
+    chatModel?: string; chatApiKey?: string;
   }): Promise<ApiResponse<void>> => api.post('/settings/ai', data),
   saveBiz: (data: {
     companyName?: string; websiteUrl?: string;
@@ -363,6 +364,30 @@ export const aiAPI = {
 
   /** 获取任务产物下载链接 */
   getTaskFiles: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/files`),
+
+  // ── Chat (Gemini Flash) ──────────────────────────────────────────────────
+
+  /** 发送消息 (SSE 流式) — 返回的是 Response 对象而非 JSON */
+  chatStream: (data: { sessionId?: string; message: string }) => {
+    const token = localStorage.getItem('accessToken') ?? '';
+    return fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  },
+
+  /** 会话列表 */
+  chatSessions: (): Promise<any> => api.get('/ai/chat/sessions'),
+
+  /** 会话详情（含消息） */
+  chatSessionDetail: (id: string): Promise<any> => api.get(`/ai/chat/sessions/${id}`),
+
+  /** 删除会话 */
+  deleteChatSession: (id: string): Promise<any> => api.delete(`/ai/chat/sessions/${id}`),
 };
 
 export default api;

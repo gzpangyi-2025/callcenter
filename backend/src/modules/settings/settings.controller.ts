@@ -56,6 +56,8 @@ export class SettingsController {
       systemPrompt?: string;
       imageModel?: string;
       imageApiKey?: string;
+      chatModel?: string;
+      chatApiKey?: string;
     },
   ) {
     await this.settingsService.saveMany({
@@ -64,6 +66,8 @@ export class SettingsController {
       'ai.systemPrompt': body.systemPrompt || '',
       'ai.imageModel': body.imageModel || '',
       'ai.imageApiKey': body.imageApiKey || '',
+      'ai.chatModel': body.chatModel || '',
+      'ai.chatApiKey': body.chatApiKey || '',
     });
     return { code: 0, message: 'AI 模型配置保存成功' };
   }

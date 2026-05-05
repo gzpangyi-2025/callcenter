@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress,
+  Row, Col, Statistic, Progress, Tabs,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { aiAPI } from '../../services/api';
 import TaskLogPanel from './components/TaskLogPanel';
+import AiChatPanel from './components/AiChatPanel';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/zh-cn';
@@ -367,20 +368,36 @@ const AiPage: React.FC = () => {
               </Text>
             }
           />
-          <Button icon={<ReloadOutlined />} onClick={() => { fetchTasks(1, status); checkWorkerHealth(); }}>
-            刷新
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => { setCreateOpen(true); fetchTemplates(); }}
-            style={{ background: 'linear-gradient(135deg, #818cf8, #a78bfa)', border: 'none' }}
-            disabled={workerStatus === 'offline'}
-          >
-            提交任务
-          </Button>
         </Space>
       </div>
+
+      <Tabs
+        defaultActiveKey="chat"
+        items={[
+          {
+            key: 'chat',
+            label: (
+              <span>
+                <RobotOutlined style={{ marginRight: 6 }} />
+                AI 对话
+              </span>
+            ),
+            children: (
+              <Card style={{ borderRadius: 12, minHeight: 560 }} styles={{ body: { padding: 0 } }}>
+                <AiChatPanel onTaskCreated={() => fetchTasks(1, status)} />
+              </Card>
+            ),
+          },
+          {
+            key: 'tasks',
+            label: (
+              <span>
+                <ThunderboltOutlined style={{ marginRight: 6 }} />
+                任务中心
+              </span>
+            ),
+            children: (
+              <>
 
       {workerStatus === 'offline' && (
         <Alert
@@ -393,7 +410,7 @@ const AiPage: React.FC = () => {
       )}
 
       {/* Stats Cards */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
+      <Row gutter={16} style={{ marginBottom: 16 }}>
         {[
           { title: '本页任务', value: stats.total, icon: <ThunderboltOutlined />, color: '#818cf8' },
           { title: '执行中', value: stats.running, icon: <LoadingOutlined />, color: '#f59e0b' },
@@ -413,24 +430,37 @@ const AiPage: React.FC = () => {
         ))}
       </Row>
 
-      {/* Filters + Table */}
+      <div style={{ marginBottom: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
+        <Button icon={<ReloadOutlined />} onClick={() => { fetchTasks(1, status); checkWorkerHealth(); }}>
+          刷新
+        </Button>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => { setCreateOpen(true); fetchTemplates(); }}
+          style={{ background: 'linear-gradient(135deg, #818cf8, #a78bfa)', border: 'none' }}
+          disabled={workerStatus === 'offline'}
+        >
+          提交任务
+        </Button>
+        <Select
+          placeholder="筛选状态"
+          allowClear
+          style={{ width: 140 }}
+          value={status}
+          onChange={s => { setStatus(s); fetchTasks(1, s); setPage(1); }}
+          options={[
+            { label: '排队中', value: 'pending' },
+            { label: '执行中', value: 'running' },
+            { label: '已完成', value: 'completed' },
+            { label: '执行失败', value: 'failed' },
+            { label: '已取消', value: 'cancelled' },
+          ]}
+        />
+      </div>
+
+      {/* Table */}
       <Card style={{ borderRadius: 12 }}>
-        <div style={{ marginBottom: 16, display: 'flex', gap: 12, alignItems: 'center' }}>
-          <Select
-            placeholder="筛选状态"
-            allowClear
-            style={{ width: 140 }}
-            value={status}
-            onChange={s => { setStatus(s); fetchTasks(1, s); setPage(1); }}
-            options={[
-              { label: '排队中', value: 'pending' },
-              { label: '执行中', value: 'running' },
-              { label: '已完成', value: 'completed' },
-              { label: '执行失败', value: 'failed' },
-              { label: '已取消', value: 'cancelled' },
-            ]}
-          />
-        </div>
 
         <Table
           dataSource={tasks}
@@ -448,6 +478,11 @@ const AiPage: React.FC = () => {
           size="middle"
         />
       </Card>
+              </>
+            ),
+          },
+        ]}
+      />
 
       {/* ── Create Task Modal ──────────────────────────────────────────── */}
       <Modal

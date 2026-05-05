@@ -28,6 +28,8 @@ import { BbsSection } from './entities/bbs-section.entity';
 import { BbsTag } from './entities/bbs-tag.entity';
 import { TicketReadState } from './entities/ticket-read-state.entity';
 import { BbsSubscription } from './entities/bbs-subscription.entity';
+import { AiChatSession } from './entities/ai-chat-session.entity';
+import { AiChatMessage } from './entities/ai-chat-message.entity';
 import { BbsModule } from './modules/bbs/bbs.module';
 import { SearchModule } from './modules/search/search.module';
 import { BackupModule } from './modules/backup/backup.module';
@@ -66,6 +68,8 @@ import { AiModule } from './modules/ai/ai.module';
           BbsTag,
           TicketReadState,
           BbsSubscription,
+          AiChatSession,
+          AiChatMessage,
         ],
         synchronize: process.env.NODE_ENV !== 'production', // 生产环境禁用自动同步，防止数据丢失
         charset: 'utf8mb4',
