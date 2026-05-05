@@ -728,8 +728,8 @@ const AiPage: React.FC = () => {
                             processFiles.push(f);
                           } else {
                             // Fallback for historical tasks without category:
-                            // Files in output/ path or response.md are core
-                            if (fullName.startsWith('output/') || fullName === 'response.md') {
+                            // Only files in an output/ subdirectory are core deliverables
+                            if (fullName.includes('output/') && fullName !== 'response.md') {
                               coreFiles.push(f);
                             } else {
                               processFiles.push(f);
