@@ -160,8 +160,19 @@ export class AiController {
     @Param('id') id: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    const data = await this.aiChatService.getSession(id, req.user.id);
-    return { code: 0, data };
+    const session = await this.aiChatService.getSession(id, req.user.id);
+    return { code: 0, data: session };
+  }
+
+  /** POST /api/ai/chat/sessions/:id/messages — 注入系统或大模型反馈消息 */
+  @Post('chat/sessions/:id/messages')
+  async injectMessage(
+    @Param('id') id: string,
+    @Body() body: { role: 'assistant' | 'system'; content: string; metadata?: any },
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const message = await this.aiChatService.injectMessage(id, req.user.id, body.role, body.content, body.metadata);
+    return { code: 0, data: message };
   }
 
   /** DELETE /api/ai/chat/sessions/:id — 删除会话 */

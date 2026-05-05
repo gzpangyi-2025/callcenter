@@ -386,6 +386,10 @@ export const aiAPI = {
   /** 会话详情（含消息） */
   chatSessionDetail: (id: string): Promise<any> => api.get(`/ai/chat/sessions/${id}`),
 
+  /** 注入消息到会话（如任务反馈） */
+  injectChatMessage: (id: string, data: { role: 'assistant' | 'system'; content: string; metadata?: any }): Promise<any> =>
+    api.post(`/ai/chat/sessions/${id}/messages`, data),
+
   /** 删除会话 */
   deleteChatSession: (id: string): Promise<any> => api.delete(`/ai/chat/sessions/${id}`),
 };

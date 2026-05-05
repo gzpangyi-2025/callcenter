@@ -387,7 +387,7 @@ const AiPage: React.FC = () => {
                 style={{ borderRadius: 12, height: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column' }} 
                 styles={{ body: { padding: 0, flex: 1, display: 'flex', overflow: 'hidden' } }}
               >
-                <AiChatPanel onTaskCreated={() => fetchTasks(1, status)} />
+                <AiChatPanel tasks={tasks} onDownloadFile={handleFileDownload} onViewTaskDetail={handleViewDetail} onTaskCreated={() => fetchTasks(1, status)} />
               </Card>
             ),
           },

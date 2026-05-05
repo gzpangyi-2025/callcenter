@@ -154,6 +154,7 @@ export class AiChatService {
       }
 
       // 7. Check if response contains task dispatch instructions
+      let dispatchedTaskId: string | undefined;
       const taskMatch = fullResponse.match(/\[DISPATCH_TASK\]([\s\S]*?)\[\/DISPATCH_TASK\]/);
       if (taskMatch) {
         try {
@@ -168,6 +169,7 @@ export class AiChatService {
           );
           const taskId = taskResult?.data?.id || taskResult?.id;
           if (taskId) {
+            dispatchedTaskId = taskId;
             // Link task to session
             const linkedIds = session.linkedTaskIds
               ? session.linkedTaskIds.split(',')
@@ -194,7 +196,7 @@ export class AiChatService {
           sessionId: session.id,
           role: 'assistant',
           content: cleanResponse || fullResponse,
-          metadata: taskMatch ? { intent: 'create_task' } : { intent: 'chat' },
+          metadata: taskMatch ? { intent: 'create_task', taskId: dispatchedTaskId } : { intent: 'chat' },
         }),
       );
 
@@ -248,6 +250,34 @@ export class AiChatService {
 
   // ── Private Helpers ───────────────────────────────────────────────────────
 
+  async injectMessage(
+    sessionId: string,
+    userId: number,
+    role: 'assistant' | 'system',
+    content: string,
+    metadata?: any,
+  ) {
+    const session = await this.sessionRepo.findOne({
+      where: { id: sessionId, userId },
+    });
+    if (!session) {
+      throw new NotFoundException('Session not found');
+    }
+
+    const message = this.messageRepo.create({
+      sessionId,
+      role,
+      content,
+      metadata,
+    });
+    
+    // Update session timestamp
+    session.updatedAt = new Date();
+    await this.sessionRepo.save(session);
+    
+    return this.messageRepo.save(message);
+  }
+
   private buildSystemPrompt(settings: Record<string, string>): string {
     const customPrompt = settings['ai.systemPrompt'] || '';
     return `你是 CallCenter 系统的智能 AI 助手。你可以帮助用户完成以下任务：
@@ -259,6 +289,8 @@ export class AiChatService {
 ## 任务调度规则
 【极其重要】当且仅当用户明确发出指令（例如：“帮我生成一份文档”、“写一段XX代码并创建任务”）时，才在回复末尾附上以下调度标签。
 如果用户只是和你聊天、探讨方案、或者明确表示“不执行/不需要”，你必须只用文本回答，【绝不能】输出 DISPATCH_TASK 标签。
+
+【中转与记忆】如果上下文中包含“Codex 反馈”或“任务已完成”的系统提示，这意味着后台工作流已返回了草稿、大纲或提问。当用户确认或修改后，**你必须把之前的草稿大纲和用户的修改意见一并打包，写在新的 DISPATCH_TASK 的 prompt 里发给 Codex**，因为 Codex 每次执行都是无状态的，必须由你来传递上下文。
 
 调度标签格式：
 \`\`\`

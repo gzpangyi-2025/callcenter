@@ -30,9 +30,12 @@ interface ChatSession {
 interface Props {
   /** Callback when a task is created from chat */
   onTaskCreated?: (taskId: string) => void;
+  tasks?: any[];
+  onDownloadFile?: (taskId: string, filename: string, displayName: string) => void;
+  onViewTaskDetail?: (task: any) => void;
 }
 
-const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
+const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onDownloadFile, onViewTaskDetail }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | undefined>();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -85,6 +88,51 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
       }, 50);
     }
   }, [sending]);
+
+  // Monitor task completions to inject response.md
+  useEffect(() => {
+    if (!tasks || tasks.length === 0 || !activeSessionId || messages.length === 0) return;
+
+    const messageTaskIds = messages
+      .filter((m) => m.metadata?.intent === 'create_task' && m.metadata?.taskId)
+      .map((m) => m.metadata.taskId);
+
+    for (const taskId of messageTaskIds) {
+      const task = tasks.find((t) => t.id === taskId);
+      if (task && task.status === 'completed') {
+        const hasFeedback = messages.some((m) => m.metadata?.responseForTask === taskId);
+        if (!hasFeedback) {
+          injectFeedbackMessage(task);
+        }
+      }
+    }
+  }, [tasks, messages, activeSessionId]);
+
+  const injectFeedbackMessage = async (task: any) => {
+    try {
+      const filesRes: any = await aiAPI.getTaskFiles(task.id);
+      const files = filesRes.data || [];
+      const responseMd = files.find((f: any) => f.name === 'response.md' || f.name.endsWith('response.md'));
+      let feedbackContent = '';
+      if (responseMd && responseMd.url) {
+        const res = await fetch(responseMd.url);
+        feedbackContent = await res.text();
+      } else {
+        feedbackContent = '任务已执行完成。';
+      }
+
+      const content = `【Codex 执行反馈】\n\n${feedbackContent}`;
+      const injectRes: any = await aiAPI.injectChatMessage(activeSessionId!, {
+        role: 'assistant',
+        content,
+        metadata: { responseForTask: task.id },
+      });
+      
+      setMessages((prev) => [...prev, injectRes.data]);
+    } catch (err) {
+      console.error('Failed to inject feedback message:', err);
+    }
+  };
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -350,8 +398,6 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
                       color: m.role === 'user' ? '#fff' : '#1f2937',
                       fontSize: 14,
                       lineHeight: '22px',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
                     }}
                   >
                     <div style={{ marginBottom: 4, fontSize: 11, opacity: 0.7 }}>
@@ -361,11 +407,49 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated }) => {
                         <><RobotOutlined /> AI 助手</>
                       )}
                     </div>
-                    {m.content}
-                    {m.metadata?.intent === 'create_task' && (
-                      <Tag color="purple" style={{ marginTop: 6 }}>
-                        <ThunderboltOutlined /> 已调度任务
-                      </Tag>
+                    <pre
+                      style={{
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: 'inherit',
+                        margin: 0,
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {m.content}
+                    </pre>
+
+                    {/* Task Card Injection */}
+                    {m.metadata?.intent === 'create_task' && m.metadata?.taskId && (
+                      <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-secondary, #fafafa)', borderRadius: 8, border: '1px solid var(--border, #e5e7eb)' }}>
+                        <Text strong style={{ display: 'block', marginBottom: 8 }}><ThunderboltOutlined /> 任务进度</Text>
+                        {(() => {
+                          const task = tasks?.find(t => t.id === m.metadata.taskId);
+                          if (!task) return <Text type="secondary">正在拉取任务状态...</Text>;
+                          
+                          if (task.status === 'pending' || task.status === 'running') {
+                            return (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <Spin size="small" />
+                                <Text type="secondary">Codex 正在处理中: {task.progress}% - {task.currentStep || '执行中'}</Text>
+                              </div>
+                            );
+                          }
+                          if (task.status === 'completed') {
+                            return (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                                <Text type="success" style={{ color: '#52c41a' }}>✓ 任务已完成</Text>
+                                {onViewTaskDetail && (
+                                  <Button size="small" type="primary" ghost onClick={() => onViewTaskDetail(task)}>查看产物</Button>
+                                )}
+                              </div>
+                            );
+                          }
+                          if (task.status === 'failed') {
+                            return <Text type="danger" style={{ color: '#ff4d4f' }}>✗ 任务失败: {task.errorMessage}</Text>;
+                          }
+                          return <Text type="secondary">状态: {task.status}</Text>;
+                        })()}
+                      </div>
                     )}
                   </div>
                 </div>
