@@ -202,6 +202,8 @@ const AdminPage: React.FC = () => {
                           <Form.Item label="模型" name="imageModel">
                             <Select>
                               <Select.Option value="nano-banana-2">Nano Banana 2</Select.Option>
+                              <Select.Option value="gemini-3.1-flash-image-preview">Gemini 3.1 Flash Image (中文支持好)</Select.Option>
+                              <Select.Option value="gemini-3-pro-image-preview">Gemini 3 Pro Image (高质量生图)</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>

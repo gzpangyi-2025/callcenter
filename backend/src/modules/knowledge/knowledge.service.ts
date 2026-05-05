@@ -66,6 +66,7 @@ export class KnowledgeService {
     const visionApiKey = settings['ai.visionApiKey'];
     let systemPrompt = settings['ai.systemPrompt'];
     const imageApiKey = settings['ai.imageApiKey'];
+    const imageModel = settings['ai.imageModel'] || 'gemini-3.1-flash-image-preview';
 
     if (!visionApiKey)
       throw new BadRequestException('未配置 AI 文本模型 (Gemini) API Key');
@@ -183,8 +184,8 @@ engineer: ${ticket.assignee?.displayName || '未知'}
           this.logger.log(`Generating images for ticket ${ticket.ticketNo}...`);
 
           const [analysisImgUrl, flowImgUrl] = await Promise.all([
-            this.generateKnowledgeImage(analysisImgPrompt, imageApiKey),
-            this.generateKnowledgeImage(flowImgPrompt, imageApiKey),
+            this.generateKnowledgeImage(analysisImgPrompt, imageApiKey, imageModel),
+            this.generateKnowledgeImage(flowImgPrompt, imageApiKey, imageModel),
           ]);
 
           finalMarkdown = finalMarkdown.replace(
@@ -577,9 +578,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   private async generateKnowledgeImage(
     prompt: string,
     apiKey: string,
+    imageModel: string,
   ): Promise<string> {
-    // Determine which model to use. Assume imagen-4.0-generate-001 as the underlying implementation for nano-banana-2
-    const modelToUse = 'imagen-4.0-generate-001';
+    // 动态使用数据库配置的生图模型，若前端选择nano-banana-2则映射回imagen-4.0
+    const modelToUse = imageModel === 'nano-banana-2' ? 'imagen-4.0-generate-001' : imageModel;
 
     // Fallback placeholder
     const defaultImg =
