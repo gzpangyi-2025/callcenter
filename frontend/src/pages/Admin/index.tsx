@@ -175,8 +175,8 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="visionModel">
                             <Select>
-                              <Select.Option value="gemini-2.5-pro">Gemini 2.5 Pro</Select.Option>
-                              <Select.Option value="gemini-2.0-pro">Gemini 2.0 Pro</Select.Option>
+                              <Select.Option value="gemini-2.5-pro">Gemini 2.5 Pro（稳定版）</Select.Option>
+                              <Select.Option value="gemini-3.1-pro-preview">Gemini 3.1 Pro（预览版）</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>
@@ -223,8 +223,9 @@ const AdminPage: React.FC = () => {
                         <Col xs={24} sm={12}>
                           <Form.Item label="模型" name="chatModel">
                             <Select>
-                              <Select.Option value="gemini-2.5-flash">Gemini 2.5 Flash</Select.Option>
-                              <Select.Option value="gemini-2.0-flash">Gemini 2.0 Flash</Select.Option>
+                              <Select.Option value="gemini-2.5-flash">Gemini 2.5 Flash（稳定版）</Select.Option>
+                              <Select.Option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite（预览版）</Select.Option>
+                              <Select.Option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</Select.Option>
                             </Select>
                           </Form.Item>
                         </Col>
