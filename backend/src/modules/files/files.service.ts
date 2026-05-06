@@ -10,6 +10,47 @@ import { SettingsService } from '../settings/settings.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const PROXY_ENV_KEYS = [
+  'HTTP_PROXY',
+  'HTTPS_PROXY',
+  'ALL_PROXY',
+  'http_proxy',
+  'https_proxy',
+  'all_proxy',
+];
+let proxyEnvBypassDepth = 0;
+let proxyEnvSnapshot: Map<string, string | undefined> | null = null;
+
+function acquireDirectCloudProxyBypass(): () => void {
+  if (proxyEnvBypassDepth === 0) {
+    proxyEnvSnapshot = new Map<string, string | undefined>();
+    for (const key of PROXY_ENV_KEYS) {
+      proxyEnvSnapshot.set(key, process.env[key]);
+      delete process.env[key];
+    }
+  }
+
+  proxyEnvBypassDepth++;
+  let released = false;
+
+  return () => {
+    if (released) return;
+    released = true;
+    proxyEnvBypassDepth = Math.max(0, proxyEnvBypassDepth - 1);
+
+    if (proxyEnvBypassDepth === 0 && proxyEnvSnapshot) {
+      for (const [key, value] of proxyEnvSnapshot.entries()) {
+        if (value === undefined) {
+          delete process.env[key];
+        } else {
+          process.env[key] = value;
+        }
+      }
+      proxyEnvSnapshot = null;
+    }
+  };
+}
+
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
@@ -429,31 +470,38 @@ export class FilesService {
     };
 
     return new Promise((resolve, reject) => {
-      STS.getCredential(
-        {
-          secretId: config.secretId,
-          secretKey: config.secretKey,
-          policy: policy,
-          durationSeconds: 1800, // 30 mins
-          proxy: '', // Bypass system HTTP_PROXY to avoid "plain HTTP sent to HTTPS port" errors
-        },
-        (err: any, credential: any) => {
-          if (err) {
-            this.logger.error(`STS Error: ${err.message}`, err);
-            reject(new InternalServerErrorException('获取上传凭证失败'));
-          } else {
-            resolve({
-              provider: 'cos',
-              credentials: credential.credentials,
-              startTime: credential.startTime,
-              expiredTime: credential.expiredTime,
-              bucket: config.bucket,
-              region: config.region,
-              key: filename,
-            });
-          }
-        },
-      );
+      const releaseProxyBypass = acquireDirectCloudProxyBypass();
+      try {
+        STS.getCredential(
+          {
+            secretId: config.secretId,
+            secretKey: config.secretKey,
+            policy: policy,
+            durationSeconds: 1800, // 30 mins
+            proxy: '',
+          },
+          (err: any, credential: any) => {
+            releaseProxyBypass();
+            if (err) {
+              this.logger.error(`STS Error: ${err.message}`, err);
+              reject(new InternalServerErrorException('获取上传凭证失败'));
+            } else {
+              resolve({
+                provider: 'cos',
+                credentials: credential.credentials,
+                startTime: credential.startTime,
+                expiredTime: credential.expiredTime,
+                bucket: config.bucket,
+                region: config.region,
+                key: filename,
+              });
+            }
+          },
+        );
+      } catch (err) {
+        releaseProxyBypass();
+        reject(err);
+      }
     });
   }
 
