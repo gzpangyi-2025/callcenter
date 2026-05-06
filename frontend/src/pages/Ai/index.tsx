@@ -511,18 +511,21 @@ const AiPage: React.FC = () => {
                 size="small"
                 danger
                 icon={<DeleteOutlined />}
-                onClick={() => Modal.confirm({
-                  title: '确认删除此任务？',
-                  content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
-                  okText: '确认删除',
-                  okButtonProps: { danger: true },
-                  cancelText: '取消',
-                  onOk: () => handleDelete(record.id),
-                })}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  Modal.confirm({
+                    title: '确认删除此任务？',
+                    content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
+                    okText: '确认删除',
+                    okButtonProps: { danger: true },
+                    cancelText: '取消',
+                    onOk: () => handleDelete(record.id),
+                  });
+                }}
               />
             </Tooltip>
           ) : (
-            <Button size="small" icon={<DeleteOutlined />} disabled style={{ visibility: 'hidden' }} />
+            <div style={{ width: 24 }} />
           )}
         </div>
       ),
