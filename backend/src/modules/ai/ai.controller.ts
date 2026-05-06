@@ -24,6 +24,9 @@ import { AiChatService } from './ai-chat.service';
 import { AuditService } from '../audit/audit.service';
 import { AuditType } from '../../entities/audit-log.entity';
 import type { AuthenticatedRequest } from '../../common/types/auth.types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
+import { User } from '../../entities/user.entity';
 
 import { IsString, IsObject, IsOptional } from 'class-validator';
 
@@ -58,6 +61,8 @@ export class AiController {
     private readonly aiService: AiService,
     private readonly aiChatService: AiChatService,
     private readonly auditService: AuditService,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
   ) {}
 
   /** GET /api/ai/health — Codex Worker 健康检查 */
@@ -96,23 +101,37 @@ export class AiController {
 
   /** GET /api/ai/tasks — 任务列表（当前用户） */
   @Get('tasks')
-  listTasks(
+  async listTasks(
     @Req() req: AuthenticatedRequest,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('status') status?: string,
-    @Query('all') all?: string, // admin-only: list all users
+    @Query('all') all?: string,
   ) {
     const roleObj = req.user.role as any;
     const isAdmin = roleObj?.name === 'admin';
-    
-    return this.aiService.listTasks({
+    const showAll = isAdmin && all === '1';
+
+    const result = await this.aiService.listTasks({
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
       status: status || undefined,
-      // Non-admins can only see their own tasks
-      userId: isAdmin && all === '1' ? undefined : req.user.id,
+      userId: showAll ? undefined : req.user.id,
     });
+
+    // Enrich with creator names when admin views all
+    if (showAll && result?.data?.length > 0) {
+      const userIds = [...new Set(result.data.map((t: any) => t.userId).filter(Boolean))];
+      if (userIds.length > 0) {
+        const users = await this.userRepo.find({ where: { id: In(userIds) }, select: ['id', 'username', 'realName', 'displayName'] });
+        const userMap = new Map(users.map(u => [u.id, u.realName || u.displayName || u.username]));
+        for (const task of result.data) {
+          task.creatorName = task.userId ? userMap.get(task.userId) ?? `用户#${task.userId}` : '-';
+        }
+      }
+    }
+
+    return result;
   }
 
   /** GET /api/ai/tasks/:id — 获取任务详情 */

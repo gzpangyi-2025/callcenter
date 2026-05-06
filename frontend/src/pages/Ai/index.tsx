@@ -430,6 +430,14 @@ const AiPage: React.FC = () => {
         </Space>
       ),
     },
+    // 管理员查看全部时显示发起人
+    ...(showAll ? [{
+      title: '发起人',
+      dataIndex: 'creatorName',
+      key: 'creatorName',
+      width: 90,
+      render: (name: string) => <Text style={{ fontSize: 12 }}>{name || '-'}</Text>,
+    }] : []),
     {
       title: '状态',
       dataIndex: 'status',
@@ -927,7 +935,9 @@ const AiPage: React.FC = () => {
               {selectedTask.tokenUsage && (
                 <Descriptions.Item label="Token 用量" span={2}>
                   <Text type="secondary">
-                    输入 {selectedTask.tokenUsage.input || 0} / 输出 {selectedTask.tokenUsage.output || 0}
+                    {typeof selectedTask.tokenUsage === 'object'
+                      ? `输入 ${(selectedTask.tokenUsage.input || 0).toLocaleString()} / 输出 ${(selectedTask.tokenUsage.output || 0).toLocaleString()} (合计 ${(selectedTask.tokenUsage.total || 0).toLocaleString()})`
+                      : `合计 ${Number(selectedTask.tokenUsage).toLocaleString()}`}
                   </Text>
                 </Descriptions.Item>
               )}
