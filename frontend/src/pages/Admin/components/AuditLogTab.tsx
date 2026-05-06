@@ -16,12 +16,14 @@ const typeOptions = [
   { value: 'ticket_status', label: '工单状态变更' },
   { value: 'user_login', label: '用户登录' },
   { value: 'external_login', label: '外部用户登录' },
+  { value: 'ai_task', label: 'AI 任务' },
 ];
 
 const typeTagMap: Record<string, { color: string; text: string }> = {
   ticket_status: { color: 'blue', text: '工单状态' },
   user_login: { color: 'green', text: '用户登录' },
   external_login: { color: 'orange', text: '外部登录' },
+  ai_task: { color: 'purple', text: 'AI 任务' },
 };
 
 const actionTextMap: Record<string, string> = {
@@ -34,6 +36,10 @@ const actionTextMap: Record<string, string> = {
   login: '登录成功',
   login_failed: '登录失败',
   external_login: '外部接入',
+  create_task: '提交AI任务',
+  modify_task: '修改AI任务',
+  cancel_task: '取消AI任务',
+  delete_task: '删除AI任务',
 };
 
 export const AuditLogTab: React.FC = () => {
@@ -49,6 +55,7 @@ export const AuditLogTab: React.FC = () => {
     ticket_status: true,
     user_login: true,
     external_login: true,
+    ai_task: true,
   });
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -187,10 +194,11 @@ export const AuditLogTab: React.FC = () => {
         style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
       >
         <Row gutter={[24, 12]}>
-          {[
+           {[
             { key: 'ticket_status', label: '工单状态变更审计', desc: '记录工单创建、接单、关单、删除等操作' },
             { key: 'user_login', label: '用户登录审计', desc: '记录内部用户登录成功与失败' },
             { key: 'external_login', label: '外部用户登录审计', desc: '记录外部用户通过共享链接接入' },
+            { key: 'ai_task', label: 'AI 任务审计', desc: '记录AI任务提交、修改、取消、删除操作' },
           ].map(item => (
             <Col xs={24} sm={8} key={item.key}>
               <div style={{

@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Popconfirm,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
   StopOutlined, DownloadOutlined, ThunderboltOutlined, EditOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
-  LoadingOutlined, InboxOutlined,
+  LoadingOutlined, InboxOutlined, DeleteOutlined,
 } from '@ant-design/icons';
 import { aiAPI, filesAPI } from '../../services/api';
 import TaskLogPanel from './components/TaskLogPanel';
@@ -55,6 +55,8 @@ const AiPage: React.FC = () => {
   const [filesLoading, setFilesLoading] = useState(false);
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const selectedTaskIdRef = useRef<string | null>(null);
+  const taskFilesRequestSeqRef = useRef(0);
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
   const [uploadedAttachments, setUploadedAttachments] = useState<Array<{ name: string; url: string; size: number }>>([]);
   const [uploadingCount, setUploadingCount] = useState(0);
@@ -306,9 +308,26 @@ const AiPage: React.FC = () => {
     } catch {}
   };
 
+  // ── Delete task ──────────────────────────────────────────────────────────
+
+  const handleDelete = async (taskId: string) => {
+    try {
+      await aiAPI.deleteTask(taskId);
+      message.success('任务已删除，COS 文件已清理');
+      if (detailOpen && selectedTask?.id === taskId) {
+        setDetailOpen(false);
+        setSelectedTask(null);
+      }
+      fetchTasks();
+    } catch {
+      message.error('删除失败，请重试');
+    }
+  };
+
   // ── View task detail + files ──────────────────────────────────────────────
 
   const fetchTaskFiles = useCallback(async (taskId: string) => {
+    const requestSeq = ++taskFilesRequestSeqRef.current;
     setFilesLoading(true);
     try {
       const res: any = await aiAPI.getTaskFiles(taskId);
@@ -316,23 +335,36 @@ const AiPage: React.FC = () => {
       const files = Array.isArray(res?.data) ? res.data
         : Array.isArray(res?.data?.data) ? res.data.data
         : [];
-      setTaskFiles(files);
+      if (requestSeq === taskFilesRequestSeqRef.current && selectedTaskIdRef.current === taskId) {
+        setTaskFiles(files);
+      }
     } catch {
-      setTaskFiles([]);
+      if (requestSeq === taskFilesRequestSeqRef.current && selectedTaskIdRef.current === taskId) {
+        setTaskFiles([]);
+      }
     } finally {
-      setFilesLoading(false);
+      if (requestSeq === taskFilesRequestSeqRef.current && selectedTaskIdRef.current === taskId) {
+        setFilesLoading(false);
+      }
     }
   }, []);
 
   const handleViewDetail = async (task: any) => {
+    selectedTaskIdRef.current = task.id;
+    taskFilesRequestSeqRef.current += 1;
     setSelectedTask(task);
     setDetailOpen(true);
+    setTaskFiles([]);
     if (task.status === 'completed') {
       fetchTaskFiles(task.id);
     } else {
-      setTaskFiles([]);
+      setFilesLoading(false);
     }
   };
+
+  useEffect(() => {
+    selectedTaskIdRef.current = selectedTask?.id ?? null;
+  }, [selectedTask?.id]);
 
   // Sync selectedTask with tasks array updates
   useEffect(() => {
@@ -447,6 +479,20 @@ const AiPage: React.FC = () => {
                 onClick={() => { setModifyTarget(record); setModifyOpen(true); }}
               />
             </Tooltip>
+          )}
+          {['completed', 'failed', 'cancelled'].includes(record.status) && (
+            <Popconfirm
+              title="确认删除此任务？"
+              description="将同时删除 COS 上的产物文件，此操作不可恢复。"
+              onConfirm={() => handleDelete(record.id)}
+              okText="确认删除"
+              cancelText="取消"
+              okButtonProps={{ danger: true }}
+            >
+              <Tooltip title="删除任务及产物">
+                <Button size="small" danger icon={<DeleteOutlined />} />
+              </Tooltip>
+            </Popconfirm>
           )}
         </Space>
       ),
@@ -748,7 +794,14 @@ const AiPage: React.FC = () => {
       <Modal
         title={<Space><ThunderboltOutlined style={{ color: '#818cf8' }} />任务详情</Space>}
         open={detailOpen}
-        onCancel={() => { setDetailOpen(false); setSelectedTask(null); setTaskFiles([]); }}
+        onCancel={() => {
+          selectedTaskIdRef.current = null;
+          taskFilesRequestSeqRef.current += 1;
+          setDetailOpen(false);
+          setSelectedTask(null);
+          setTaskFiles([]);
+          setFilesLoading(false);
+        }}
         footer={
           selectedTask?.status === 'completed' ? (
             <Button 
@@ -853,7 +906,7 @@ const AiPage: React.FC = () => {
             )}
 
             {/* Real-time log panel — shown for running/pending tasks and completed tasks with detail */}
-            <TaskLogPanel taskId={selectedTask.id} taskStatus={selectedTask.status} />
+            <TaskLogPanel key={selectedTask.id} taskId={selectedTask.id} taskStatus={selectedTask.status} />
             </Col>
 
             {/* Output files - Right Column */}

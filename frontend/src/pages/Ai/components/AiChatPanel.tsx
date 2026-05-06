@@ -50,6 +50,12 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isComposing = useRef(false);
+  const activeSessionIdRef = useRef<string | undefined>(undefined);
+  const sessionLoadSeqRef = useRef(0);
+
+  useEffect(() => {
+    activeSessionIdRef.current = activeSessionId;
+  }, [activeSessionId]);
 
   // Load sessions
   const loadSessions = useCallback(async () => {
@@ -63,10 +69,16 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
 
   // Load session messages
   const loadSession = useCallback(async (sessionId: string) => {
+    const requestSeq = ++sessionLoadSeqRef.current;
+    activeSessionIdRef.current = sessionId;
+    setActiveSessionId(sessionId);
+    setMessages([]);
+    setStreaming('');
     try {
       const res: any = await aiAPI.chatSessionDetail(sessionId);
-      setMessages(res?.data?.messages ?? []);
-      setActiveSessionId(sessionId);
+      if (requestSeq === sessionLoadSeqRef.current && activeSessionIdRef.current === sessionId) {
+        setMessages(res?.data?.messages ?? []);
+      }
     } catch {
       message.error('加载会话失败');
     }
@@ -152,6 +164,10 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
     setPendingFiles([]);
     setSending(true);
     setStreaming('');
+    const sessionAtSend = activeSessionIdRef.current;
+    const canUpdateCurrentSession = () =>
+      activeSessionIdRef.current === sessionAtSend ||
+      (!sessionAtSend && activeSessionIdRef.current === undefined);
 
     // Optimistically add user message
     let displayContent = text;
@@ -171,7 +187,7 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
       }
 
       const response = await aiAPI.chatStream({
-        sessionId: activeSessionId,
+        sessionId: sessionAtSend,
         message: text,
         images,
       });
@@ -184,7 +200,7 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
       const decoder = new TextDecoder();
       let fullText = '';
       let errorText = '';
-      let newSessionId = activeSessionId;
+      let newSessionId = sessionAtSend;
 
       if (reader) {
         while (true) {
@@ -198,12 +214,12 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
             if (!line.startsWith('data: ')) continue;
             try {
               const data = JSON.parse(line.slice(6));
-              if (data.sessionId && !activeSessionId) {
+              if (data.sessionId && !sessionAtSend) {
                 newSessionId = data.sessionId;
               }
               if (data.type === 'text') {
                 fullText += data.content;
-                setStreaming(fullText);
+                if (canUpdateCurrentSession()) setStreaming(fullText);
               } else if (data.type === 'task_created') {
                 if (data.taskId && onTaskCreated) {
                   onTaskCreated(data.taskId);
@@ -221,13 +237,14 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
 
       // Add final assistant message
       const displayText = fullText || (errorText ? `⚠️ ${errorText}` : '');
-      if (displayText) {
+      if (displayText && canUpdateCurrentSession()) {
         setMessages((prev) => [...prev, { role: 'assistant', content: displayText }]);
       }
-      setStreaming('');
+      if (canUpdateCurrentSession()) setStreaming('');
 
       // Update session
-      if (newSessionId) {
+      if (newSessionId && canUpdateCurrentSession()) {
+        activeSessionIdRef.current = newSessionId;
         setActiveSessionId(newSessionId);
         loadSessions(); // Refresh session list
       }
@@ -240,9 +257,13 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
 
   // New conversation
   const handleNewChat = () => {
+    sessionLoadSeqRef.current += 1;
+    activeSessionIdRef.current = undefined;
     setActiveSessionId(undefined);
     setMessages([]);
+    setStreaming('');
     setInput('');
+    setPendingFiles([]);
   };
 
   // Delete session

@@ -21,6 +21,8 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Permissions } from '../auth/permissions.decorator';
 import { AiService } from './ai.service';
 import { AiChatService } from './ai-chat.service';
+import { AuditService } from '../audit/audit.service';
+import { AuditType } from '../../entities/audit-log.entity';
 import type { AuthenticatedRequest } from '../../common/types/auth.types';
 
 import { IsString, IsObject, IsOptional } from 'class-validator';
@@ -55,6 +57,7 @@ export class AiController {
   constructor(
     private readonly aiService: AiService,
     private readonly aiChatService: AiChatService,
+    private readonly auditService: AuditService,
   ) {}
 
   /** GET /api/ai/health — Codex Worker 健康检查 */
@@ -71,11 +74,24 @@ export class AiController {
 
   /** POST /api/ai/tasks — 提交新 AI 任务 */
   @Post('tasks')
-  createTask(
+  async createTask(
     @Body() body: CreateAiTaskDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.aiService.createTask(body, req.user.id);
+    const result = await this.aiService.createTask(body, req.user.id);
+    // 审计日志
+    this.auditService.log({
+      type: AuditType.AI_TASK,
+      action: body.parentTaskId ? 'modify_task' : 'create_task',
+      userId: req.user.id,
+      username: req.user.username ?? req.user.realName ?? null,
+      targetName: body.type,
+      detail: body.parentTaskId
+        ? `增量修改任务，父任务: ${body.parentTaskId}`
+        : `提交AI任务 [${body.type}]，模式: ${body.reviewMode ?? 'auto'}`,
+      ip: req.ip ?? null,
+    });
+    return result;
   }
 
   /** GET /api/ai/tasks — 任务列表（当前用户） */
@@ -107,8 +123,34 @@ export class AiController {
 
   /** POST /api/ai/tasks/:id/cancel — 取消任务 */
   @Post('tasks/:id/cancel')
-  cancelTask(@Param('id') id: string) {
-    return this.aiService.cancelTask(id);
+  async cancelTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const result = await this.aiService.cancelTask(id);
+    this.auditService.log({
+      type: AuditType.AI_TASK,
+      action: 'cancel_task',
+      userId: req.user.id,
+      username: req.user.username ?? req.user.realName ?? null,
+      targetName: id,
+      detail: `取消AI任务 ${id}`,
+      ip: req.ip ?? null,
+    });
+    return result;
+  }
+
+  /** DELETE /api/ai/tasks/:id — 删除任务及COS文件 */
+  @Delete('tasks/:id')
+  async deleteTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const result = await this.aiService.deleteTask(id);
+    this.auditService.log({
+      type: AuditType.AI_TASK,
+      action: 'delete_task',
+      userId: req.user.id,
+      username: req.user.username ?? req.user.realName ?? null,
+      targetName: id,
+      detail: `删除AI任务 ${id}（COS文件已清理）`,
+      ip: req.ip ?? null,
+    });
+    return result;
   }
 
   /** POST /api/ai/tasks/:id/resume — 继续任务（审阅回复） */

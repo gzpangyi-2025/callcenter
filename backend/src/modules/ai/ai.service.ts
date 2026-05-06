@@ -130,6 +130,19 @@ export class AiService {
     }
   }
 
+  /** Delete a task and its COS files */
+  async deleteTask(taskId: string) {
+    try {
+      const res = await this.worker.delete(`/api/tasks/${taskId}`);
+      return res.data;
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        throw new NotFoundException(`Task ${taskId} not found`);
+      }
+      this.handleWorkerError(err, 'deleteTask');
+    }
+  }
+
   /** Get available prompt templates */
   async getTemplates() {
     try {

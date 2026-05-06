@@ -10,6 +10,7 @@ export enum AuditType {
   TICKET_STATUS = 'ticket_status',
   USER_LOGIN = 'user_login',
   EXTERNAL_LOGIN = 'external_login',
+  AI_TASK = 'ai_task',
 }
 
 @Entity('audit_logs')

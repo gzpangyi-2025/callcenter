@@ -364,6 +364,9 @@ export const aiAPI = {
   /** 取消任务 */
   cancelTask: (id: string): Promise<any> => api.post(`/ai/tasks/${id}/cancel`),
 
+  /** 删除任务（含COS文件清理） */
+  deleteTask: (id: string): Promise<any> => api.delete(`/ai/tasks/${id}`),
+
   /** 恢复暂停的任务（提交审阅确认） */
   resumeTask: (id: string, input: string): Promise<any> => api.post(`/ai/tasks/${id}/resume`, { input }),
 
