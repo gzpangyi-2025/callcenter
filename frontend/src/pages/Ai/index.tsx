@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Popconfirm,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Dropdown,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
   StopOutlined, DownloadOutlined, ThunderboltOutlined, EditOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
-  LoadingOutlined, InboxOutlined, DeleteOutlined,
+  LoadingOutlined, InboxOutlined, DeleteOutlined, MoreOutlined,
 } from '@ant-design/icons';
 import { aiAPI, filesAPI } from '../../services/api';
 import TaskLogPanel from './components/TaskLogPanel';
@@ -451,51 +451,63 @@ const AiPage: React.FC = () => {
     {
       title: '操作',
       key: 'actions',
-      width: 150,
-      render: (_: any, record: any) => (
-        <Space>
-          <Button
-            size="small"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewDetail(record)}
-          >
-            详情
-          </Button>
-          {(record.status === 'pending' || record.status === 'running') && (
-            <Tooltip title="取消任务">
-              <Button
-                size="small"
-                danger
-                icon={<StopOutlined />}
-                onClick={() => handleCancel(record.id)}
-              />
-            </Tooltip>
-          )}
-          {record.status === 'completed' && (
-            <Tooltip title="基于此任务进行增量修改">
-              <Button
-                size="small"
-                icon={<EditOutlined />}
-                onClick={() => { setModifyTarget(record); setModifyOpen(true); }}
-              />
-            </Tooltip>
-          )}
-          {['completed', 'failed', 'cancelled'].includes(record.status) && (
-            <Popconfirm
-              title="确认删除此任务？"
-              description="将同时删除 COS 上的产物文件，此操作不可恢复。"
-              onConfirm={() => handleDelete(record.id)}
-              okText="确认删除"
-              cancelText="取消"
-              okButtonProps={{ danger: true }}
+      width: 100,
+      fixed: 'right' as const,
+      render: (_: any, record: any) => {
+        const menuItems: any[] = [];
+        if (record.status === 'pending' || record.status === 'running') {
+          menuItems.push({
+            key: 'cancel',
+            icon: <StopOutlined />,
+            label: '取消任务',
+            danger: true,
+            onClick: () => handleCancel(record.id),
+          });
+        }
+        if (record.status === 'completed') {
+          menuItems.push({
+            key: 'modify',
+            icon: <EditOutlined />,
+            label: '增量修改',
+            onClick: () => { setModifyTarget(record); setModifyOpen(true); },
+          });
+        }
+        if (['completed', 'failed', 'cancelled'].includes(record.status)) {
+          if (menuItems.length > 0) menuItems.push({ type: 'divider' });
+          menuItems.push({
+            key: 'delete',
+            icon: <DeleteOutlined />,
+            label: '删除任务',
+            danger: true,
+            onClick: () => Modal.confirm({
+              title: '确认删除此任务？',
+              content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
+              okText: '确认删除',
+              okButtonProps: { danger: true },
+              cancelText: '取消',
+              onOk: () => handleDelete(record.id),
+            }),
+          });
+        }
+        return (
+          <Space size={4}>
+            <Button
+              size="small"
+              type="link"
+              icon={<EyeOutlined />}
+              onClick={() => handleViewDetail(record)}
+              style={{ padding: '0 4px' }}
             >
-              <Tooltip title="删除任务及产物">
-                <Button size="small" danger icon={<DeleteOutlined />} />
-              </Tooltip>
-            </Popconfirm>
-          )}
-        </Space>
-      ),
+              详情
+            </Button>
+            {menuItems.length > 0 && (
+              <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
+                <Button size="small" type="text" icon={<MoreOutlined style={{ fontSize: 16 }} />} style={{ padding: '0 4px' }} />
+              </Dropdown>
+            )}
+          </Space>
+        );
+      },
     },
   ];
 
