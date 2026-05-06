@@ -58,8 +58,9 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [hasVideoFrames, setHasVideoFrames] = useState(false);
+  const [videoFrameStreamId, setVideoFrameStreamId] = useState<string | null>(null);
   const { addScreenshot } = useScreenshotStore();
+  const hasVideoFrames = !!remoteStream && videoFrameStreamId === remoteStream.id;
 
   // 播放辅助函数（带防护）
   const safePlay = useCallback((el: HTMLVideoElement) => {
@@ -98,11 +99,11 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
 
   // 检测视频是否真正有画面帧（解决"已连接但黑屏"问题）
   useEffect(() => {
-    if (!remoteStream) { setHasVideoFrames(false); return; }
+    if (!remoteStream) return;
     const el = remoteVideoRef.current;
     if (!el) return;
 
-    setHasVideoFrames(false); // 新流先重置
+    const streamId = remoteStream.id;
     let timerId: ReturnType<typeof setTimeout>;
     let checkCount = 0;
 
@@ -111,7 +112,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
       // videoWidth > 0 表示解码器已收到并解析出真实画面
       if (el.videoWidth > 0 && el.videoHeight > 0) {
         console.log('[屏幕共享] 视频帧已到达, 尺寸:', el.videoWidth, 'x', el.videoHeight);
-        setHasVideoFrames(true);
+        setVideoFrameStreamId(streamId);
         return; // 停止轮询
       }
       // 最多检查 30 秒（每 200ms 一次 = 150 次）
@@ -130,17 +131,14 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
 
   useEffect(() => {
     if (isWaitingFrames && onRetry) {
-      let timer1: ReturnType<typeof setTimeout>;
-      let timer2: ReturnType<typeof setTimeout>;
-
       // 15秒提示
-      timer1 = setTimeout(() => {
+      const timer1 = setTimeout(() => {
         console.log('[屏幕共享] 15秒未收到首帧画面，可能网络拥堵...');
         message.warning('画面传输较慢，正在努力缓冲中...如果长时间无画面可点击手动重试', 5);
       }, 15000);
 
       // 20秒彻底超时才自动重试
-      timer2 = setTimeout(() => {
+      const timer2 = setTimeout(() => {
         console.log('[屏幕共享] 20秒超时仍无画面，触发自动重连...');
         message.error('获取画面超时，系统自动重新连接...');
         onRetry();
@@ -154,11 +152,24 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
   }, [isWaitingFrames, onRetry]);
 
   // 绑定本地预览流到 video 元素
-  useEffect(() => {
-    if (localVideoRef.current && localStream) {
-      localVideoRef.current.srcObject = localStream;
+  const bindLocalVideo = useCallback((el: HTMLVideoElement | null) => {
+    localVideoRef.current = el;
+    if (el && localStream) {
+      console.log('[屏幕共享] callback ref: 绑定本地预览流');
+      el.srcObject = localStream;
+      safePlay(el);
     }
-  }, [localStream]);
+  }, [localStream, safePlay]);
+
+  useEffect(() => {
+    const el = localVideoRef.current;
+    if (!el || !localStream) return;
+    if (el.srcObject !== localStream) {
+      console.log('[屏幕共享] useEffect: 更新本地预览流');
+      el.srcObject = localStream;
+      safePlay(el);
+    }
+  }, [localStream, safePlay]);
 
   // 全屏切换
   const toggleFullscreen = useCallback(() => {
@@ -191,9 +202,6 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
-
-  // 没有活跃的共享时不渲染
-  if (!isSharing && !isViewing) return null;
 
   // 截图逻辑
   const handleScreenshot = useCallback(() => {
@@ -249,6 +257,8 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
 
   // 区分"已连接但等待画面"和"已连接且有画面"两种状态
   // isWaitingFrames 已在上方定义
+  // 没有活跃的共享时不渲染。必须放在全部 Hook 之后，避免开始共享时 Hook 顺序变化。
+  if (!isSharing && !isViewing) return null;
 
   const statusIcon = connectionState === 'connecting'
     ? <LoadingOutlined spin style={{ color: '#f59e0b' }} />
@@ -468,7 +478,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
         {isSharing && localStream && (
           <div className="screen-share-local-preview">
             <video
-              ref={localVideoRef}
+              ref={bindLocalVideo}
               autoPlay
               playsInline
               muted

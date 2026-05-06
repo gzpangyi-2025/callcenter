@@ -8,7 +8,8 @@ export const calcBadge = (
   myTicketIds: number[],
   bbsUnreadMap: Record<number, number>,
 ): number => {
-  const unreadTotal = myTicketIds.reduce((sum, id) => sum + (unreadMap[id] || 0), 0);
+  const unreadTicketIds = myTicketIds.length > 0 ? myTicketIds : Object.keys(unreadMap).map(Number);
+  const unreadTotal = unreadTicketIds.reduce((sum, id) => sum + (unreadMap[id] || 0), 0);
   const bbsTotal = Object.values(bbsUnreadMap).reduce((sum, count) => sum + count, 0);
   return unreadTotal + newTicketIds.length + bbsTotal;
 };

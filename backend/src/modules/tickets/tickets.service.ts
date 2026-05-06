@@ -883,7 +883,7 @@ export class TicketsService {
     const newTicketIds: number[] = [];
 
     if (ticketIds.length === 0) {
-      return { unreadMap, newTicketIds };
+      return { unreadMap, newTicketIds, ticketIds };
     }
 
     // 批量查询当前用户对这些工单的阅读指针状态
@@ -938,7 +938,7 @@ export class TicketsService {
       }
     }
 
-    return { unreadMap, newTicketIds };
+    return { unreadMap, newTicketIds, ticketIds };
   }
 
   /**

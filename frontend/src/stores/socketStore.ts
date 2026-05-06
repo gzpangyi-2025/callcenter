@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-import { useAuthStore } from './authStore';
+import { useAuthStore, type User } from './authStore';
 import { authAPI, ticketsAPI, bbsAPI } from '../services/api';
 import { calcBadge } from '../utils/badgeUtils';
 import { playDing, playAlert } from '../utils/soundUtils';
@@ -9,12 +9,57 @@ import { startTitleFlash, stopTitleFlash, initVisibilityListener } from '../util
 // 重新导出供外部按需使用（保持 API 兼容）
 export { startTitleFlash, stopTitleFlash };
 
+type TicketBadgePayload = {
+  unreadMap?: Record<string | number, number>;
+  newTicketIds?: Array<string | number>;
+  ticketIds?: Array<string | number>;
+};
+
+type TicketEventPayload = {
+  id: number;
+  creatorId?: number | null;
+  assigneeId?: number | null;
+  participants?: Array<{ id: number | string }>;
+};
+
+const apiData = <T,>(res: T | { data?: T }): T => {
+  if (res && typeof res === 'object' && 'data' in res) {
+    return (res as { data?: T }).data as T;
+  }
+  return res as T;
+};
+
+const toNumberArray = (value?: Array<string | number>): number[] => {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map(Number).filter(Number.isFinite))];
+};
+
+const normalizeCountMap = (value?: Record<string | number, number>): Record<number, number> => {
+  if (!value) return {};
+  return Object.entries(value).reduce<Record<number, number>>((acc, [key, count]) => {
+    const ticketId = Number(key);
+    const normalizedCount = Number(count);
+    if (Number.isFinite(ticketId) && normalizedCount > 0) {
+      acc[ticketId] = normalizedCount;
+    }
+    return acc;
+  }, {});
+};
+
+const socketToken = (socket: Socket | null): string | undefined => {
+  const auth = socket?.auth;
+  if (auth && typeof auth === 'object' && 'token' in auth) {
+    return (auth as { token?: string }).token;
+  }
+  return undefined;
+};
+
 interface SocketState {
   socket: Socket | null;
   connected: boolean;
   unreadMap: Record<number, number>; // ticketId -> unread count
   newTicketIds: number[];            // ticketIds that are "new" for assigned/participated tabs
-  myTicketIds: number[];             // all ticket IDs relevant to current user (set by Profile)
+  myTicketIds: number[];             // all ticket IDs relevant to current user
   bbsUnreadMap: Record<number, number>; // postId -> unreadCount
   profileBadge: number;              // computed in-store, read by sidebar
   currentTicketId: number | null;
@@ -44,7 +89,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
   connect: (token: string) => {
     const existing = get().socket;
-    if (existing?.connected) return;
+    if (existing?.connected && socketToken(existing) === token) return;
     if (existing) existing.disconnect();
 
     const socket = io('/chat', {
@@ -62,13 +107,21 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       // 连接/重连成功后，主动拉取一次全量的工单状态和BBS状态
       get().fetchBbsUnread();
       
-      ticketsAPI.getMyBadges().then((res: any) => {
-        if (res.code === 0 && res.data) {
+      ticketsAPI.getMyBadges().then((res) => {
+        const payload = apiData<TicketBadgePayload>(res);
+        if (payload) {
           const state = get();
-          const newBadge = calcBadge(res.data.unreadMap, res.data.newTicketIds, state.myTicketIds, state.bbsUnreadMap);
+          const unreadMap = normalizeCountMap(payload.unreadMap);
+          const newTicketIds = toNumberArray(payload.newTicketIds);
+          const serverTicketIds = toNumberArray(payload.ticketIds);
+          const myTicketIds = serverTicketIds.length > 0
+            ? serverTicketIds
+            : [...new Set([...state.myTicketIds, ...Object.keys(unreadMap).map(Number), ...newTicketIds])];
+          const newBadge = calcBadge(unreadMap, newTicketIds, myTicketIds, state.bbsUnreadMap);
           set({
-            unreadMap: res.data.unreadMap,
-            newTicketIds: res.data.newTicketIds,
+            unreadMap,
+            newTicketIds,
+            myTicketIds,
             profileBadge: newBadge,
           });
           startTitleFlash(newBadge);
@@ -83,11 +136,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       // 当服务端因 token 过期等原因断开连接时，尝试刷新 token 并重连
       if (reason === 'io server disconnect') {
         try {
-          const res: any = await authAPI.refresh();
-          if (res.code === 0 && res.data?.accessToken) {
-            localStorage.setItem('accessToken', res.data.accessToken);
+          const res = await authAPI.refresh();
+          const data = apiData<{ accessToken?: string }>(res);
+          if (data?.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
             // 使用新 token 注入并建立全新的连接
-            get().connect(res.data.accessToken);
+            get().connect(data.accessToken);
           }
         } catch (e) {
           console.error('[GlobalSocket] 自动重连令牌续期失败', e);
@@ -107,11 +161,13 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
       // 自己发的消息 / 正在查看的工单 → 不累加
       if (data.senderId === currentUserId) return;
-      // 额外保险校验：如果这不是属于我监控范围的工单，屏蔽
-      if (!state.myTicketIds.includes(data.ticketId)) return;
+      const myTicketIds = state.myTicketIds.includes(data.ticketId)
+        ? state.myTicketIds
+        : [...state.myTicketIds, data.ticketId];
 
       // 判断如果当前正在查看这个工单页面，立刻给后端发回执，强制已读，消灭别的端红点
       if (data.ticketId === state.currentTicketId) {
+        if (myTicketIds !== state.myTicketIds) set({ myTicketIds });
         ticketsAPI.readTicket(data.ticketId).catch(() => {});
         return;
       }
@@ -120,9 +176,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         ...state.unreadMap,
         [data.ticketId]: (state.unreadMap[data.ticketId] || 0) + 1,
       };
-      const newBadge = calcBadge(newMap, state.newTicketIds, state.myTicketIds, state.bbsUnreadMap);
+      const newBadge = calcBadge(newMap, state.newTicketIds, myTicketIds, state.bbsUnreadMap);
       set({
         unreadMap: newMap,
+        myTicketIds,
         profileBadge: newBadge,
       });
 
@@ -149,7 +206,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
 
     // ── 工单事件：追踪新分配/邀请的工单，同步更新 profileBadge ─────────────
-    socket.on('ticketEvent', (event: { action: string; operatorId: number | null; data: any }) => {
+    socket.on('ticketEvent', (event: { action: string; operatorId: number | null; data?: TicketEventPayload }) => {
       const currentUserId = useAuthStore.getState().user?.id;
       if (!currentUserId) return;
       const t = event.data;
@@ -179,7 +236,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
       const isMyCreation = t.creatorId === currentUserId;
       const isAssignedToMe = t.assigneeId === currentUserId;
-      const isParticipant = Array.isArray(t.participants) && t.participants.some((p: any) => p.id === currentUserId);
+      const isParticipant = Array.isArray(t.participants) && t.participants.some((p) => Number(p.id) === currentUserId);
 
       // 更新 myTicketIds：确保自己相关工单都被追踪
       let newMyIds = state.myTicketIds;
@@ -252,11 +309,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on('permissionsUpdated', () => {
       console.log('[GlobalSocket] 收到权限变更通知，正在刷新用户权限...');
       authAPI.getMe()
-        .then((res: any) => {
-          if (res.code === 0) {
+        .then((res) => {
+          const user = apiData<User>(res as unknown as User | { data?: User });
+          if (user) {
             const token = localStorage.getItem('accessToken');
             if (token) {
-              useAuthStore.getState().setAuth(res.data, token);
+              useAuthStore.getState().setAuth(user, token);
               console.log('[GlobalSocket] 权限已实时更新');
             }
           }
@@ -271,9 +329,17 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     const { socket } = get();
     if (socket) {
       socket.disconnect();
-      set({ socket: null, connected: false, unreadMap: {}, newTicketIds: [], myTicketIds: [], profileBadge: 0 });
-      stopTitleFlash();
     }
+    set({
+      socket: null,
+      connected: false,
+      unreadMap: {},
+      newTicketIds: [],
+      myTicketIds: [],
+      bbsUnreadMap: {},
+      profileBadge: 0,
+    });
+    stopTitleFlash();
   },
 
   setCurrentTicket: (ticketId: number | null) => {
@@ -361,11 +427,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
   fetchBbsUnread: () => {
     import('../services/api').then(({ bbsAPI }) => {
-      bbsAPI.getNotifications().then((res: any) => {
-        if (Array.isArray(res)) {
+      bbsAPI.getNotifications().then((res) => {
+        const notifications = apiData<Array<{ postId: number | string; unreadCount: number | string }>>(res);
+        if (Array.isArray(notifications)) {
           const newMap: Record<number, number> = {};
-          res.forEach(item => {
-            newMap[item.postId] = item.unreadCount;
+          notifications.forEach(item => {
+            newMap[Number(item.postId)] = Number(item.unreadCount) || 0;
           });
           const state = get();
           const newBadge = calcBadge(state.unreadMap, state.newTicketIds, state.myTicketIds, newMap);

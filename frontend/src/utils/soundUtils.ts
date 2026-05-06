@@ -1,6 +1,50 @@
 // ─── 通知音效：使用 Web Audio API 合成提示音 ───
 let audioCtx: AudioContext | null = null;
 let lastPlayTime = 0;
+let audioUnlockRegistered = false;
+
+type WebkitAudioWindow = Window &
+  typeof globalThis & {
+    webkitAudioContext?: typeof AudioContext;
+  };
+
+const getAudioContext = (): AudioContext | null => {
+  if (typeof window === 'undefined') return null;
+  if (audioCtx) return audioCtx;
+
+  const AudioContextCtor =
+    window.AudioContext || (window as WebkitAudioWindow).webkitAudioContext;
+  if (!AudioContextCtor) return null;
+
+  audioCtx = new AudioContextCtor();
+  return audioCtx;
+};
+
+const unlockAudio = () => {
+  const ctx = getAudioContext();
+  if (ctx?.state === 'suspended') {
+    void ctx.resume().catch(() => {});
+  }
+};
+
+const registerAudioUnlock = () => {
+  if (typeof window === 'undefined' || audioUnlockRegistered) return;
+  audioUnlockRegistered = true;
+
+  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((eventName) => {
+    window.addEventListener(eventName, unlockAudio, { passive: true });
+  });
+};
+
+registerAudioUnlock();
+
+const resumeThen = (ctx: AudioContext, onReady: () => void) => {
+  void ctx.resume()
+    .then(() => {
+      if (ctx.state === 'running') onReady();
+    })
+    .catch(() => {});
+};
 
 /**
  * 播放消息提示音：清脆的 "叮" 声（A5 → E6 上扬正弦波 + 快速衰减）
@@ -8,18 +52,18 @@ let lastPlayTime = 0;
 export const playDing = () => {
   try {
     const now = Date.now();
+
+    audioCtx = getAudioContext();
+    if (!audioCtx) return;
+
+    if (audioCtx.state === 'suspended') {
+      resumeThen(audioCtx, playDing);
+      return;
+    }
+
     // 防抖：200ms 内不重复播放
     if (now - lastPlayTime < 200) return;
     lastPlayTime = now;
-
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    // 如果 AudioContext 被浏览器挂起（用户尚未交互），静默跳过
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
-      return;
-    }
 
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
@@ -48,16 +92,17 @@ export const playDing = () => {
 export const playAlert = () => {
   try {
     const now = Date.now();
-    if (now - lastPlayTime < 200) return;
-    lastPlayTime = now;
 
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
+    audioCtx = getAudioContext();
+    if (!audioCtx) return;
+
     if (audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
+      resumeThen(audioCtx, playAlert);
       return;
     }
+
+    if (now - lastPlayTime < 200) return;
+    lastPlayTime = now;
 
     // 第一声
     const osc1 = audioCtx.createOscillator();

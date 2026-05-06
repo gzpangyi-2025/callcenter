@@ -60,7 +60,7 @@ export interface TicketQueryParams {
 }
 
 export interface TicketBadgeSummary {
-  unreadCount: number;
-  newCount: number;
-  total: number;
+  unreadMap: Record<number, number>;
+  newTicketIds: number[];
+  ticketIds: number[];
 }

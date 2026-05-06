@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
-interface User {
+export interface User {
   id: number;
   username: string;
-  displayName: string;
+  displayName?: string;
   realName?: string;
-  email: string;
+  email?: string;
   phone?: string;
-  avatar: string | null;
-  role: { id: number; name: string; permissions?: any[] } | null;
+  avatar?: string | null;
+  role: { id: number; name: string; permissions?: unknown[] } | null;
 }
 
 interface AuthState {
