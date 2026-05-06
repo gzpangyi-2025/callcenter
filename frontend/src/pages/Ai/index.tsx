@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Dropdown,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
   StopOutlined, DownloadOutlined, ThunderboltOutlined, EditOutlined,
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
-  LoadingOutlined, InboxOutlined, DeleteOutlined, MoreOutlined,
+  LoadingOutlined, InboxOutlined, DeleteOutlined,
 } from '@ant-design/icons';
 import { aiAPI, filesAPI } from '../../services/api';
 import TaskLogPanel from './components/TaskLogPanel';
@@ -431,9 +431,34 @@ const AiPage: React.FC = () => {
       },
     },
     {
+      title: '任务简介',
+      dataIndex: 'prompt',
+      key: 'prompt',
+      ellipsis: true,
+      width: 200,
+      render: (p: string) => p
+        ? <Tooltip title={p}><Text type="secondary" style={{ fontSize: 12 }}>{p.length > 30 ? p.slice(0, 30) + '…' : p}</Text></Tooltip>
+        : <Text type="secondary" style={{ fontSize: 12 }}>-</Text>,
+    },
+    {
+      title: '产物大小',
+      dataIndex: 'outputFiles',
+      key: 'fileSize',
+      width: 90,
+      render: (files: any[] | null) => {
+        if (!files || files.length === 0) return <Text type="secondary" style={{ fontSize: 12 }}>-</Text>;
+        const totalBytes = files.reduce((sum: number, f: any) => sum + (f.size || 0), 0);
+        const display = totalBytes < 1024 ? `${totalBytes} B`
+          : totalBytes < 1024 * 1024 ? `${(totalBytes / 1024).toFixed(0)} KB`
+          : `${(totalBytes / (1024 * 1024)).toFixed(1)} MB`;
+        return <Text style={{ fontSize: 12, fontFamily: 'monospace' }}>{display}</Text>;
+      },
+    },
+    {
       title: '当前步骤',
       dataIndex: 'currentStep',
       key: 'currentStep',
+      width: 120,
       ellipsis: true,
       render: (s: string) => s ? <Text type="secondary" style={{ fontSize: 12 }}>{s}</Text> : '-',
     },
@@ -441,73 +466,66 @@ const AiPage: React.FC = () => {
       title: '提交时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 150,
+      width: 140,
       render: (d: string) => (
-        <Tooltip title={dayjs(d).format('YYYY-MM-DD HH:mm:ss')}>
-          <Text style={{ fontSize: 12 }}>{dayjs(d).fromNow()}</Text>
-        </Tooltip>
+        <Text style={{ fontSize: 12, fontFamily: 'monospace' }}>{dayjs(d).format('MM-DD HH:mm:ss')}</Text>
       ),
     },
     {
       title: '操作',
       key: 'actions',
-      width: 100,
+      width: 160,
       fixed: 'right' as const,
-      render: (_: any, record: any) => {
-        const menuItems: any[] = [];
-        if (record.status === 'pending' || record.status === 'running') {
-          menuItems.push({
-            key: 'cancel',
-            icon: <StopOutlined />,
-            label: '取消任务',
-            danger: true,
-            onClick: () => handleCancel(record.id),
-          });
-        }
-        if (record.status === 'completed') {
-          menuItems.push({
-            key: 'modify',
-            icon: <EditOutlined />,
-            label: '增量修改',
-            onClick: () => { setModifyTarget(record); setModifyOpen(true); },
-          });
-        }
-        if (['completed', 'failed', 'cancelled'].includes(record.status)) {
-          if (menuItems.length > 0) menuItems.push({ type: 'divider' });
-          menuItems.push({
-            key: 'delete',
-            icon: <DeleteOutlined />,
-            label: '删除任务',
-            danger: true,
-            onClick: () => Modal.confirm({
-              title: '确认删除此任务？',
-              content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
-              okText: '确认删除',
-              okButtonProps: { danger: true },
-              cancelText: '取消',
-              onOk: () => handleDelete(record.id),
-            }),
-          });
-        }
-        return (
-          <Space size={4}>
-            <Button
-              size="small"
-              type="link"
-              icon={<EyeOutlined />}
-              onClick={() => handleViewDetail(record)}
-              style={{ padding: '0 4px' }}
-            >
-              详情
-            </Button>
-            {menuItems.length > 0 && (
-              <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
-                <Button size="small" type="text" icon={<MoreOutlined style={{ fontSize: 16 }} />} style={{ padding: '0 4px' }} />
-              </Dropdown>
-            )}
-          </Space>
-        );
-      },
+      render: (_: any, record: any) => (
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          <Button
+            size="small"
+            icon={<EyeOutlined />}
+            onClick={() => handleViewDetail(record)}
+          >
+            详情
+          </Button>
+          {record.status === 'completed' ? (
+            <Tooltip title="增量修改">
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => { setModifyTarget(record); setModifyOpen(true); }}
+              />
+            </Tooltip>
+          ) : (record.status === 'pending' || record.status === 'running') ? (
+            <Tooltip title="取消任务">
+              <Button
+                size="small"
+                danger
+                icon={<StopOutlined />}
+                onClick={() => handleCancel(record.id)}
+              />
+            </Tooltip>
+          ) : (
+            <Button size="small" icon={<EditOutlined />} disabled style={{ visibility: 'hidden' }} />
+          )}
+          {['completed', 'failed', 'cancelled'].includes(record.status) ? (
+            <Tooltip title="删除任务及产物">
+              <Button
+                size="small"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => Modal.confirm({
+                  title: '确认删除此任务？',
+                  content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
+                  okText: '确认删除',
+                  okButtonProps: { danger: true },
+                  cancelText: '取消',
+                  onOk: () => handleDelete(record.id),
+                })}
+              />
+            </Tooltip>
+          ) : (
+            <Button size="small" icon={<DeleteOutlined />} disabled style={{ visibility: 'hidden' }} />
+          )}
+        </div>
+      ),
     },
   ];
 
