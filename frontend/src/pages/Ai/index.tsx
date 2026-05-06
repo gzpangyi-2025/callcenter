@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Popconfirm,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
@@ -506,24 +506,18 @@ const AiPage: React.FC = () => {
             <Button size="small" icon={<EditOutlined />} disabled style={{ visibility: 'hidden' }} />
           )}
           {['completed', 'failed', 'cancelled'].includes(record.status) ? (
-            <Tooltip title="删除任务及产物">
-              <Button
-                size="small"
-                danger
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  Modal.confirm({
-                    title: '确认删除此任务？',
-                    content: '将同时删除 COS 上的产物文件，此操作不可恢复。',
-                    okText: '确认删除',
-                    okButtonProps: { danger: true },
-                    cancelText: '取消',
-                    onOk: () => handleDelete(record.id),
-                  });
-                }}
-              />
-            </Tooltip>
+            <Popconfirm
+              title="确认删除此任务？"
+              description="将同时删除 COS 上的产物文件，此操作不可恢复。"
+              onConfirm={() => handleDelete(record.id)}
+              okText="确认删除"
+              cancelText="取消"
+              okButtonProps={{ danger: true }}
+            >
+              <Tooltip title="删除任务及产物">
+                <Button size="small" danger icon={<DeleteOutlined />} />
+              </Tooltip>
+            </Popconfirm>
           ) : (
             <div style={{ width: 24 }} />
           )}
