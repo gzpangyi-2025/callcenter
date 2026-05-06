@@ -170,6 +170,7 @@ export class AuditService {
       'audit.ticket_status',
       'audit.user_login',
       'audit.external_login',
+      'audit.ai_task',
     ];
     const settings = await this.settingRepository.find({
       where: { key: In(keys) },
@@ -179,6 +180,7 @@ export class AuditService {
       ticket_status: true,
       user_login: true,
       external_login: true,
+      ai_task: true,
     };
 
     for (const s of settings) {
