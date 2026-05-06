@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Card, Button, Table, Tag, Space, Modal, Form, Select, Input, message,
   Typography, Tooltip, Badge, Descriptions, Spin, Empty, Alert,
-  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Popconfirm,
+  Row, Col, Statistic, Progress, Tabs, Upload, Radio, Image, Popconfirm, Switch,
 } from 'antd';
 import {
   RobotOutlined, PlusOutlined, ReloadOutlined, EyeOutlined,
@@ -11,6 +11,7 @@ import {
   LoadingOutlined, InboxOutlined, DeleteOutlined,
 } from '@ant-design/icons';
 import { aiAPI, filesAPI } from '../../services/api';
+import { useAuthStore, type User } from '../../stores/authStore';
 import TaskLogPanel from './components/TaskLogPanel';
 import AiChatPanel from './components/AiChatPanel';
 import dayjs from 'dayjs';
@@ -35,11 +36,17 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: Re
 };
 
 const AiPage: React.FC = () => {
+  const user = useAuthStore(s => s.user) as User | null;
+  const isAdmin = user?.role?.name === 'admin';
+
   const [tasks, setTasks] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string | undefined>();
+  const [showAll, setShowAll] = useState(false); // 管理员查看全部
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [batchDeleting, setBatchDeleting] = useState(false);
   const [workerStatus, setWorkerStatus] = useState<'online' | 'offline' | 'checking'>('checking');
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -130,29 +137,28 @@ const AiPage: React.FC = () => {
 
   // ── Fetch tasks ──────────────────────────────────────────────────────────
 
-  const fetchTasks = useCallback(async (p = page, s = status) => {
+  const fetchTasks = useCallback(async (p = page, s = status, all = showAll) => {
     setLoading(true);
     try {
-      const res: any = await aiAPI.listTasks({ page: p, limit: 15, status: s });
-      // Trace the full response shape to console for debugging
+      const params: any = { page: p, limit: 20, status: s };
+      if (isAdmin && all) params.all = '1';
+      const res: any = await aiAPI.listTasks(params);
       console.debug('[AI] listTasks raw response:', res);
-      // Axios response: res.data = what the backend returned
-      // Backend returns the Worker response directly: { success, data: Task[], total }
       const payload = res?.data;
       if (!payload) return;
-      // Handle both shapes: { data: [...] } and { items: [...] } and plain array
       const list = Array.isArray(payload) ? payload
         : Array.isArray(payload?.data) ? payload.data
         : Array.isArray(payload?.items) ? payload.items
         : [];
       setTasks(list);
       setTotal(payload?.total ?? list.length);
+      setSelectedRowKeys([]);
     } catch (err) {
       console.error('[AI] fetchTasks error:', err);
     } finally {
       setLoading(false);
     }
-  }, [page, status]);
+  }, [page, status, showAll, isAdmin]);
 
   // ── Worker health check ──────────────────────────────────────────────────
 
@@ -322,6 +328,26 @@ const AiPage: React.FC = () => {
     } catch {
       message.error('删除失败，请重试');
     }
+  };
+
+  // ── Batch delete ────────────────────────────────────────────────────────
+
+  const handleBatchDelete = async () => {
+    if (selectedRowKeys.length === 0) return;
+    setBatchDeleting(true);
+    let successCount = 0;
+    for (const id of selectedRowKeys) {
+      try {
+        await aiAPI.deleteTask(id as string);
+        successCount++;
+      } catch {
+        // continue
+      }
+    }
+    message.success(`成功删除 ${successCount} 个任务`);
+    setSelectedRowKeys([]);
+    setBatchDeleting(false);
+    fetchTasks();
   };
 
   // ── View task detail + files ──────────────────────────────────────────────
@@ -514,9 +540,7 @@ const AiPage: React.FC = () => {
               cancelText="取消"
               okButtonProps={{ danger: true }}
             >
-              <Tooltip title="删除任务及产物">
-                <Button size="small" danger icon={<DeleteOutlined />} />
-              </Tooltip>
+              <Button size="small" danger icon={<DeleteOutlined />} />
             </Popconfirm>
           ) : (
             <div style={{ width: 24 }} />
@@ -624,8 +648,8 @@ const AiPage: React.FC = () => {
         ))}
       </Row>
 
-      <div style={{ marginBottom: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
-        <Button icon={<ReloadOutlined />} onClick={() => { fetchTasks(1, status); checkWorkerHealth(); }}>
+      <div style={{ marginBottom: 12, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+        <Button icon={<ReloadOutlined />} onClick={() => { fetchTasks(1, status, showAll); checkWorkerHealth(); }}>
           刷新
         </Button>
         <Button
@@ -642,7 +666,7 @@ const AiPage: React.FC = () => {
           allowClear
           style={{ width: 140 }}
           value={status}
-          onChange={s => { setStatus(s); fetchTasks(1, s); setPage(1); }}
+          onChange={s => { setStatus(s); fetchTasks(1, s, showAll); setPage(1); }}
           options={[
             { label: '排队中', value: 'pending' },
             { label: '执行中', value: 'running' },
@@ -651,6 +675,26 @@ const AiPage: React.FC = () => {
             { label: '已取消', value: 'cancelled' },
           ]}
         />
+        {isAdmin && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Switch size="small" checked={showAll} onChange={v => { setShowAll(v); setPage(1); fetchTasks(1, status, v); }} />
+            <Text style={{ fontSize: 12 }}>查看全部用户任务</Text>
+          </div>
+        )}
+        {selectedRowKeys.length > 0 && (
+          <Popconfirm
+            title={`确认批量删除 ${selectedRowKeys.length} 个任务？`}
+            description="将同时删除 COS 上的产物文件，此操作不可恢复。"
+            onConfirm={handleBatchDelete}
+            okText="确认删除"
+            cancelText="取消"
+            okButtonProps={{ danger: true }}
+          >
+            <Button danger icon={<DeleteOutlined />} loading={batchDeleting}>
+              批量删除 ({selectedRowKeys.length})
+            </Button>
+          </Popconfirm>
+        )}
       </div>
 
       {/* Table */}
@@ -661,15 +705,24 @@ const AiPage: React.FC = () => {
           columns={columns}
           rowKey="id"
           loading={loading}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: keys => setSelectedRowKeys(keys),
+            getCheckboxProps: (record: any) => ({
+              disabled: !['completed', 'failed', 'cancelled'].includes(record.status),
+            }),
+          }}
           pagination={{
             current: page,
-            pageSize: 15,
+            pageSize: 20,
             total,
-            onChange: p => { setPage(p); fetchTasks(p, status); },
+            onChange: p => { setPage(p); fetchTasks(p, status, showAll); },
             showTotal: t => `共 ${t} 条记录`,
+            showSizeChanger: false,
           }}
           locale={{ emptyText: <Empty description="暂无 AI 任务" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
           size="middle"
+          scroll={{ x: 1200 }}
         />
       </Card>
               </>
