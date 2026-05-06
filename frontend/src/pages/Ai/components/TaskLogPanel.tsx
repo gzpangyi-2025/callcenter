@@ -116,6 +116,23 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectAttemptRef = useRef(0);
+
+  useEffect(() => {
+    eventSourceRef.current?.close();
+    eventSourceRef.current = null;
+    if (reconnectTimerRef.current) {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
+    }
+    reconnectAttemptRef.current = 0;
+    setLogs([]);
+    setFiles([]);
+    setConnected(false);
+    setCurrentStep(null);
+    setProgress(0);
+  }, [taskId]);
 
   const connect = useCallback(() => {
     if (eventSourceRef.current) {
@@ -126,16 +143,20 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     const url = `/api/ai/tasks/${taskId}/logs/stream?token=${encodeURIComponent(token)}`;
     const es = new EventSource(url);
 
-    es.onopen = () => setConnected(true);
+    es.onopen = () => {
+      setConnected(true);
+      reconnectAttemptRef.current = 0; // Reset on successful connect
+    };
     es.onmessage = (event) => {
       try {
         const data: StreamEvent = JSON.parse(event.data);
+        if (data.taskId && data.taskId !== taskId) return;
 
         if ('eventType' in data && data.eventType === 'file_ready') {
           // File event
           setFiles((prev) => {
             // Deduplicate by name
-            if (prev.some(f => f.name === data.name)) return prev;
+            if (prev.some(f => f.taskId === data.taskId && f.name === data.name)) return prev;
             return [...prev, data as FileEvent];
           });
         } else {
@@ -185,18 +206,33 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     };
     es.onerror = () => {
       setConnected(false);
+      es.close();
+      eventSourceRef.current = null;
+      // Auto-reconnect with increasing delay (2s → 20s), max 10 attempts
+      const attempt = reconnectAttemptRef.current;
+      if (attempt < 10 && ['running', 'pending', 'paused'].includes(taskStatus)) {
+        const delay = Math.min(2000 + attempt * 2000, 20000);
+        reconnectTimerRef.current = setTimeout(() => {
+          reconnectAttemptRef.current = attempt + 1;
+          connect();
+        }, delay);
+      }
     };
 
     eventSourceRef.current = es;
   }, [taskId]);
 
   useEffect(() => {
-    if (taskStatus === 'running' || taskStatus === 'pending') {
+    if (['running', 'pending', 'paused', 'completed', 'failed'].includes(taskStatus)) {
       connect();
     }
     return () => {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
     };
   }, [taskId, taskStatus, connect]);
 
