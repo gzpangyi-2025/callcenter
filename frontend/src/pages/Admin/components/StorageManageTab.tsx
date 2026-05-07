@@ -9,7 +9,7 @@ export const StorageManageTab: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [provider, setProvider] = useState<'local' | 'cos'>('local');
+  const [provider, setProvider] = useState<'local' | 'cos' | 's3'>('local');
   const [migrationStats, setMigrationStats] = useState<{ localFiles: number, migrationState?: any } | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [migrating, setMigrating] = useState(false);
