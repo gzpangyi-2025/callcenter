@@ -84,6 +84,22 @@ ensure_git_synced() {
   log "Git is clean and synchronized with $upstream at $local_head"
 }
 
+run_tests() {
+  log "Running frontend tests"
+  cd "$LOCAL_DIR/frontend"
+  if ! npm run test; then
+    fail "Frontend tests failed. Deployment aborted."
+  fi
+
+  log "Running backend tests"
+  cd "$LOCAL_DIR/backend"
+  if ! npm run test; then
+    fail "Backend tests failed. Deployment aborted."
+  fi
+
+  cd "$LOCAL_DIR"
+}
+
 run_ssh() {
   local user="$1"
   local host="$2"
@@ -169,6 +185,7 @@ deploy_node() {
 }
 
 ensure_git_synced
+run_tests
 deploy_node "local production node" "$REMOTE_USER_1" "$REMOTE_HOST_1" "$REMOTE_PASSWORD_1"
 deploy_node "Shanghai production node" "$REMOTE_USER_2" "$REMOTE_HOST_2" "$REMOTE_PASSWORD_2"
 
