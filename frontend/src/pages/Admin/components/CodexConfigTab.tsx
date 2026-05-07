@@ -138,7 +138,7 @@ const CodexConfigTab: React.FC = () => {
           />
 
           <Form.Item name="storageProvider" style={{ marginBottom: 16 }}>
-            <Radio.Group>
+            <Radio.Group onChange={(e) => setProvider(e.target.value)}>
               <Radio.Button value="tencent">☁️ 腾讯云 (COS)</Radio.Button>
               <Radio.Button value="s3">🌐 首云 (S3兼容)</Radio.Button>
             </Radio.Group>
