@@ -267,9 +267,9 @@ export const StorageManageTab: React.FC = () => {
                 <Form.Item
                   label="Region (所属地域)"
                   name="s3Region"
-                  rules={[{ required: provider === 's3', message: '请输入地域简称' }]}
+                  extra="可选，留空自动使用 us-east-1"
                 >
-                  <Input placeholder="cn-beijing" />
+                  <Input placeholder="留空即可，首云等 S3 兼容服务通常不需要" />
                 </Form.Item>
               </Col>
             </Row>
