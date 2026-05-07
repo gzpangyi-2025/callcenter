@@ -140,4 +140,93 @@ describe('BbsService', () => {
       expect(postRepo.update).toHaveBeenCalledWith(1, expect.objectContaining({ lastCommentAt: expect.any(Date) }));
     });
   });
+
+  describe('findOne', () => {
+    it('should return post when found', async () => {
+      postRepo.findOne.mockResolvedValue({ id: 1, title: 'Hello' });
+      const result = await service.findOne(1);
+      expect(result.title).toBe('Hello');
+    });
+
+    it('should throw NotFoundException when not found', async () => {
+      postRepo.findOne.mockResolvedValue(null);
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findAllSections', () => {
+    it('should return sections', async () => {
+      sectionRepo.find.mockResolvedValue([{ id: 1, name: '技术分享' }]);
+      const result = await service.findAllSections();
+      expect(result).toHaveLength(1);
+    });
+  });
+
+  describe('createSection', () => {
+    it('should create a section', async () => {
+      sectionRepo.create.mockReturnValue({ name: 'New' });
+      sectionRepo.save.mockResolvedValue({ id: 1, name: 'New' });
+      const result = await service.createSection({ name: 'New' });
+      expect(result.name).toBe('New');
+    });
+  });
+
+  describe('updateSection', () => {
+    it('should update section', async () => {
+      sectionRepo.findOne.mockResolvedValue({ id: 1, name: 'Old' });
+      sectionRepo.save.mockResolvedValue({ id: 1, name: 'Updated' });
+      const result = await service.updateSection(1, { name: 'Updated' });
+      expect(result.name).toBe('Updated');
+    });
+
+    it('should throw NotFoundException when section not found', async () => {
+      sectionRepo.findOne.mockResolvedValue(null);
+      await expect(service.updateSection(999, { name: 'X' })).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('removeSection', () => {
+    it('should remove section and orphan posts', async () => {
+      sectionRepo.findOne.mockResolvedValue({ id: 1, name: 'Old' });
+      postRepo.find.mockResolvedValue([]);
+      sectionRepo.remove.mockResolvedValue(undefined);
+      const result = await service.removeSection(1);
+      expect(result).toEqual({ success: true });
+    });
+
+    it('should throw NotFoundException', async () => {
+      sectionRepo.findOne.mockResolvedValue(null);
+      await expect(service.removeSection(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('generateShareToken', () => {
+    it('should throw NotFoundException if post not found', async () => {
+      postRepo.findOne.mockResolvedValue(null);
+      await expect(service.generateShareToken(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return items and total', async () => {
+      const result = await service.findAll(1, 10);
+      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('total', 0);
+    });
+  });
+
+  describe('remove', () => {
+    it('should allow admin to delete any post', async () => {
+      postRepo.findOne.mockResolvedValue({ id: 1, authorId: 2, content: '' });
+      postRepo.remove.mockResolvedValue(undefined);
+      commentRepo.find.mockResolvedValue([]);
+      await service.remove(1, 99, true);
+      expect(postRepo.remove).toHaveBeenCalled();
+    });
+
+    it('should deny non-author non-admin', async () => {
+      postRepo.findOne.mockResolvedValue({ id: 1, authorId: 2, content: '' });
+      await expect(service.remove(1, 99, false)).rejects.toThrow(ForbiddenException);
+    });
+  });
 });

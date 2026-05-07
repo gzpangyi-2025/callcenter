@@ -155,4 +155,60 @@ describe('KnowledgeService', () => {
       expect(mockKnowledgeRepo.delete).toHaveBeenCalledWith(1);
     });
   });
+
+  describe('generateKnowledge', () => {
+    it('should throw NotFoundException if ticket not found', async () => {
+      mockTicketRepo.findOne.mockResolvedValue(null);
+      await expect(service.generateKnowledge(999)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw BadRequestException if ticket not closed', async () => {
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: 1, status: 'in_progress', ticketNo: 'TK-1',
+      });
+      await expect(service.generateKnowledge(1)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException if no AI API key', async () => {
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: 1, status: 'closed', ticketNo: 'TK-1',
+      });
+      mockSettingsService.getAll.mockResolvedValue({});
+      await expect(service.generateKnowledge(1)).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('updateKnowledge (without optional params)', () => {
+    it('should update content only when title/tags not provided', async () => {
+      mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, title: 'Old', content: 'old', tags: 't' });
+      mockKnowledgeRepo.save.mockImplementation(async (doc) => doc);
+      const result = await service.updateKnowledge(1, 'new content');
+      expect(result.content).toBe('new content');
+      expect(result.title).toBe('Old'); // unchanged
+    });
+  });
+
+  describe('getDocAndSafeName (no ticket)', () => {
+    it('should fallback to doc title when ticket not found', async () => {
+      mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, ticketId: 999, title: 'Doc Title' });
+      mockTicketRepo.findOne.mockResolvedValue(null);
+      const result = await service.getDocAndSafeName(1);
+      expect(result.safeName).toContain('Doc Title');
+    });
+  });
+
+  describe('searchKnowledge with docType', () => {
+    it('should filter by specified docType', async () => {
+      const result = await service.searchKnowledge('', 1, 20, 'chat_history');
+      expect(result.items).toBeDefined();
+    });
+  });
+
+  describe('getByTicketId (null case)', () => {
+    it('should return null when no doc exists', async () => {
+      mockKnowledgeRepo.findOne.mockResolvedValue(null);
+      const result = await service.getByTicketId(999);
+      expect(result).toBeNull();
+    });
+  });
 });
