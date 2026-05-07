@@ -174,8 +174,8 @@ const CodexConfigTab: React.FC = () => {
               <Form.Item label="Bucket (存储桶名称)" name="s3Bucket" rules={[{ required: provider === 's3', message: '请输入存储桶名称' }]}>
                 <Input placeholder="my-s3-bucket" />
               </Form.Item>
-              <Form.Item label="Region (所属地域)" name="s3Region" rules={[{ required: provider === 's3', message: '请输入地域简称' }]}>
-                <Input placeholder="cn-beijing" />
+              <Form.Item label="Region (所属地域)" name="s3Region" extra="可选，留空自动使用 us-east-1">
+                <Input placeholder="留空即可，首云等 S3 兼容服务通常不需要" />
               </Form.Item>
             </>
           )}
