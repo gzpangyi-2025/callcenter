@@ -150,7 +150,7 @@ const ChatMessageList: React.FC<ChatMessageListProps> = ({
                         )}
                       </div>
                     ) : msg.type === 'file' ? (
-                      <a href={`/api/files/download/${(msg.fileUrl || '').split('/').pop()}?name=${encodeURIComponent(msg.fileName || '')}&token=${localStorage.getItem('accessToken') || ''}`}
+                      <a href={`/api/files/download/${(msg.fileUrl || '').replace('/api/files/static/', '')}?name=${encodeURIComponent(msg.fileName || '')}&token=${localStorage.getItem('accessToken') || ''}`}
                         target="_blank" rel="noopener noreferrer" className="chat-file-card">
                         {(() => {
                           const fi = getFileIcon(msg.fileName);

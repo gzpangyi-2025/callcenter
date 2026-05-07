@@ -155,12 +155,15 @@ export class FilesController {
    * 我们通过预签名链接重定向到腾讯云 COS，实现鉴权下载
    */
   @UseGuards(AuthGuard('jwt'))
-  @Get('download/*splat')
+  @Get('download/*')
   async downloadFile(
-    @Param('splat') filename: string,
+    @Req() req: Request,
     @Query('name') originalName: string,
     @Res() res: Response,
   ) {
+    const prefix = '/api/files/download/';
+    let filename = req.path.substring(req.path.indexOf(prefix) + prefix.length);
+    filename = decodeURIComponent(filename);
     const safeName = sanitizeFilename(filename);
     const downloadName = originalName || safeName;
     const url = await this.filesService.getPresignedUrl(
@@ -186,8 +189,11 @@ export class FilesController {
    * 静态资源访问代理，重定向到 COS 预签名链接
    * 前端渲染图片（/api/files/static/xxx.png）会走到这里
    */
-  @Get('static/*splat')
-  async serveStatic(@Param('splat') filename: string, @Res() res: Response) {
+  @Get('static/*')
+  async serveStatic(@Req() req: Request, @Res() res: Response) {
+    const prefix = '/api/files/static/';
+    let filename = req.path.substring(req.path.indexOf(prefix) + prefix.length);
+    filename = decodeURIComponent(filename);
     const safeName = sanitizeFilename(filename);
     if (!isPublicPreviewImage(safeName)) {
       throw new ForbiddenException('该文件类型不允许公开预览，请使用鉴权下载');
