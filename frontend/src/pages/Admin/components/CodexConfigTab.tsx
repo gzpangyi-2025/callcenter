@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Form, InputNumber, Button, Card, Alert, Descriptions, Badge, Spin, message, Tooltip, Input
+  Form, InputNumber, Button, Card, Alert, Descriptions, Badge, Spin, message, Tooltip, Input, Radio
 } from 'antd';
 import {
-  ThunderboltOutlined, ReloadOutlined, InfoCircleOutlined, WarningOutlined
+  ThunderboltOutlined, ReloadOutlined, InfoCircleOutlined, WarningOutlined, CloudServerOutlined
 } from '@ant-design/icons';
 import { settingsAPI } from '../../../services/api';
 
@@ -14,6 +14,12 @@ interface WorkerConfig {
   cosSecretKey?: string;
   cosBucket?: string;
   cosRegion?: string;
+  storageProvider?: string;
+  s3Endpoint?: string;
+  s3AccessKey?: string;
+  s3SecretKey?: string;
+  s3Bucket?: string;
+  s3Region?: string;
 }
 
 const CodexConfigTab: React.FC = () => {
@@ -21,6 +27,7 @@ const CodexConfigTab: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
   const [workerConfig, setWorkerConfig] = useState<WorkerConfig | null>(null);
+  const [provider, setProvider] = useState<'tencent' | 's3'>('tencent');
   const [lastResult, setLastResult] = useState<any>(null);
 
   // 加载当前配置（直接从 Worker 读，两个前端显示一致）
