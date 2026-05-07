@@ -57,6 +57,7 @@ describe('CodexConfigTab', () => {
     // Wait for the data to load and set the provider
     await waitFor(() => {
       expect(screen.getByPlaceholderText('输入腾讯云 API 密钥的 SecretId')).toBeInTheDocument();
+    });
     // Check that S3 fields are not present
     expect(screen.queryByPlaceholderText('例如: https://s3-cn-beijing.capitalonline.net')).not.toBeInTheDocument();
   });
