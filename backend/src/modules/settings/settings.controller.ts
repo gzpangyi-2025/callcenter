@@ -280,10 +280,13 @@ export class SettingsController {
   @Post('codex')
   @Permissions('settings:manage')
   async saveCodexConfig(
-    @Body()
     body: {
       maxRetries?: number;
       concurrency?: number;
+      cosSecretId?: string;
+      cosSecretKey?: string;
+      cosBucket?: string;
+      cosRegion?: string;
     },
   ) {
     const maxRetries = body.maxRetries ?? 3;
@@ -306,7 +309,14 @@ export class SettingsController {
     try {
       await axios.post(
         `${workerUrl}/api/config`,
-        { maxRetries, concurrency },   // send both; worker handles .env + restart for concurrency
+        { 
+          maxRetries, 
+          concurrency,
+          cosSecretId: body.cosSecretId,
+          cosSecretKey: body.cosSecretKey,
+          cosBucket: body.cosBucket,
+          cosRegion: body.cosRegion
+        },
         {
           timeout: 5000,
           headers: apiKey ? { 'X-API-Key': apiKey } : {},
@@ -327,8 +337,8 @@ export class SettingsController {
         workerUpdated,
         restartRequired: false,
         note: workerUpdated
-          ? '✅ maxRetries 即时生效；并发线程数已写入 Worker .env，Worker 将在 2 秒后自动重启生效'
-          : '✅ 配置已保存至数据库，但未能推送到 Worker（请检查连接）',
+          ? '✅ 基础配置即时生效；系统配置（并发、存储等）已写入 Worker .env，Worker 将在 2 秒后自动重启生效'
+          : '✅ 配置已提交，但未能推送到 Worker（请检查连接）',
       },
     };
   }

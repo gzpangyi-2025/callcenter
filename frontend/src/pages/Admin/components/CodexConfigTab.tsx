@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Form, InputNumber, Button, Card, Alert, Descriptions, Badge, Spin, message, Tooltip
+  Form, InputNumber, Button, Card, Alert, Descriptions, Badge, Spin, message, Tooltip, Input
 } from 'antd';
 import {
   ThunderboltOutlined, ReloadOutlined, InfoCircleOutlined, CheckCircleOutlined, WarningOutlined
@@ -10,6 +10,10 @@ import { settingsAPI } from '../../../services/api';
 interface WorkerConfig {
   maxRetries: number;
   concurrency: number;
+  cosSecretId?: string;
+  cosSecretKey?: string;
+  cosBucket?: string;
+  cosRegion?: string;
 }
 
 const CodexConfigTab: React.FC = () => {
@@ -27,8 +31,9 @@ const CodexConfigTab: React.FC = () => {
         if (res.code === 0 && res.data) {
           const maxRetries = res.data.maxRetries ?? 3;
           const concurrency = res.data.concurrency ?? 2;
-          form.setFieldsValue({ maxRetries, concurrency });
-          setWorkerConfig({ maxRetries, concurrency });
+          const { cosSecretId, cosSecretKey, cosBucket, cosRegion } = res.data;
+          form.setFieldsValue({ maxRetries, concurrency, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          setWorkerConfig({ maxRetries, concurrency, cosSecretId, cosSecretKey, cosBucket, cosRegion });
         }
       } catch {
         form.setFieldsValue({ maxRetries: 3, concurrency: 2 });
@@ -47,7 +52,7 @@ const CodexConfigTab: React.FC = () => {
       const res: any = await (settingsAPI as any).saveCodexConfig(values);
       if (res.code === 0) {
         setLastResult(res.data);
-        setWorkerConfig({ maxRetries: values.maxRetries, concurrency: values.concurrency });
+        setWorkerConfig({ ...workerConfig, ...values });
         if (res.data?.restartRequired) {
           message.warning('并发线程数已保存，请在东京服务器执行 pm2 restart codex-worker 后生效');
         } else {
@@ -97,6 +102,54 @@ const CodexConfigTab: React.FC = () => {
       )}
 
       <Form form={form} layout="vertical" onFinish={handleSave}>
+        {/* 腾讯云 COS 存储配置 */}
+        <Card
+          size="small"
+          style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
+          title={
+            <span style={{ fontWeight: 600 }}>
+              <ThunderboltOutlined style={{ color: '#0ea5e9', marginRight: 6 }} />
+              腾讯云 COS 存储配置 (Worker 专属)
+            </span>
+          }
+        >
+          <Alert
+            type="info"
+            showIcon
+            message="专属存储空间"
+            description="这些配置专用于存放 AI 执行过程中的上下文、附件及生成产物，与主站隔离。修改后也会自动重启 Worker 生效。"
+            style={{ marginBottom: 16 }}
+          />
+          <Form.Item
+            label="SecretId"
+            name="cosSecretId"
+            rules={[{ required: true, message: '请输入 SecretId' }]}
+          >
+            <Input placeholder="输入腾讯云 API 密钥的 SecretId" />
+          </Form.Item>
+          <Form.Item
+            label="SecretKey"
+            name="cosSecretKey"
+            rules={[{ required: true, message: '请输入 SecretKey' }]}
+          >
+            <Input.Password placeholder="输入腾讯云 API 密钥的 SecretKey（留空保持不变）" />
+          </Form.Item>
+          <Form.Item
+            label="存储桶名称 (Bucket)"
+            name="cosBucket"
+            rules={[{ required: true, message: '请输入存储桶名称' }]}
+          >
+            <Input placeholder="如: codex-worker-1234567890" />
+          </Form.Item>
+          <Form.Item
+            label="所属地域 (Region)"
+            name="cosRegion"
+            rules={[{ required: true, message: '请输入所属地域' }]}
+          >
+            <Input placeholder="如: ap-guangzhou" />
+          </Form.Item>
+        </Card>
+
         {/* 并发线程数 */}
         <Card
           size="small"
