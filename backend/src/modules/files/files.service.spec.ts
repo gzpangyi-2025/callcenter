@@ -13,6 +13,7 @@ jest.mock('@aws-sdk/s3-request-presigner', () => ({
 jest.mock('qcloud-cos-sts', () => ({
   getCredential: jest.fn().mockImplementation((opt, cb) => cb(null, { credentials: { tmpSecretId: 'tmpId', tmpSecretKey: 'tmpKey', sessionToken: 'token' } })),
 }));
+const fs = require('fs');
 
 describe('FilesService', () => {
   let service: FilesService;
@@ -185,8 +186,31 @@ describe('FilesService', () => {
 
   describe('generateUploadCredentials', () => {
     it('should throw for local provider', async () => {
-      const result = await service.generateUploadCredentials('test.png');
+      const result = await service.generateUploadCredentials('callcenter/tickets/test.png');
       expect(result).toEqual({ provider: 'local' });
+    });
+  });
+
+  describe('uploadToCos', () => {
+    it('should upload locally and create recursive directories', async () => {
+      (settingsService.get as jest.Mock).mockImplementation(async (key: string) => {
+        const config: Record<string, string> = {
+          'storage.provider': 'local',
+        };
+        return config[key];
+      });
+      const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(false);
+      const mkdirSyncSpy = jest.spyOn(fs, 'mkdirSync').mockImplementation();
+      const writeFileSyncSpy = jest.spyOn(fs, 'writeFileSync').mockImplementation();
+      
+      await service.uploadToCos('callcenter/tickets/test.png', Buffer.from('test'), 'image/png');
+      
+      expect(mkdirSyncSpy).toHaveBeenCalledWith(expect.any(String), { recursive: true });
+      expect(writeFileSyncSpy).toHaveBeenCalled();
+
+      existsSyncSpy.mockRestore();
+      mkdirSyncSpy.mockRestore();
+      writeFileSyncSpy.mockRestore();
     });
   });
 });

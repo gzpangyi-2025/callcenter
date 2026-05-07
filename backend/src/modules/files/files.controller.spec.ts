@@ -68,6 +68,14 @@ describe('FilesController', () => {
       const result = await controller.getUploadCredentials('test.png');
       expect(result.code).toBe(0);
       expect(result.data).toBeDefined();
+      expect(filesService.generateUploadCredentials).toHaveBeenCalledWith(expect.stringContaining('callcenter/others/'));
+    });
+
+    it('should include module directory prefix if moduleName is provided', async () => {
+      (filesService.generateUploadCredentials as jest.Mock).mockResolvedValue({ tmpSecretId: 'tmp' });
+      const result = await controller.getUploadCredentials('test.png', 'tickets');
+      expect(result.code).toBe(0);
+      expect(filesService.generateUploadCredentials).toHaveBeenCalledWith(expect.stringContaining('callcenter/tickets/'));
     });
   });
 
@@ -99,6 +107,21 @@ describe('FilesController', () => {
       const result = await controller.uploadFile(mockFile);
       expect(result.code).toBe(0);
       expect(result.data.filename).toContain('.png');
+      expect(result.data.filename).toContain('callcenter/others/');
+      expect(filesService.uploadToCos).toHaveBeenCalled();
+    });
+
+    it('should upload successfully with module prefix', async () => {
+      const mockFile = {
+        originalname: 'test.png',
+        mimetype: 'image/png',
+        buffer: Buffer.from('test'),
+        size: 100,
+      } as Express.Multer.File;
+
+      const result = await controller.uploadFile(mockFile, 'bbs');
+      expect(result.code).toBe(0);
+      expect(result.data.filename).toContain('callcenter/bbs/');
       expect(filesService.uploadToCos).toHaveBeenCalled();
     });
   });
