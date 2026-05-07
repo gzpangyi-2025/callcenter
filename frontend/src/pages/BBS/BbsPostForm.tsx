@@ -144,7 +144,7 @@ export default function BbsPostForm() {
         if (items[i].type.indexOf('image') !== -1) {
             const file = items[i].getAsFile();
             if (file) {
-                uploadPromises.push(filesAPI.upload(file).then((res: any) => {
+                uploadPromises.push(filesAPI.upload(file, 'bbs').then((res: any) => {
                     if (res.code === 0 && res.data?.url) {
                         return `\n![图片](${res.data.url})\n`;
                     }
@@ -279,7 +279,7 @@ export default function BbsPostForm() {
                     const ext = contentType === 'image/jpeg' ? 'jpg' : contentType === 'image/png' ? 'png' : 'gif';
                     const imageFile = new File([blob], `word_image_${Date.now()}.${ext}`, { type: contentType });
                     
-                    const res: any = await filesAPI.upload(imageFile);
+                    const res: any = await filesAPI.upload(imageFile, 'bbs');
                     if (res.code === 0 && res.data?.url) {
                         return { src: res.data.url };
                     }

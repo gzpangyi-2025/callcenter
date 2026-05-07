@@ -166,7 +166,7 @@ export default function BbsPostDetail({ externalPostId }: { externalPostId?: str
   const uploadCommentImage = async (file: File) => {
     setUploadingCount(prev => prev + 1);
     try {
-      const res: any = await filesAPI.upload(file);
+      const res: any = await filesAPI.upload(file, 'bbs');
       if (res.code === 0 && res.data?.url) {
         setCommentImages(prev => [...prev, { url: res.data.url }]);
       } else {

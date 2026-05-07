@@ -36,7 +36,7 @@ describe('FilesController', () => {
       } as unknown as Response;
       (filesService.getPresignedUrl as jest.Mock).mockResolvedValue('https://cos-url.com/test.png');
 
-      await controller.downloadFile('test.png', 'test.png', mockRes);
+      await controller.downloadFile({ params: { 0: 'test.png' } } as any, 'test.png', mockRes);
       expect(mockRes.redirect).toHaveBeenCalledWith(302, 'https://cos-url.com/test.png');
     });
   });
@@ -44,7 +44,7 @@ describe('FilesController', () => {
   describe('serveStatic', () => {
     it('should throw if not a public preview image', async () => {
       const mockRes = {} as Response;
-      await expect(controller.serveStatic('test.pdf', mockRes)).rejects.toThrow(ForbiddenException);
+      await expect(controller.serveStatic({ params: { 0: 'test.pdf' } } as any, mockRes)).rejects.toThrow(ForbiddenException);
     });
 
     it('should redirect to presigned URL', async () => {
@@ -53,7 +53,7 @@ describe('FilesController', () => {
       } as unknown as Response;
       (filesService.getPresignedUrl as jest.Mock).mockResolvedValue('https://cos-url.com/test.png');
 
-      await controller.serveStatic('test.png', mockRes);
+      await controller.serveStatic({ params: { 0: 'test.png' } } as any, mockRes);
       expect(mockRes.redirect).toHaveBeenCalledWith(302, 'https://cos-url.com/test.png');
     });
   });

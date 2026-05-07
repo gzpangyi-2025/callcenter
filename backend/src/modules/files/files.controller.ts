@@ -10,6 +10,7 @@ import {
   Param,
   Query,
   Res,
+  Req,
   Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,7 +19,7 @@ import { Permissions } from '../auth/permissions.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import { FilesService } from './files.service';
 import * as multer from 'multer';
 import * as path from 'path';
@@ -110,7 +111,12 @@ const INLINE_MIME_BY_EXTENSION: Record<string, string> = {
 };
 
 function sanitizeFilename(filename: string): string {
-  return filename.replace(/[/\\]/g, '');
+  // 允许使用正斜杠，但严禁目录穿越 (..) 和绝对路径 (/)
+  return filename
+    .replace(/\\/g, '/')          // Windows 反斜杠转正斜杠
+    .replace(/\.\.+/g, '')        // 移除连续的 .. 防御路径穿越
+    .replace(/^\/+/g, '')         // 移除开头的 / 防御绝对路径
+    .replace(/\/\/+/g, '/');      // 合并连续的 /
 }
 
 function getExtension(filename: string): string {
@@ -149,12 +155,13 @@ export class FilesController {
    * 我们通过预签名链接重定向到腾讯云 COS，实现鉴权下载
    */
   @UseGuards(AuthGuard('jwt'))
-  @Get('download/:filename')
+  @Get('download/*')
   async downloadFile(
-    @Param('filename') filename: string,
+    @Req() req: Request,
     @Query('name') originalName: string,
     @Res() res: Response,
   ) {
+    const filename = req.params[0];
     const safeName = sanitizeFilename(filename);
     const downloadName = originalName || safeName;
     const url = await this.filesService.getPresignedUrl(
@@ -180,8 +187,9 @@ export class FilesController {
    * 静态资源访问代理，重定向到 COS 预签名链接
    * 前端渲染图片（/api/files/static/xxx.png）会走到这里
    */
-  @Get('static/:filename')
-  async serveStatic(@Param('filename') filename: string, @Res() res: Response) {
+  @Get('static/*')
+  async serveStatic(@Req() req: Request, @Res() res: Response) {
+    const filename = req.params[0];
     const safeName = sanitizeFilename(filename);
     if (!isPublicPreviewImage(safeName)) {
       throw new ForbiddenException('该文件类型不允许公开预览，请使用鉴权下载');
@@ -210,12 +218,13 @@ export class FilesController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('upload-credentials')
-  async getUploadCredentials(@Query('filename') filename: string) {
+  async getUploadCredentials(@Query('filename') filename: string, @Query('module') moduleName?: string) {
     if (!filename) {
       throw new BadRequestException('请提供文件名');
     }
     assertAllowedUpload(filename);
-    const uniqueName = `${uuidv4()}${extname(filename)}`;
+    const prefix = moduleName ? `callcenter/${moduleName}` : 'callcenter/others';
+    const uniqueName = `${prefix}/${uuidv4()}${extname(filename)}`;
     const result = await this.filesService.generateUploadCredentials(uniqueName);
     return {
       code: 0,
@@ -269,13 +278,17 @@ export class FilesController {
       },
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('module') moduleName?: string,
+  ) {
     if (!file) {
       throw new BadRequestException('文件上传失败');
     }
     assertAllowedUpload(file.originalname, file.mimetype);
 
-    const uniqueName = `${uuidv4()}${extname(file.originalname)}`;
+    const prefix = moduleName ? `callcenter/${moduleName}` : 'callcenter/others';
+    const uniqueName = `${prefix}/${uuidv4()}${extname(file.originalname)}`;
 
     await this.filesService.uploadToCos(uniqueName, file.buffer, file.mimetype);
 

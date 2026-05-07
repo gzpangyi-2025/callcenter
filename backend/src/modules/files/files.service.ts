@@ -168,6 +168,7 @@ export class FilesService {
     if (config.provider === 'local') {
       const localPath = path.join(process.cwd(), 'oss', filename);
       try {
+        fs.mkdirSync(path.dirname(localPath), { recursive: true });
         fs.writeFileSync(localPath, buffer);
         return `/api/files/static/${filename}`;
       } catch (err: any) {

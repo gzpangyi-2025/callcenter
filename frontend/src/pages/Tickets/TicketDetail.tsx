@@ -487,7 +487,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
     setUploading(true);
     const hide = message.loading(`正在上传 ${file.name}...`, 0);
     try {
-      const res: any = await filesAPI.upload(file);
+      const res: any = await filesAPI.upload(file, 'tickets');
       hide();
       if (res.code === 0 && socket) {
         const isImage = file.type.startsWith('image/');

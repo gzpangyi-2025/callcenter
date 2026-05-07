@@ -98,14 +98,17 @@ export const ticketsAPI = {
 
 // Files API
 export const filesAPI = {
-  upload: async (file: File): Promise<ApiResponse<any>> => {
+  upload: async (file: File, moduleName?: string): Promise<ApiResponse<any>> => {
     try {
-      const { data: credResult } = await api.get('/files/upload-credentials', { params: { filename: file.name } });
+      const { data: credResult } = await api.get('/files/upload-credentials', { 
+        params: { filename: file.name, ...(moduleName ? { module: moduleName } : {}) } 
+      });
       const { provider, credentials, startTime, expiredTime, bucket, region, key } = credResult;
 
       if (provider === 'local') {
         const formData = new FormData();
         formData.append('file', file);
+        if (moduleName) formData.append('module', moduleName);
         return api.post('/files/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -161,6 +164,7 @@ export const filesAPI = {
       console.warn('COS direct upload failed, falling back to standard upload...', e);
       const formData = new FormData();
       formData.append('file', file);
+      if (moduleName) formData.append('module', moduleName);
       return api.post('/files/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
