@@ -1,23 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ConfigProvider, theme, App as AntApp } from 'antd';
+import { ConfigProvider, theme, App as AntApp, Spin } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import LoginPage from './pages/Login';
 import MainLayout from './components/MainLayout';
 import Dashboard from './pages/Dashboard';
 import TicketList from './pages/Tickets';
 import TicketDetail from './pages/Tickets/TicketDetail';
-import ProfilePage from './pages/Profile';
-import AdminPage from './pages/Admin';
-import KnowledgePage from './pages/Knowledge';
-import ReportsPage from './pages/Reports';
 import TicketShared from './pages/Tickets/TicketShared';
-import BbsShared from './pages/BBS/BbsShared';
-import BbsList from './pages/BBS';
-import BbsPostDetail from './pages/BBS/BbsPostDetail';
-import BbsPostForm from './pages/BBS/BbsPostForm';
-import GlobalSearch from './pages/GlobalSearch';
-import AiPage from './pages/Ai';
 import { useAuthStore } from './stores/authStore';
 import { useSocketStore } from './stores/socketStore';
 import { authAPI } from './services/api';
@@ -29,6 +19,25 @@ import './styles/chat.css';
 import './styles/screen-share.css';
 import './styles/login.css';
 import './styles/layout.css';
+
+// ── 路由级懒加载：非首屏页面按需加载 ──
+const ProfilePage = React.lazy(() => import('./pages/Profile'));
+const AdminPage = React.lazy(() => import('./pages/Admin'));
+const KnowledgePage = React.lazy(() => import('./pages/Knowledge'));
+const ReportsPage = React.lazy(() => import('./pages/Reports'));
+const BbsShared = React.lazy(() => import('./pages/BBS/BbsShared'));
+const BbsList = React.lazy(() => import('./pages/BBS'));
+const BbsPostDetail = React.lazy(() => import('./pages/BBS/BbsPostDetail'));
+const BbsPostForm = React.lazy(() => import('./pages/BBS/BbsPostForm'));
+const GlobalSearch = React.lazy(() => import('./pages/GlobalSearch'));
+const AiPage = React.lazy(() => import('./pages/Ai'));
+
+/** 懒加载占位符 */
+const LazyFallback = (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+    <Spin size="large" />
+  </div>
+);
 
 
 
@@ -82,6 +91,7 @@ const AppContent: React.FC = () => {
 
   return (
     <BrowserRouter>
+      <Suspense fallback={LazyFallback}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/external/ticket/:token" element={<TicketShared />} />
@@ -123,6 +133,7 @@ const AppContent: React.FC = () => {
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };

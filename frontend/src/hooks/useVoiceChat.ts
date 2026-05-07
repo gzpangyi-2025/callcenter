@@ -21,7 +21,7 @@ const getIceServers = async (): Promise<RTCIceServer[]> => {
       return cachedIceServers as RTCIceServer[];
     }
   } catch (err) {
-    console.error('[语音通话] 获取穿透配置失败，使用默认保底:', err);
+    if (import.meta.env.DEV) console.error('[语音通话] 获取穿透配置失败，使用默认保底:', err);
   }
   return [{ urls: 'stun:stun.qq.com:3478' }];
 };
@@ -56,7 +56,7 @@ const unlockAudioPlayback = () => {
       if (ctx.state === 'suspended') {
         ctx.resume();
       }
-      console.log('[语音通话] AudioContext 已解锁, state:', ctx.state);
+      if (import.meta.env.DEV) console.log('[语音通话] AudioContext 已解锁, state:', ctx.state);
     }
 
     const silentAudio = document.createElement('audio');
@@ -65,13 +65,13 @@ const unlockAudioPlayback = () => {
     silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoAAAAAAAAAAAAAAAAAAAA';
     silentAudio.volume = 0.01;
     silentAudio.play().then(() => {
-      console.log('[语音通话] 静音 Audio 播放成功，浏览器音频已解锁');
+      if (import.meta.env.DEV) console.log('[语音通话] 静音 Audio 播放成功，浏览器音频已解锁');
       setTimeout(() => silentAudio.remove(), 1000);
     }).catch(() => {
       silentAudio.remove();
     });
   } catch (e) {
-    console.warn('[语音通话] 音频解锁尝试失败（不影响桌面端）:', e);
+    if (import.meta.env.DEV) console.warn('[语音通话] 音频解锁尝试失败（不影响桌面端）:', e);
   }
 };
 
@@ -118,12 +118,12 @@ export function useVoiceChat(
   const flushPendingCandidates = async (peerId: number, pc: RTCPeerConnection) => {
     const pending = pendingCandidatesRef.current.get(peerId);
     if (pending && pending.length > 0) {
-      console.log(`[语音通话] 消化 ${pending.length} 个缓冲的 ICE Candidate, peerId:`, peerId);
+      if (import.meta.env.DEV) console.log(`[语音通话] 消化 ${pending.length} 个缓冲的 ICE Candidate, peerId:`, peerId);
       for (const candidate of pending) {
         try {
           await pc.addIceCandidate(new RTCIceCandidate(candidate));
         } catch (err) {
-          console.error('[语音通话] 缓冲 ICE candidate 添加失败:', err);
+          if (import.meta.env.DEV) console.error('[语音通话] 缓冲 ICE candidate 添加失败:', err);
         }
       }
       pendingCandidatesRef.current.delete(peerId);
@@ -156,10 +156,10 @@ export function useVoiceChat(
   const safePlayAudio = (audioEl: HTMLAudioElement, peerId: number) => {
     const tryPlay = () => {
       audioEl.play().then(() => {
-        console.log('[语音通话] 音频播放成功, peerId:', peerId,
+        if (import.meta.env.DEV) console.log('[语音通话] 音频播放成功, peerId:', peerId,
           'paused:', audioEl.paused, 'volume:', audioEl.volume, 'muted:', audioEl.muted);
       }).catch(err => {
-        console.warn('[语音通话] 音频播放失败, peerId:', peerId, err.name, err.message);
+        if (import.meta.env.DEV) console.warn('[语音通话] 音频播放失败, peerId:', peerId, err.name, err.message);
         if (err.name === 'NotAllowedError') {
           const retryOnClick = () => {
             audioEl.play().catch(() => {});
@@ -178,7 +178,7 @@ export function useVoiceChat(
   const restartIceForPeer = useCallback(async (peerId: number) => {
     const count = (iceRestartCountRef.current.get(peerId) || 0) + 1;
     if (count > 5) {
-      console.warn('[语音通话] peerId', peerId, '已达 ICE Restart 上限(5次)，放弃重连');
+      if (import.meta.env.DEV) console.warn('[语音通话] peerId', peerId, '已达 ICE Restart 上限(5次)，放弃重连');
       return;
     }
     iceRestartCountRef.current.set(peerId, count);
@@ -186,7 +186,7 @@ export function useVoiceChat(
     const pc = voicePeersRef.current.get(peerId);
     if (!pc || !localStreamRef.current) return;
 
-    console.log(`[语音通话] 触发 ICE Restart (第${count}次), peerId:`, peerId);
+    if (import.meta.env.DEV) console.log(`[语音通话] 触发 ICE Restart (第${count}次), peerId:`, peerId);
     try {
       const offer = await pc.createOffer({ iceRestart: true });
       await pc.setLocalDescription(offer);
@@ -201,7 +201,7 @@ export function useVoiceChat(
         });
       }
     } catch (err) {
-      console.error('[语音通话] ICE Restart 失败, peerId:', peerId, err);
+      if (import.meta.env.DEV) console.error('[语音通话] ICE Restart 失败, peerId:', peerId, err);
     }
   }, []);
 
@@ -227,7 +227,7 @@ export function useVoiceChat(
     };
 
     pc.ontrack = (event) => {
-      console.log('[语音通话] ontrack 触发, peerId:', peerId,
+      if (import.meta.env.DEV) console.log('[语音通话] ontrack 触发, peerId:', peerId,
         'track.kind:', event.track.kind, 'track.readyState:', event.track.readyState,
         'streams:', event.streams.length);
 
@@ -246,19 +246,19 @@ export function useVoiceChat(
       safePlayAudio(audioEl, peerId);
 
       event.track.onmute = () => {
-        console.log('[语音通话] 远程音频轨道 muted, peerId:', peerId);
+        if (import.meta.env.DEV) console.log('[语音通话] 远程音频轨道 muted, peerId:', peerId);
       };
       event.track.onunmute = () => {
-        console.log('[语音通话] 远程音频轨道 unmuted, peerId:', peerId);
+        if (import.meta.env.DEV) console.log('[语音通话] 远程音频轨道 unmuted, peerId:', peerId);
         safePlayAudio(audioEl, peerId);
       };
       event.track.onended = () => {
-        console.log('[语音通话] 远程音频轨道 ended, peerId:', peerId);
+        if (import.meta.env.DEV) console.log('[语音通话] 远程音频轨道 ended, peerId:', peerId);
       };
     };
 
     pc.oniceconnectionstatechange = () => {
-      console.log('[语音通话] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
+      if (import.meta.env.DEV) console.log('[语音通话] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
 
       // 清理之前的 disconnected 计时器
       const existingTimer = disconnectTimersRef.current.get(peerId);
@@ -272,20 +272,20 @@ export function useVoiceChat(
         iceRestartCountRef.current.delete(peerId);
         const audioEl = audioElementsRef.current.get(peerId);
         if (audioEl && audioEl.paused && audioEl.srcObject) {
-          console.log('[语音通话] ICE connected, 重新尝试播放音频');
+          if (import.meta.env.DEV) console.log('[语音通话] ICE connected, 重新尝试播放音频');
           safePlayAudio(audioEl, peerId);
         }
       } else if (pc.iceConnectionState === 'disconnected') {
         // disconnected 是临时状态，给 5 秒恢复窗口
         const timer = setTimeout(() => {
           if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
-            console.log('[语音通话] disconnected 超时 5 秒未恢复，触发 ICE Restart, peerId:', peerId);
+            if (import.meta.env.DEV) console.log('[语音通话] disconnected 超时 5 秒未恢复，触发 ICE Restart, peerId:', peerId);
             restartIceForPeer(peerId);
           }
         }, 5000);
         disconnectTimersRef.current.set(peerId, timer);
       } else if (pc.iceConnectionState === 'failed') {
-        console.log('[语音通话] ICE 连接失败，触发 ICE Restart, peerId:', peerId);
+        if (import.meta.env.DEV) console.log('[语音通话] ICE 连接失败，触发 ICE Restart, peerId:', peerId);
         restartIceForPeer(peerId);
       }
     };
@@ -370,12 +370,12 @@ export function useVoiceChat(
       voicePeersRef.current.forEach((pc, peerId) => {
         const iceState = pc.iceConnectionState;
         if (iceState === 'failed') {
-          console.log('[语音通话] 心跳检测: peerId', peerId, '处于 failed 状态，触发 ICE Restart');
+          if (import.meta.env.DEV) console.log('[语音通话] 心跳检测: peerId', peerId, '处于 failed 状态，触发 ICE Restart');
           restartIceForPeer(peerId);
         } else if (iceState === 'disconnected') {
           // disconnected 已经有单独的计时器处理，这里不重复
         } else if (iceState === 'closed') {
-          console.log('[语音通话] 心跳检测: peerId', peerId, '连接已关闭，清理');
+          if (import.meta.env.DEV) console.log('[语音通话] 心跳检测: peerId', peerId, '连接已关闭，清理');
           cleanupPeer(peerId);
         }
       });
@@ -415,7 +415,7 @@ export function useVoiceChat(
       // 启动健康心跳
       startHeartbeat();
     } catch (err: any) {
-      console.error('[语音通话] 获取麦克风失败:', err);
+      if (import.meta.env.DEV) console.error('[语音通话] 获取麦克风失败:', err);
       if (err.name === 'NotAllowedError') {
         message.error('麦克风权限被拒绝，请在浏览器设置中允许访问麦克风');
       } else if (err.name === 'NotFoundError') {
@@ -483,7 +483,7 @@ export function useVoiceChat(
 
     const handleActive = (data: { ticketId: number; participants: VoiceParticipant[] }) => {
       if (data.ticketId !== ticketIdRef.current) return;
-      console.log('[语音通话] 房间内有活跃语音通话:', data.participants);
+      if (import.meta.env.DEV) console.log('[语音通话] 房间内有活跃语音通话:', data.participants);
       setState(prev => ({
         ...prev,
         voiceParticipants: data.participants,
@@ -493,7 +493,7 @@ export function useVoiceChat(
 
     const handleCurrentParticipants = async (data: { ticketId: number; participants: VoiceParticipant[] }) => {
       if (data.ticketId !== ticketIdRef.current || !localStreamRef.current) return;
-      console.log('[语音通话] 收到现有参与者列表:', data.participants);
+      if (import.meta.env.DEV) console.log('[语音通话] 收到现有参与者列表:', data.participants);
 
       for (const participant of data.participants) {
         if (participant.userId === currentUserIdRef.current) continue;
@@ -507,7 +507,7 @@ export function useVoiceChat(
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
 
-        console.log('[语音通话] 发送 Offer 给已有参与者:', participant.userId);
+        if (import.meta.env.DEV) console.log('[语音通话] 发送 Offer 给已有参与者:', participant.userId);
         socket.emit('voice:offer', {
           ticketId,
           sdp: offer,
@@ -519,7 +519,7 @@ export function useVoiceChat(
     const handlePeerJoined = async (data: { ticketId: number; userId: number; userName: string }) => {
       if (data.ticketId !== ticketIdRef.current) return;
 
-      console.log('[语音通话] 新用户加入:', data.userName, '(', data.userId, ')');
+      if (import.meta.env.DEV) console.log('[语音通话] 新用户加入:', data.userName, '(', data.userId, ')');
 
       setState(prev => {
         const exists = prev.voiceParticipants.some(p => p.userId === data.userId);
@@ -540,7 +540,7 @@ export function useVoiceChat(
 
     const handlePeerLeft = (data: { ticketId: number; userId: number }) => {
       if (data.ticketId !== ticketIdRef.current) return;
-      console.log('[语音通话] 用户离开:', data.userId);
+      if (import.meta.env.DEV) console.log('[语音通话] 用户离开:', data.userId);
 
       cleanupPeer(data.userId);
 
@@ -561,7 +561,7 @@ export function useVoiceChat(
       const waitForStream = async (retries = 3): Promise<boolean> => {
         for (let i = 0; i < retries; i++) {
           if (localStreamRef.current) return true;
-          console.log(`[语音通话] 收到 Offer 但 localStream 未就绪，等待重试 (${i + 1}/${retries}), from:`, data.from);
+          if (import.meta.env.DEV) console.log(`[语音通话] 收到 Offer 但 localStream 未就绪，等待重试 (${i + 1}/${retries}), from:`, data.from);
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
         return false;
@@ -570,12 +570,12 @@ export function useVoiceChat(
       if (!localStreamRef.current) {
         const ready = await waitForStream();
         if (!ready) {
-          console.warn('[语音通话] 放弃处理 Offer: localStream 始终未就绪, from:', data.from);
+          if (import.meta.env.DEV) console.warn('[语音通话] 放弃处理 Offer: localStream 始终未就绪, from:', data.from);
           return;
         }
       }
 
-      console.log('[语音通话] 收到 Offer, from:', data.from);
+      if (import.meta.env.DEV) console.log('[语音通话] 收到 Offer, from:', data.from);
 
       const pc = await createVoicePeerConnection(data.from);
 
@@ -591,7 +591,7 @@ export function useVoiceChat(
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      console.log('[语音通话] 发送 Answer 给:', data.from);
+      if (import.meta.env.DEV) console.log('[语音通话] 发送 Answer 给:', data.from);
       socket.emit('voice:answer', {
         ticketId,
         sdp: answer,
@@ -601,7 +601,7 @@ export function useVoiceChat(
 
     const handleAnswer = async (data: { ticketId: number; sdp: RTCSessionDescriptionInit; from: number }) => {
       if (data.ticketId !== ticketIdRef.current) return;
-      console.log('[语音通话] 收到 Answer, from:', data.from);
+      if (import.meta.env.DEV) console.log('[语音通话] 收到 Answer, from:', data.from);
       const pc = voicePeersRef.current.get(data.from);
       if (pc) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
@@ -618,10 +618,10 @@ export function useVoiceChat(
           try {
             await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
           } catch (err) {
-            console.error('[语音通话] ICE candidate 添加失败:', err);
+            if (import.meta.env.DEV) console.error('[语音通话] ICE candidate 添加失败:', err);
           }
         } else {
-          console.log('[语音通话] remoteDescription 未就绪，缓冲 ICE candidate, from:', data.from);
+          if (import.meta.env.DEV) console.log('[语音通话] remoteDescription 未就绪，缓冲 ICE candidate, from:', data.from);
           const pending = pendingCandidatesRef.current.get(data.from) || [];
           pending.push(data.candidate);
           pendingCandidatesRef.current.set(data.from, pending);

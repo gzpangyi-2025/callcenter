@@ -20,7 +20,7 @@ const getIceServers = async (): Promise<RTCIceServer[]> => {
       return cachedIceServers as RTCIceServer[];
     }
   } catch (err) {
-    console.error('[WebRTC] 获取穿透配置失败，使用默认保底:', err);
+    if (import.meta.env.DEV) console.error('[WebRTC] 获取穿透配置失败，使用默认保底:', err);
   }
   // 保底免费服务器
   return [{ urls: 'stun:stun.qq.com:3478' }];
@@ -101,12 +101,12 @@ export function useScreenShare(
   const flushPendingCandidates = async (peerId: number, pc: RTCPeerConnection) => {
     const pending = pendingCandidatesRef.current.get(peerId);
     if (pending && pending.length > 0) {
-      console.log(`[屏幕共享] 消化 ${pending.length} 个缓冲的 ICE Candidate, peerId:`, peerId);
+      if (import.meta.env.DEV) console.log(`[屏幕共享] 消化 ${pending.length} 个缓冲的 ICE Candidate, peerId:`, peerId);
       for (const candidate of pending) {
         try {
           await pc.addIceCandidate(new RTCIceCandidate(candidate));
         } catch (err) {
-          console.error('[屏幕共享] 缓冲 ICE candidate 添加失败:', err);
+          if (import.meta.env.DEV) console.error('[屏幕共享] 缓冲 ICE candidate 添加失败:', err);
         }
       }
       pendingCandidatesRef.current.delete(peerId);
@@ -116,14 +116,14 @@ export function useScreenShare(
   // 触发观看方自动重连
   const triggerReconnect = useCallback(() => {
     if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
-      console.log('[屏幕共享] 已达最大重连次数，停止自动重连');
+      if (import.meta.env.DEV) console.log('[屏幕共享] 已达最大重连次数，停止自动重连');
       setState(prev => ({ ...prev, connectionState: 'failed' }));
       return;
     }
 
     reconnectAttemptsRef.current += 1;
     const attempt = reconnectAttemptsRef.current;
-    console.log(`[屏幕共享] 自动重连第 ${attempt} 次`);
+    if (import.meta.env.DEV) console.log(`[屏幕共享] 自动重连第 ${attempt} 次`);
 
     setState(prev => ({
       ...prev,
@@ -156,7 +156,7 @@ export function useScreenShare(
     // 清理已有的旧连接
     const existing = peerConnectionsRef.current.get(peerId);
     if (existing) {
-      console.log('[屏幕共享] 清理已有PeerConnection for:', peerId);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 清理已有PeerConnection for:', peerId);
       existing.close();
       peerConnectionsRef.current.delete(peerId);
     }
@@ -175,7 +175,7 @@ export function useScreenShare(
     };
 
     pc.ontrack = (event) => {
-      console.log('[屏幕共享] ontrack 触发, track.kind:', event.track.kind, 'streams:', event.streams.length, 'peerId:', peerId);
+      if (import.meta.env.DEV) console.log('[屏幕共享] ontrack 触发, track.kind:', event.track.kind, 'streams:', event.streams.length, 'peerId:', peerId);
 
       let stream: MediaStream;
       if (event.streams && event.streams.length > 0) {
@@ -189,7 +189,7 @@ export function useScreenShare(
         stream.addTrack(event.track);
       }
 
-      console.log('[屏幕共享] 远程流已获取, tracks:', stream.getTracks().map(t => `${t.kind}:${t.readyState}`));
+      if (import.meta.env.DEV) console.log('[屏幕共享] 远程流已获取, tracks:', stream.getTracks().map(t => `${t.kind}:${t.readyState}`));
 
       remoteStreamRef.current = stream;
       // 成功收到 track，重置重连计数
@@ -205,7 +205,7 @@ export function useScreenShare(
     };
 
     pc.oniceconnectionstatechange = () => {
-      console.log('[屏幕共享] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
+      if (import.meta.env.DEV) console.log('[屏幕共享] ICE 状态变更:', pc.iceConnectionState, 'peerId:', peerId);
       
       const isSharer = !!localStreamRef.current;
 
@@ -219,7 +219,7 @@ export function useScreenShare(
           // 我是分享方，某个观看者断开了，不要修改全局状态，只清理该连接
           setTimeout(() => {
             if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
-              console.log(`[屏幕共享] 观看者 ${peerId} 彻底断开，清理连接`);
+              if (import.meta.env.DEV) console.log(`[屏幕共享] 观看者 ${peerId} 彻底断开，清理连接`);
               pc.close();
               peerConnectionsRef.current.delete(peerId);
             }
@@ -231,7 +231,7 @@ export function useScreenShare(
           disconnectTimerRef.current = setTimeout(() => {
             // 超时仍未恢复，触发自动重连
             if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
-              console.log('[屏幕共享] disconnected 超时 8 秒未恢复，触发自动重连');
+              if (import.meta.env.DEV) console.log('[屏幕共享] disconnected 超时 8 秒未恢复，触发自动重连');
               triggerReconnect();
             }
           }, 8000);
@@ -242,14 +242,14 @@ export function useScreenShare(
           peerConnectionsRef.current.delete(peerId);
         } else {
           clearDisconnectTimer();
-          console.log('[屏幕共享] ICE 连接失败，触发自动重连');
+          if (import.meta.env.DEV) console.log('[屏幕共享] ICE 连接失败，触发自动重连');
           triggerReconnect();
         }
       }
     };
 
     pc.onconnectionstatechange = () => {
-      console.log('[屏幕共享] 连接状态:', pc.connectionState, 'peerId:', peerId);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 连接状态:', pc.connectionState, 'peerId:', peerId);
     };
 
     peerConnectionsRef.current.set(peerId, pc);
@@ -340,7 +340,7 @@ export function useScreenShare(
         stopSharing();
       };
     } catch (err: any) {
-      console.error('[屏幕共享] 获取屏幕流失败:', err);
+      if (import.meta.env.DEV) console.error('[屏幕共享] 获取屏幕流失败:', err);
     }
   }, []);
 
@@ -373,7 +373,7 @@ export function useScreenShare(
     setState(prev => {
       if (!prev.sharerUserId || prev.sharerUserId === currentUserIdRef.current) return prev;
 
-      console.log('[屏幕共享] 主动加入观看, sharer:', prev.sharerUserId);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 主动加入观看, sharer:', prev.sharerUserId);
 
       // 发送观看请求
       s.emit('screenShare:requestView', { ticketId: tid, to: prev.sharerUserId });
@@ -395,7 +395,7 @@ export function useScreenShare(
     const handleStarted = async (data: { ticketId: number; from: number; fromName: string }) => {
       if (data.ticketId !== ticketIdRef.current || data.from === currentUserIdRef.current) return;
 
-      console.log('[屏幕共享] 收到共享开始通知, from:', data.fromName, '(', data.from, ')');
+      if (import.meta.env.DEV) console.log('[屏幕共享] 收到共享开始通知, from:', data.fromName, '(', data.from, ')');
 
       setState(prev => ({
         ...prev,
@@ -413,7 +413,7 @@ export function useScreenShare(
     const handleActive = (data: { ticketId: number; from: number; fromName: string }) => {
       if (data.ticketId !== ticketIdRef.current || data.from === currentUserIdRef.current) return;
 
-      console.log('[屏幕共享] 房间内有活跃共享, from:', data.fromName, '(', data.from, ')');
+      if (import.meta.env.DEV) console.log('[屏幕共享] 房间内有活跃共享, from:', data.fromName, '(', data.from, ')');
 
       setState(prev => ({
         ...prev,
@@ -427,16 +427,16 @@ export function useScreenShare(
     // 分享方：收到观看请求，为该观看者创建 offer
     const handleRequestView = async (data: { ticketId: number; from: number }) => {
       if (data.ticketId !== ticketIdRef.current || !localStreamRef.current) {
-        console.log('[屏幕共享] handleRequestView 跳过: ticketId匹配:', data.ticketId === ticketIdRef.current, 'localStream存在:', !!localStreamRef.current);
+        if (import.meta.env.DEV) console.log('[屏幕共享] handleRequestView 跳过: ticketId匹配:', data.ticketId === ticketIdRef.current, 'localStream存在:', !!localStreamRef.current);
         return;
       }
 
-      console.log('[屏幕共享] 收到观看请求, from:', data.from, '当前PC数:', peerConnectionsRef.current.size);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 收到观看请求, from:', data.from, '当前PC数:', peerConnectionsRef.current.size);
 
       const pc = await createPeerConnection(data.from);
 
       const tracks = localStreamRef.current.getTracks();
-      console.log('[屏幕共享] 添加轨道到PC:', tracks.map(t => `${t.kind}:${t.readyState}`));
+      if (import.meta.env.DEV) console.log('[屏幕共享] 添加轨道到PC:', tracks.map(t => `${t.kind}:${t.readyState}`));
       tracks.forEach(track => {
         pc.addTrack(track, localStreamRef.current!);
       });
@@ -444,7 +444,7 @@ export function useScreenShare(
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
-      console.log('[屏幕共享] 发送 Offer 给:', data.from);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 发送 Offer 给:', data.from);
       socket.emit('screenShare:offer', {
         ticketId,
         sdp: offer,
@@ -456,7 +456,7 @@ export function useScreenShare(
     const handleOffer = async (data: { ticketId: number; sdp: RTCSessionDescriptionInit; from: number }) => {
       if (data.ticketId !== ticketIdRef.current) return;
 
-      console.log('[屏幕共享] 收到 Offer, from:', data.from);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 收到 Offer, from:', data.from);
 
       const pc = await createPeerConnection(data.from);
       await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
@@ -467,7 +467,7 @@ export function useScreenShare(
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      console.log('[屏幕共享] 发送 Answer 给:', data.from);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 发送 Answer 给:', data.from);
       socket.emit('screenShare:answer', {
         ticketId,
         sdp: answer,
@@ -478,7 +478,7 @@ export function useScreenShare(
     // 分享方：收到 SDP Answer
     const handleAnswer = async (data: { ticketId: number; sdp: RTCSessionDescriptionInit; from: number }) => {
       if (data.ticketId !== ticketIdRef.current) return;
-      console.log('[屏幕共享] 收到 Answer, from:', data.from);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 收到 Answer, from:', data.from);
       const pc = peerConnectionsRef.current.get(data.from);
       if (pc) {
         await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
@@ -497,17 +497,17 @@ export function useScreenShare(
           try {
             await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
           } catch (err) {
-            console.error('[屏幕共享] ICE candidate 添加失败:', err);
+            if (import.meta.env.DEV) console.error('[屏幕共享] ICE candidate 添加失败:', err);
           }
         } else {
-          console.log('[屏幕共享] remoteDescription 未就绪，缓冲 ICE candidate, from:', data.from);
+          if (import.meta.env.DEV) console.log('[屏幕共享] remoteDescription 未就绪，缓冲 ICE candidate, from:', data.from);
           const pending = pendingCandidatesRef.current.get(data.from) || [];
           pending.push(data.candidate);
           pendingCandidatesRef.current.set(data.from, pending);
         }
       } else {
         // PC 尚未创建，缓冲候选者
-        console.log('[屏幕共享] PeerConnection 尚未创建，缓冲 ICE candidate, from:', data.from);
+        if (import.meta.env.DEV) console.log('[屏幕共享] PeerConnection 尚未创建，缓冲 ICE candidate, from:', data.from);
         const pending = pendingCandidatesRef.current.get(data.from) || [];
         pending.push(data.candidate);
         pendingCandidatesRef.current.set(data.from, pending);
@@ -517,7 +517,7 @@ export function useScreenShare(
     // 有人停止了屏幕共享
     const handleStopped = (data: { ticketId: number; from: number }) => {
       if (data.ticketId !== ticketIdRef.current) return;
-      console.log('[屏幕共享] 收到共享停止通知, from:', data.from);
+      if (import.meta.env.DEV) console.log('[屏幕共享] 收到共享停止通知, from:', data.from);
       // 完全清理
       clearDisconnectTimer();
       peerConnectionsRef.current.forEach(pc => pc.close());
