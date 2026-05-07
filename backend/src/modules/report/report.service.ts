@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Ticket } from '../../entities/ticket.entity';
@@ -372,6 +372,14 @@ export class ReportService {
   /**
    * 矩阵统计：工单类型与人员的汇总交叉统计 (如指定 Category2 或 Category3 的提单和接单排行)
    */
+  private static readonly ALLOWED_CATEGORY_COLUMNS = ['category2', 'category3'] as const;
+
+  private validateCategoryColumn(col: string): void {
+    if (!ReportService.ALLOWED_CATEGORY_COLUMNS.includes(col as any)) {
+      throw new BadRequestException(`Invalid category column: ${col}`);
+    }
+  }
+
   async getCrossMatrix(
     categoryName: string,
     level: 'category2' | 'category3' = 'category2',
@@ -380,6 +388,7 @@ export class ReportService {
     startDate?: string,
     endDate?: string,
   ) {
+    this.validateCategoryColumn(level);
     const colName = `t.${level}`;
 
     // 获取特定技术方向下 提供支持排名 (接单人)
@@ -484,6 +493,7 @@ export class ReportService {
     }
 
     if (categoryName) {
+      this.validateCategoryColumn(categoryLevel);
       qb.andWhere(`t.${categoryLevel} = :categoryName`, { categoryName });
     }
 
