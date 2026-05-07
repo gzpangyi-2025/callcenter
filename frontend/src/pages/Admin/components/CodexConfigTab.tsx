@@ -167,7 +167,6 @@ const CodexConfigTab: React.FC = () => {
             </>
           )}
         </Card>
-        </>)}
 
         {/* 并发线程数 */}
         <Card
