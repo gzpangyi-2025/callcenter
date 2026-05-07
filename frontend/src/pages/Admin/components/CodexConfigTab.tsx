@@ -112,14 +112,13 @@ const CodexConfigTab: React.FC = () => {
       )}
 
       <Form form={form} layout="vertical" onFinish={handleSave}>
-        {/* 腾讯云 COS 存储配置 */}
         <Card
           size="small"
           style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
           title={
             <span style={{ fontWeight: 600 }}>
-              <ThunderboltOutlined style={{ color: '#0ea5e9', marginRight: 6 }} />
-              腾讯云 COS 存储配置 (Worker 专属)
+              <CloudServerOutlined style={{ color: '#1677ff', marginRight: 6 }} />
+              云存储配置 (Worker 专属)
             </span>
           }
         >
@@ -130,7 +129,14 @@ const CodexConfigTab: React.FC = () => {
             description="这些配置专用于存放 AI 执行过程中的上下文、附件及生成产物，与主站隔离。修改后也会自动重启 Worker 生效。"
             style={{ marginBottom: 16 }}
           />
-          {provider === "tencent" && (<>
+
+          <Form.Item name="storageProvider" style={{ marginBottom: 16 }}>
+            <Radio.Group>
+              <Radio.Button value="tencent">☁️ 腾讯云 (COS)</Radio.Button>
+              <Radio.Button value="s3">🌐 首云 (S3兼容)</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+
           {provider === 'tencent' && (
             <>
               <Form.Item label="SecretId" name="cosSecretId" rules={[{ required: provider === 'tencent', message: '请输入 SecretId' }]}>
