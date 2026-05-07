@@ -10,8 +10,10 @@ import {
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
   LoadingOutlined, InboxOutlined, DeleteOutlined,
 } from '@ant-design/icons';
-import { aiAPI, filesAPI } from '../../services/api';
+import { aiAPI } from '../../services/api';
+import axios from 'axios';
 import { useAuthStore, type User } from '../../stores/authStore';
+import { useSocketStore } from '../../stores/socketStore';
 import TaskLogPanel from './components/TaskLogPanel';
 import AiChatPanel from './components/AiChatPanel';
 import dayjs from 'dayjs';
@@ -37,6 +39,7 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: Re
 
 const AiPage: React.FC = () => {
   const user = useAuthStore(s => s.user) as User | null;
+  const { socket, connected } = useSocketStore();
   const isAdmin = user?.role?.name === 'admin';
 
   const [tasks, setTasks] = useState<any[]>([]);
@@ -50,6 +53,7 @@ const AiPage: React.FC = () => {
   const [workerStatus, setWorkerStatus] = useState<'online' | 'offline' | 'checking'>('checking');
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [draftTaskId, setDraftTaskId] = useState<string>('');
   const [creating, setCreating] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
   const [form] = Form.useForm();
@@ -61,8 +65,8 @@ const AiPage: React.FC = () => {
   const [taskFiles, setTaskFiles] = useState<any[]>([]);
   const [filesLoading, setFilesLoading] = useState(false);
 
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const selectedTaskIdRef = useRef<string | null>(null);
+  const subscribedTaskIdsRef = useRef<Set<string>>(new Set());
   const taskFilesRequestSeqRef = useRef(0);
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
   const [uploadedAttachments, setUploadedAttachments] = useState<Array<{ name: string; url: string; size: number }>>([]);
@@ -87,26 +91,60 @@ const AiPage: React.FC = () => {
     const key = `${taskId}/${filename}`;
     setDownloadingFiles(prev => ({ ...prev, [key]: true }));
     try {
-      // Pass filename as query parameter to avoid all URL path encoding issues.
-      const proxyUrl = `/api/ai/tasks/${taskId}/download?file=${encodeURIComponent(filename)}`;
-      // callcenter backend uses JWT Bearer auth — must send the token manually.
       const token = localStorage.getItem('accessToken') ?? '';
+      const authHeaders = { Authorization: `Bearer ${token}` };
+
+      // Strategy 1: Get COS presigned URL and download directly (bypasses proxy chain)
+      try {
+        const urlResp = await fetch(
+          `/api/ai/tasks/${taskId}/download-url?file=${encodeURIComponent(filename)}`,
+          { credentials: 'include', headers: authHeaders },
+        );
+        if (urlResp.status === 401) {
+          message.error('登录已过期，请重新登录后再下载');
+          setTimeout(() => { window.location.href = '/login'; }, 1500);
+          return;
+        }
+        if (urlResp.ok) {
+          const { url } = await urlResp.json();
+          // Use <a> tag to trigger direct COS download
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = displayName;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          return;
+        }
+      } catch (e) {
+        console.warn('[Download] Direct URL failed, falling back to proxy', e);
+      }
+
+      // Strategy 2: Fallback — proxy download through backend
+      const proxyUrl = `/api/ai/tasks/${taskId}/download?file=${encodeURIComponent(filename)}`;
       const resp = await fetch(proxyUrl, {
         credentials: 'include',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: authHeaders,
       });
+      if (resp.status === 401) {
+        message.error('登录已过期，请重新登录后再下载');
+        setTimeout(() => { window.location.href = '/login'; }, 1500);
+        return;
+      }
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const blob = await resp.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = blobUrl;
-      a.download = displayName;   // filename with correct extension
+      a.download = displayName;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     } catch (err) {
-      message.error('文件下载失败，请重试');
+      message.error('文件下载失败，请刷新页面后重试');
       console.error('[Download]', err);
     } finally {
       setDownloadingFiles(prev => ({ ...prev, [key]: false }));
@@ -137,8 +175,13 @@ const AiPage: React.FC = () => {
 
   // ── Fetch tasks ──────────────────────────────────────────────────────────
 
-  const fetchTasks = useCallback(async (p = page, s = status, all = showAll) => {
-    setLoading(true);
+  const fetchTasks = useCallback(async (
+    p = page,
+    s = status,
+    all = showAll,
+    options: { silent?: boolean } = {},
+  ) => {
+    if (!options.silent) setLoading(true);
     try {
       const params: any = { page: p, limit: 20, status: s };
       if (isAdmin && all) params.all = '1';
@@ -152,11 +195,11 @@ const AiPage: React.FC = () => {
         : [];
       setTasks(list);
       setTotal(payload?.total ?? list.length);
-      setSelectedRowKeys([]);
+      if (!options.silent) setSelectedRowKeys([]);
     } catch (err) {
       console.error('[AI] fetchTasks error:', err);
     } finally {
-      setLoading(false);
+      if (!options.silent) setLoading(false);
     }
   }, [page, status, showAll, isAdmin]);
 
@@ -181,36 +224,6 @@ const AiPage: React.FC = () => {
     } catch {}
   }, []);
 
-  // ── Polling for running tasks ─────────────────────────────────────────────
-
-  const startPolling = useCallback(() => {
-    if (pollingRef.current) return;
-    pollingRef.current = setInterval(() => {
-      const hasActive = tasks.some(t => t.status === 'pending' || t.status === 'running');
-      if (hasActive) {
-        fetchTasks();
-      } else {
-        clearInterval(pollingRef.current!);
-        pollingRef.current = null;
-      }
-    }, 3000);
-  }, [tasks, fetchTasks]);
-
-  useEffect(() => {
-    const hasActive = tasks.some(t => t.status === 'pending' || t.status === 'running');
-    if (hasActive) {
-      startPolling();
-    } else {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    }
-    return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current);
-    };
-  }, [tasks, startPolling]);
-
   useEffect(() => {
     fetchTasks(1, undefined);
     fetchTemplates();
@@ -223,6 +236,7 @@ const AiPage: React.FC = () => {
     setCreating(true);
     try {
       const payload: any = {
+        id: draftTaskId,
         type: values.type,
         params: {},
       };
@@ -259,6 +273,7 @@ const AiPage: React.FC = () => {
       setSelectedTemplate(null);
       setUseRawPrompt(false);
       setUploadedAttachments([]);
+      setDraftTaskId('');
       fetchTasks(1, status);
     } catch {
       // global interceptor handles
@@ -375,6 +390,38 @@ const AiPage: React.FC = () => {
     }
   }, []);
 
+  const applyTaskPatch = useCallback((taskId: string, patch: Record<string, any>) => {
+    setTasks(prev => prev.flatMap(task => {
+      if (task.id !== taskId) return [task];
+      const updated = { ...task, ...patch };
+      if (status && updated.status !== status) return [];
+      return [updated];
+    }));
+
+    setSelectedTask((prev: any) => prev?.id === taskId ? { ...prev, ...patch } : prev);
+  }, [status]);
+
+  const applyTaskSnapshot = useCallback((task: any) => {
+    if (!task?.id) return;
+
+    setTasks(prev => {
+      if (status && task.status !== status) {
+        return prev.filter(item => item.id !== task.id);
+      }
+
+      let found = false;
+      const next = prev.map(item => {
+        if (item.id !== task.id) return item;
+        found = true;
+        return { ...item, ...task };
+      });
+
+      return found ? next : [task, ...next];
+    });
+
+    setSelectedTask((prev: any) => prev?.id === task.id ? { ...prev, ...task } : prev);
+  }, [status]);
+
   const handleViewDetail = async (task: any) => {
     selectedTaskIdRef.current = task.id;
     taskFilesRequestSeqRef.current += 1;
@@ -391,6 +438,155 @@ const AiPage: React.FC = () => {
   useEffect(() => {
     selectedTaskIdRef.current = selectedTask?.id ?? null;
   }, [selectedTask?.id]);
+
+  useEffect(() => {
+    if (!socket) {
+      subscribedTaskIdsRef.current.clear();
+      return;
+    }
+
+    const handleProgress = (payload: any) => {
+      if (!payload?.taskId) return;
+      const patch: Record<string, any> = {
+        status: 'running',
+        currentStep: payload.currentStep ?? null,
+      };
+      if (typeof payload.progress === 'number') patch.progress = payload.progress;
+      applyTaskPatch(payload.taskId, patch);
+    };
+
+    const handleTaskUpdated = (payload: any) => {
+      const task = payload?.task;
+      if (!task?.id) return;
+
+      applyTaskSnapshot(task);
+      if (
+        ['completed', 'paused'].includes(task.status) &&
+        selectedTaskIdRef.current === task.id
+      ) {
+        fetchTaskFiles(task.id);
+      }
+    };
+
+    const handleTerminal = (payload: any, fallback: Record<string, any>) => {
+      const taskId = payload?.taskId || payload?.task?.id;
+      if (!taskId) return;
+
+      if (payload?.task) {
+        applyTaskSnapshot(payload.task);
+      } else {
+        applyTaskPatch(taskId, fallback);
+      }
+
+      if (['completed', 'paused'].includes(fallback.status) && selectedTaskIdRef.current === taskId) {
+        fetchTaskFiles(taskId);
+      }
+
+      fetchTasks(page, status, showAll, { silent: true });
+    };
+
+    const handleCompleted = (payload: any) => {
+      handleTerminal(payload, { status: 'completed', progress: 100, outputFiles: payload?.outputFiles ?? [] });
+    };
+    const handleFailed = (payload: any) => {
+      handleTerminal(payload, { status: 'failed', error: payload?.error || '执行失败' });
+    };
+    const handlePaused = (payload: any) => {
+      handleTerminal(payload, {
+        status: 'paused',
+        progress: 50,
+        lastAgentMessage: payload?.agentMessage ?? null,
+      });
+    };
+    const handleFileReady = (payload: any) => {
+      if (!payload?.taskId || selectedTaskIdRef.current !== payload.taskId) return;
+      setFilesLoading(false);
+      setTaskFiles(prev => {
+        if (prev.some(file => file.name === payload.name)) return prev;
+        return [...prev, payload];
+      });
+    };
+    const handleSubscriptionError = (payload: any) => {
+      console.warn('[AI] task subscription failed:', payload);
+    };
+    const handleConnect = () => {
+      subscribedTaskIdsRef.current.clear();
+      fetchTasks(page, status, showAll, { silent: true });
+      tasks
+        .filter(task => ['pending', 'running', 'paused'].includes(task.status))
+        .forEach(task => {
+          if (!task.id) return;
+          subscribedTaskIdsRef.current.add(task.id);
+          socket.emit('ai:subscribeTask', { taskId: task.id });
+        });
+    };
+
+    socket.on('ai:taskProgress', handleProgress);
+    socket.on('ai:taskUpdated', handleTaskUpdated);
+    socket.on('ai:taskCompleted', handleCompleted);
+    socket.on('ai:taskFailed', handleFailed);
+    socket.on('ai:taskPaused', handlePaused);
+    socket.on('ai:fileReady', handleFileReady);
+    socket.on('ai:subscriptionError', handleSubscriptionError);
+    socket.on('connect', handleConnect);
+
+    return () => {
+      socket.off('ai:taskProgress', handleProgress);
+      socket.off('ai:taskUpdated', handleTaskUpdated);
+      socket.off('ai:taskCompleted', handleCompleted);
+      socket.off('ai:taskFailed', handleFailed);
+      socket.off('ai:taskPaused', handlePaused);
+      socket.off('ai:fileReady', handleFileReady);
+      socket.off('ai:subscriptionError', handleSubscriptionError);
+      socket.off('connect', handleConnect);
+    };
+  }, [socket, tasks, page, status, showAll, applyTaskPatch, applyTaskSnapshot, fetchTaskFiles, fetchTasks]);
+
+  useEffect(() => {
+    if (!socket || !connected) {
+      subscribedTaskIdsRef.current.clear();
+      return;
+    }
+
+    const wantedTaskIds = new Set<string>();
+    for (const task of tasks) {
+      if (task?.id && ['pending', 'running', 'paused'].includes(task.status)) {
+        wantedTaskIds.add(task.id);
+      }
+    }
+    if (selectedTask?.id && ['pending', 'running', 'paused'].includes(selectedTask.status)) {
+      wantedTaskIds.add(selectedTask.id);
+    }
+
+    for (const taskId of wantedTaskIds) {
+      if (!subscribedTaskIdsRef.current.has(taskId)) {
+        subscribedTaskIdsRef.current.add(taskId);
+        socket.emit('ai:subscribeTask', { taskId });
+      }
+    }
+
+    for (const taskId of [...subscribedTaskIdsRef.current]) {
+      if (!wantedTaskIds.has(taskId)) {
+        subscribedTaskIdsRef.current.delete(taskId);
+        socket.emit('ai:unsubscribeTask', { taskId });
+      }
+    }
+  }, [socket, connected, tasks, selectedTask?.id, selectedTask?.status]);
+
+  useEffect(() => {
+    const syncWhenVisible = () => {
+      if (document.visibilityState === 'visible') {
+        fetchTasks(page, status, showAll, { silent: true });
+      }
+    };
+
+    document.addEventListener('visibilitychange', syncWhenVisible);
+    window.addEventListener('focus', syncWhenVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', syncWhenVisible);
+      window.removeEventListener('focus', syncWhenVisible);
+    };
+  }, [fetchTasks, page, status, showAll]);
 
   // Sync selectedTask with tasks array updates
   useEffect(() => {
@@ -743,7 +939,14 @@ const AiPage: React.FC = () => {
       <Modal
         title={<Space><RobotOutlined style={{ color: '#818cf8' }} />提交 AI 任务</Space>}
         open={createOpen}
-        onCancel={() => { setCreateOpen(false); form.resetFields(); setSelectedTemplate(null); setUseRawPrompt(false); }}
+        onCancel={() => { 
+          setCreateOpen(false); 
+          form.resetFields(); 
+          setSelectedTemplate(null); 
+          setUseRawPrompt(false); 
+          setUploadedAttachments([]);
+          setDraftTaskId('');
+        }}
         onOk={() => form.submit()}
         confirmLoading={creating}
         okText="提交任务"
@@ -836,10 +1039,28 @@ const AiPage: React.FC = () => {
                   if (file.status) return; // Skip antd-triggered events
                   setUploadingCount(c => c + 1);
                   try {
-                    // Use existing filesAPI.upload which handles COS STS + fallback
-                    const res: any = await filesAPI.upload(file);
-                    const url = res?.data?.url || res?.url || '';
-                    setUploadedAttachments(prev => [...prev, { name: file.name, url, size: file.size }]);
+                    // Make sure we have a draftTaskId
+                    let currentTaskId = draftTaskId;
+                    if (!currentTaskId) {
+                      currentTaskId = crypto.randomUUID();
+                      setDraftTaskId(currentTaskId);
+                    }
+
+                    // 1. Get presigned upload URL from worker (proxied via callcenter backend)
+                    const res: any = await aiAPI.getUploadUrl(currentTaskId, file.name);
+                    if (!res?.data?.url) throw new Error('无法获取上传凭证');
+
+                    // 2. Direct PUT upload to Worker COS bucket
+                    await axios.put(res.data.url, file, {
+                      headers: {
+                        'Content-Type': file.type || 'application/octet-stream'
+                      }
+                    });
+
+                    // 3. Record the resulting COS URL (it's the url without the query parameters)
+                    const finalUrl = res.data.url.split('?')[0];
+
+                    setUploadedAttachments(prev => [...prev, { name: file.name, url: finalUrl, size: file.size }]);
                     message.success(`附件 ${file.name} 上传成功`);
                   } catch (err: any) {
                     message.error(`上传失败: ${err.message || '未知错误'}`);

@@ -20,5 +20,6 @@ import { FilesModule } from '../files/files.module';
   ],
   providers: [AiService, AiChatService],
   controllers: [AiController],
+  exports: [AiService],
 })
 export class AiModule {}

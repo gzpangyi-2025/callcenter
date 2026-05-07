@@ -7,6 +7,7 @@ import { SettingsService } from '../settings/settings.service';
 import { ScreenShareService } from './screen-share.service';
 import { VoiceService } from './voice.service';
 import { RoomService } from './room.service';
+import { AiService } from '../ai/ai.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
 import { Ticket } from '../../entities/ticket.entity';
@@ -37,6 +38,7 @@ describe('ChatGateway', () => {
         { provide: ScreenShareService, useValue: { handleDisconnect: jest.fn() } },
         { provide: VoiceService, useValue: { handleDisconnect: jest.fn() } },
         { provide: RoomService, useValue: { removeUserFromAllRooms: jest.fn(), addOnlineUser: jest.fn() } },
+        { provide: AiService, useValue: { getTask: jest.fn() } },
         { provide: getRepositoryToken(User), useValue: mockUserRepo },
         { provide: getRepositoryToken(Ticket), useValue: {} },
       ],

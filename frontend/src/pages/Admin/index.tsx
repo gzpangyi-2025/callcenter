@@ -3,7 +3,8 @@ import { Card, Tabs, Form, Input, Select, Button, message, Upload, Row, Col, Div
 import {
   RobotOutlined, SafetyOutlined, TeamOutlined,
   SafetyCertificateOutlined, UploadOutlined, GlobalOutlined, PictureOutlined,
-  FileSearchOutlined, AppstoreOutlined, FireOutlined, CloudServerOutlined, VideoCameraOutlined, DatabaseOutlined
+  FileSearchOutlined, AppstoreOutlined, FireOutlined, CloudServerOutlined, VideoCameraOutlined, DatabaseOutlined,
+  ApiOutlined
 } from '@ant-design/icons';
 import { UserManageTab } from './components/UserManageTab';
 import { RoleManageTab } from './components/RoleManageTab';
@@ -14,6 +15,7 @@ import BackupTab from './components/BackupTab';
 import InfraTab from './components/InfraTab';
 import { WebRtcManageTab } from './components/WebRtcManageTab';
 import { StorageManageTab } from './components/StorageManageTab';
+import CodexConfigTab from './components/CodexConfigTab';
 import { settingsAPI } from '../../services/api';
 
 const AdminPage: React.FC = () => {
@@ -386,6 +388,11 @@ const AdminPage: React.FC = () => {
               key: 'storage',
               label: <span><DatabaseOutlined /> 存储与迁移设定</span>,
               children: <StorageManageTab />
+            },
+            {
+              key: 'codex',
+              label: <span><ApiOutlined /> AI 协作配置</span>,
+              children: <CodexConfigTab />
             }
           ]}
         />

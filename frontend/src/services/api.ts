@@ -211,6 +211,9 @@ export const settingsAPI = {
     customTurn?: string; turnUsername?: string; turnPassword?: string;
     screenShareMaxViewers?: number; voiceMaxParticipants?: number;
   }): Promise<ApiResponse<void>> => api.post('/settings/webrtc', data),
+  saveCodexConfig: (data: { maxRetries?: number; concurrency?: number }): Promise<ApiResponse<any>> =>
+    api.post('/settings/codex', data),
+  getCodexConfig: (): Promise<ApiResponse<any>> => api.get('/settings/codex'),
 };
 
 // Knowledge API
@@ -338,8 +341,13 @@ export const aiAPI = {
   /** 获取可用任务模板列表 */
   getTemplates: (): Promise<any> => api.get('/ai/templates'),
 
+  /** 获取直接上传附件到 Worker COS 的预签名 URL */
+  getUploadUrl: (taskId: string, filename: string): Promise<any> => 
+    api.get('/ai/upload-url', { params: { taskId, filename } }),
+
   /** 提交新 AI 任务 */
   createTask: (data: {
+    id?: string;
     type: string;
     params: Record<string, unknown>;
     prompt?: string;

@@ -7,8 +7,9 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { io as createSocketClient, Socket as WorkerSocket } from 'socket.io-client';
 import { ChatService } from './chat.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -21,6 +22,7 @@ import { AuthenticatedSocket } from '../../common/types/auth.types';
 import { ScreenShareService } from './screen-share.service';
 import { VoiceService } from './voice.service';
 import { RoomService } from './room.service';
+import { AiService } from '../ai/ai.service';
 
 /** fetchSockets() 返回的远程 Socket 代理类型 */
 interface AuthenticatedRemoteSocket {
@@ -59,6 +61,30 @@ interface RTCIceCandidateInit {
   usernameFragment?: string | null;
 }
 
+type AiWorkerEventPayload = {
+  taskId?: string;
+  event?: string;
+  task?: AiTaskSnapshot;
+  progress?: number;
+  currentStep?: string | null;
+  outputFiles?: unknown[];
+  error?: string;
+  agentMessage?: string | null;
+  [key: string]: unknown;
+};
+
+type AiTaskSnapshot = {
+  id: string;
+  userId?: number | string | null;
+  status?: string;
+  progress?: number;
+  currentStep?: string | null;
+  lastAgentMessage?: string | null;
+  outputFiles?: unknown[];
+  error?: string | null;
+  [key: string]: unknown;
+};
+
 @WebSocketGateway({
   cors: {
     origin: process.env.CORS_ORIGIN
@@ -68,11 +94,13 @@ interface RTCIceCandidateInit {
   },
   namespace: '/chat',
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(ChatGateway.name);
+  private workerSocket: WorkerSocket | null = null;
+  private readonly aiWorkerSubscriptions = new Set<string>();
 
   constructor(
     private readonly chatService: ChatService,
@@ -82,6 +110,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly screenShareService: ScreenShareService,
     private readonly voiceService: VoiceService,
     private readonly roomService: RoomService,
+    private readonly aiService: AiService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Ticket)
@@ -94,6 +123,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   public hasActiveVoice(ticketId: number): boolean {
     return this.voiceService.hasActiveVoice(ticketId);
+  }
+
+  onModuleDestroy() {
+    this.workerSocket?.disconnect();
+    this.workerSocket = null;
   }
 
   async handleConnection(client: Socket) {
@@ -169,6 +203,49 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('ai:subscribeTask')
+  async handleAiSubscribeTask(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { taskId?: string },
+  ) {
+    const taskId = typeof data?.taskId === 'string' ? data.taskId.trim() : '';
+    if (!taskId) {
+      client.emit('ai:subscriptionError', { message: '缺少 taskId' });
+      return { ok: false, message: '缺少 taskId' };
+    }
+
+    try {
+      const task = await this.getAuthorizedAiTask(client, taskId);
+      if (!task) {
+        client.emit('ai:subscriptionError', { taskId, message: '无权订阅该 AI 任务' });
+        return { ok: false, taskId, message: '无权订阅该 AI 任务' };
+      }
+
+      await client.join(this.aiTaskRoom(taskId));
+      this.subscribeWorkerTask(taskId);
+      client.emit('ai:subscribedTask', { taskId });
+      return { ok: true, taskId };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '订阅 AI 任务失败';
+      this.logger.warn(`AI task subscribe failed for ${taskId}: ${message}`);
+      client.emit('ai:subscriptionError', { taskId, message });
+      return { ok: false, taskId, message };
+    }
+  }
+
+  @SubscribeMessage('ai:unsubscribeTask')
+  async handleAiUnsubscribeTask(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { taskId?: string },
+  ) {
+    const taskId = typeof data?.taskId === 'string' ? data.taskId.trim() : '';
+    if (!taskId) return { ok: false, message: '缺少 taskId' };
+
+    await client.leave(this.aiTaskRoom(taskId));
+    await this.unsubscribeWorkerTaskIfIdle(taskId);
+    return { ok: true, taskId };
+  }
+
   // 获取一个房间内所有在线用户信息
   private async getRoomUsers(roomName: string) {
     const sockets = await this.server.in(roomName).fetchSockets();
@@ -187,6 +264,192 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
     return users;
+  }
+
+  private ensureAiWorkerSocket(): WorkerSocket {
+    if (this.workerSocket) return this.workerSocket;
+
+    const baseUrl = (this.configService.get<string>('CODEX_WORKER_URL') || 'http://43.130.240.106:3100')
+      .replace(/\/+$/, '');
+    const apiKey = this.configService.get<string>('CODEX_WORKER_API_KEY') || '';
+
+    const socket = createSocketClient(`${baseUrl}/codex`, {
+      transports: ['websocket'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
+      auth: apiKey ? { apiKey } : undefined,
+      extraHeaders: apiKey ? { 'X-API-Key': apiKey } : undefined,
+    });
+
+    socket.on('connect', () => {
+      this.logger.log(`AI worker socket connected: ${socket.id}`);
+      for (const taskId of this.aiWorkerSubscriptions) {
+        socket.emit('subscribe', { taskId });
+      }
+    });
+
+    socket.on('disconnect', (reason: string) => {
+      this.logger.warn(`AI worker socket disconnected: ${reason}`);
+    });
+
+    socket.on('connect_error', (err: Error) => {
+      this.logger.warn(`AI worker socket connect error: ${err.message}`);
+    });
+
+    socket.on('progress', (payload: AiWorkerEventPayload) => {
+      const taskId = this.getPayloadTaskId(payload);
+      if (!taskId) return;
+      this.server.to(this.aiTaskRoom(taskId)).emit('ai:taskProgress', {
+        taskId,
+        status: 'running',
+        progress: payload.progress,
+        currentStep: payload.currentStep ?? null,
+      });
+    });
+
+    socket.on('file_ready', (payload: AiWorkerEventPayload) => {
+      const taskId = this.getPayloadTaskId(payload);
+      if (!taskId) return;
+      this.server.to(this.aiTaskRoom(taskId)).emit('ai:fileReady', payload);
+    });
+
+    socket.on('task_updated', (payload: AiWorkerEventPayload) => {
+      const taskId = this.getPayloadTaskId(payload);
+      if (!taskId || !payload.task) return;
+
+      this.server.to(this.aiTaskRoom(taskId)).emit('ai:taskUpdated', {
+        taskId,
+        event: payload.event ?? 'updated',
+        task: payload.task,
+        timestamp: Date.now(),
+      });
+    });
+
+    socket.on('completed', (payload: AiWorkerEventPayload) => {
+      void this.forwardAiTaskSnapshot('ai:taskCompleted', payload, {
+        status: 'completed',
+        progress: 100,
+        outputFiles: payload.outputFiles,
+      });
+    });
+
+    socket.on('failed', (payload: AiWorkerEventPayload) => {
+      void this.forwardAiTaskSnapshot('ai:taskFailed', payload, {
+        status: 'failed',
+        error: payload.error,
+      });
+    });
+
+    socket.on('task_paused', (payload: AiWorkerEventPayload) => {
+      void this.forwardAiTaskSnapshot('ai:taskPaused', payload, {
+        status: 'paused',
+        progress: 50,
+        lastAgentMessage: payload.agentMessage ?? null,
+      });
+    });
+
+    this.workerSocket = socket;
+    return socket;
+  }
+
+  private subscribeWorkerTask(taskId: string): void {
+    this.aiWorkerSubscriptions.add(taskId);
+    const socket = this.ensureAiWorkerSocket();
+    if (socket.connected) {
+      socket.emit('subscribe', { taskId });
+    }
+  }
+
+  private async unsubscribeWorkerTaskIfIdle(taskId: string): Promise<void> {
+    const sockets = await this.server.in(this.aiTaskRoom(taskId)).fetchSockets();
+    if (sockets.length > 0) return;
+
+    this.aiWorkerSubscriptions.delete(taskId);
+    if (this.workerSocket?.connected) {
+      this.workerSocket.emit('unsubscribe', { taskId });
+    }
+  }
+
+  private async forwardAiTaskSnapshot(
+    eventName: 'ai:taskCompleted' | 'ai:taskFailed' | 'ai:taskPaused',
+    payload: AiWorkerEventPayload,
+    fallback: Partial<AiTaskSnapshot>,
+  ): Promise<void> {
+    const taskId = this.getPayloadTaskId(payload);
+    if (!taskId) return;
+
+    let task: AiTaskSnapshot | null = payload.task ?? null;
+    if (!task) {
+      try {
+        task = await this.fetchAiTaskSnapshot(taskId);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.warn(`Failed to refresh AI task ${taskId} after ${eventName}: ${message}`);
+      }
+    }
+
+    this.server.to(this.aiTaskRoom(taskId)).emit(eventName, {
+      taskId,
+      ...payload,
+      ...fallback,
+      ...(task ? { task } : {}),
+    });
+  }
+
+  private async getAuthorizedAiTask(client: Socket, taskId: string): Promise<AiTaskSnapshot | null> {
+    const authClient = client as AuthenticatedSocket;
+    if (!authClient.userId || authClient.role === 'external') return null;
+
+    const canUseAi = await this.canUseAi(authClient);
+    if (!canUseAi) return null;
+
+    const task = await this.fetchAiTaskSnapshot(taskId);
+    if (authClient.role === 'admin') return task;
+
+    return Number(task.userId) === authClient.userId ? task : null;
+  }
+
+  private async canUseAi(authClient: AuthenticatedSocket): Promise<boolean> {
+    if (authClient.role === 'admin') return true;
+
+    const user = await this.userRepository.findOne({
+      where: { id: authClient.userId },
+    });
+    const permissions = user?.role?.permissions ?? [];
+    return permissions.some((permission) => {
+      const code = `${permission.resource}:${permission.action}`;
+      return code === 'ai:access';
+    });
+  }
+
+  private async fetchAiTaskSnapshot(taskId: string): Promise<AiTaskSnapshot> {
+    const response = await this.aiService.getTask(taskId);
+    const task = this.unwrapAiResponse(response);
+    if (!task?.id) {
+      throw new Error(`Task ${taskId} not found`);
+    }
+    return task;
+  }
+
+  private unwrapAiResponse(response: unknown): AiTaskSnapshot | null {
+    if (!response || typeof response !== 'object') return null;
+    const value = response as { data?: unknown };
+    const data = value.data && typeof value.data === 'object'
+      ? (value.data as { data?: unknown }).data ?? value.data
+      : response;
+    return data && typeof data === 'object' ? data as AiTaskSnapshot : null;
+  }
+
+  private getPayloadTaskId(payload: AiWorkerEventPayload): string | null {
+    return typeof payload?.taskId === 'string' && payload.taskId.trim()
+      ? payload.taskId.trim()
+      : null;
+  }
+
+  private aiTaskRoom(taskId: string): string {
+    return `ai_task_${taskId}`;
   }
 
   // 广播房间在线用户

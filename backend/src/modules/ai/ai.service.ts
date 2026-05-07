@@ -12,6 +12,7 @@ import * as path from 'path';
 import { FilesService } from '../files/files.service';
 
 export interface CreateAiTaskDto {
+  id?: string;
   type: string;
   params: Record<string, unknown>;
   prompt?: string;
@@ -47,28 +48,24 @@ export class AiService {
     this.logger.log(`Codex Worker URL: ${baseURL}`);
   }
 
+  /** Get a presigned upload URL from the codex worker for direct attachment upload */
+  async getUploadUrl(taskId: string, filename: string) {
+    try {
+      const key = `tasks/${taskId}/attachments/${filename}`;
+      const res = await this.worker.get('/api/tasks/upload-url', { params: { key } });
+      return res.data;
+    } catch (err: any) {
+      this.handleWorkerError(err, 'getUploadUrl');
+    }
+  }
+
   /** Submit a new AI task */
   async createTask(dto: CreateAiTaskDto, userId: number) {
     try {
-      // Resolve attachment URLs to absolute COS presigned URLs
-      // (worker runs on a different server and can't access relative paths)
-      let resolvedAttachments = dto.attachments;
-      if (dto.attachments && dto.attachments.length > 0) {
-        resolvedAttachments = await Promise.all(
-          dto.attachments.map(async (att) => {
-            if (att.url.startsWith('http')) return att; // Already absolute
-            // Extract COS key from relative path like /api/files/static/<key>
-            const cosKey = att.url.replace('/api/files/static/', '');
-            const absoluteUrl = await this.filesService.getPresignedUrl(cosKey, att.name, false);
-            return { ...att, url: absoluteUrl };
-          }),
-        );
-        this.logger.log(`Resolved ${resolvedAttachments.length} attachment URLs for task`);
-      }
-
+      // With direct presigned PUT uploads, attachments are already uploaded to the worker's COS bucket.
+      // So their URLs are absolute and we don't need to resolve relative paths or extract cosKeys for callcenter bucket deletion.
       const res = await this.worker.post('/api/tasks', {
         ...dto,
-        attachments: resolvedAttachments,
         userId,
       });
       return res.data;
@@ -214,6 +211,30 @@ export class AiService {
       this.logger.error(`[proxyDownload] Failed to stream file: ${err.message}`);
       throw new ServiceUnavailableException('文件下载失败，请重试');
     }
+  }
+
+  /**
+   * Get a direct COS presigned download URL for a task file.
+   * The browser will download directly from COS, bypassing the proxy chain.
+   */
+  async getDirectDownloadUrl(taskId: string, filename: string) {
+    let files: Array<{ name: string; url: string; size: number }>;
+    try {
+      const filesRes = await this.worker.get(`/api/tasks/${taskId}/files`);
+      files = filesRes.data?.data ?? filesRes.data ?? [];
+    } catch (err: any) {
+      throw new NotFoundException(`Task ${taskId} files not found`);
+    }
+
+    const decodedFilename = decodeURIComponent(filename);
+    const file = files.find(
+      (f) => path.basename(f.name) === decodedFilename || f.name === decodedFilename,
+    );
+    if (!file) {
+      throw new NotFoundException(`File "${filename}" not found in task ${taskId}`);
+    }
+
+    return { url: file.url, name: decodedFilename, size: file.size };
   }
 
   // ── Private helpers ──────────────────────────────────────────────────────

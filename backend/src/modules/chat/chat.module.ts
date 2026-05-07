@@ -14,12 +14,14 @@ import { Setting } from '../../entities/setting.entity';
 import { SearchModule } from '../search/search.module';
 import { SettingsModule } from '../settings/settings.module';
 import { FilesModule } from '../files/files.module';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message, User, Ticket, Setting]),
     SettingsModule,
     FilesModule,
+    AiModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

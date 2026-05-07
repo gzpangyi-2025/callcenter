@@ -31,6 +31,10 @@ import { User } from '../../entities/user.entity';
 import { IsString, IsObject, IsOptional } from 'class-validator';
 
 export class CreateAiTaskDto {
+  @IsOptional()
+  @IsString()
+  id?: string;
+
   @IsString()
   type!: string;
 
@@ -75,6 +79,16 @@ export class AiController {
   @Get('templates')
   getTemplates() {
     return this.aiService.getTemplates();
+  }
+
+  /** GET /api/ai/upload-url — 获取直接上传附件到 Worker COS 的预签名 URL */
+  @Get('upload-url')
+  async getUploadUrl(@Query('taskId') taskId: string, @Query('filename') filename: string) {
+    if (!taskId || !filename) {
+      return { success: false, message: 'taskId and filename are required' };
+    }
+    const result = await this.aiService.getUploadUrl(taskId, filename);
+    return { code: 0, data: result?.data ?? result };
   }
 
   /** POST /api/ai/tasks — 提交新 AI 任务 */
@@ -182,6 +196,19 @@ export class AiController {
   @Get('tasks/:id/files')
   getTaskFiles(@Param('id') id: string) {
     return this.aiService.getTaskFiles(id);
+  }
+
+  /**
+   * GET /api/ai/tasks/:id/download-url?file=<filename>
+   * 返回 COS 预签名直链 — 浏览器直接从 COS 下载，绕过代理链。
+   * 解决通过 CF Tunnel / 慢速网络下载大文件失败的问题。
+   */
+  @Get('tasks/:id/download-url')
+  async getDownloadUrl(
+    @Param('id') taskId: string,
+    @Query('file') filename: string,
+  ) {
+    return this.aiService.getDirectDownloadUrl(taskId, filename);
   }
 
   /**

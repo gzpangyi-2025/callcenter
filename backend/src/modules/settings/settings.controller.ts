@@ -8,6 +8,7 @@ import {
   UploadedFile,
   UsePipes,
   ValidationPipe,
+  Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -20,6 +21,8 @@ import {
   Permissions,
 } from '../auth/permissions.decorator';
 import { SettingsService } from './settings.service';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 // 确保上传目录存在
 const uploadDir = join(process.cwd(), 'uploads', 'logo');
@@ -35,7 +38,12 @@ if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
   }),
 )
 export class SettingsController {
-  constructor(private readonly settingsService: SettingsService) {}
+  private readonly logger = new Logger(SettingsController.name);
+
+  constructor(
+    private readonly settingsService: SettingsService,
+    private readonly configService: ConfigService,
+  ) {}
 
   /** 获取所有系统配置 */
   @Get()
@@ -237,5 +245,91 @@ export class SettingsController {
       'storage.cos.region': body.cosRegion || '',
     });
     return { code: 0, message: '存储配置保存成功' };
+  }
+
+  /** 获取 AI 协作配置（直接从 Worker 读，确保所有后端显示一致） */
+  @Get('codex')
+  @Permissions('settings:read', 'settings:manage')
+  async getCodexConfig() {
+    const workerUrl = this.configService.get<string>(
+      'CODEX_WORKER_URL',
+      'http://43.130.240.106:3100',
+    );
+    const apiKey = this.configService.get<string>('CODEX_WORKER_API_KEY', '');
+    try {
+      const res = await axios.get(`${workerUrl}/api/config`, {
+        timeout: 4000,
+        headers: apiKey ? { 'X-API-Key': apiKey } : {},
+      });
+      return { code: 0, data: res.data?.data ?? res.data };
+    } catch (err: any) {
+      // 回退到本地 DB 值
+      this.logger.warn(`Worker unreachable, falling back to DB: ${err.message}`);
+      const d = await this.settingsService.getAll();
+      return {
+        code: 0,
+        data: {
+          maxRetries: parseInt(d['codex.maxRetries'] ?? '3', 10),
+          concurrency: parseInt(d['codex.concurrency'] ?? '2', 10),
+        },
+      };
+    }
+  }
+
+  /** 保存 AI 协作配置 */
+  @Post('codex')
+  @Permissions('settings:manage')
+  async saveCodexConfig(
+    @Body()
+    body: {
+      maxRetries?: number;
+      concurrency?: number;
+    },
+  ) {
+    const maxRetries = body.maxRetries ?? 3;
+    const concurrency = body.concurrency ?? 2;
+
+    // Save to DB
+    await this.settingsService.saveMany({
+      'codex.maxRetries': String(maxRetries),
+      'codex.concurrency': String(concurrency),
+    });
+
+    // Push maxRetries to Worker runtime (no restart needed)
+    const workerUrl = this.configService.get<string>(
+      'CODEX_WORKER_URL',
+      'http://43.130.240.106:3100',
+    );
+    const apiKey = this.configService.get<string>('CODEX_WORKER_API_KEY', '');
+    let workerUpdated = false;
+
+    try {
+      await axios.post(
+        `${workerUrl}/api/config`,
+        { maxRetries, concurrency },   // send both; worker handles .env + restart for concurrency
+        {
+          timeout: 5000,
+          headers: apiKey ? { 'X-API-Key': apiKey } : {},
+        },
+      );
+      workerUpdated = true;
+      this.logger.log(`Pushed maxRetries=${maxRetries}, concurrency=${concurrency} to Worker`);
+    } catch (err: any) {
+      this.logger.warn(`Failed to push config to Worker: ${err.message}`);
+    }
+
+    return {
+      code: 0,
+      message: 'AI 协作配置已保存',
+      data: {
+        maxRetries,
+        concurrency,
+        workerUpdated,
+        restartRequired: false,
+        note: workerUpdated
+          ? '✅ maxRetries 即时生效；并发线程数已写入 Worker .env，Worker 将在 2 秒后自动重启生效'
+          : '✅ 配置已保存至数据库，但未能推送到 Worker（请检查连接）',
+      },
+    };
   }
 }
