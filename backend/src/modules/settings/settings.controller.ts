@@ -235,15 +235,33 @@ export class SettingsController {
       cosSecretKey?: string;
       cosBucket?: string;
       cosRegion?: string;
+      s3Endpoint?: string;
+      s3AccessKey?: string;
+      s3SecretKey?: string;
+      s3Bucket?: string;
+      s3Region?: string;
     },
   ) {
-    await this.settingsService.saveMany({
+    const toSave: Record<string, string> = {
       'storage.provider': body.provider || 'local',
       'storage.cos.secretId': body.cosSecretId || '',
-      'storage.cos.secretKey': body.cosSecretKey || '',
       'storage.cos.bucket': body.cosBucket || '',
       'storage.cos.region': body.cosRegion || '',
-    });
+      'storage.s3.endpoint': body.s3Endpoint || '',
+      'storage.s3.accessKey': body.s3AccessKey || '',
+      'storage.s3.bucket': body.s3Bucket || '',
+      'storage.s3.region': body.s3Region || '',
+    };
+    
+    // 只有非空时才覆盖 SecretKey（前端传空字符串表示不修改密码）
+    if (body.cosSecretKey && body.cosSecretKey.trim() !== '') {
+      toSave['storage.cos.secretKey'] = body.cosSecretKey;
+    }
+    if (body.s3SecretKey && body.s3SecretKey.trim() !== '') {
+      toSave['storage.s3.secretKey'] = body.s3SecretKey;
+    }
+
+    await this.settingsService.saveMany(toSave);
     return { code: 0, message: '存储配置保存成功' };
   }
 
