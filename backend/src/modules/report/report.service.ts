@@ -87,7 +87,7 @@ export class ReportService {
 
     const statusMap: Record<string, number> = {};
     for (const r of statusData) {
-      statusMap[r.status] = parseInt(r.count);
+      statusMap[r.status] = parseInt(r.count, 10);
     }
 
     // 平均处理时长（仅已关闭工单）
@@ -143,11 +143,11 @@ export class ReportService {
     return {
       category1: category1Data.map((r: CategoryRaw) => ({
         name: r.category1,
-        value: parseInt(r.total),
+        value: parseInt(r.total, 10),
       })),
       category2: category2Data.map((r: CategoryRaw) => ({
         name: r.category2,
-        value: parseInt(r.total),
+        value: parseInt(r.total, 10),
       })),
     };
   }
@@ -175,7 +175,7 @@ export class ReportService {
 
     return data.map((r: CategoryRaw) => ({
       name: r.category2,
-      value: parseInt(r.total),
+      value: parseInt(r.total, 10),
     }));
   }
 
@@ -203,7 +203,7 @@ export class ReportService {
 
     return data.map((r: CategoryRaw) => ({
       name: r.category3,
-      value: parseInt(r.total),
+      value: parseInt(r.total, 10),
     }));
   }
 
@@ -253,7 +253,7 @@ export class ReportService {
     // 收集所有 userId 一次性查用户名
     const allIds = new Set<number>();
     for (const r of [...assignData, ...createData, ...participateData]) {
-      allIds.add(parseInt(r.userId));
+      allIds.add(parseInt(r.userId, 10));
     }
 
     const usersMap: Record<number, UserInfo> = {};
@@ -273,12 +273,12 @@ export class ReportService {
     }
 
     const mapRow = (r: UserCountRaw) => ({
-      userId: parseInt(r.userId),
-      count: parseInt(r.count),
-      username: usersMap[parseInt(r.userId)]?.username || '-',
+      userId: parseInt(r.userId, 10),
+      count: parseInt(r.count, 10),
+      username: usersMap[parseInt(r.userId, 10)]?.username || '-',
       realName:
-        usersMap[parseInt(r.userId)]?.realName ||
-        usersMap[parseInt(r.userId)]?.displayName ||
+        usersMap[parseInt(r.userId, 10)]?.realName ||
+        usersMap[parseInt(r.userId, 10)]?.displayName ||
         '-',
     });
 
@@ -315,9 +315,9 @@ export class ReportService {
 
     return data.map((r: CustomerRaw) => ({
       customerName: r.customerName,
-      total: parseInt(r.total),
-      closed: parseInt(r.closed),
-      active: parseInt(r.active),
+      total: parseInt(r.total, 10),
+      closed: parseInt(r.closed, 10),
+      active: parseInt(r.active, 10),
     }));
   }
 
@@ -365,7 +365,7 @@ export class ReportService {
 
     return data.map((r) => ({
       date: String(r.date),
-      count: parseInt(r.count),
+      count: parseInt(r.count, 10),
     }));
   }
 
@@ -428,7 +428,7 @@ export class ReportService {
 
     const allIds = new Set<number>();
     for (const r of [...assignData, ...createData]) {
-      allIds.add(parseInt(r.userId));
+      allIds.add(parseInt(r.userId, 10));
     }
 
     const usersMap: Record<number, UserInfo> = {};
@@ -448,12 +448,12 @@ export class ReportService {
     }
 
     const mapRow = (r: UserCountRaw) => ({
-      userId: parseInt(r.userId),
-      count: parseInt(r.count),
-      username: usersMap[parseInt(r.userId)]?.username || '-',
+      userId: parseInt(r.userId, 10),
+      count: parseInt(r.count, 10),
+      username: usersMap[parseInt(r.userId, 10)]?.username || '-',
       realName:
-        usersMap[parseInt(r.userId)]?.realName ||
-        usersMap[parseInt(r.userId)]?.displayName ||
+        usersMap[parseInt(r.userId, 10)]?.realName ||
+        usersMap[parseInt(r.userId, 10)]?.displayName ||
         '-',
     });
 

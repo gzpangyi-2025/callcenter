@@ -68,7 +68,7 @@ export class ReportController {
     @Query('endDate') endDate?: string,
   ) {
     const data = await this.reportService.getByPerson(
-      limit ? parseInt(limit) : undefined,
+      limit ? parseInt(limit, 10) : undefined,
       startDate,
       endDate,
     );
@@ -113,7 +113,7 @@ export class ReportController {
     const data = await this.reportService.getCrossMatrix(
       categoryName,
       level || 'category2',
-      limit ? parseInt(limit) : 8,
+      limit ? parseInt(limit, 10) : 8,
       parentCategory,
       startDate,
       endDate,
@@ -132,7 +132,7 @@ export class ReportController {
     @Query('endDate') endDate?: string,
   ) {
     const data = await this.reportService.drillPersonTickets(
-      parseInt(userId),
+      parseInt(userId, 10),
       role as 'creator' | 'assignee' | 'participant',
       categoryName,
       categoryLevel || 'category3',

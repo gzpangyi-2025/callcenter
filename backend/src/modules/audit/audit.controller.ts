@@ -28,8 +28,8 @@ export class AuditController {
     @Query('endDate') endDate?: string,
   ) {
     const result = await this.auditService.findAll({
-      page: page ? parseInt(page) : 1,
-      pageSize: pageSize ? parseInt(pageSize) : 20,
+      page: page ? parseInt(page, 10) : 1,
+      pageSize: pageSize ? parseInt(pageSize, 10) : 20,
       type,
       keyword,
       startDate,

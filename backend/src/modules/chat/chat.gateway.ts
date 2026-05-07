@@ -187,7 +187,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const cleanedShareRooms = this.screenShareService.cleanupUser(userId);
     for (const roomName of cleanedShareRooms) {
       this.server.to(roomName).emit('screenShare:stopped', {
-        ticketId: parseInt(roomName.replace('ticket_', '')),
+        ticketId: parseInt(roomName.replace('ticket_', ''), 10),
         from: userId,
       });
       this.server.emit('ticketEvent', { action: 'screenShareChanged' });
@@ -197,7 +197,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const affectedVoiceRooms = this.voiceService.cleanupUser(userId);
     for (const roomName of affectedVoiceRooms) {
       this.server.to(roomName).emit('voice:peerLeft', {
-        ticketId: parseInt(roomName.replace('ticket_', '')),
+        ticketId: parseInt(roomName.replace('ticket_', ''), 10),
         userId,
       });
     }

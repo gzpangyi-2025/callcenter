@@ -68,8 +68,8 @@ export class TicketsController {
     @Query('assigneeId') assigneeId?: string,
   ) {
     const result = await this.ticketsService.findAll({
-      page: page ? parseInt(page) : 1,
-      pageSize: pageSize ? parseInt(pageSize) : 10,
+      page: page ? parseInt(page, 10) : 1,
+      pageSize: pageSize ? parseInt(pageSize, 10) : 10,
       status,
       type,
       keyword,
@@ -77,8 +77,8 @@ export class TicketsController {
       category2,
       category3,
       customerName,
-      creatorId: creatorId ? parseInt(creatorId) : undefined,
-      assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
+      creatorId: creatorId ? parseInt(creatorId, 10) : undefined,
+      assigneeId: assigneeId ? parseInt(assigneeId, 10) : undefined,
       isDashboard: isDashboard === 'true',
     });
     return { code: 0, data: result };
@@ -114,8 +114,8 @@ export class TicketsController {
       category2,
       category3,
       customerName,
-      creatorId: creatorId ? parseInt(creatorId) : undefined,
-      assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
+      creatorId: creatorId ? parseInt(creatorId, 10) : undefined,
+      assigneeId: assigneeId ? parseInt(assigneeId, 10) : undefined,
       isDashboard: isDashboard === 'true',
     });
     return { code: 0, data: result };

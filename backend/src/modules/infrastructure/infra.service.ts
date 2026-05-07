@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
@@ -10,6 +10,21 @@ import * as mysql from 'mysql2/promise';
 export class InfraService {
   private readonly logger = new Logger(InfraService.name);
   private readonly envPath = path.join(process.cwd(), '.env');
+
+  /** 允许通过 API 修改的 .env 键白名单 */
+  private static readonly ALLOWED_ENV_KEYS = new Set([
+    'DB_HOST', 'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD', 'DB_DATABASE',
+    'REDIS_HOST', 'REDIS_PORT', 'REDIS_PASSWORD',
+    'ELASTICSEARCH_NODE', 'ELASTICSEARCH_USERNAME', 'ELASTICSEARCH_PASSWORD',
+    'JWT_SECRET', 'JWT_EXPIRES_IN',
+    'STORAGE_TYPE', 'COS_SECRET_ID', 'COS_SECRET_KEY', 'COS_BUCKET', 'COS_REGION', 'COS_DOMAIN',
+    'S3_ACCESS_KEY', 'S3_SECRET_KEY', 'S3_BUCKET', 'S3_ENDPOINT', 'S3_REGION', 'S3_DOMAIN',
+    'OPENAI_API_KEY', 'OPENAI_BASE_URL', 'CODEX_API_KEY',
+  ]);
+
+  /** 重启限流：上次重启时间 */
+  private lastRestartTime = 0;
+  private static readonly RESTART_COOLDOWN_MS = 60_000; // 60 秒冷却
 
   getEnvPath() {
     return this.envPath;
@@ -39,6 +54,16 @@ export class InfraService {
   }
 
   async updateEnvConfig(updates: Record<string, string>) {
+    // 白名单校验：拒绝不在白名单中的键
+    const invalidKeys = Object.keys(updates).filter(
+      (k) => !InfraService.ALLOWED_ENV_KEYS.has(k),
+    );
+    if (invalidKeys.length > 0) {
+      throw new BadRequestException(
+        `不允许修改以下环境变量: ${invalidKeys.join(', ')}`,
+      );
+    }
+
     if (!fs.existsSync(this.envPath)) {
       fs.writeFileSync(this.envPath, '', 'utf-8');
     }
@@ -78,6 +103,14 @@ export class InfraService {
   }
 
   async restartService() {
+    const now = Date.now();
+    const elapsed = now - this.lastRestartTime;
+    if (elapsed < InfraService.RESTART_COOLDOWN_MS) {
+      const waitSec = Math.ceil((InfraService.RESTART_COOLDOWN_MS - elapsed) / 1000);
+      throw new BadRequestException(`操作过于频繁，请 ${waitSec} 秒后再试`);
+    }
+    this.lastRestartTime = now;
+
     this.logger.log('Restarting service via PM2...');
     try {
       // Execute in background so the response can be sent to client
