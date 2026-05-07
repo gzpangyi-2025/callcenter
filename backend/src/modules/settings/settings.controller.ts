@@ -280,7 +280,7 @@ export class SettingsController {
   @Post('codex')
   @Permissions('settings:manage')
   async saveCodexConfig(
-    body: {
+    @Body() body: {
       maxRetries?: number;
       concurrency?: number;
       cosSecretId?: string;
