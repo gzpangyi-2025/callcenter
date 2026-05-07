@@ -287,6 +287,12 @@ export class SettingsController {
       cosSecretKey?: string;
       cosBucket?: string;
       cosRegion?: string;
+      storageProvider?: string;
+      s3Endpoint?: string;
+      s3AccessKey?: string;
+      s3SecretKey?: string;
+      s3Bucket?: string;
+      s3Region?: string;
     },
   ) {
     const concurrency = body.concurrency ?? 2;
@@ -315,7 +321,13 @@ export class SettingsController {
           cosSecretId: body.cosSecretId,
           cosSecretKey: body.cosSecretKey,
           cosBucket: body.cosBucket,
-          cosRegion: body.cosRegion
+          cosRegion: body.cosRegion,
+          storageProvider: body.storageProvider,
+          s3Endpoint: body.s3Endpoint,
+          s3AccessKey: body.s3AccessKey,
+          s3SecretKey: body.s3SecretKey,
+          s3Bucket: body.s3Bucket,
+          s3Region: body.s3Region
         },
         {
           timeout: 5000,

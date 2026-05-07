@@ -31,9 +31,19 @@ const CodexConfigTab: React.FC = () => {
         if (res.code === 0 && res.data) {
           const concurrency = res.data.concurrency ?? 2;
           const maxResumeAttempts = res.data.maxResumeAttempts ?? 3;
-          const { cosSecretId, cosSecretKey, cosBucket, cosRegion } = res.data;
-          form.setFieldsValue({ concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
-          setWorkerConfig({ concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          const { cosSecretId, cosSecretKey, cosBucket, cosRegion, storageProvider, s3Endpoint, s3AccessKey, s3SecretKey, s3Bucket, s3Region } = res.data;
+          const prov = storageProvider || 'tencent';
+          setProvider(prov);
+          form.setFieldsValue({ 
+            concurrency, maxResumeAttempts, 
+            cosSecretId, cosSecretKey, cosBucket, cosRegion,
+            storageProvider: prov, s3Endpoint, s3AccessKey, s3SecretKey, s3Bucket, s3Region 
+          });
+          setWorkerConfig({ 
+            concurrency, maxResumeAttempts, 
+            cosSecretId, cosSecretKey, cosBucket, cosRegion,
+            storageProvider: prov, s3Endpoint, s3AccessKey, s3SecretKey, s3Bucket, s3Region 
+          });
         }
       } catch {
         form.setFieldsValue({ concurrency: 2, maxResumeAttempts: 3 });
@@ -120,35 +130,44 @@ const CodexConfigTab: React.FC = () => {
             description="这些配置专用于存放 AI 执行过程中的上下文、附件及生成产物，与主站隔离。修改后也会自动重启 Worker 生效。"
             style={{ marginBottom: 16 }}
           />
-          <Form.Item
-            label="SecretId"
-            name="cosSecretId"
-            rules={[{ required: true, message: '请输入 SecretId' }]}
-          >
-            <Input placeholder="输入腾讯云 API 密钥的 SecretId" />
-          </Form.Item>
-          <Form.Item
-            label="SecretKey"
-            name="cosSecretKey"
-            rules={[{ required: true, message: '请输入 SecretKey' }]}
-          >
-            <Input.Password placeholder="输入腾讯云 API 密钥的 SecretKey（留空保持不变）" />
-          </Form.Item>
-          <Form.Item
-            label="存储桶名称 (Bucket)"
-            name="cosBucket"
-            rules={[{ required: true, message: '请输入存储桶名称' }]}
-          >
-            <Input placeholder="如: codex-worker-1234567890" />
-          </Form.Item>
-          <Form.Item
-            label="所属地域 (Region)"
-            name="cosRegion"
-            rules={[{ required: true, message: '请输入所属地域' }]}
-          >
-            <Input placeholder="如: ap-guangzhou" />
-          </Form.Item>
+          {provider === "tencent" && (<>
+          {provider === 'tencent' && (
+            <>
+              <Form.Item label="SecretId" name="cosSecretId" rules={[{ required: provider === 'tencent', message: '请输入 SecretId' }]}>
+                <Input placeholder="输入腾讯云 API 密钥的 SecretId" />
+              </Form.Item>
+              <Form.Item label="SecretKey" name="cosSecretKey" rules={[{ required: provider === 'tencent', message: '请输入 SecretKey' }]}>
+                <Input.Password placeholder="输入腾讯云 API 密钥的 SecretKey（留空保持不变）" />
+              </Form.Item>
+              <Form.Item label="存储桶名称 (Bucket)" name="cosBucket" rules={[{ required: provider === 'tencent', message: '请输入存储桶名称' }]}>
+                <Input placeholder="如: codex-worker-1234567890" />
+              </Form.Item>
+              <Form.Item label="所属地域 (Region)" name="cosRegion" rules={[{ required: provider === 'tencent', message: '请输入所属地域' }]}>
+                <Input placeholder="如: ap-guangzhou" />
+              </Form.Item>
+            </>
+          )}
+          {provider === 's3' && (
+            <>
+              <Form.Item label="Endpoint (访问域名)" name="s3Endpoint" rules={[{ required: provider === 's3', message: '请输入 Endpoint' }]}>
+                <Input placeholder="例如: https://s3-cn-beijing.capitalonline.net" />
+              </Form.Item>
+              <Form.Item label="Access Key (AK)" name="s3AccessKey" rules={[{ required: provider === 's3', message: '请输入 Access Key' }]}>
+                <Input placeholder="请输入 Access Key" />
+              </Form.Item>
+              <Form.Item label="Secret Key (SK)" name="s3SecretKey" rules={[{ required: provider === 's3', message: '请输入 Secret Key' }]}>
+                <Input.Password placeholder="请输入 Secret Key（留空保持不变）" />
+              </Form.Item>
+              <Form.Item label="Bucket (存储桶名称)" name="s3Bucket" rules={[{ required: provider === 's3', message: '请输入存储桶名称' }]}>
+                <Input placeholder="my-s3-bucket" />
+              </Form.Item>
+              <Form.Item label="Region (所属地域)" name="s3Region" rules={[{ required: provider === 's3', message: '请输入地域简称' }]}>
+                <Input placeholder="cn-beijing" />
+              </Form.Item>
+            </>
+          )}
         </Card>
+        </>)}
 
         {/* 并发线程数 */}
         <Card

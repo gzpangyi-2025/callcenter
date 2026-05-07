@@ -111,6 +111,21 @@ export const filesAPI = {
         });
       }
 
+      if (provider === 's3') {
+        await axios.put(credResult.presignedUrl, file, {
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+          },
+        });
+        
+        return await api.post('/files/confirm', {
+          key,
+          originalName: file.name,
+          size: file.size,
+          mimetype: file.type || 'application/octet-stream',
+        });
+      }
+
       const cos = new COS({
         getAuthorization: (_options, callback) => {
           callback({

@@ -39,6 +39,11 @@ export const StorageManageTab: React.FC = () => {
           cosSecretKey: d['storage.cos.secretKey'] || '',
           cosBucket: d['storage.cos.bucket'] || '',
           cosRegion: d['storage.cos.region'] || '',
+          s3Endpoint: d['storage.s3.endpoint'] || '',
+          s3AccessKey: d['storage.s3.accessKey'] || '',
+          s3SecretKey: d['storage.s3.secretKey'] || '',
+          s3Bucket: d['storage.s3.bucket'] || '',
+          s3Region: d['storage.s3.region'] || '',
         });
       }
     } catch (err) {
@@ -157,6 +162,7 @@ export const StorageManageTab: React.FC = () => {
             <Radio.Group>
               <Radio.Button value="local" style={{ padding: '0 32px' }}>💻 本地存储 (OSS)</Radio.Button>
               <Radio.Button value="cos" style={{ padding: '0 32px' }}>☁️ 腾讯云对象存储 (COS)</Radio.Button>
+              <Radio.Button value="s3" style={{ padding: '0 32px' }}>🌐 首云 (S3 兼容)</Radio.Button>
             </Radio.Group>
           </Form.Item>
         </Card>
@@ -204,6 +210,66 @@ export const StorageManageTab: React.FC = () => {
                   rules={[{ required: provider === 'cos', message: '请输入地域简称' }]}
                 >
                   <Input placeholder="ap-guangzhou" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Card>
+        )}
+
+        {provider === 's3' && (
+          <Card
+            size="small"
+            title={<span style={{ fontWeight: 600 }}><CloudServerOutlined /> 首云 (S3 兼容) 配置</span>}
+            style={{ marginBottom: 24, borderRadius: 10, border: '1px solid var(--border)' }}
+          >
+            <Row gutter={16}>
+              <Col xs={24} sm={24}>
+                <Form.Item
+                  label="Endpoint (访问域名)"
+                  name="s3Endpoint"
+                  rules={[{ required: provider === 's3', message: '请输入 Endpoint' }]}
+                >
+                  <Input placeholder="例如: https://s3-cn-beijing.capitalonline.net" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label="Access Key (AK)"
+                  name="s3AccessKey"
+                  rules={[{ required: provider === 's3', message: '请输入 Access Key' }]}
+                >
+                  <Input placeholder="请输入 Access Key" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label="Secret Key (SK)"
+                  name="s3SecretKey"
+                  rules={[{ required: provider === 's3', message: '请输入 Secret Key' }]}
+                >
+                  <Input.Password placeholder="请输入 Secret Key" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label="Bucket (存储桶名称)"
+                  name="s3Bucket"
+                  rules={[{ required: provider === 's3', message: '请输入存储桶名称' }]}
+                >
+                  <Input placeholder="my-s3-bucket" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label="Region (所属地域)"
+                  name="s3Region"
+                  rules={[{ required: provider === 's3', message: '请输入地域简称' }]}
+                >
+                  <Input placeholder="cn-beijing" />
                 </Form.Item>
               </Col>
             </Row>
