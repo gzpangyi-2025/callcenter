@@ -281,7 +281,6 @@ export class SettingsController {
   @Permissions('settings:manage')
   async saveCodexConfig(
     @Body() body: {
-      maxRetries?: number;
       concurrency?: number;
       maxResumeAttempts?: number;
       cosSecretId?: string;
@@ -290,18 +289,16 @@ export class SettingsController {
       cosRegion?: string;
     },
   ) {
-    const maxRetries = body.maxRetries ?? 3;
     const concurrency = body.concurrency ?? 2;
     const maxResumeAttempts = body.maxResumeAttempts;
 
     // Save to DB
     await this.settingsService.saveMany({
-      'codex.maxRetries': String(maxRetries),
       'codex.concurrency': String(concurrency),
       ...(maxResumeAttempts !== undefined ? { 'codex.maxResumeAttempts': String(maxResumeAttempts) } : {}),
     });
 
-    // Push maxRetries to Worker runtime (no restart needed)
+    // Push config to Worker
     const workerUrl = this.configService.get<string>(
       'CODEX_WORKER_URL',
       'http://43.130.240.106:3100',
@@ -313,7 +310,6 @@ export class SettingsController {
       await axios.post(
         `${workerUrl}/api/config`,
         { 
-          maxRetries, 
           concurrency,
           maxResumeAttempts,
           cosSecretId: body.cosSecretId,
@@ -327,7 +323,7 @@ export class SettingsController {
         },
       );
       workerUpdated = true;
-      this.logger.log(`Pushed maxRetries=${maxRetries}, concurrency=${concurrency} to Worker`);
+      this.logger.log(`Pushed concurrency=${concurrency}, maxResumeAttempts=${maxResumeAttempts} to Worker`);
     } catch (err: any) {
       this.logger.warn(`Failed to push config to Worker: ${err.message}`);
     }
@@ -336,12 +332,11 @@ export class SettingsController {
       code: 0,
       message: 'AI 协作配置已保存',
       data: {
-        maxRetries,
         concurrency,
         workerUpdated,
         restartRequired: false,
         note: workerUpdated
-          ? '✅ 基础配置即时生效；系统配置（并发、存储等）已写入 Worker .env，Worker 将在 2 秒后自动重启生效'
+          ? '✅ 系统配置已写入 Worker .env，Worker 将在 2 秒后自动重启生效'
           : '✅ 配置已提交，但未能推送到 Worker（请检查连接）',
       },
     };

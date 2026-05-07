@@ -3,12 +3,11 @@ import {
   Form, InputNumber, Button, Card, Alert, Descriptions, Badge, Spin, message, Tooltip, Input
 } from 'antd';
 import {
-  ThunderboltOutlined, ReloadOutlined, InfoCircleOutlined, CheckCircleOutlined, WarningOutlined
+  ThunderboltOutlined, ReloadOutlined, InfoCircleOutlined, WarningOutlined
 } from '@ant-design/icons';
 import { settingsAPI } from '../../../services/api';
 
 interface WorkerConfig {
-  maxRetries: number;
   concurrency: number;
   maxResumeAttempts?: number;
   cosSecretId?: string;
@@ -30,16 +29,15 @@ const CodexConfigTab: React.FC = () => {
       try {
         const res: any = await settingsAPI.getCodexConfig();
         if (res.code === 0 && res.data) {
-          const maxRetries = res.data.maxRetries ?? 3;
           const concurrency = res.data.concurrency ?? 2;
           const maxResumeAttempts = res.data.maxResumeAttempts ?? 3;
           const { cosSecretId, cosSecretKey, cosBucket, cosRegion } = res.data;
-          form.setFieldsValue({ maxRetries, concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
-          setWorkerConfig({ maxRetries, concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          form.setFieldsValue({ concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          setWorkerConfig({ concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
         }
       } catch {
-        form.setFieldsValue({ maxRetries: 3, concurrency: 2, maxResumeAttempts: 3 });
-        setWorkerConfig({ maxRetries: 3, concurrency: 2, maxResumeAttempts: 3 });
+        form.setFieldsValue({ concurrency: 2, maxResumeAttempts: 3 });
+        setWorkerConfig({ concurrency: 2, maxResumeAttempts: 3 });
       } finally {
         setInitLoading(false);
       }
@@ -95,9 +93,6 @@ const CodexConfigTab: React.FC = () => {
           <Descriptions size="small" column={2}>
             <Descriptions.Item label="并发线程数">
               <Badge status="processing" text={`${workerConfig.concurrency} 个`} />
-            </Descriptions.Item>
-            <Descriptions.Item label="断线重试次数">
-              <Badge status="success" text={`${workerConfig.maxRetries} 次`} />
             </Descriptions.Item>
             <Descriptions.Item label="自动续跑次数">
               <Badge status="success" text={`${workerConfig.maxResumeAttempts ?? 3} 次`} />
@@ -205,48 +200,6 @@ const CodexConfigTab: React.FC = () => {
           </div>
         </Card>
 
-        {/* 断线重试次数 */}
-        <Card
-          size="small"
-          style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
-          title={
-            <span style={{ fontWeight: 600 }}>
-              <ReloadOutlined style={{ color: '#10b981', marginRight: 6 }} />
-              断线重试次数
-            </span>
-          }
-        >
-          <Alert
-            type="success"
-            showIcon
-            icon={<CheckCircleOutlined />}
-            message="修改后即时生效，无需重启"
-            description="调整后立即推送到 Worker 运行内存，新提交的任务立即使用新值。进行中的任务不受影响。"
-            style={{ marginBottom: 16 }}
-          />
-          <Form.Item
-            name="maxRetries"
-            label={
-              <span>
-                OpenAI 断线自动重试次数
-                <Tooltip title="当 Codex SDK WebSocket 被 OpenAI 服务端断开时，自动重新连接并继续执行的最大次数（0 = 不重试）">
-                  <InfoCircleOutlined style={{ marginLeft: 6, color: 'var(--text-secondary)' }} />
-                </Tooltip>
-              </span>
-            }
-            rules={[{ required: true, type: 'number', min: 0, max: 10, message: '请输入 0~10 之间的整数' }]}
-          >
-            <InputNumber
-              min={0}
-              max={10}
-              style={{ width: 160 }}
-              addonAfter="次"
-            />
-          </Form.Item>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-            💡 推荐值：3。OpenAI 服务不稳定时可适当调高至 5。
-          </div>
-        </Card>
 
         {/* 自动断点续跑次数 */}
         <Card
