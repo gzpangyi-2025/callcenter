@@ -211,7 +211,7 @@ export const settingsAPI = {
     customTurn?: string; turnUsername?: string; turnPassword?: string;
     screenShareMaxViewers?: number; voiceMaxParticipants?: number;
   }): Promise<ApiResponse<void>> => api.post('/settings/webrtc', data),
-  saveCodexConfig: (data: { maxRetries?: number; concurrency?: number }): Promise<ApiResponse<any>> =>
+  saveCodexConfig: (data: { maxRetries?: number; concurrency?: number; maxResumeAttempts?: number }): Promise<ApiResponse<any>> =>
     api.post('/settings/codex', data),
   getCodexConfig: (): Promise<ApiResponse<any>> => api.get('/settings/codex'),
 };

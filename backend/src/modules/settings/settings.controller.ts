@@ -283,6 +283,7 @@ export class SettingsController {
     @Body() body: {
       maxRetries?: number;
       concurrency?: number;
+      maxResumeAttempts?: number;
       cosSecretId?: string;
       cosSecretKey?: string;
       cosBucket?: string;
@@ -291,11 +292,13 @@ export class SettingsController {
   ) {
     const maxRetries = body.maxRetries ?? 3;
     const concurrency = body.concurrency ?? 2;
+    const maxResumeAttempts = body.maxResumeAttempts;
 
     // Save to DB
     await this.settingsService.saveMany({
       'codex.maxRetries': String(maxRetries),
       'codex.concurrency': String(concurrency),
+      ...(maxResumeAttempts !== undefined ? { 'codex.maxResumeAttempts': String(maxResumeAttempts) } : {}),
     });
 
     // Push maxRetries to Worker runtime (no restart needed)
@@ -312,6 +315,7 @@ export class SettingsController {
         { 
           maxRetries, 
           concurrency,
+          maxResumeAttempts,
           cosSecretId: body.cosSecretId,
           cosSecretKey: body.cosSecretKey,
           cosBucket: body.cosBucket,

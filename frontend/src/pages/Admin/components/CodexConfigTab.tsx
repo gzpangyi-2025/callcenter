@@ -10,6 +10,7 @@ import { settingsAPI } from '../../../services/api';
 interface WorkerConfig {
   maxRetries: number;
   concurrency: number;
+  maxResumeAttempts?: number;
   cosSecretId?: string;
   cosSecretKey?: string;
   cosBucket?: string;
@@ -31,13 +32,14 @@ const CodexConfigTab: React.FC = () => {
         if (res.code === 0 && res.data) {
           const maxRetries = res.data.maxRetries ?? 3;
           const concurrency = res.data.concurrency ?? 2;
+          const maxResumeAttempts = res.data.maxResumeAttempts ?? 3;
           const { cosSecretId, cosSecretKey, cosBucket, cosRegion } = res.data;
-          form.setFieldsValue({ maxRetries, concurrency, cosSecretId, cosSecretKey, cosBucket, cosRegion });
-          setWorkerConfig({ maxRetries, concurrency, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          form.setFieldsValue({ maxRetries, concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
+          setWorkerConfig({ maxRetries, concurrency, maxResumeAttempts, cosSecretId, cosSecretKey, cosBucket, cosRegion });
         }
       } catch {
-        form.setFieldsValue({ maxRetries: 3, concurrency: 2 });
-        setWorkerConfig({ maxRetries: 3, concurrency: 2 });
+        form.setFieldsValue({ maxRetries: 3, concurrency: 2, maxResumeAttempts: 3 });
+        setWorkerConfig({ maxRetries: 3, concurrency: 2, maxResumeAttempts: 3 });
       } finally {
         setInitLoading(false);
       }
@@ -96,6 +98,9 @@ const CodexConfigTab: React.FC = () => {
             </Descriptions.Item>
             <Descriptions.Item label="断线重试次数">
               <Badge status="success" text={`${workerConfig.maxRetries} 次`} />
+            </Descriptions.Item>
+            <Descriptions.Item label="自动续跑次数">
+              <Badge status="success" text={`${workerConfig.maxResumeAttempts ?? 3} 次`} />
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -240,6 +245,48 @@ const CodexConfigTab: React.FC = () => {
           </Form.Item>
           <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
             💡 推荐值：3。OpenAI 服务不稳定时可适当调高至 5。
+          </div>
+        </Card>
+
+        {/* 自动断点续跑次数 */}
+        <Card
+          size="small"
+          style={{ marginBottom: 20, borderRadius: 10, border: '1px solid var(--border)' }}
+          title={
+            <span style={{ fontWeight: 600 }}>
+              <ReloadOutlined style={{ color: '#8b5cf6', marginRight: 6 }} />
+              自动断点续跑次数
+            </span>
+          }
+        >
+          <Alert
+            type="info"
+            showIcon
+            message="修改后需重启 Worker 生效"
+            description="PPT 任务因断线/崩溃中断后，系统会自动从断点恢复执行。此项控制最大自动恢复尝试次数，达到上限后任务暂停等待人工介入。"
+            style={{ marginBottom: 16 }}
+          />
+          <Form.Item
+            name="maxResumeAttempts"
+            label={
+              <span>
+                最大自动续跑次数
+                <Tooltip title="PPT 任务因 WebSocket 断线、进程重启等原因中断后，系统自动从 manifest 断点恢复的最大次数。超过此次数后任务暂停，需手动决定是否继续。">
+                  <InfoCircleOutlined style={{ marginLeft: 6, color: 'var(--text-secondary)' }} />
+                </Tooltip>
+              </span>
+            }
+            rules={[{ required: true, type: 'number', min: 1, max: 20, message: '请输入 1~20 之间的整数' }]}
+          >
+            <InputNumber
+              min={1}
+              max={20}
+              style={{ width: 160 }}
+              addonAfter="次"
+            />
+          </Form.Item>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+            💡 推荐值：5~10。网络不稳定时建议适当调高，避免频繁暂停。
           </div>
         </Card>
 
