@@ -400,6 +400,9 @@ export const aiAPI = {
   /** 获取任务产物下载链接 */
   getTaskFiles: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/files`),
 
+  /** 获取已完成任务的预览文件（slides、图片等） */
+  getTaskPreviews: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/previews`),
+
   // ── Chat (Gemini Flash) ──────────────────────────────────────────────────
 
   /** 发送消息 (SSE 流式) — 返回的是 Response 对象而非 JSON */

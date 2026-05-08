@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Card, Badge, Typography, Switch, Space, Tooltip, Tag, Tabs, Image, Button, Row, Col } from 'antd';
+import { aiAPI } from '../../../services/api';
 import {
   CodeOutlined, PauseCircleOutlined, PlayCircleOutlined,
   ClearOutlined, FullscreenOutlined, FullscreenExitOutlined,
@@ -114,6 +115,7 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
   const [expanded, setExpanded] = useState(false);
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -132,7 +134,64 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     setConnected(false);
     setCurrentStep(null);
     setProgress(0);
+    setHistoryLoaded(false);
   }, [taskId]);
+
+  // Load persisted execution data for completed/failed tasks
+  useEffect(() => {
+    if (!['completed', 'failed'].includes(taskStatus)) return;
+
+    let cancelled = false;
+
+    const loadHistory = async () => {
+      try {
+        // Load task detail (contains executionLog)
+        const taskRes = await aiAPI.getTask(taskId);
+        const task = taskRes?.data;
+
+        if (cancelled) return;
+
+        // Load persisted execution logs
+        if (task?.executionLog?.length) {
+          setLogs(task.executionLog.map((entry: any) => ({
+            taskId,
+            line: entry.line,
+            type: entry.type || 'info',
+            timestamp: entry.timestamp,
+          })));
+        }
+
+        // Load persisted preview files with presigned URLs
+        try {
+          const previewRes = await aiAPI.getTaskPreviews(taskId);
+          if (!cancelled && previewRes?.data?.length) {
+            setFiles(previewRes.data.map((f: any) => ({
+              taskId,
+              eventType: 'file_ready' as const,
+              name: f.name,
+              category: f.category || 'process',
+              size: f.size,
+              url: f.url,
+              mimeType: f.mimeType,
+              timestamp: Date.now(),
+            })));
+          }
+        } catch {
+          // previews endpoint may not have data — non-fatal
+        }
+
+        if (!cancelled) {
+          setHistoryLoaded(true);
+          setProgress(taskStatus === 'completed' ? 100 : 0);
+        }
+      } catch {
+        // Task fetch failed — non-fatal, SSE fallback will try
+      }
+    };
+
+    loadHistory();
+    return () => { cancelled = true; };
+  }, [taskId, taskStatus]);
 
   const connect = useCallback(() => {
     if (eventSourceRef.current) {
@@ -321,7 +380,7 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
       {/* Real-time file gallery */}
       {files.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '20px 0', color: '#9ca3af' }}>
-          {isActive ? '等待文件生成...' : '暂无实时文件'}
+          {isActive ? '等待文件生成...' : historyLoaded ? '此任务无预览文件记录' : '暂无实时文件'}
         </div>
       ) : (
         <div style={{ maxHeight: panelHeight - 80, overflowY: 'auto' }}>
@@ -457,7 +516,7 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     >
       {logs.length === 0 ? (
         <div style={{ color: '#64748b', padding: '20px 0', textAlign: 'center' }}>
-          {isActive ? '等待日志输出...' : '暂无日志记录'}
+          {isActive ? '等待日志输出...' : historyLoaded ? '此任务无执行日志记录' : '暂无日志记录'}
         </div>
       ) : (
         logs.map((entry, i) => (
@@ -518,11 +577,13 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
       title={
         <Space>
           <CodeOutlined style={{ color: '#10b981' }} />
-          <span>实时执行日志</span>
+          <span>{isActive ? '实时执行日志' : '执行日志'}</span>
           {connected && isActive ? (
             <Badge status="processing" text={<Text type="secondary" style={{ fontSize: 12 }}>实时连接中</Text>} />
           ) : isActive ? (
             <Badge status="warning" text={<Text type="secondary" style={{ fontSize: 12 }}>连接中...</Text>} />
+          ) : historyLoaded ? (
+            <Badge status="success" text={<Text type="secondary" style={{ fontSize: 12 }}>历史记录</Text>} />
           ) : (
             <Badge status="default" text={<Text type="secondary" style={{ fontSize: 12 }}>任务已结束</Text>} />
           )}

@@ -198,6 +198,12 @@ export class AiController {
     return this.aiService.getTaskFiles(id);
   }
 
+  /** GET /api/ai/tasks/:id/previews — 获取已完成任务的预览文件（slides、图片等） */
+  @Get('tasks/:id/previews')
+  getTaskPreviews(@Param('id') id: string) {
+    return this.aiService.getTaskPreviews(id);
+  }
+
   /**
    * GET /api/ai/tasks/:id/download-url?file=<filename>
    * 返回 COS 预签名直链 — 浏览器直接从 COS 下载，绕过代理链。

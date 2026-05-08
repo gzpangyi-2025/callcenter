@@ -127,6 +127,16 @@ export class AiService {
     }
   }
 
+  /** Get presigned URLs for persisted preview files of a completed task */
+  async getTaskPreviews(taskId: string) {
+    try {
+      const res = await this.worker.get(`/api/tasks/${taskId}/previews`);
+      return res.data;
+    } catch (err: any) {
+      this.handleWorkerError(err, 'getTaskPreviews');
+    }
+  }
+
   /** Delete a task and its COS files */
   async deleteTask(taskId: string) {
     try {
