@@ -414,6 +414,7 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
                             border: '1px solid #f0f0f0',
                             aspectRatio: '1',
                             animation: 'fadeIn 0.3s ease-in',
+                            position: 'relative',
                           }}>
                             <Image
                               src={f.url}
@@ -421,6 +422,9 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
                               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               preview={{ mask: <Text style={{ color: '#fff', fontSize: 10 }}>预览</Text> }}
                             />
+                            <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(255,255,255,0.7)', borderRadius: '50%', padding: 2, display: 'flex', zIndex: 10 }}>
+                              <DownloadOutlined style={{ fontSize: 12, color: '#333' }} />
+                            </a>
                           </div>
                         </Col>
                       ))}
@@ -460,14 +464,18 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
             overflow: 'hidden',
             border: '2px solid #818cf8',
             animation: 'fadeIn 0.3s ease-in',
+            position: 'relative',
           }}>
             <Image
               src={f.url}
               alt={displayName}
               style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
             />
-            <div style={{ padding: '4px 6px', fontSize: 11, color: '#666', textAlign: 'center' }}>
-              {displayName}
+            <div style={{ padding: '4px 6px', fontSize: 11, color: '#666', textAlign: 'center', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</span>
+              <a href={f.url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                <Button size="small" type="link" icon={<DownloadOutlined />} style={{ padding: '0 4px', height: '20px' }}>下载</Button>
+              </a>
             </div>
           </div>
         </Col>

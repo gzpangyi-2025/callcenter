@@ -176,7 +176,7 @@ remote_build_and_reload() {
 
   log "Starting backend on $host"
   run_ssh "$user" "$host" "$password" \
-    "if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 restart '$BACKEND_SERVICE' --update-env; else pm2 start dist/main.js --name '$BACKEND_SERVICE' --max-memory-restart 250M --node-args='--max-old-space-size=200' --cwd '$remote_dir/backend'; fi && pm2 save"
+    "if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 restart '$BACKEND_SERVICE' --update-env; else pm2 start dist/main.js --name '$BACKEND_SERVICE' --max-memory-restart 1G --node-args='--max-old-space-size=800' --cwd '$remote_dir/backend'; fi && pm2 save"
 
   log "Building frontend on $host"
   run_ssh "$user" "$host" "$password" \
