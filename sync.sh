@@ -20,11 +20,19 @@ RUN_NPM_INSTALL="${RUN_NPM_INSTALL:-1}"
 REMOTE_USER_1="root"
 REMOTE_HOST_1="192.168.50.51"
 REMOTE_PASSWORD_1=""
+REMOTE_DIR_1="/var/www/callcenter"
 
 # 101.43.59.206 (Shanghai production node)
 REMOTE_USER_2="root"
 REMOTE_HOST_2="101.43.59.206"
 REMOTE_PASSWORD_2=""
+REMOTE_DIR_2="/var/www/callcenter"
+
+# 172.31.0.22 (Company Server)
+REMOTE_USER_3="root"
+REMOTE_HOST_3="172.31.0.22"
+REMOTE_PASSWORD_3="Yxkj@300231"
+REMOTE_DIR_3="/data/callcenter"
 
 SSH_OPTS=(-o StrictHostKeyChecking=no)
 
@@ -137,18 +145,20 @@ sync_sources() {
   local user="$1"
   local host="$2"
   local password="$3"
+  local remote_dir="$4"
 
   run_rsync "frontend source" "$user" "$host" "$password" \
-    "$LOCAL_DIR/frontend/" "$REMOTE_DIR/frontend/" "${FRONTEND_EXCLUDES[@]}"
+    "$LOCAL_DIR/frontend/" "$remote_dir/frontend/" "${FRONTEND_EXCLUDES[@]}"
 
   run_rsync "backend source" "$user" "$host" "$password" \
-    "$LOCAL_DIR/backend/" "$REMOTE_DIR/backend/" "${BACKEND_EXCLUDES[@]}"
+    "$LOCAL_DIR/backend/" "$remote_dir/backend/" "${BACKEND_EXCLUDES[@]}"
 }
 
 remote_build_and_reload() {
   local user="$1"
   local host="$2"
   local password="$3"
+  local remote_dir="$4"
   local install_prefix=""
 
   if [[ "$RUN_NPM_INSTALL" == "1" ]]; then
@@ -162,15 +172,15 @@ remote_build_and_reload() {
 
   log "Building backend on $host"
   run_ssh "$user" "$host" "$password" \
-    "cd '$REMOTE_DIR/backend' && ${install_prefix}npm run build"
+    "cd '$remote_dir/backend' && ${install_prefix}npm run build"
 
   log "Starting backend on $host"
   run_ssh "$user" "$host" "$password" \
-    "if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 restart '$BACKEND_SERVICE' --update-env; else pm2 start dist/main.js --name '$BACKEND_SERVICE' --max-memory-restart 250M --node-args='--max-old-space-size=200' --cwd '$REMOTE_DIR/backend'; fi && pm2 save"
+    "if pm2 show '$BACKEND_SERVICE' > /dev/null 2>&1; then pm2 restart '$BACKEND_SERVICE' --update-env; else pm2 start dist/main.js --name '$BACKEND_SERVICE' --max-memory-restart 250M --node-args='--max-old-space-size=200' --cwd '$remote_dir/backend'; fi && pm2 save"
 
   log "Building frontend on $host"
   run_ssh "$user" "$host" "$password" \
-    "cd '$REMOTE_DIR/frontend' && ${install_prefix}npm run build"
+    "cd '$remote_dir/frontend' && ${install_prefix}npm run build"
 }
 
 deploy_node() {
@@ -178,15 +188,17 @@ deploy_node() {
   local user="$2"
   local host="$3"
   local password="$4"
+  local remote_dir="$5"
 
-  log "Deploying $label ($host)"
-  sync_sources "$user" "$host" "$password"
-  remote_build_and_reload "$user" "$host" "$password"
+  log "Deploying $label ($host) to $remote_dir"
+  sync_sources "$user" "$host" "$password" "$remote_dir"
+  remote_build_and_reload "$user" "$host" "$password" "$remote_dir"
 }
 
 ensure_git_synced
 run_tests
-deploy_node "local production node" "$REMOTE_USER_1" "$REMOTE_HOST_1" "$REMOTE_PASSWORD_1"
-deploy_node "Shanghai production node" "$REMOTE_USER_2" "$REMOTE_HOST_2" "$REMOTE_PASSWORD_2"
+deploy_node "local production node" "$REMOTE_USER_1" "$REMOTE_HOST_1" "$REMOTE_PASSWORD_1" "$REMOTE_DIR_1"
+deploy_node "Shanghai production node" "$REMOTE_USER_2" "$REMOTE_HOST_2" "$REMOTE_PASSWORD_2" "$REMOTE_DIR_2"
+deploy_node "Company Server" "$REMOTE_USER_3" "$REMOTE_HOST_3" "$REMOTE_PASSWORD_3" "$REMOTE_DIR_3"
 
 log "Deployment completed successfully."
