@@ -13,8 +13,8 @@ LOCAL_DIR="/Users/yipang/Documents/Antigravity/callcenter"
 REMOTE_DIR="/var/www/callcenter"
 BACKEND_SERVICE="callcenter-backend"
 
-# Set RUN_NPM_INSTALL=1 when package.json/package-lock.json changed.
-RUN_NPM_INSTALL="${RUN_NPM_INSTALL:-0}"
+# Set RUN_NPM_INSTALL=0 to skip dependency installation if explicitly desired.
+RUN_NPM_INSTALL="${RUN_NPM_INSTALL:-1}"
 
 # 192.168.50.51 (local production node)
 REMOTE_USER_1="root"
