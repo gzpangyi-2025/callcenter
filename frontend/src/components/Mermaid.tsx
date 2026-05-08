@@ -21,7 +21,7 @@ const sanitizeMermaidSvg = (svg: string): string => {
   }
 
   doc
-    .querySelectorAll('script, foreignObject, iframe, object, embed')
+    .querySelectorAll('script, iframe, object, embed')
     .forEach((node) => node.remove());
 
   doc.querySelectorAll('*').forEach((element) => {
