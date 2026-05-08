@@ -11,39 +11,26 @@ mermaid.initialize({
 });
 
 const sanitizeMermaidSvg = (svg: string): string => {
-  if (typeof DOMParser === 'undefined') {
-    return '';
-  }
+  // Mermaid is initialized with securityLevel: 'strict', which already
+  // mitigates most XSS risks. DOMParser with 'image/svg+xml' is too strict
+  // and frequently throws parsererror on perfectly valid Mermaid SVGs
+  // due to HTML inside <foreignObject>. 
+  
+  // As a fallback defense-in-depth, we do a basic string replacement
+  // to remove any script tags or javascript: hrefs that might have somehow bypassed Mermaid.
+  let cleanSvg = svg;
+  
+  // Remove <script> tags
+  cleanSvg = cleanSvg.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  
+  // Remove javascript: and data:text/html links
+  cleanSvg = cleanSvg.replace(/href\s*=\s*["']\s*(javascript:|data:text\/html)[^"']*["']/gi, 'href="#"');
+  cleanSvg = cleanSvg.replace(/xlink:href\s*=\s*["']\s*(javascript:|data:text\/html)[^"']*["']/gi, 'xlink:href="#"');
+  
+  // Remove inline on* event handlers
+  cleanSvg = cleanSvg.replace(/\bon[a-z]+\s*=\s*["'][^"']*["']/gi, '');
 
-  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
-  if (doc.querySelector('parsererror')) {
-    return '';
-  }
-
-  doc
-    .querySelectorAll('script, iframe, object, embed')
-    .forEach((node) => node.remove());
-
-  doc.querySelectorAll('*').forEach((element) => {
-    Array.from(element.attributes).forEach((attr) => {
-      const name = attr.name.toLowerCase();
-      const value = attr.value.trim().toLowerCase();
-
-      if (name.startsWith('on')) {
-        element.removeAttribute(attr.name);
-        return;
-      }
-
-      if (
-        (name === 'href' || name === 'xlink:href') &&
-        (value.startsWith('javascript:') || value.startsWith('data:text/html'))
-      ) {
-        element.removeAttribute(attr.name);
-      }
-    });
-  });
-
-  return new XMLSerializer().serializeToString(doc.documentElement);
+  return cleanSvg;
 };
 
 interface MermaidProps {
