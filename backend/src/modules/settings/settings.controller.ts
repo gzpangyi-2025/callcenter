@@ -47,7 +47,7 @@ export class SettingsController {
 
   /** 获取所有系统配置 */
   @Get()
-  @Permissions('settings:read', 'settings:manage') // Allow read or manage to view
+  @Permissions('settings:read', 'settings:edit') // Allow read or manage to view
   async getAll() {
     const data = await this.settingsService.getAll();
     return { code: 0, data };
@@ -55,7 +55,7 @@ export class SettingsController {
 
   /** 保存 AI 模型配置 */
   @Post('ai')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveAi(
     @Body()
     body: {
@@ -82,7 +82,7 @@ export class SettingsController {
 
   /** 保存企业信息 */
   @Post('biz')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveBiz(
     @Body()
     body: {
@@ -105,7 +105,7 @@ export class SettingsController {
 
   /** 上传 Logo */
   @Post('logo')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -134,7 +134,7 @@ export class SettingsController {
 
   /** 保存安全设置 */
   @Post('security')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveSecurity(@Body() body: { shareExpiration?: string }) {
     await this.settingsService.saveMany({
       'security.shareExpiration': body.shareExpiration || '7d',
@@ -186,7 +186,7 @@ export class SettingsController {
 
   /** 保存 WebRTC 设置 */
   @Post('webrtc')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveWebRtc(
     @Body()
     body: {
@@ -226,7 +226,7 @@ export class SettingsController {
 
   /** 保存存储配置 */
   @Post('storage')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveStorage(
     @Body()
     body: {
@@ -296,7 +296,7 @@ export class SettingsController {
 
   /** 保存 AI 协作配置 */
   @Post('codex')
-  @Permissions('settings:manage')
+  @Permissions('settings:edit')
   async saveCodexConfig(
     @Body() body: {
       concurrency?: number;

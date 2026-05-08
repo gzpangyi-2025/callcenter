@@ -61,6 +61,7 @@ export class RoleInitService implements OnModuleInit {
         action: 'export_history',
         description: '直接导出聊天记录',
       },
+      { resource: 'ai', action: 'access', description: 'AI协作使用权限' },
       { resource: 'admin', action: 'access', description: '访问后台面板' },
       { resource: 'report', action: 'read', description: '查看数据报表' },
       { resource: 'settings', action: 'read', description: '查看系统设置' },
