@@ -161,23 +161,24 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
           })));
         }
 
-        // Load persisted preview files with presigned URLs
+        // Load all generated files (not just filtered previews) with presigned URLs
         try {
-          const previewRes = await aiAPI.getTaskPreviews(taskId);
-          if (!cancelled && previewRes?.data?.length) {
-            setFiles(previewRes.data.map((f: any) => ({
+          const fileRes = await aiAPI.getTaskFiles(taskId);
+          const filesData = Array.isArray(fileRes?.data) ? fileRes.data : Array.isArray(fileRes?.data?.data) ? fileRes.data.data : [];
+          if (!cancelled && filesData.length) {
+            setFiles(filesData.map((f: any) => ({
               taskId,
               eventType: 'file_ready' as const,
-              name: f.name,
+              name: f.name || f.key || '',
               category: f.category || 'process',
-              size: f.size,
+              size: f.size || 0,
               url: f.url,
-              mimeType: f.mimeType,
+              mimeType: f.mimeType || 'application/octet-stream',
               timestamp: Date.now(),
             })));
           }
         } catch {
-          // previews endpoint may not have data — non-fatal
+          // files endpoint may not have data — non-fatal
         }
 
         if (!cancelled) {
