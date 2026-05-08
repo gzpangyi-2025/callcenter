@@ -71,7 +71,7 @@ describe('RoleInitService', () => {
     await service.onModuleInit();
 
     expect(mockRoleRepo.save).toHaveBeenCalledTimes(5);
-    expect(mockPermRepo.save).toHaveBeenCalledTimes(19);
+    expect(mockPermRepo.save).toHaveBeenCalledTimes(20);
     expect(mockUserRepo.save).toHaveBeenCalledTimes(1);
     expect(mockUserRepo.save).toHaveBeenCalledWith(expect.objectContaining({ username: 'admin', password: 'hashedPassword' }));
   });
