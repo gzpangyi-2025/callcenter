@@ -32,7 +32,7 @@ export class UsersController {
   @Put('me')
   async updateMe(
     @Request() req: any,
-    @Body() body: { realName?: string; email?: string; phone?: string },
+    @Body() body: { employeeId?: string; department?: string; position?: string; realName?: string; email?: string; phone?: string },
   ) {
     const userId = req.user.sub || req.user.id;
     const data = await this.usersService.updateUser(userId, body);
@@ -80,6 +80,9 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body()
     body: {
+      employeeId?: string;
+      department?: string;
+      position?: string;
       displayName?: string;
       realName?: string;
       email?: string;

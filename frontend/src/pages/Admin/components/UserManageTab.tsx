@@ -97,6 +97,9 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
   const openEditModal = (user: any) => {
     setEditingUser(user);
     editForm.setFieldsValue({
+      employeeId: user.employeeId || '',
+      department: user.department || '',
+      position: user.position || '',
       realName: user.realName || '',
       email: user.email || '',
       phone: user.phone || '',
@@ -155,6 +158,9 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
     { title: 'ID', dataIndex: 'id', width: 60, fixed: isMobile ? undefined : 'left' as const },
     { title: '用户名', dataIndex: 'username', width: 120, ellipsis: true },
     { title: '中文姓名', dataIndex: 'realName', width: 120, render: (text: string, record: any) => `${text || '未知'} (${record.username})` },
+    { title: '工号', dataIndex: 'employeeId', width: 100, ellipsis: true },
+    { title: '部门', dataIndex: 'department', width: 120, ellipsis: true },
+    { title: '职位', dataIndex: 'position', width: 100, ellipsis: true },
     {
       title: '状态', dataIndex: 'isActive', width: 70,
       render: (isActive: boolean) => (
@@ -289,6 +295,15 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
         destroyOnClose
       >
         <Form form={editForm} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item name="employeeId" label="工号">
+            <Input placeholder="输入工号" />
+          </Form.Item>
+          <Form.Item name="department" label="部门">
+            <Input placeholder="输入所属部门" />
+          </Form.Item>
+          <Form.Item name="position" label="职位">
+            <Input placeholder="输入职位" />
+          </Form.Item>
           <Form.Item name="realName" label="中文姓名">
             <Input placeholder="输入中文姓名" />
           </Form.Item>

@@ -262,9 +262,18 @@ const ProfilePage: React.FC = () => {
       `}</style>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>
-          个人主页 · {user?.realName || user?.displayName || user?.username}
-        </h2>
+        <div>
+          <h2 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>
+            个人主页 · {user?.realName || user?.displayName || user?.username}
+          </h2>
+          {(user?.employeeId || user?.department || user?.position) && (
+            <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {user.employeeId && <Tag color="blue" bordered={false}>工号: {user.employeeId}</Tag>}
+              {user.department && <Tag color="cyan" bordered={false}>部门: {user.department}</Tag>}
+              {user.position && <Tag color="geekblue" bordered={false}>职位: {user.position}</Tag>}
+            </div>
+          )}
+        </div>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
           新建工单
         </Button>

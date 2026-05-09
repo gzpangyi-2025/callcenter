@@ -16,6 +16,9 @@ export interface Permission {
 export interface User {
   id: number;
   username: string;
+  employeeId?: string;
+  department?: string;
+  position?: string;
   displayName?: string;
   realName?: string;
   email?: string;
@@ -31,6 +34,9 @@ export interface UserSearchParam {
 }
 
 export interface UpdateUserInfoParam {
+  employeeId?: string;
+  department?: string;
+  position?: string;
   displayName?: string;
   realName?: string;
   email?: string;
