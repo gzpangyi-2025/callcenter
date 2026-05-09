@@ -3,17 +3,47 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket, TicketStatus, TicketType } from '../../entities/ticket.entity';
 import { User } from '../../entities/user.entity';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class PushTicketDto {
+  @IsString()
+  @IsNotEmpty()
   title: string;
+
+  @IsString()
+  @IsNotEmpty()
   description: string;
+
+  @IsString()
+  @IsNotEmpty()
   serviceNo: string;
+
+  @IsString()
+  @IsNotEmpty()
   customerName: string;
+
+  @IsString()
+  @IsNotEmpty()
   creatorEmployeeId: string;
+
+  @IsString()
+  @IsNotEmpty()
   assigneeEmployeeId: string;
+
+  @IsString()
+  @IsOptional()
   type?: string;
+
+  @IsString()
+  @IsOptional()
   category1?: string;
+
+  @IsString()
+  @IsOptional()
   category2?: string;
+
+  @IsString()
+  @IsOptional()
   category3?: string;
 }
 
