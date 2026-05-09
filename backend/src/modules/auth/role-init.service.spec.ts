@@ -5,15 +5,17 @@ import { Role } from '../../entities/role.entity';
 import { Permission } from '../../entities/permission.entity';
 import { User } from '../../entities/user.entity';
 
+type MockRepository = Record<string, jest.Mock>;
+
 jest.mock('bcryptjs', () => ({
   hash: jest.fn().mockResolvedValue('hashedPassword'),
 }));
 
 describe('RoleInitService', () => {
   let service: RoleInitService;
-  let mockRoleRepo: any;
-  let mockPermRepo: any;
-  let mockUserRepo: any;
+  let mockRoleRepo: MockRepository;
+  let mockPermRepo: MockRepository;
+  let mockUserRepo: MockRepository;
 
   beforeEach(async () => {
     mockRoleRepo = {
@@ -73,7 +75,12 @@ describe('RoleInitService', () => {
     expect(mockRoleRepo.save).toHaveBeenCalledTimes(7);
     expect(mockPermRepo.save).toHaveBeenCalledTimes(20);
     expect(mockUserRepo.save).toHaveBeenCalledTimes(1);
-    expect(mockUserRepo.save).toHaveBeenCalledWith(expect.objectContaining({ username: 'admin', password: 'hashedPassword' }));
+    expect(mockUserRepo.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        username: 'admin',
+        password: 'hashedPassword',
+      }),
+    );
   });
 
   it('should skip if already initialized', async () => {

@@ -11,8 +11,14 @@ jest.mock('docx', () => ({
   Paragraph: jest.fn().mockImplementation(() => ({})),
   TextRun: jest.fn().mockImplementation(() => ({})),
   ImageRun: jest.fn().mockImplementation(() => ({})),
-  Packer: { toBuffer: jest.fn().mockResolvedValue(Buffer.from('docx-content')) },
-  HeadingLevel: { HEADING_1: 'HEADING_1', HEADING_2: 'HEADING_2', TITLE: 'TITLE' },
+  Packer: {
+    toBuffer: jest.fn().mockResolvedValue(Buffer.from('docx-content')),
+  },
+  HeadingLevel: {
+    HEADING_1: 'HEADING_1',
+    HEADING_2: 'HEADING_2',
+    TITLE: 'TITLE',
+  },
   AlignmentType: { LEFT: 'LEFT', RIGHT: 'RIGHT', CENTER: 'CENTER' },
   ShadingType: { CLEAR: 'CLEAR' },
   Table: jest.fn().mockImplementation(() => ({})),
@@ -22,7 +28,9 @@ jest.mock('docx', () => ({
   BorderStyle: { NONE: 'NONE', SINGLE: 'SINGLE' },
 }));
 
-jest.mock('image-size', () => jest.fn().mockReturnValue({ width: 800, height: 600, type: 'png' }));
+jest.mock('image-size', () =>
+  jest.fn().mockReturnValue({ width: 800, height: 600, type: 'png' }),
+);
 
 jest.mock('archiver', () => {
   const mockArchive = {
@@ -49,7 +57,9 @@ describe('TicketsExportService', () => {
     assigneeId: 20,
     creator: { realName: '张三', displayName: 'zhangsan', username: 'zs' },
     assignee: { realName: '李四', displayName: 'lisi', username: 'ls' },
-    participants: [{ id: 30, realName: '王五', displayName: 'wangwu', username: 'ww' }],
+    participants: [
+      { id: 30, realName: '王五', displayName: 'wangwu', username: 'ww' },
+    ],
     customerName: 'ACME',
     category1: '硬件',
     category2: '服务器',
@@ -59,23 +69,40 @@ describe('TicketsExportService', () => {
     closedAt: new Date('2026-05-02'),
     messages: [
       {
-        id: 1, senderId: 10, content: '你好，我遇到了问题',
+        id: 1,
+        senderId: 10,
+        content: '你好，我遇到了问题',
         createdAt: new Date('2026-05-01T10:00:00'),
-        isRecalled: false, type: 'text',
-        sender: { realName: '张三', displayName: 'zhangsan', role: { name: 'user' } },
+        isRecalled: false,
+        type: 'text',
+        sender: {
+          realName: '张三',
+          displayName: 'zhangsan',
+          role: { name: 'user' },
+        },
         senderName: '张三',
       },
       {
-        id: 2, senderId: 20, content: '我来帮你看看',
+        id: 2,
+        senderId: 20,
+        content: '我来帮你看看',
         createdAt: new Date('2026-05-01T10:05:00'),
-        isRecalled: false, type: 'text',
-        sender: { realName: '李四', displayName: 'lisi', role: { name: 'user' } },
+        isRecalled: false,
+        type: 'text',
+        sender: {
+          realName: '李四',
+          displayName: 'lisi',
+          role: { name: 'user' },
+        },
         senderName: '李四',
       },
       {
-        id: 3, senderId: 10, content: '[撤回的消息]',
+        id: 3,
+        senderId: 10,
+        content: '[撤回的消息]',
         createdAt: new Date('2026-05-01T10:10:00'),
-        isRecalled: true, type: 'text',
+        isRecalled: true,
+        type: 'text',
         sender: { realName: '张三', displayName: 'zhangsan' },
         senderName: '张三',
       },
@@ -109,20 +136,27 @@ describe('TicketsExportService', () => {
     it('should throw NotFoundException if ticket not found', async () => {
       ticketRepo.findOne.mockResolvedValue(null);
       const res = { setHeader: jest.fn(), end: jest.fn() };
-      await expect(service.exportChatZip(999, 10, 'user', res)).rejects.toThrow(NotFoundException);
+      await expect(service.exportChatZip(999, 10, 'user', res)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not authorized', async () => {
       ticketRepo.findOne.mockResolvedValue(mockTicket);
       const res = { setHeader: jest.fn(), end: jest.fn() };
-      await expect(service.exportChatZip(1, 999, 'user', res)).rejects.toThrow(ForbiddenException);
+      await expect(service.exportChatZip(1, 999, 'user', res)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should allow creator to export', async () => {
       ticketRepo.findOne.mockResolvedValue(mockTicket);
       const res = { setHeader: jest.fn(), end: jest.fn() };
       await service.exportChatZip(1, 10, 'user', res); // creator
-      expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/zip');
+      expect(res.setHeader).toHaveBeenCalledWith(
+        'Content-Type',
+        'application/zip',
+      );
     });
 
     it('should allow admin to export', async () => {
@@ -153,13 +187,17 @@ describe('TicketsExportService', () => {
     it('should throw NotFoundException if ticket not found', async () => {
       ticketRepo.findOne.mockResolvedValue(null);
       const res = { setHeader: jest.fn(), end: jest.fn() };
-      await expect(service.exportReport(999, 10, 'user', res)).rejects.toThrow(NotFoundException);
+      await expect(service.exportReport(999, 10, 'user', res)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException for unauthorized user', async () => {
       ticketRepo.findOne.mockResolvedValue(mockTicket);
       const res = { setHeader: jest.fn(), end: jest.fn() };
-      await expect(service.exportReport(1, 999, 'user', res)).rejects.toThrow(ForbiddenException);
+      await expect(service.exportReport(1, 999, 'user', res)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should generate DOCX report for authorized creator', async () => {
@@ -194,11 +232,18 @@ describe('TicketsExportService', () => {
     it('should handle image messages with /api/files/static/', async () => {
       const ticket = {
         ...mockTicket,
-        messages: [{
-          id: 4, senderId: 10, content: '![img](/api/files/static/test.png)',
-          type: 'image', createdAt: new Date(), isRecalled: false,
-          sender: { realName: '张三', role: { name: 'user' } }, senderName: '张三',
-        }],
+        messages: [
+          {
+            id: 4,
+            senderId: 10,
+            content: '![img](/api/files/static/test.png)',
+            type: 'image',
+            createdAt: new Date(),
+            isRecalled: false,
+            sender: { realName: '张三', role: { name: 'user' } },
+            senderName: '张三',
+          },
+        ],
       };
       ticketRepo.findOne.mockResolvedValue(ticket);
       const res = { setHeader: jest.fn(), end: jest.fn() };

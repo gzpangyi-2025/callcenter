@@ -5,12 +5,24 @@ import { AuditService } from '../audit/audit.service';
 import { HttpStatus } from '@nestjs/common';
 import * as express from 'express';
 
+type MockService = Record<string, jest.Mock>;
+type MockResponse = express.Response & {
+  cookie: jest.Mock;
+  clearCookie: jest.Mock;
+  status: jest.Mock;
+  json: jest.Mock;
+};
+type MockRequest = express.Request & {
+  cookies?: Record<string, string>;
+  user?: unknown;
+};
+
 describe('AuthController', () => {
   let controller: AuthController;
-  let mockAuthService: any;
-  let mockAuditService: any;
-  let mockRes: Partial<express.Response>;
-  let mockReq: Partial<express.Request>;
+  let mockAuthService: MockService;
+  let mockAuditService: MockService;
+  let mockRes: MockResponse;
+  let mockReq: MockRequest;
 
   beforeEach(async () => {
     mockAuthService = {
@@ -29,14 +41,14 @@ describe('AuthController', () => {
       cookie: jest.fn(),
       clearCookie: jest.fn(),
       status: jest.fn().mockReturnThis(),
-      json: jest.fn((data) => data as any),
-    };
+      json: jest.fn((data) => data),
+    } as unknown as MockResponse;
 
     mockReq = {
       ip: '127.0.0.1',
       headers: {},
       secure: false,
-    };
+    } as MockRequest;
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -59,14 +71,26 @@ describe('AuthController', () => {
 
   describe('register', () => {
     it('should register a user', async () => {
-      const registerDto = { username: 'test', password: 'password', role: 'user' };
-      const resultData = { accessToken: 'token', refreshToken: 'refresh', user: { id: 1 } };
+      const registerDto = {
+        username: 'test',
+        password: 'password',
+        role: 'user',
+      };
+      const resultData = {
+        accessToken: 'token',
+        refreshToken: 'refresh',
+        user: { id: 1 },
+      };
       mockAuthService.register.mockResolvedValue(resultData);
 
-      const result = await controller.register(registerDto, mockReq as any, mockRes as any);
+      const result = await controller.register(registerDto, mockReq, mockRes);
 
       expect(mockAuthService.register).toHaveBeenCalledWith(registerDto);
-      expect(mockRes.cookie).toHaveBeenCalledWith('refreshToken', 'refresh', expect.any(Object));
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refresh',
+        expect.any(Object),
+      );
       expect(result).toEqual({
         code: 0,
         message: '注册成功',
@@ -78,10 +102,14 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should login a user and log audit', async () => {
       const loginDto = { username: 'test', password: 'password' };
-      const resultData = { accessToken: 'token', refreshToken: 'refresh', user: { id: 1, username: 'test' } };
+      const resultData = {
+        accessToken: 'token',
+        refreshToken: 'refresh',
+        user: { id: 1, username: 'test' },
+      };
       mockAuthService.login.mockResolvedValue(resultData);
 
-      const result = await controller.login(loginDto, mockReq as any, mockRes as any);
+      const result = await controller.login(loginDto, mockReq, mockRes);
 
       expect(mockAuthService.login).toHaveBeenCalledWith(loginDto);
       expect(mockAuditService.log).toHaveBeenCalled();
@@ -97,30 +125,45 @@ describe('AuthController', () => {
       const loginDto = { username: 'test', password: 'password' };
       mockAuthService.login.mockRejectedValue(new Error('Invalid password'));
 
-      await expect(controller.login(loginDto, mockReq as any, mockRes as any)).rejects.toThrow('Invalid password');
-      expect(mockAuditService.log).toHaveBeenCalledWith(expect.objectContaining({
-        action: 'login_failed',
-      }));
+      await expect(
+        controller.login(loginDto, mockReq, mockRes),
+      ).rejects.toThrow('Invalid password');
+      expect(mockAuditService.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: 'login_failed',
+        }),
+      );
     });
   });
 
   describe('refresh', () => {
     it('should return 401 if no refresh token', async () => {
-      const reqWithoutCookie = { cookies: {} } as any;
-      const result = await controller.refresh(reqWithoutCookie, mockRes as any);
+      const reqWithoutCookie = { cookies: {} } as MockRequest;
+      const result = await controller.refresh(reqWithoutCookie, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
       expect(result).toEqual({ code: -1, message: '请重新登录' });
     });
 
     it('should refresh token successfully', async () => {
-      const reqWithCookie = { cookies: { refreshToken: 'oldRefresh' }, secure: false } as any;
-      const resultData = { accessToken: 'newToken', refreshToken: 'newRefresh', user: { id: 1 } };
+      const reqWithCookie = {
+        cookies: { refreshToken: 'oldRefresh' },
+        secure: false,
+      } as MockRequest;
+      const resultData = {
+        accessToken: 'newToken',
+        refreshToken: 'newRefresh',
+        user: { id: 1 },
+      };
       mockAuthService.refreshToken.mockResolvedValue(resultData);
 
-      const result = await controller.refresh(reqWithCookie, mockRes as any);
+      const result = await controller.refresh(reqWithCookie, mockRes);
 
       expect(mockAuthService.refreshToken).toHaveBeenCalledWith('oldRefresh');
-      expect(mockRes.cookie).toHaveBeenCalledWith('refreshToken', 'newRefresh', expect.any(Object));
+      expect(mockRes.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'newRefresh',
+        expect.any(Object),
+      );
       expect(result).toEqual({
         code: 0,
         message: '刷新成功',
@@ -131,15 +174,20 @@ describe('AuthController', () => {
 
   describe('logout', () => {
     it('should clear cookie and return success', () => {
-      const result = controller.logout(mockRes as any);
-      expect(mockRes.clearCookie).toHaveBeenCalledWith('refreshToken', expect.any(Object));
+      const result = controller.logout(mockRes);
+      expect(mockRes.clearCookie).toHaveBeenCalledWith(
+        'refreshToken',
+        expect.any(Object),
+      );
       expect(result).toEqual({ code: 0, message: '退出成功' });
     });
   });
 
   describe('getProfile', () => {
     it('should return user profile', () => {
-      const reqWithUser = { user: { id: 1, username: 'test' } } as any;
+      const reqWithUser = {
+        user: { id: 1, username: 'test' },
+      } as MockRequest;
       const result = controller.getProfile(reqWithUser);
       expect(result).toEqual({ code: 0, data: { id: 1, username: 'test' } });
     });
@@ -147,7 +195,10 @@ describe('AuthController', () => {
 
   describe('externalLogin', () => {
     it('should return error if missing params', async () => {
-      const result = await controller.externalLogin({ ticketToken: '', nickname: '' }, mockReq as any);
+      const result = await controller.externalLogin(
+        { ticketToken: '', nickname: '' },
+        mockReq,
+      );
       expect(result).toEqual({ code: -1, message: '缺少 token 或昵称参数' });
     });
 
@@ -155,17 +206,25 @@ describe('AuthController', () => {
       const data = { user: { ticketId: 123 } };
       mockAuthService.externalLogin.mockResolvedValue(data);
 
-      const result = await controller.externalLogin({ ticketToken: 'abc', nickname: 'Guest' }, mockReq as any);
+      const result = await controller.externalLogin(
+        { ticketToken: 'abc', nickname: 'Guest' },
+        mockReq,
+      );
 
-      expect(mockAuthService.externalLogin).toHaveBeenCalledWith('abc', 'Guest');
-      expect(mockAuditService.log).toHaveBeenCalledWith(expect.objectContaining({ action: 'external_login' }));
+      expect(mockAuthService.externalLogin).toHaveBeenCalledWith(
+        'abc',
+        'Guest',
+      );
+      expect(mockAuditService.log).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'external_login' }),
+      );
       expect(result).toEqual({ code: 0, message: '临时接入成功', data });
     });
   });
 
   describe('bbsExternalLogin', () => {
     it('should return error if missing token', async () => {
-      const result = await controller.bbsExternalLogin({ token: '' }, mockReq as any);
+      const result = await controller.bbsExternalLogin({ token: '' }, mockReq);
       expect(result).toEqual({ code: -1, message: '缺少 token 参数' });
     });
 
@@ -173,10 +232,15 @@ describe('AuthController', () => {
       const data = { user: { bbsId: 456 } };
       mockAuthService.bbsExternalLogin.mockResolvedValue(data);
 
-      const result = await controller.bbsExternalLogin({ token: 'xyz' }, mockReq as any);
+      const result = await controller.bbsExternalLogin(
+        { token: 'xyz' },
+        mockReq,
+      );
 
       expect(mockAuthService.bbsExternalLogin).toHaveBeenCalledWith('xyz');
-      expect(mockAuditService.log).toHaveBeenCalledWith(expect.objectContaining({ action: 'external_login' }));
+      expect(mockAuditService.log).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'external_login' }),
+      );
       expect(result).toEqual({ code: 0, message: '临时接入 BBS 成功', data });
     });
   });

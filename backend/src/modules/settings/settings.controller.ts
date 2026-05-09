@@ -252,7 +252,7 @@ export class SettingsController {
       'storage.s3.bucket': body.s3Bucket || '',
       'storage.s3.region': body.s3Region || '',
     };
-    
+
     // 只有非空时才覆盖 SecretKey（前端传空字符串表示不修改密码）
     if (body.cosSecretKey && body.cosSecretKey.trim() !== '') {
       toSave['storage.cos.secretKey'] = body.cosSecretKey;
@@ -282,7 +282,9 @@ export class SettingsController {
       return { code: 0, data: res.data?.data ?? res.data };
     } catch (err: any) {
       // 回退到本地 DB 值
-      this.logger.warn(`Worker unreachable, falling back to DB: ${err.message}`);
+      this.logger.warn(
+        `Worker unreachable, falling back to DB: ${err.message}`,
+      );
       const d = await this.settingsService.getAll();
       return {
         code: 0,
@@ -298,7 +300,8 @@ export class SettingsController {
   @Post('codex')
   @Permissions('settings:edit')
   async saveCodexConfig(
-    @Body() body: {
+    @Body()
+    body: {
       concurrency?: number;
       maxResumeAttempts?: number;
       cosSecretId?: string;
@@ -319,7 +322,9 @@ export class SettingsController {
     // Save to DB
     await this.settingsService.saveMany({
       'codex.concurrency': String(concurrency),
-      ...(maxResumeAttempts !== undefined ? { 'codex.maxResumeAttempts': String(maxResumeAttempts) } : {}),
+      ...(maxResumeAttempts !== undefined
+        ? { 'codex.maxResumeAttempts': String(maxResumeAttempts) }
+        : {}),
     });
 
     // Push config to Worker
@@ -333,7 +338,7 @@ export class SettingsController {
     try {
       await axios.post(
         `${workerUrl}/api/config`,
-        { 
+        {
           concurrency,
           maxResumeAttempts,
           cosSecretId: body.cosSecretId,
@@ -345,7 +350,7 @@ export class SettingsController {
           s3AccessKey: body.s3AccessKey,
           s3SecretKey: body.s3SecretKey,
           s3Bucket: body.s3Bucket,
-          s3Region: body.s3Region
+          s3Region: body.s3Region,
         },
         {
           timeout: 5000,
@@ -353,7 +358,9 @@ export class SettingsController {
         },
       );
       workerUpdated = true;
-      this.logger.log(`Pushed concurrency=${concurrency}, maxResumeAttempts=${maxResumeAttempts} to Worker`);
+      this.logger.log(
+        `Pushed concurrency=${concurrency}, maxResumeAttempts=${maxResumeAttempts} to Worker`,
+      );
     } catch (err: any) {
       this.logger.warn(`Failed to push config to Worker: ${err.message}`);
     }

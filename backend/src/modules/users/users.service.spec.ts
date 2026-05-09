@@ -7,6 +7,20 @@ import { UsersService } from './users.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
+type MockRepository = Record<string, jest.Mock>;
+type MockGateway = {
+  server: {
+    emit: jest.Mock;
+  };
+};
+type MockQueryBuilder = {
+  select: jest.Mock;
+  where: jest.Mock;
+  andWhere: jest.Mock;
+  take: jest.Mock;
+  getMany: jest.Mock;
+};
+
 jest.mock('bcryptjs', () => ({
   hash: jest.fn().mockResolvedValue('hashedPassword'),
   compare: jest.fn().mockResolvedValue(true),
@@ -14,9 +28,9 @@ jest.mock('bcryptjs', () => ({
 
 describe('UsersService', () => {
   let service: UsersService;
-  let mockUserRepository: any;
-  let mockRoleRepository: any;
-  let mockChatGateway: any;
+  let mockUserRepository: MockRepository;
+  let mockRoleRepository: MockRepository;
+  let mockChatGateway: MockGateway;
 
   beforeEach(async () => {
     mockUserRepository = {
@@ -100,7 +114,7 @@ describe('UsersService', () => {
 
     it('should return matching users', async () => {
       const users = [{ id: 1, username: 'test' }];
-      const queryBuilder: any = {
+      const queryBuilder: MockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
@@ -111,10 +125,12 @@ describe('UsersService', () => {
 
       const result = await service.search('test');
       expect(result).toEqual(users);
-      expect(mockUserRepository.createQueryBuilder).toHaveBeenCalledWith('user');
+      expect(mockUserRepository.createQueryBuilder).toHaveBeenCalledWith(
+        'user',
+      );
       expect(queryBuilder.andWhere).toHaveBeenCalledWith(
         '(user.username LIKE :q OR user.realName LIKE :q OR user.displayName LIKE :q)',
-        { q: '%test%' }
+        { q: '%test%' },
       );
     });
   });
@@ -136,33 +152,59 @@ describe('UsersService', () => {
       const role = { id: 2, name: 'Admin' };
       mockUserRepository.findOne.mockResolvedValue(user);
       mockRoleRepository.findOne.mockResolvedValue(role);
-      mockUserRepository.save.mockResolvedValue({ ...user, role, roleId: role.id });
+      mockUserRepository.save.mockResolvedValue({
+        ...user,
+        role,
+        roleId: role.id,
+      });
 
       const result = await service.updateRole(1, 2);
       expect(result.roleId).toBe(2);
-      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('permissionsUpdated', {
-        type: 'roleChange',
-        userId: 1,
-        roleId: 2,
-        roleName: 'Admin',
-      });
+      expect(mockChatGateway.server.emit).toHaveBeenCalledWith(
+        'permissionsUpdated',
+        {
+          type: 'roleChange',
+          userId: 1,
+          roleId: 2,
+          roleName: 'Admin',
+        },
+      );
     });
   });
 
   describe('updateUser', () => {
     it('should throw NotFoundException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
-      await expect(service.updateUser(1, {})).rejects.toThrow(NotFoundException);
+      await expect(service.updateUser(1, {})).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should update user fields', async () => {
       const user = { id: 1, displayName: 'Old' };
       mockUserRepository.findOne.mockResolvedValue(user);
-      mockUserRepository.save.mockResolvedValue({ ...user, displayName: 'New', realName: 'R', email: 'E', phone: 'P' });
+      mockUserRepository.save.mockResolvedValue({
+        ...user,
+        displayName: 'New',
+        realName: 'R',
+        email: 'E',
+        phone: 'P',
+      });
 
-      const result = await service.updateUser(1, { displayName: 'New', realName: 'R', email: 'E', phone: 'P' });
+      const result = await service.updateUser(1, {
+        displayName: 'New',
+        realName: 'R',
+        email: 'E',
+        phone: 'P',
+      });
       expect(result.displayName).toBe('New');
-      expect(mockUserRepository.save).toHaveBeenCalledWith({ id: 1, displayName: 'New', realName: 'R', email: 'E', phone: 'P' });
+      expect(mockUserRepository.save).toHaveBeenCalledWith({
+        id: 1,
+        displayName: 'New',
+        realName: 'R',
+        email: 'E',
+        phone: 'P',
+      });
     });
   });
 
@@ -175,7 +217,7 @@ describe('UsersService', () => {
     it('should reset to default password', async () => {
       const user = { id: 1, password: 'old' };
       mockUserRepository.findOne.mockResolvedValue(user);
-      
+
       const result = await service.resetPassword(1);
       expect(result).toEqual({ success: true, newPassword: '123456' });
       expect(user.password).toBe('hashedPassword');
@@ -185,7 +227,7 @@ describe('UsersService', () => {
     it('should reset to provided password', async () => {
       const user = { id: 1, password: 'old' };
       mockUserRepository.findOne.mockResolvedValue(user);
-      
+
       const result = await service.resetPassword(1, 'custom');
       expect(result).toEqual({ success: true, newPassword: 'custom' });
     });
@@ -194,7 +236,9 @@ describe('UsersService', () => {
   describe('changePassword', () => {
     it('should throw NotFoundException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
-      await expect(service.changePassword(1, 'old', 'new')).rejects.toThrow(NotFoundException);
+      await expect(service.changePassword(1, 'old', 'new')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw BadRequestException if old password is wrong', async () => {
@@ -202,7 +246,9 @@ describe('UsersService', () => {
       mockUserRepository.findOne.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
 
-      await expect(service.changePassword(1, 'wrong', 'new')).rejects.toThrow(BadRequestException);
+      await expect(service.changePassword(1, 'wrong', 'new')).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should change password successfully', async () => {

@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { Response } from 'express';
 import * as path from 'path';
+import { Readable } from 'stream';
 import { FilesService } from '../files/files.service';
 
 export interface CreateAiTaskDto {
@@ -20,6 +21,58 @@ export interface CreateAiTaskDto {
   reviewMode?: 'review' | 'auto';
   parentTaskId?: string;
 }
+
+interface WorkerFile {
+  name: string;
+  url: string;
+  size: number;
+}
+
+interface WorkerFileListResponse {
+  data?: unknown;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isWorkerFile = (value: unknown): value is WorkerFile =>
+  isRecord(value) &&
+  typeof value.name === 'string' &&
+  typeof value.url === 'string' &&
+  typeof value.size === 'number';
+
+const normalizeWorkerFiles = (payload: unknown): WorkerFile[] => {
+  const body =
+    isRecord(payload) && 'data' in payload
+      ? (payload as WorkerFileListResponse).data
+      : payload;
+  return Array.isArray(body) ? body.filter(isWorkerFile) : [];
+};
+
+const errorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err);
+
+const errorResponse = (err: unknown): Record<string, unknown> | undefined => {
+  if (axios.isAxiosError<unknown>(err)) {
+    return isRecord(err.response) ? err.response : undefined;
+  }
+  if (!isRecord(err) || !isRecord(err.response)) return undefined;
+  return err.response;
+};
+
+const errorStatus = (err: unknown): number | undefined => {
+  const response = errorResponse(err);
+  return typeof response?.status === 'number' ? response.status : undefined;
+};
+
+const workerErrorMessage = (err: unknown): string | undefined => {
+  const response = errorResponse(err);
+  const data = response?.data;
+  if (isRecord(data) && typeof data.message === 'string') {
+    return data.message;
+  }
+  return undefined;
+};
 
 @Injectable()
 export class AiService {
@@ -52,9 +105,11 @@ export class AiService {
   async getUploadUrl(taskId: string, filename: string) {
     try {
       const key = `tasks/${taskId}/attachments/${filename}`;
-      const res = await this.worker.get('/api/tasks/upload-url', { params: { key } });
+      const res = await this.worker.get<unknown>('/api/tasks/upload-url', {
+        params: { key },
+      });
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'getUploadUrl');
     }
   }
@@ -64,22 +119,29 @@ export class AiService {
     try {
       // With direct presigned PUT uploads, attachments are already uploaded to the worker's COS bucket.
       // So their URLs are absolute and we don't need to resolve relative paths or extract cosKeys for callcenter bucket deletion.
-      const res = await this.worker.post('/api/tasks', {
+      const res = await this.worker.post<unknown>('/api/tasks', {
         ...dto,
         userId,
       });
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'createTask');
     }
   }
 
   /** List tasks (optionally filtered by userId) */
-  async listTasks(query: { page?: number; limit?: number; status?: string; userId?: number }) {
+  async listTasks(query: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    userId?: number;
+  }) {
     try {
-      const res = await this.worker.get('/api/tasks', { params: query });
+      const res = await this.worker.get<unknown>('/api/tasks', {
+        params: query,
+      });
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'listTasks');
     }
   }
@@ -87,10 +149,10 @@ export class AiService {
   /** Get a single task by ID */
   async getTask(taskId: string) {
     try {
-      const res = await this.worker.get(`/api/tasks/${taskId}`);
+      const res = await this.worker.get<unknown>(`/api/tasks/${taskId}`);
       return res.data;
-    } catch (err: any) {
-      if (err.response?.status === 404) {
+    } catch (err: unknown) {
+      if (errorStatus(err) === 404) {
         throw new NotFoundException(`Task ${taskId} not found`);
       }
       this.handleWorkerError(err, 'getTask');
@@ -100,9 +162,11 @@ export class AiService {
   /** Cancel a task */
   async cancelTask(taskId: string) {
     try {
-      const res = await this.worker.post(`/api/tasks/${taskId}/cancel`);
+      const res = await this.worker.post<unknown>(
+        `/api/tasks/${taskId}/cancel`,
+      );
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'cancelTask');
     }
   }
@@ -110,9 +174,14 @@ export class AiService {
   /** Resume a paused task with input */
   async resumeTask(taskId: string, input: string) {
     try {
-      const res = await this.worker.post(`/api/tasks/${taskId}/resume`, { input });
+      const res = await this.worker.post<unknown>(
+        `/api/tasks/${taskId}/resume`,
+        {
+          input,
+        },
+      );
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'resumeTask');
     }
   }
@@ -120,9 +189,9 @@ export class AiService {
   /** Get download URLs for task output files */
   async getTaskFiles(taskId: string) {
     try {
-      const res = await this.worker.get(`/api/tasks/${taskId}/files`);
+      const res = await this.worker.get<unknown>(`/api/tasks/${taskId}/files`);
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'getTaskFiles');
     }
   }
@@ -130,9 +199,11 @@ export class AiService {
   /** Get presigned URLs for persisted preview files of a completed task */
   async getTaskPreviews(taskId: string) {
     try {
-      const res = await this.worker.get(`/api/tasks/${taskId}/previews`);
+      const res = await this.worker.get<unknown>(
+        `/api/tasks/${taskId}/previews`,
+      );
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'getTaskPreviews');
     }
   }
@@ -140,10 +211,10 @@ export class AiService {
   /** Delete a task and its COS files */
   async deleteTask(taskId: string) {
     try {
-      const res = await this.worker.delete(`/api/tasks/${taskId}`);
+      const res = await this.worker.delete<unknown>(`/api/tasks/${taskId}`);
       return res.data;
-    } catch (err: any) {
-      if (err.response?.status === 404) {
+    } catch (err: unknown) {
+      if (errorStatus(err) === 404) {
         throw new NotFoundException(`Task ${taskId} not found`);
       }
       this.handleWorkerError(err, 'deleteTask');
@@ -153,9 +224,9 @@ export class AiService {
   /** Get available prompt templates */
   async getTemplates() {
     try {
-      const res = await this.worker.get('/api/templates');
+      const res = await this.worker.get<unknown>('/api/templates');
       return res.data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.handleWorkerError(err, 'getTemplates');
     }
   }
@@ -163,9 +234,9 @@ export class AiService {
   /** Health check for the worker */
   async workerHealth() {
     try {
-      const res = await this.worker.get('/health');
+      const res = await this.worker.get<unknown>('/health');
       return res.data;
-    } catch (err: any) {
+    } catch {
       throw new ServiceUnavailableException('Codex Worker is unavailable');
     }
   }
@@ -177,33 +248,47 @@ export class AiService {
    */
   async proxyDownload(taskId: string, filename: string, res: Response) {
     // 1. Get the presigned URL list from Worker
-    let files: Array<{ name: string; url: string; size: number }>;
+    let files: WorkerFile[];
     try {
-      const filesRes = await this.worker.get(`/api/tasks/${taskId}/files`);
-      files = filesRes.data?.data ?? filesRes.data ?? [];
-    } catch (err: any) {
+      const filesRes = await this.worker.get<unknown>(
+        `/api/tasks/${taskId}/files`,
+      );
+      files = normalizeWorkerFiles(filesRes.data);
+    } catch {
       throw new NotFoundException(`Task ${taskId} files not found`);
     }
 
     // 2. Find the matching file by filename (decoded, handles URL-encoded names)
     const decodedFilename = decodeURIComponent(filename);
     const file = files.find(
-      (f) => path.basename(f.name) === decodedFilename || f.name === decodedFilename,
+      (f) =>
+        path.basename(f.name) === decodedFilename || f.name === decodedFilename,
     );
     if (!file) {
-      throw new NotFoundException(`File "${filename}" not found in task ${taskId}`);
+      throw new NotFoundException(
+        `File "${filename}" not found in task ${taskId}`,
+      );
     }
 
     // 3. Stream COS → NestJS → Browser
     try {
-      const upstream = await axios.get(file.url, { responseType: 'stream', proxy: false });
+      const upstream = await axios.get<Readable>(file.url, {
+        responseType: 'stream',
+        proxy: false,
+      });
       const ext = path.extname(decodedFilename).toLowerCase();
       const mimeMap: Record<string, string> = {
-        '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-        '.gif': 'image/gif', '.webp': 'image/webp',
-        '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        '.pdf': 'application/pdf', '.txt': 'text/plain',
-        '.py': 'text/x-python', '.js': 'text/javascript',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.pptx':
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        '.pdf': 'application/pdf',
+        '.txt': 'text/plain',
+        '.py': 'text/x-python',
+        '.js': 'text/javascript',
         '.zip': 'application/zip',
       };
       const contentType = mimeMap[ext] ?? 'application/octet-stream';
@@ -212,13 +297,15 @@ export class AiService {
       res.set({
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename*=UTF-8''${encodedName}`,
-        'Content-Length': upstream.headers['content-length'] ?? '',
+        'Content-Length': String(upstream.headers['content-length'] ?? ''),
         'Cache-Control': 'no-cache',
       });
 
       upstream.data.pipe(res);
-    } catch (err: any) {
-      this.logger.error(`[proxyDownload] Failed to stream file: ${err.message}`);
+    } catch (err: unknown) {
+      this.logger.error(
+        `[proxyDownload] Failed to stream file: ${errorMessage(err)}`,
+      );
       throw new ServiceUnavailableException('文件下载失败，请重试');
     }
   }
@@ -228,20 +315,25 @@ export class AiService {
    * The browser will download directly from COS, bypassing the proxy chain.
    */
   async getDirectDownloadUrl(taskId: string, filename: string) {
-    let files: Array<{ name: string; url: string; size: number }>;
+    let files: WorkerFile[];
     try {
-      const filesRes = await this.worker.get(`/api/tasks/${taskId}/files`);
-      files = filesRes.data?.data ?? filesRes.data ?? [];
-    } catch (err: any) {
+      const filesRes = await this.worker.get<unknown>(
+        `/api/tasks/${taskId}/files`,
+      );
+      files = normalizeWorkerFiles(filesRes.data);
+    } catch {
       throw new NotFoundException(`Task ${taskId} files not found`);
     }
 
     const decodedFilename = decodeURIComponent(filename);
     const file = files.find(
-      (f) => path.basename(f.name) === decodedFilename || f.name === decodedFilename,
+      (f) =>
+        path.basename(f.name) === decodedFilename || f.name === decodedFilename,
     );
     if (!file) {
-      throw new NotFoundException(`File "${filename}" not found in task ${taskId}`);
+      throw new NotFoundException(
+        `File "${filename}" not found in task ${taskId}`,
+      );
     }
 
     return { url: file.url, name: decodedFilename, size: file.size };
@@ -249,17 +341,21 @@ export class AiService {
 
   // ── Private helpers ──────────────────────────────────────────────────────
 
-  private handleWorkerError(err: any, context: string): never {
-    if (err.code === 'ECONNREFUSED' || err.code === 'ECONNABORTED' || err.code === 'ETIMEDOUT') {
-      this.logger.error(`[${context}] Worker unreachable: ${err.message}`);
-      throw new ServiceUnavailableException(
-        'AI 服务暂时不可用，请稍后重试',
-      );
+  private handleWorkerError(err: unknown, context: string): never {
+    const code = axios.isAxiosError(err) ? err.code : undefined;
+    const message = errorMessage(err);
+    if (
+      code === 'ECONNREFUSED' ||
+      code === 'ECONNABORTED' ||
+      code === 'ETIMEDOUT'
+    ) {
+      this.logger.error(`[${context}] Worker unreachable: ${message}`);
+      throw new ServiceUnavailableException('AI 服务暂时不可用，请稍后重试');
     }
-    if (err.response?.status === 400) {
-      throw new BadRequestException(err.response.data?.message || '请求参数错误');
+    if (errorStatus(err) === 400) {
+      throw new BadRequestException(workerErrorMessage(err) || '请求参数错误');
     }
-    this.logger.error(`[${context}] Worker error: ${err.message}`);
+    this.logger.error(`[${context}] Worker error: ${message}`);
     throw new ServiceUnavailableException('AI 服务请求失败');
   }
 
@@ -271,7 +367,7 @@ export class AiService {
     res.set({
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
       'X-Accel-Buffering': 'no', // Disable Nginx buffering for SSE
     });
     res.flushHeaders();
@@ -283,7 +379,7 @@ export class AiService {
       );
       const apiKey = this.config.get<string>('CODEX_WORKER_API_KEY', '');
 
-      const upstream = await axios.get(
+      const upstream = await axios.get<Readable>(
         `${baseURL}/api/tasks/${taskId}/logs/stream`,
         {
           responseType: 'stream',
@@ -306,7 +402,9 @@ export class AiService {
         // period for any in-flight final events, then cleanly close browser SSE.
         setTimeout(() => {
           if (!res.writableEnded) {
-            res.write(`data: ${JSON.stringify({ line: '', type: 'info', _streamEnd: true, timestamp: Date.now() })}\n\n`);
+            res.write(
+              `data: ${JSON.stringify({ line: '', type: 'info', _streamEnd: true, timestamp: Date.now() })}\n\n`,
+            );
             res.end();
           }
         }, 3000);
@@ -320,10 +418,14 @@ export class AiService {
       res.on('close', () => {
         upstream.data.destroy();
       });
-    } catch (err: any) {
-      this.logger.error(`[proxyLogStream] Failed for task ${taskId}: ${err.message}`);
+    } catch (err: unknown) {
+      this.logger.error(
+        `[proxyLogStream] Failed for task ${taskId}: ${errorMessage(err)}`,
+      );
       // Write an error event and close
-      res.write(`data: ${JSON.stringify({ error: 'Failed to connect to log stream' })}\n\n`);
+      res.write(
+        `data: ${JSON.stringify({ error: 'Failed to connect to log stream' })}\n\n`,
+      );
       res.end();
     }
   }

@@ -3,10 +3,17 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 
+type MockAuthService = {
+  validateUser: jest.Mock;
+};
+type MockConfigService = {
+  get: jest.Mock;
+};
+
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
-  let mockAuthService: any;
-  let mockConfigService: any;
+  let mockAuthService: MockAuthService;
+  let mockConfigService: MockConfigService;
 
   beforeEach(async () => {
     mockAuthService = {
@@ -33,7 +40,13 @@ describe('JwtStrategy', () => {
 
   describe('validate', () => {
     it('should validate external user', async () => {
-      const payload = { role: 'external', sub: 1, username: 'guest', ticketId: 10, bbsId: 20 };
+      const payload = {
+        role: 'external',
+        sub: 1,
+        username: 'guest',
+        ticketId: 10,
+        bbsId: 20,
+      };
       const result = await strategy.validate(payload);
       expect(result).toEqual({
         id: 1,
@@ -48,9 +61,15 @@ describe('JwtStrategy', () => {
 
     it('should validate normal user', async () => {
       const payload = { sub: 1 };
-      const user = { id: 1, username: 'test', displayName: 'Test', realName: 'R', role: 'admin' };
+      const user = {
+        id: 1,
+        username: 'test',
+        displayName: 'Test',
+        realName: 'R',
+        role: 'admin',
+      };
       mockAuthService.validateUser.mockResolvedValue(user);
-      
+
       const result = await strategy.validate(payload);
       expect(result).toEqual({
         id: 1,
@@ -73,7 +92,9 @@ describe('JwtStrategy', () => {
   describe('constructor', () => {
     it('should throw error if JWT_SECRET is not set', () => {
       mockConfigService.get.mockReturnValue(null);
-      expect(() => new JwtStrategy(mockConfigService as any, mockAuthService as any)).toThrow();
+      expect(
+        () => new JwtStrategy(mockConfigService, mockAuthService),
+      ).toThrow();
     });
   });
 });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, Row, Col, Breadcrumb, Empty, Spin, Segmented, Drawer, Button, Typography, Table, Tag, Statistic, Modal, Radio, DatePicker, Space } from 'antd';
+import type { RadioChangeEvent } from 'antd';
 import {
   BarChartOutlined, TeamOutlined, ArrowsAltOutlined, ArrowRightOutlined, SyncOutlined,
   FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, DownloadOutlined
@@ -8,8 +9,37 @@ import ReactECharts from 'echarts-for-react';
 import { reportAPI, ticketsAPI } from '../../services/api';
 import { message } from 'antd';
 import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
+import type {
+  ApiResponse,
+  ReportCategoryStats,
+  ReportCrossMatrix,
+  ReportDimension,
+  ReportStatItem,
+  ReportSummary,
+  ReportTimeSeriesItem,
+} from '../../types/api';
+import type { Ticket } from '../../types/ticket';
 
 const { Title, Text } = Typography;
+
+interface TicketDrawerState {
+  open: boolean;
+  title: string;
+  category3: string;
+  role: 'creator' | 'assignee' | '';
+  userId: number;
+}
+
+interface ChartClickParam {
+  name: string;
+  dataIndex: number;
+}
+
+interface ChartColorStop {
+  offset: number;
+  color: string;
+}
 
 /** 读取 CSS 变量的实际计算值，供 ECharts 使用（ECharts 不支持 var(--xxx) 语法） */
 function cssVar(name: string): string {
@@ -21,25 +51,25 @@ const ReportsPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [viewLevel, setViewLevel] = useState<1 | 2 | 3>(1);
-  const [ticketDrawerState, setTicketDrawerState] = useState({ open: false, title: '', category3: '', role: '', userId: 0 });
+  const [ticketDrawerState, setTicketDrawerState] = useState<TicketDrawerState>({ open: false, title: '', category3: '', role: '', userId: 0 });
 
   // Drilldown Paths
   const [drillPath, setDrillPath] = useState<{ category1?: string, category2?: string }>({});
 
   // ================= Dashboard Data (Level 1) =================
-  const [summary, setSummary] = useState<any>(null);
-  const [trendDimension, setTrendDimension] = useState<'day' | 'month' | 'quarter' | 'year'>('day');
-  const [timeSeries, setTimeSeries] = useState<any[]>([]);
-  const [categoryStats, setCategoryStats] = useState<{ category1: any[], category2: any[] }>({ category1: [], category2: [] });
+  const [summary, setSummary] = useState<ReportSummary | null>(null);
+  const [trendDimension, setTrendDimension] = useState<ReportDimension>('day');
+  const [timeSeries, setTimeSeries] = useState<ReportTimeSeriesItem[]>([]);
+  const [categoryStats, setCategoryStats] = useState<ReportCategoryStats>({ category1: [], category2: [] });
 
   // ================= Drilldown Data (Level 2 & 3) =================
-  const [level2Data, setLevel2Data] = useState<any[]>([]);
-  const [level2Matrices, setLevel2Matrices] = useState<Record<string, any[]>>({});
-  const [level3Data, setLevel3Data] = useState<any[]>([]);
-  const [level3Matrices, setLevel3Matrices] = useState<Record<string, any>>({});
+  const [level2Data, setLevel2Data] = useState<ReportStatItem[]>([]);
+  const [level2Matrices, setLevel2Matrices] = useState<Record<string, ReportStatItem[]>>({});
+  const [level3Data, setLevel3Data] = useState<ReportStatItem[]>([]);
+  const [level3Matrices, setLevel3Matrices] = useState<Record<string, ReportCrossMatrix>>({});
 
   // ================= User Tickets Data (Level 4 Drawer) =================
-  const [userTickets, setUserTickets] = useState<any[]>([]);
+  const [userTickets, setUserTickets] = useState<Ticket[]>([]);
   const [userTicketsLoading, setUserTicketsLoading] = useState(false);
 
   // ================= Export Modal State =================
@@ -47,7 +77,7 @@ const ReportsPage: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedQuarter, setSelectedQuarter] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
-  const [customDateRange, setCustomDateRange] = useState<any>(null);
+  const [customDateRange, setCustomDateRange] = useState<[Dayjs, Dayjs] | null>(null);
   
   const currentYear = dayjs().year();
   const recentYears = [currentYear, currentYear - 1, currentYear - 2];
@@ -77,7 +107,7 @@ const ReportsPage: React.FC = () => {
       const [sumRes, catRes] = await Promise.all([
         reportAPI.getSummary(),
         reportAPI.getCategoryStats()
-      ]) as any[];
+      ]);
       if (sumRes.code === 0) setSummary(sumRes.data);
       if (catRes.code === 0) setCategoryStats(catRes.data);
     } catch {}
@@ -86,7 +116,7 @@ const ReportsPage: React.FC = () => {
 
   const loadTimeSeries = useCallback(async () => {
     try {
-      const res = await reportAPI.getTimeSeries(trendDimension) as any;
+      const res = await reportAPI.getTimeSeries(trendDimension);
       if (res.code === 0) setTimeSeries(res.data);
     } catch {}
   }, [trendDimension]);
@@ -100,14 +130,16 @@ const ReportsPage: React.FC = () => {
     setViewLevel(2);
     setLoading(true);
     try {
-      const res = await reportAPI.getCategory2Stats(cat1Name) as any;
+      const res = await reportAPI.getCategory2Stats(cat1Name);
       if (res.code === 0) {
         setLevel2Data(res.data);
-        const matrixPromises = res.data.map((cat: any) => reportAPI.getCategory3Stats(cat.name).catch(() => ({code: 1})));
+        const matrixPromises: Array<Promise<ApiResponse<ReportStatItem[]>>> = res.data.map((cat) =>
+          reportAPI.getCategory3Stats(cat.name).catch(() => ({ code: 1, data: [] })),
+        );
         const matrixRes = await Promise.all(matrixPromises);
-        const mMap: Record<string, any[]> = {};
-        res.data.forEach((cat: any, i: number) => {
-           if ((matrixRes[i] as any).code === 0) mMap[cat.name] = (matrixRes[i] as any).data;
+        const mMap: Record<string, ReportStatItem[]> = {};
+        res.data.forEach((cat, i) => {
+           if (matrixRes[i].code === 0) mMap[cat.name] = matrixRes[i].data;
         });
         setLevel2Matrices(mMap);
       }
@@ -120,15 +152,19 @@ const ReportsPage: React.FC = () => {
     setViewLevel(3);
     setLoading(true);
     try {
-      const res = await reportAPI.getCategory3Stats(cat2Name) as any;
+      const res = await reportAPI.getCategory3Stats(cat2Name);
       if (res.code === 0) {
         setLevel3Data(res.data);
         // 传入 parentCategory=cat2Name，确保只统计当前 category2 下的品牌数据
-        const matrixPromises = res.data.map((cat: any) => reportAPI.getCrossMatrix(cat.name, 'category3', 5, { parentCategory: cat2Name }).catch(() => ({code: 1})));
+        const matrixPromises: Array<Promise<ApiResponse<ReportCrossMatrix>>> = res.data.map((cat) =>
+          reportAPI
+            .getCrossMatrix(cat.name, 'category3', 5, { category2: cat2Name })
+            .catch(() => ({ code: 1, data: { supporters: [], requesters: [] } })),
+        );
         const matrixRes = await Promise.all(matrixPromises);
-        const mMap: Record<string, any> = {};
-        res.data.forEach((cat: any, i: number) => {
-           if ((matrixRes[i] as any).code === 0) mMap[cat.name] = (matrixRes[i] as any).data;
+        const mMap: Record<string, ReportCrossMatrix> = {};
+        res.data.forEach((cat, i) => {
+           if (matrixRes[i].code === 0) mMap[cat.name] = matrixRes[i].data;
         });
         setLevel3Matrices(mMap);
       }
@@ -140,20 +176,24 @@ const ReportsPage: React.FC = () => {
     setTicketDrawerState({ open: true, title: `${userName} 的 ${category3Name} [${role==='creator' ? '提单' : '接单'}] 列表`, category3: category3Name, role, userId });
     setUserTicketsLoading(true);
     try {
-      const filter = { category3: category3Name, [role + 'Id']: userId, pageSize: 15 };
-      const res = await ticketsAPI.getAll(filter) as any;
+      const filter = {
+        category3: category3Name,
+        pageSize: 15,
+        ...(role === 'creator' ? { creatorId: userId } : { assigneeId: userId }),
+      };
+      const res = await ticketsAPI.getAll(filter);
       if (res.code === 0) setUserTickets(res.data.items);
     } catch {}
     setUserTicketsLoading(false);
   };
 
-  const handleYearChange = (e: any) => {
+  const handleYearChange = (e: RadioChangeEvent) => {
     setSelectedYear(e.target.value);
     setSelectedQuarter('all');
     setSelectedMonth('all');
   };
 
-  const handleQuarterChange = (e: any) => {
+  const handleQuarterChange = (e: RadioChangeEvent) => {
     setSelectedQuarter(e.target.value);
     setSelectedMonth('all');
   };
@@ -193,7 +233,7 @@ const ReportsPage: React.FC = () => {
 
     setExportLoading(true);
     try {
-      const res = await reportAPI.exportXlsx({ startDate, endDate }) as any;
+      const res = await reportAPI.exportXlsx({ startDate, endDate });
       const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -216,7 +256,7 @@ const ReportsPage: React.FC = () => {
 
   const getTrendOption = () => ({
     tooltip: { trigger: 'axis', axisPointer: { type: 'cross' }, backgroundColor: themeColors.bgSecondary, borderColor: themeColors.border, textStyle: { color: themeColors.textPrimary } },
-    xAxis: { type: 'category', data: timeSeries.map((t: any) => t.date), axisLabel: chartTextStyle },
+    xAxis: { type: 'category', data: timeSeries.map((t) => t.date), axisLabel: chartTextStyle },
     yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: themeColors.border } }, axisLabel: chartTextStyle },
     series: [
       {
@@ -225,7 +265,7 @@ const ReportsPage: React.FC = () => {
         barWidth: '30%',
         itemStyle: { color: 'rgba(56, 189, 248, 0.25)', borderRadius: [4, 4, 0, 0], borderColor: 'rgba(56, 189, 248, 0.5)', borderWidth: 1 },
         label: { show: true, position: 'top', color: '#0ea5e9' },
-        data: timeSeries.map((t: any) => t.count),
+        data: timeSeries.map((t) => t.count),
       },
       {
         name: '工单趋势',
@@ -235,7 +275,7 @@ const ReportsPage: React.FC = () => {
           color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(139, 92, 246, 0.5)' }, { offset: 1, color: 'rgba(139, 92, 246, 0.0)' }] }
         },
         smooth: true,
-        data: timeSeries.map((t: any) => t.count),
+        data: timeSeries.map((t) => t.count),
       }
     ],
     grid: { left: 40, right: 20, bottom: 20, top: 20, containLabel: true }
@@ -256,25 +296,25 @@ const ReportsPage: React.FC = () => {
   const getCat2BarOption = () => ({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: themeColors.bgSecondary, borderColor: themeColors.border, textStyle: { color: themeColors.textPrimary } },
     xAxis: { type: 'value', splitLine: { show: false }, axisLabel: { show: false } },
-    yAxis: { type: 'category', inverse: true, data: categoryStats.category2.map((c: any) => c.name), axisLabel: { color: themeColors.textPrimary, width: 90, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
+    yAxis: { type: 'category', inverse: true, data: categoryStats.category2.map((c) => c.name), axisLabel: { color: themeColors.textPrimary, width: 90, overflow: 'truncate' }, axisLine: { show: false }, axisTick: { show: false } },
     series: [{
       type: 'bar', barWidth: 12,
       itemStyle: { borderRadius: 6, color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#06b6d4' }] } },
       label: { show: true, position: 'right', color: themeColors.textSecondary },
-      data: categoryStats.category2.map((c: any) => c.value),
+      data: categoryStats.category2.map((c) => c.value),
     }],
     grid: { left: 0, right: 30, bottom: 0, top: 0, containLabel: true }
   });
 
-  const getBarOption = (data: any[], valKey: string, nameKey: string, colorStops: any[]) => ({
+  const getBarOption = <T extends object>(data: T[], valKey: keyof T, nameKey: keyof T, colorStops: ChartColorStop[]) => ({
     tooltip: { trigger: 'item', backgroundColor: themeColors.bgSecondary, borderColor: themeColors.border, textStyle: { color: themeColors.textPrimary } },
     xAxis: { type: 'value', splitLine: { show: false }, axisLabel: { show: false } },
-    yAxis: { type: 'category', inverse: true, data: data.map((c: any) => c[nameKey]), axisLabel: { color: themeColors.textPrimary }, axisLine: { show: false }, axisTick: { show: false } },
+    yAxis: { type: 'category', inverse: true, data: data.map((c) => String(c[nameKey])), axisLabel: { color: themeColors.textPrimary }, axisLine: { show: false }, axisTick: { show: false } },
     series: [{
       type: 'bar', barWidth: 12,
       itemStyle: { borderRadius: 6, color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops } },
       label: { show: true, position: 'right', color: themeColors.textSecondary },
-      data: data.map((c: any) => c[valKey]),
+      data: data.map((c) => Number(c[valKey]) || 0),
     }],
     grid: { left: 10, right: 30, bottom: 0, top: 0, containLabel: true }
   });
@@ -340,7 +380,7 @@ const ReportsPage: React.FC = () => {
                 <Card style={{ borderRadius: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                     <Title level={4} style={{ margin: 0 }}>工单趋势分析</Title>
-                    <Segmented value={trendDimension} onChange={(v: any) => setTrendDimension(v)} options={[{label:'30天', value:'day'}, {label:'12个月', value:'month'}, {label:'6个季度', value:'quarter'}, {label:'3年', value:'year'}]} />
+                    <Segmented value={trendDimension} onChange={(v) => setTrendDimension(v as ReportDimension)} options={[{label:'30天', value:'day'}, {label:'12个月', value:'month'}, {label:'6个季度', value:'quarter'}, {label:'3年', value:'year'}]} />
                   </div>
                   <ReactECharts key={`trend-${themeKey}`} option={getTrendOption()} style={{ height: 350 }} />
                 </Card>
@@ -349,14 +389,14 @@ const ReportsPage: React.FC = () => {
               <Col xs={24} lg={8}>
                 <Card title={<span><BarChartOutlined /> 软硬大类分布</span>} style={{ borderRadius: 12, height: '100%' }}>
                   <Text type="secondary" style={{ display: 'block', marginBottom: 16, fontSize: 12 }}>提示：点击饼图区域可下钻至 Level 2 的详细技术方向报表。</Text>
-                  <ReactECharts key={`pie-${themeKey}`} option={getCat1PieOption()} style={{ height: 300 }} onEvents={{ click: (param: any) => handleCat1Click(param.name) }} />
+                  <ReactECharts key={`pie-${themeKey}`} option={getCat1PieOption()} style={{ height: 300 }} onEvents={{ click: (param: ChartClickParam) => handleCat1Click(param.name) }} />
                 </Card>
               </Col>
 
               <Col xs={24} lg={16}>
                 <Card title={<span><BarChartOutlined /> 技术方向分布 (Top10)</span>} style={{ borderRadius: 12, height: '100%' }}>
                   <Text type="secondary" style={{ display: 'block', marginBottom: 16, fontSize: 12 }}>提示：点击柱状图任意选项可直接下钻至 Level 3 的人员绩效矩阵。</Text>
-                  <ReactECharts key={`bar-${themeKey}`} option={getCat2BarOption()} style={{ height: 300 }} onEvents={{ click: (param: any) => handleCat2Click(param.name) }} />
+                  <ReactECharts key={`bar-${themeKey}`} option={getCat2BarOption()} style={{ height: 300 }} onEvents={{ click: (param: ChartClickParam) => handleCat2Click(param.name) }} />
                 </Card>
               </Col>
             </Row>
@@ -412,7 +452,7 @@ const ReportsPage: React.FC = () => {
                         <div style={{ padding: '8px 12px', background: 'var(--bg-primary)', borderRadius: '6px 6px 0 0', borderBottom: '2px solid #10b981', color: '#10b981', fontSize: 13, fontWeight: 'bold' }}>高效接单英雄榜 (Top 5)</div>
                         <div style={{ background: 'var(--bg-primary)', height: 260, padding: 8, borderRadius: '0 0 6px 6px' }}>
                            {level3Matrices[cat3.name]?.supporters?.length > 0 ? (
-                             <ReactECharts key={`l3s-${idx}-${themeKey}`} onEvents={{ click: (p: any) => handleUserClick(level3Matrices[cat3.name].supporters[p.dataIndex].userId, p.name, 'assignee', cat3.name) }} option={getBarOption(level3Matrices[cat3.name].supporters, 'count', 'realName', [{offset:0, color:'#059669'}, {offset:1, color:'#34d399'}])} style={{ height: '100%', width: '100%' }} />
+                             <ReactECharts key={`l3s-${idx}-${themeKey}`} onEvents={{ click: (p: ChartClickParam) => handleUserClick(level3Matrices[cat3.name].supporters[p.dataIndex].userId, p.name, 'assignee', cat3.name) }} option={getBarOption(level3Matrices[cat3.name].supporters, 'count', 'realName', [{offset:0, color:'#059669'}, {offset:1, color:'#34d399'}])} style={{ height: '100%', width: '100%' }} />
                            ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="" />}
                         </div>
                      </Col>
@@ -420,7 +460,7 @@ const ReportsPage: React.FC = () => {
                         <div style={{ padding: '8px 12px', background: 'var(--bg-primary)', borderRadius: '6px 6px 0 0', borderBottom: '2px solid #ef4444', color: '#ef4444', fontSize: 13, fontWeight: 'bold' }}>高频提单需求方 (Top 5)</div>
                         <div style={{ background: 'var(--bg-primary)', height: 260, padding: 8, borderRadius: '0 0 6px 6px' }}>
                            {level3Matrices[cat3.name]?.requesters?.length > 0 ? (
-                             <ReactECharts key={`l3r-${idx}-${themeKey}`} onEvents={{ click: (p: any) => handleUserClick(level3Matrices[cat3.name].requesters[p.dataIndex].userId, p.name, 'creator', cat3.name) }} option={getBarOption(level3Matrices[cat3.name].requesters, 'count', 'realName', [{offset:0, color:'#b91c1c'}, {offset:1, color:'#f87171'}])} style={{ height: '100%', width: '100%' }} />
+                             <ReactECharts key={`l3r-${idx}-${themeKey}`} onEvents={{ click: (p: ChartClickParam) => handleUserClick(level3Matrices[cat3.name].requesters[p.dataIndex].userId, p.name, 'creator', cat3.name) }} option={getBarOption(level3Matrices[cat3.name].requesters, 'count', 'realName', [{offset:0, color:'#b91c1c'}, {offset:1, color:'#f87171'}])} style={{ height: '100%', width: '100%' }} />
                            ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="" />}
                         </div>
                      </Col>
@@ -521,7 +561,7 @@ const ReportsPage: React.FC = () => {
                 <DatePicker.RangePicker 
                   style={{ width: '100%' }}
                   value={customDateRange}
-                  onChange={(dates) => setCustomDateRange(dates)}
+                  onChange={(dates) => setCustomDateRange(dates && dates[0] && dates[1] ? [dates[0], dates[1]] : null)}
                 />
               </div>
             )}

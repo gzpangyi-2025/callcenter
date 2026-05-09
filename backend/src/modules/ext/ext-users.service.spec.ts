@@ -38,7 +38,7 @@ describe('ExtUsersService', () => {
 
   it('should throw BadRequestException for users without employeeId', async () => {
     const users: SyncUserDto[] = [
-      { employeeId: '', realName: 'No ID User' } as any
+      { employeeId: '', realName: 'No ID User' } as any,
     ];
 
     await expect(service.syncUsers(users)).rejects.toThrow(BadRequestException);
@@ -46,18 +46,32 @@ describe('ExtUsersService', () => {
 
   it('should insert a new user if employeeId is not found', async () => {
     mockUserRepository.findOne.mockResolvedValue(null);
-    mockUserRepository.create.mockReturnValue({ id: 1, employeeId: 'E001', realName: 'New User' });
+    mockUserRepository.create.mockReturnValue({
+      id: 1,
+      employeeId: 'E001',
+      realName: 'New User',
+    });
     mockUserRepository.save.mockResolvedValue({ id: 1 });
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E001', realName: 'New User', department: 'IT', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
+      {
+        employeeId: 'E001',
+        realName: 'New User',
+        department: 'IT',
+        email: 'a@a.com',
+        phone: '123',
+        position: 'A',
+        isActive: 1,
+      },
     ];
 
     const result = await service.syncUsers(users);
 
     expect(result.inserted).toBe(1);
     expect(result.updated).toBe(0);
-    expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { employeeId: 'E001' } });
+    expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+      where: { employeeId: 'E001' },
+    });
     expect(mockUserRepository.create).toHaveBeenCalled();
     expect(mockUserRepository.save).toHaveBeenCalled();
   });
@@ -67,13 +81,21 @@ describe('ExtUsersService', () => {
       id: 2,
       employeeId: 'E002',
       realName: 'Old Name',
-      department: 'HR'
+      department: 'HR',
     };
     mockUserRepository.findOne.mockResolvedValue(existingUser);
     mockUserRepository.save.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E002', realName: 'New Name', department: 'HR', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
+      {
+        employeeId: 'E002',
+        realName: 'New Name',
+        department: 'HR',
+        email: 'a@a.com',
+        phone: '123',
+        position: 'A',
+        isActive: 1,
+      },
     ];
 
     const result = await service.syncUsers(users);
@@ -93,12 +115,20 @@ describe('ExtUsersService', () => {
       email: 'a@a.com',
       phone: '123',
       position: 'A',
-      isActive: true
+      isActive: true,
     };
     mockUserRepository.findOne.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E003', realName: 'Same Name', department: 'Finance', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
+      {
+        employeeId: 'E003',
+        realName: 'Same Name',
+        department: 'Finance',
+        email: 'a@a.com',
+        phone: '123',
+        position: 'A',
+        isActive: 1,
+      },
     ];
 
     const result = await service.syncUsers(users);

@@ -1,10 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import type { Request, Response } from 'express';
 import { KnowledgeController } from './knowledge.controller';
 import { KnowledgeService } from './knowledge.service';
 
+type MockService = Record<string, jest.Mock>;
+type MockResponse = Response & {
+  setHeader: jest.Mock;
+  send: jest.Mock;
+};
+
 describe('KnowledgeController', () => {
   let controller: KnowledgeController;
-  let mockKnowledgeService: any;
+  let mockKnowledgeService: MockService;
 
   beforeEach(async () => {
     mockKnowledgeService = {
@@ -44,8 +51,8 @@ describe('KnowledgeController', () => {
 
   describe('exportChat', () => {
     it('should export chat', async () => {
-      const req = { user: { username: 'admin' } };
-      const result = await controller.exportChat('1', req as any);
+      const req = { user: { username: 'admin' } } as Request;
+      const result = await controller.exportChat('1', req);
       expect(result.data.id).toBe(1);
     });
   });
@@ -53,7 +60,7 @@ describe('KnowledgeController', () => {
   describe('saveKnowledge', () => {
     it('should save knowledge', async () => {
       const dto = { ticketId: 1, title: 'Test', content: 'Content' };
-      const result = await controller.saveKnowledge(dto as any);
+      const result = await controller.saveKnowledge(dto);
       expect(result.data.id).toBe(1);
     });
   });
@@ -95,24 +102,30 @@ describe('KnowledgeController', () => {
 
   describe('exportMd', () => {
     it('should export md', async () => {
-      const res = { setHeader: jest.fn(), send: jest.fn() };
-      await controller.exportMd('1', res as any);
+      const res = {
+        setHeader: jest.fn(),
+        send: jest.fn(),
+      } as unknown as MockResponse;
+      await controller.exportMd('1', res);
       expect(res.send).toHaveBeenCalledWith('md content');
     });
   });
 
   describe('exportDocx', () => {
     it('should export docx', async () => {
-      const res = { setHeader: jest.fn(), send: jest.fn() };
-      await controller.exportDocx('1', res as any);
+      const res = {
+        setHeader: jest.fn(),
+        send: jest.fn(),
+      } as unknown as MockResponse;
+      await controller.exportDocx('1', res);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
   describe('exportZip', () => {
     it('should export zip', async () => {
-      const res = {};
-      await controller.exportZip('1', res as any);
+      const res = {} as Response;
+      await controller.exportZip('1', res);
       expect(mockKnowledgeService.exportZip).toHaveBeenCalledWith(1, res);
     });
   });

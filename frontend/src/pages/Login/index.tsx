@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
   const onRegister = async (values: any) => {
     setLoading(true);
     try {
-      const { confirm, ...registerData } = values;
+      const { confirm: _confirm, ...registerData } = values;
       const res: any = await authAPI.register(registerData);
       if (res.code === 0) {
         setAuth(res.data.user, res.data.accessToken);

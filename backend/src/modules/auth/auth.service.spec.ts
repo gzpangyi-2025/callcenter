@@ -8,12 +8,21 @@ import { Role } from '../../entities/role.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
+type MockRepository = Record<string, jest.Mock>;
+type MockJwtService = {
+  sign: jest.Mock;
+  verify: jest.Mock;
+};
+type MockConfigService = {
+  get: jest.Mock;
+};
+
 describe('AuthService', () => {
   let service: AuthService;
-  let mockUserRepo: any;
-  let mockRoleRepo: any;
-  let mockJwtService: any;
-  let mockConfigService: any;
+  let mockUserRepo: MockRepository;
+  let mockRoleRepo: MockRepository;
+  let mockJwtService: MockJwtService;
+  let mockConfigService: MockConfigService;
 
   const mockUser: Partial<User> = {
     id: 1,
@@ -149,14 +158,21 @@ describe('AuthService', () => {
   describe('register', () => {
     it('should successfully register a new user and return tokens', async () => {
       mockUserRepo.findOne.mockResolvedValue(null);
-      mockRoleRepo.findOne.mockResolvedValue({ id: 2, name: 'user', permissions: [] });
+      mockRoleRepo.findOne.mockResolvedValue({
+        id: 2,
+        name: 'user',
+        permissions: [],
+      });
       mockUserRepo.create.mockImplementation((dto) => dto);
-      mockUserRepo.save.mockImplementation(async (user) => ({ ...user, id: 2 }));
+      mockUserRepo.save.mockImplementation(async (user) => ({
+        ...user,
+        id: 2,
+      }));
 
       const result = await service.register({
         username: 'newuser',
         password: 'password123',
-        realName: 'New User'
+        realName: 'New User',
       });
 
       expect(result).toHaveProperty('accessToken');
@@ -169,14 +185,17 @@ describe('AuthService', () => {
       mockUserRepo.findOne.mockResolvedValue(mockUser);
 
       await expect(
-        service.register({ username: 'testuser', password: 'password123' })
+        service.register({ username: 'testuser', password: 'password123' }),
       ).rejects.toThrow('用户名已存在');
     });
   });
 
   describe('externalLogin', () => {
     it('should return tokens and external user profile for valid external ticket token', async () => {
-      mockJwtService.verify.mockReturnValue({ role: 'external', ticketId: 100 });
+      mockJwtService.verify.mockReturnValue({
+        role: 'external',
+        ticketId: 100,
+      });
 
       const result = await service.externalLogin('valid_token', 'Guest User');
 
@@ -187,17 +206,22 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for invalid external token', async () => {
-      mockJwtService.verify.mockImplementation(() => { throw new Error('Invalid'); });
+      mockJwtService.verify.mockImplementation(() => {
+        throw new Error('Invalid');
+      });
 
       await expect(
-        service.externalLogin('invalid_token', 'Guest User')
+        service.externalLogin('invalid_token', 'Guest User'),
       ).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('bbsExternalLogin', () => {
     it('should return tokens and external user profile for valid BBS token', async () => {
-      mockJwtService.verify.mockReturnValue({ role: 'external_bbs', bbsId: 200 });
+      mockJwtService.verify.mockReturnValue({
+        role: 'external_bbs',
+        bbsId: 200,
+      });
 
       const result = await service.bbsExternalLogin('valid_bbs_token');
 
@@ -210,7 +234,7 @@ describe('AuthService', () => {
       mockJwtService.verify.mockReturnValue({ role: 'user', bbsId: 200 });
 
       await expect(
-        service.bbsExternalLogin('wrong_role_token')
+        service.bbsExternalLogin('wrong_role_token'),
       ).rejects.toThrow(UnauthorizedException);
     });
   });

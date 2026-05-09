@@ -7,11 +7,18 @@ import { RolesService } from './roles.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { In } from 'typeorm';
 
+type MockRepository = Record<string, jest.Mock>;
+type MockGateway = {
+  server: {
+    emit: jest.Mock;
+  };
+};
+
 describe('RolesService', () => {
   let service: RolesService;
-  let mockRoleRepository: any;
-  let mockPermissionRepository: any;
-  let mockChatGateway: any;
+  let mockRoleRepository: MockRepository;
+  let mockPermissionRepository: MockRepository;
+  let mockChatGateway: MockGateway;
 
   beforeEach(async () => {
     mockRoleRepository = {
@@ -90,32 +97,60 @@ describe('RolesService', () => {
   describe('createRole', () => {
     it('should throw BadRequestException if role exists', async () => {
       mockRoleRepository.findOne.mockResolvedValue({ id: 1 });
-      await expect(service.createRole({ name: 'Admin' })).rejects.toThrow(BadRequestException);
+      await expect(service.createRole({ name: 'Admin' })).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should create a role without permissions', async () => {
       mockRoleRepository.findOne.mockResolvedValue(null);
-      const role = { name: 'Admin', description: 'Desc', isActive: true, permissions: [] };
+      const role = {
+        name: 'Admin',
+        description: 'Desc',
+        isActive: true,
+        permissions: [],
+      };
       mockRoleRepository.create.mockReturnValue(role);
       mockRoleRepository.save.mockResolvedValue({ ...role, id: 1 });
 
-      const result = await service.createRole({ name: 'Admin', description: 'Desc' });
+      const result = await service.createRole({
+        name: 'Admin',
+        description: 'Desc',
+      });
       expect(result.id).toBe(1);
       expect(mockRoleRepository.save).toHaveBeenCalled();
-      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('rolesUpdated', { type: 'created', roleId: 1, roleName: 'Admin' });
+      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('rolesUpdated', {
+        type: 'created',
+        roleId: 1,
+        roleName: 'Admin',
+      });
     });
 
     it('should create a role with permissions', async () => {
       mockRoleRepository.findOne.mockResolvedValue(null);
-      const role = { name: 'Admin', description: '', isActive: true, permissions: [] };
+      const role = {
+        name: 'Admin',
+        description: '',
+        isActive: true,
+        permissions: [],
+      };
       const permissions = [{ id: 1 }, { id: 2 }];
       mockRoleRepository.create.mockReturnValue(role);
       mockPermissionRepository.findBy.mockResolvedValue(permissions);
-      mockRoleRepository.save.mockResolvedValue({ ...role, id: 1, permissions });
+      mockRoleRepository.save.mockResolvedValue({
+        ...role,
+        id: 1,
+        permissions,
+      });
 
-      const result = await service.createRole({ name: 'Admin', permissionIds: [1, 2] });
+      const result = await service.createRole({
+        name: 'Admin',
+        permissionIds: [1, 2],
+      });
       expect(result.permissions).toEqual(permissions);
-      expect(mockPermissionRepository.findBy).toHaveBeenCalledWith({ id: In([1, 2]) });
+      expect(mockPermissionRepository.findBy).toHaveBeenCalledWith({
+        id: In([1, 2]),
+      });
     });
   });
 
@@ -131,7 +166,10 @@ describe('RolesService', () => {
     });
 
     it('should throw BadRequestException if role has users', async () => {
-      mockRoleRepository.findOne.mockResolvedValue({ id: 5, users: [{ id: 1 }] });
+      mockRoleRepository.findOne.mockResolvedValue({
+        id: 5,
+        users: [{ id: 1 }],
+      });
       await expect(service.deleteRole(5)).rejects.toThrow(BadRequestException);
     });
 
@@ -143,14 +181,20 @@ describe('RolesService', () => {
       const result = await service.deleteRole(5);
       expect(result).toEqual({ success: true });
       expect(mockRoleRepository.remove).toHaveBeenCalledWith(role);
-      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('rolesUpdated', { type: 'deleted', roleId: 5, roleName: 'Custom' });
+      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('rolesUpdated', {
+        type: 'deleted',
+        roleId: 5,
+        roleName: 'Custom',
+      });
     });
   });
 
   describe('updateRolePermissions', () => {
     it('should throw NotFoundException if role not found', async () => {
       mockRoleRepository.findOne.mockResolvedValue(null);
-      await expect(service.updateRolePermissions(1, [1])).rejects.toThrow(NotFoundException);
+      await expect(service.updateRolePermissions(1, [1])).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should update role permissions', async () => {
@@ -162,12 +206,18 @@ describe('RolesService', () => {
 
       const result = await service.updateRolePermissions(1, [1]);
       expect(result.permissions).toEqual(permissions);
-      expect(mockRoleRepository.save).toHaveBeenCalledWith({ ...role, permissions });
-      expect(mockChatGateway.server.emit).toHaveBeenCalledWith('permissionsUpdated', {
-        roleId: 1,
-        roleName: 'Admin',
-        permissions: [{ id: 1, resource: 'admin', action: 'access' }],
+      expect(mockRoleRepository.save).toHaveBeenCalledWith({
+        ...role,
+        permissions,
       });
+      expect(mockChatGateway.server.emit).toHaveBeenCalledWith(
+        'permissionsUpdated',
+        {
+          roleId: 1,
+          roleName: 'Admin',
+          permissions: [{ id: 1, resource: 'admin', action: 'access' }],
+        },
+      );
     });
 
     it('should clear role permissions if empty array provided', async () => {

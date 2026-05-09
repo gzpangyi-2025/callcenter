@@ -13,21 +13,24 @@ import { JwtService } from '@nestjs/jwt';
 import { FilesService } from '../files/files.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
+type MockRepository = Record<string, jest.Mock>;
+type MockService = Record<string, jest.Mock>;
+
 describe('BbsService', () => {
   let service: BbsService;
-  let postRepo: any;
-  let sectionRepo: any;
-  let commentRepo: any;
-  let subRepo: any;
-  let searchService: any;
-  let filesService: any;
+  let postRepo: MockRepository;
+  let sectionRepo: MockRepository;
+  let commentRepo: MockRepository;
+  let subRepo: MockRepository;
+  let searchService: MockService;
+  let filesService: MockService;
 
   beforeEach(async () => {
     postRepo = {
       findOne: jest.fn(),
       find: jest.fn(),
-      create: jest.fn().mockImplementation(dto => dto),
-      save: jest.fn().mockImplementation(dto => ({ ...dto, id: 1 })),
+      create: jest.fn().mockImplementation((dto) => dto),
+      save: jest.fn().mockImplementation((dto) => ({ ...dto, id: 1 })),
       remove: jest.fn(),
       increment: jest.fn(),
       update: jest.fn(),
@@ -56,8 +59,8 @@ describe('BbsService', () => {
 
     commentRepo = {
       find: jest.fn().mockResolvedValue([]),
-      create: jest.fn().mockImplementation(dto => dto),
-      save: jest.fn().mockImplementation(dto => ({ ...dto, id: 1 })),
+      create: jest.fn().mockImplementation((dto) => dto),
+      save: jest.fn().mockImplementation((dto) => ({ ...dto, id: 1 })),
     };
 
     subRepo = {
@@ -92,7 +95,10 @@ describe('BbsService', () => {
         { provide: getRepositoryToken(BbsTag), useValue: {} },
         { provide: getRepositoryToken(BbsSubscription), useValue: subRepo },
         { provide: SearchService, useValue: searchService },
-        { provide: ChatGateway, useValue: { server: { to: jest.fn(() => ({ emit: jest.fn() })) } } },
+        {
+          provide: ChatGateway,
+          useValue: { server: { to: jest.fn(() => ({ emit: jest.fn() })) } },
+        },
         { provide: ConfigService, useValue: { get: jest.fn() } },
         { provide: JwtService, useValue: { sign: jest.fn() } },
         { provide: FilesService, useValue: filesService },
@@ -113,7 +119,7 @@ describe('BbsService', () => {
       expect(postRepo.save).toHaveBeenCalled();
       expect(subRepo.save).toHaveBeenCalled();
       // wait a bit for async ES sync
-      await new Promise(r => setTimeout(r, 10));
+      await new Promise((r) => setTimeout(r, 10));
       expect(searchService.indexPost).toHaveBeenCalled();
     });
   });
@@ -121,7 +127,9 @@ describe('BbsService', () => {
   describe('update', () => {
     it('should throw Forbidden if not author and not admin', async () => {
       postRepo.findOne.mockResolvedValue({ id: 1, authorId: 2 });
-      await expect(service.update(1, { title: 'new' }, 1, false)).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update(1, { title: 'new' }, 1, false),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('should allow update if admin', async () => {
@@ -137,7 +145,10 @@ describe('BbsService', () => {
       await service.addComment(1, 'nice', 1);
 
       expect(commentRepo.save).toHaveBeenCalled();
-      expect(postRepo.update).toHaveBeenCalledWith(1, expect.objectContaining({ lastCommentAt: expect.any(Date) }));
+      expect(postRepo.update).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({ lastCommentAt: expect.any(Date) }),
+      );
     });
   });
 
@@ -181,7 +192,9 @@ describe('BbsService', () => {
 
     it('should throw NotFoundException when section not found', async () => {
       sectionRepo.findOne.mockResolvedValue(null);
-      await expect(service.updateSection(999, { name: 'X' })).rejects.toThrow(NotFoundException);
+      await expect(service.updateSection(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -196,14 +209,18 @@ describe('BbsService', () => {
 
     it('should throw NotFoundException', async () => {
       sectionRepo.findOne.mockResolvedValue(null);
-      await expect(service.removeSection(999)).rejects.toThrow(NotFoundException);
+      await expect(service.removeSection(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('generateShareToken', () => {
     it('should throw NotFoundException if post not found', async () => {
       postRepo.findOne.mockResolvedValue(null);
-      await expect(service.generateShareToken(999)).rejects.toThrow(NotFoundException);
+      await expect(service.generateShareToken(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -226,7 +243,9 @@ describe('BbsService', () => {
 
     it('should deny non-author non-admin', async () => {
       postRepo.findOne.mockResolvedValue({ id: 1, authorId: 2, content: '' });
-      await expect(service.remove(1, 99, false)).rejects.toThrow(ForbiddenException);
+      await expect(service.remove(1, 99, false)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });

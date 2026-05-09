@@ -1,9 +1,13 @@
 import { InfraService } from './infra.service';
+import { exec } from 'child_process';
 
 // Mock external modules
 jest.mock('@elastic/elasticsearch', () => ({
   Client: jest.fn().mockImplementation(() => ({
-    info: jest.fn().mockResolvedValue({ version: { number: '8.10.2' }, cluster_name: 'test' }),
+    info: jest.fn().mockResolvedValue({
+      version: { number: '8.10.2' },
+      cluster_name: 'test',
+    }),
   })),
 }));
 jest.mock('ioredis', () => ({
@@ -18,20 +22,38 @@ jest.mock('mysql2/promise', () => ({
     end: jest.fn().mockResolvedValue(undefined),
   }),
 }));
+jest.mock('child_process', () => ({
+  exec: jest.fn(
+    (
+      _cmd: string,
+      cb: (err: Error | null, stdout: string, stderr: string) => void,
+    ) => {
+      cb(null, 'reloaded', '');
+    },
+  ),
+}));
 
 const fs = require('fs');
 
 describe('InfraService', () => {
   let service: InfraService;
+  const mockedExec = exec as jest.MockedFunction<typeof exec>;
 
   beforeEach(() => {
+    jest.useFakeTimers();
     service = new InfraService();
     jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('DB_HOST=localhost\nDB_PORT=3306\n# comment\n');
+    jest
+      .spyOn(fs, 'readFileSync')
+      .mockReturnValue('DB_HOST=localhost\nDB_PORT=3306\n# comment\n');
     jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
 
   describe('getEnvConfig', () => {
     it('should parse .env and return key-value pairs', () => {
@@ -49,14 +71,16 @@ describe('InfraService', () => {
     it('should update existing whitelisted keys in-place', async () => {
       await service.updateEnvConfig({ DB_HOST: '127.0.0.1' });
       expect(fs.writeFileSync).toHaveBeenCalled();
-      const written = (fs.writeFileSync as jest.Mock).mock.calls[0][1] as string;
+      const written = (fs.writeFileSync as jest.Mock).mock
+        .calls[0][1] as string;
       expect(written).toContain('DB_HOST=127.0.0.1');
       expect(written).toContain('DB_PORT=3306');
     });
 
     it('should append new whitelisted keys', async () => {
       await service.updateEnvConfig({ REDIS_HOST: '127.0.0.1' });
-      const written = (fs.writeFileSync as jest.Mock).mock.calls[0][1] as string;
+      const written = (fs.writeFileSync as jest.Mock).mock
+        .calls[0][1] as string;
       expect(written).toContain('REDIS_HOST=127.0.0.1');
     });
 
@@ -81,7 +105,9 @@ describe('InfraService', () => {
 
   describe('testElasticsearch', () => {
     it('should return success on valid connection', async () => {
-      const result = await service.testElasticsearch({ node: 'http://localhost:9200' });
+      const result = await service.testElasticsearch({
+        node: 'http://localhost:9200',
+      });
       expect(result.success).toBe(true);
       expect(result.message).toContain('8.10.2');
     });
@@ -107,14 +133,20 @@ describe('InfraService', () => {
   describe('testMysql', () => {
     it('should return success on valid connection', async () => {
       const result = await service.testMysql({
-        host: 'localhost', port: 3306, username: 'root', database: 'test',
+        host: 'localhost',
+        port: 3306,
+        username: 'root',
+        database: 'test',
       });
       expect(result.success).toBe(true);
     });
 
     it('should fail if required fields missing', async () => {
       const result = await service.testMysql({
-        host: '', port: 0, username: '', database: '',
+        host: '',
+        port: 0,
+        username: '',
+        database: '',
       });
       expect(result.success).toBe(false);
     });
@@ -124,6 +156,14 @@ describe('InfraService', () => {
     it('should return success on first call', async () => {
       const result = await service.restartService();
       expect(result.success).toBe(true);
+      expect(mockedExec).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(1000);
+
+      expect(mockedExec).toHaveBeenCalledWith(
+        'pm2 reload callcenter-backend',
+        expect.any(Function),
+      );
     });
 
     it('should reject rapid successive restarts (rate limiting)', async () => {

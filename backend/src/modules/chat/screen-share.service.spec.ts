@@ -42,7 +42,10 @@ describe('ScreenShareService', () => {
       expect(cleaned).toContain('ticket_1');
       expect(cleaned).toContain('ticket_2');
       expect(cleaned).not.toContain('ticket_3');
-      expect(service.getActiveSharer('ticket_3')).toEqual({ userId: 2, userName: 'Bob' });
+      expect(service.getActiveSharer('ticket_3')).toEqual({
+        userId: 2,
+        userName: 'Bob',
+      });
     });
 
     it('should return empty array if user has no shares', () => {

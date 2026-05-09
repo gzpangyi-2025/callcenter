@@ -9,6 +9,7 @@ import {
   DownloadOutlined, CheckCircleFilled, LoadingOutlined,
   ClockCircleFilled, RightOutlined,
 } from '@ant-design/icons';
+import type { AiTask, AiTaskFile, ApiResponse } from '../../../types/api';
 
 const { Text } = Typography;
 
@@ -36,6 +37,33 @@ interface Props {
   taskId: string;
   taskStatus: string;
 }
+
+interface PersistedLogEntry {
+  line: string;
+  type?: LogEntry['type'];
+  timestamp: number;
+}
+
+interface PersistedTask extends AiTask {
+  executionLog?: PersistedLogEntry[];
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
+  if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
+    return value.data as T;
+  }
+  return value as T;
+};
+
+const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
+  const payload = unwrapApiData(value);
+  if (Array.isArray(payload)) return payload;
+  if (isRecord(payload) && Array.isArray(payload.data)) return payload.data as AiTaskFile[];
+  return [];
+};
 
 const TYPE_COLORS: Record<string, string> = {
   thought: '#8b5cf6',
@@ -85,7 +113,7 @@ function deriveStages(_currentStep: string | null, progress: number, taskStatus:
   if (taskStatus === 'failed') {
     // Mark stages up to where it failed as done, current as active (will show error)
     let activeIdx = 2; // default to codex
-    if (progress < 10) activeIdx = 0;
+    if (progress < 7) activeIdx = 0;
     else if (progress < 10) activeIdx = 1;
     return stages.map((s, i) => ({
       ...s,
@@ -147,13 +175,13 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
       try {
         // Load task detail (contains executionLog)
         const taskRes = await aiAPI.getTask(taskId);
-        const task = taskRes?.data;
+        const task = unwrapApiData<PersistedTask>(taskRes);
 
         if (cancelled) return;
 
         // Load persisted execution logs
         if (task?.executionLog?.length) {
-          setLogs(task.executionLog.map((entry: any) => ({
+          setLogs(task.executionLog.map((entry) => ({
             taskId,
             line: entry.line,
             type: entry.type || 'info',
@@ -164,15 +192,15 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
         // Load all generated files (not just filtered previews) with presigned URLs
         try {
           const fileRes = await aiAPI.getTaskFiles(taskId);
-          const filesData = Array.isArray(fileRes?.data) ? fileRes.data : Array.isArray(fileRes?.data?.data) ? fileRes.data.data : [];
+          const filesData = normalizeTaskFiles(fileRes);
           if (!cancelled && filesData.length) {
-            setFiles(filesData.map((f: any) => ({
+            setFiles(filesData.map((f) => ({
               taskId,
               eventType: 'file_ready' as const,
               name: f.name || f.key || '',
-              category: f.category || 'process',
+              category: f.category === 'core' ? 'core' : 'process',
               size: f.size || 0,
-              url: f.url,
+              url: f.url ?? '',
               mimeType: f.mimeType || 'application/octet-stream',
               timestamp: Date.now(),
             })));
@@ -303,7 +331,10 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
     }
   }, [logs, autoScroll]);
 
-  const stripAnsi = (str: string) => str.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '');
+  const stripAnsi = (str: string) => {
+    const esc = String.fromCharCode(27);
+    return str.replace(new RegExp(`${esc}\\[[0-9;]*[a-zA-Z]`, 'g'), '');
+  };
 
   const isActive = taskStatus === 'running' || taskStatus === 'pending';
   const panelHeight = expanded ? 500 : 280;

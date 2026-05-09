@@ -49,7 +49,7 @@ describe('SearchSubscriber', () => {
       } as any;
       subscriber.afterInsert(event);
       // Wait for async call to finish
-      await new Promise(r => setTimeout(r, 10));
+      await new Promise((r) => setTimeout(r, 10));
       expect(searchService.indexPost).toHaveBeenCalled();
     });
 
@@ -59,7 +59,7 @@ describe('SearchSubscriber', () => {
         entity: { id: 1 },
       } as any;
       subscriber.afterInsert(event);
-      await new Promise(r => setTimeout(r, 10));
+      await new Promise((r) => setTimeout(r, 10));
       expect(searchService.indexPost).not.toHaveBeenCalled();
       expect(searchService.indexTicket).not.toHaveBeenCalled();
     });
@@ -72,7 +72,7 @@ describe('SearchSubscriber', () => {
         databaseEntity: { id: 1 },
       } as any;
       subscriber.afterRemove(event);
-      await new Promise(r => setTimeout(r, 10));
+      await new Promise((r) => setTimeout(r, 10));
       expect(searchService.removePost).toHaveBeenCalledWith(1);
     });
   });

@@ -51,19 +51,34 @@ describe('RoomService', () => {
     });
 
     it('should allow external user with matching ticketId and link enabled', () => {
-      const user: RoomUserInfo = { userId: 99, role: 'external', allowedTicketId: 1 };
+      const user: RoomUserInfo = {
+        userId: 99,
+        role: 'external',
+        allowedTicketId: 1,
+      };
       expect(service.isAuthorizedForRoom(user, makeTicket())).toBe(true);
     });
 
     it('should deny external user if link is disabled', () => {
-      const user: RoomUserInfo = { userId: 99, role: 'external', allowedTicketId: 1 };
+      const user: RoomUserInfo = {
+        userId: 99,
+        role: 'external',
+        allowedTicketId: 1,
+      };
       expect(
-        service.isAuthorizedForRoom(user, makeTicket({ isExternalLinkDisabled: true })),
+        service.isAuthorizedForRoom(
+          user,
+          makeTicket({ isExternalLinkDisabled: true }),
+        ),
       ).toBe(false);
     });
 
     it('should deny external user with wrong ticketId', () => {
-      const user: RoomUserInfo = { userId: 99, role: 'external', allowedTicketId: 999 };
+      const user: RoomUserInfo = {
+        userId: 99,
+        role: 'external',
+        allowedTicketId: 999,
+      };
       expect(service.isAuthorizedForRoom(user, makeTicket())).toBe(false);
     });
 
@@ -136,14 +151,25 @@ describe('RoomService', () => {
     });
 
     it('should deny external user with disabled link', () => {
-      const user: RoomUserInfo = { userId: 99, role: 'external', allowedTicketId: 1 };
+      const user: RoomUserInfo = {
+        userId: 99,
+        role: 'external',
+        allowedTicketId: 1,
+      };
       expect(
-        service.canAccessTicketRoom(user, makeTicket({ isExternalLinkDisabled: true })),
+        service.canAccessTicketRoom(
+          user,
+          makeTicket({ isExternalLinkDisabled: true }),
+        ),
       ).toBe(false);
     });
 
     it('should allow external user with valid link', () => {
-      const user: RoomUserInfo = { userId: 99, role: 'external', allowedTicketId: 1 };
+      const user: RoomUserInfo = {
+        userId: 99,
+        role: 'external',
+        allowedTicketId: 1,
+      };
       expect(service.canAccessTicketRoom(user, makeTicket())).toBe(true);
     });
   });

@@ -52,26 +52,43 @@ describe('BbsController', () => {
     it('should return post and increment view', async () => {
       const mockPost = { id: 1, title: 'test' };
       (service.findOne as jest.Mock).mockResolvedValue(mockPost);
-      
-      const result = await controller.findOne(1, { user: { id: 1, role: { name: 'user' } } });
-      
+
+      const result = await controller.findOne(1, {
+        user: { id: 1, role: { name: 'user' } },
+      });
+
       expect(result).toEqual(mockPost);
       expect(service.incrementView).toHaveBeenCalledWith(1);
     });
 
     it('should throw if external user accesses unshared post', async () => {
       const req = { user: { id: 1, role: { name: 'external' }, bbsId: 2 } };
-      await expect(controller.findOne(1, req)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.findOne(1, req)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
   describe('update', () => {
     it('should pass bypassOwnership flag correctly', async () => {
-      await controller.update(1, { title: 'new' }, { user: { id: 1, role: { name: 'admin' } } });
+      await controller.update(
+        1,
+        { title: 'new' },
+        { user: { id: 1, role: { name: 'admin' } } },
+      );
       expect(service.update).toHaveBeenCalledWith(1, { title: 'new' }, 1, true);
 
-      await controller.update(1, { title: 'new' }, { user: { id: 2, role: { name: 'user', permissions: [] } } });
-      expect(service.update).toHaveBeenCalledWith(1, { title: 'new' }, 2, false);
+      await controller.update(
+        1,
+        { title: 'new' },
+        { user: { id: 2, role: { name: 'user', permissions: [] } } },
+      );
+      expect(service.update).toHaveBeenCalledWith(
+        1,
+        { title: 'new' },
+        2,
+        false,
+      );
     });
   });
 });

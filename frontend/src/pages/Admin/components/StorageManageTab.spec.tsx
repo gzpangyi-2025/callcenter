@@ -33,17 +33,25 @@ Object.defineProperty(window, 'matchMedia', {
 describe('StorageManageTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (settingsAPI.getAll as jest.Mock).mockResolvedValue({
+    vi.mocked(settingsAPI.getAll).mockResolvedValue({
       code: 0,
       data: {
         'storage.provider': 'cos',
+        'storage.cos.secretId': 'AKID-test',
+        'storage.cos.secretKey': 'secret-key',
+        'storage.cos.bucket': 'callcenter-test',
+        'storage.cos.region': 'ap-guangzhou',
       },
     });
-    (settingsAPI.getMigrationStats as jest.Mock).mockResolvedValue({
+    vi.mocked(settingsAPI.getMigrationStats).mockResolvedValue({
       code: 0,
       data: {
         localFiles: 0,
       },
+    });
+    vi.mocked(settingsAPI.saveStorage).mockResolvedValue({
+      code: 0,
+      message: 'ok',
     });
   });
 
@@ -73,5 +81,23 @@ describe('StorageManageTab', () => {
     });
 
     expect(screen.queryByPlaceholderText('请输入以 AKID 开头的标识')).not.toBeInTheDocument();
+  });
+
+  it('submits the selected storage provider', async () => {
+    render(<StorageManageTab />);
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('请输入以 AKID 开头的标识')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /保存存储配置/ }));
+
+    await waitFor(() => {
+      expect(settingsAPI.saveStorage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          provider: 'cos',
+        }),
+      );
+    });
   });
 });

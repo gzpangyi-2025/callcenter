@@ -14,10 +14,16 @@ jest.mock('fs', () => {
     readdirSync: jest.fn().mockReturnValue([]),
     readFileSync: jest.fn().mockReturnValue('{}'),
     unlinkSync: jest.fn(),
-    statSync: jest.fn().mockReturnValue({ isFile: () => true, size: 1024, mtime: new Date() }),
+    statSync: jest
+      .fn()
+      .mockReturnValue({ isFile: () => true, size: 1024, mtime: new Date() }),
     rmSync: jest.fn(),
-    createWriteStream: jest.fn().mockReturnValue({ on: jest.fn(), pipe: jest.fn() }),
-    createReadStream: jest.fn().mockReturnValue({ pipe: jest.fn().mockReturnValue({ on: jest.fn() }) }),
+    createWriteStream: jest
+      .fn()
+      .mockReturnValue({ on: jest.fn(), pipe: jest.fn() }),
+    createReadStream: jest
+      .fn()
+      .mockReturnValue({ pipe: jest.fn().mockReturnValue({ on: jest.fn() }) }),
   };
 });
 
@@ -77,7 +83,10 @@ describe('BackupService', () => {
   describe('getOrphanFiles', () => {
     it('should calculate orphans correctly', async () => {
       (fs.readdirSync as jest.Mock).mockReturnValue(['orphan.png']);
-      (fs.statSync as jest.Mock).mockReturnValue({ isFile: () => true, size: 1000 });
+      (fs.statSync as jest.Mock).mockReturnValue({
+        isFile: () => true,
+        size: 1000,
+      });
       dataSource.query.mockResolvedValue([]); // No references
       const result = await service.getOrphanFiles();
       expect(result.count).toBe(1);
@@ -87,7 +96,11 @@ describe('BackupService', () => {
 
   describe('cleanOrphanFiles', () => {
     it('should delete orphan files', async () => {
-      jest.spyOn(service, 'getOrphanFiles').mockResolvedValue({ files: ['orphan.png'], count: 1, totalSize: 1000 });
+      jest.spyOn(service, 'getOrphanFiles').mockResolvedValue({
+        files: ['orphan.png'],
+        count: 1,
+        totalSize: 1000,
+      });
       const result = await service.cleanOrphanFiles();
       expect(fs.unlinkSync).toHaveBeenCalled();
       expect(result.deletedCount).toBe(1);
@@ -106,9 +119,13 @@ describe('BackupService', () => {
 
   describe('cleanCosOrphanFiles', () => {
     it('should call deleteCosObjects', async () => {
-      jest.spyOn(service, 'getCosOrphanFiles').mockResolvedValue({ count: 1, files: ['cos-orphan.png'] });
+      jest
+        .spyOn(service, 'getCosOrphanFiles')
+        .mockResolvedValue({ count: 1, files: ['cos-orphan.png'] });
       const result = await service.cleanCosOrphanFiles();
-      expect(filesService.deleteCosObjects).toHaveBeenCalledWith(['cos-orphan.png']);
+      expect(filesService.deleteCosObjects).toHaveBeenCalledWith([
+        'cos-orphan.png',
+      ]);
       expect(result.deletedCount).toBe(2);
     });
   });
@@ -118,7 +135,7 @@ describe('BackupService', () => {
       dataSource.query
         .mockResolvedValueOnce([{ Tables_in_db: 'users' }]) // SHOW TABLES
         .mockResolvedValueOnce([{ cnt: '5' }]); // COUNT(*)
-      
+
       const result = await service.getStats();
       expect(result.code).toBe(0);
       expect(result.data.tableCount).toBe(1);

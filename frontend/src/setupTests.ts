@@ -1,4 +1,23 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
+const localStorageStore = new Map<string, string>();
+
+Object.defineProperty(globalThis, 'localStorage', {
+  configurable: true,
+  value: {
+    getItem: vi.fn((key: string) => localStorageStore.get(key) ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      localStorageStore.set(key, String(value));
+    }),
+    removeItem: vi.fn((key: string) => {
+      localStorageStore.delete(key);
+    }),
+    clear: vi.fn(() => {
+      localStorageStore.clear();
+    }),
+  },
+});
 
 // matchMedia mock
 Object.defineProperty(window, 'matchMedia', {

@@ -2,9 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
+type MockService = Record<string, jest.Mock>;
+
 describe('UsersController', () => {
   let controller: UsersController;
-  let mockUsersService: any;
+  let mockUsersService: MockService;
 
   beforeEach(async () => {
     mockUsersService = {
@@ -60,7 +62,7 @@ describe('UsersController', () => {
       mockUsersService.updateUser.mockResolvedValue(data);
       const req = { user: { sub: 1 } };
       const body = { realName: 'test' };
-      
+
       const result = await controller.updateMe(req, body);
       expect(result).toEqual({ code: 0, message: '个人信息更新成功', data });
       expect(mockUsersService.updateUser).toHaveBeenCalledWith(1, body);
@@ -83,10 +85,14 @@ describe('UsersController', () => {
       mockUsersService.changePassword.mockResolvedValue(undefined);
       const result = await controller.changePassword(
         { user: { sub: 1 } },
-        { oldPassword: 'old', newPassword: 'new' }
+        { oldPassword: 'old', newPassword: 'new' },
       );
       expect(result).toEqual({ code: 0, message: '密码修改成功' });
-      expect(mockUsersService.changePassword).toHaveBeenCalledWith(1, 'old', 'new');
+      expect(mockUsersService.changePassword).toHaveBeenCalledWith(
+        1,
+        'old',
+        'new',
+      );
     });
   });
 

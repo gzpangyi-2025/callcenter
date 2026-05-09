@@ -1,10 +1,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  AI Chat Service — Gemini 3.1 Flash dispatcher for conversational AI
 // ─────────────────────────────────────────────────────────────────────────────
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, Part, Tool } from '@google/generative-ai';
 
 import { AiChatSession } from '../../entities/ai-chat-session.entity';
 import { AiChatMessage } from '../../entities/ai-chat-message.entity';
@@ -26,6 +31,40 @@ interface ChatStreamChunk {
   sessionId?: string;
 }
 
+interface DispatchTaskInstruction {
+  type: string;
+  params: Record<string, unknown>;
+  prompt?: string;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const errorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err);
+
+const hasErrorText = (err: unknown, text: string): boolean =>
+  errorMessage(err).toLowerCase().includes(text);
+
+const parseDispatchTaskInstruction = (
+  raw: string,
+): DispatchTaskInstruction | null => {
+  const parsed: unknown = JSON.parse(raw);
+  if (!isRecord(parsed)) return null;
+
+  const type = typeof parsed.type === 'string' ? parsed.type : 'custom';
+  const params = isRecord(parsed.params) ? parsed.params : {};
+  const prompt = typeof parsed.prompt === 'string' ? parsed.prompt : undefined;
+  return { type, params, prompt };
+};
+
+const getTaskIdFromWorkerResponse = (response: unknown): string | undefined => {
+  if (!isRecord(response)) return undefined;
+  const nested = response.data;
+  if (isRecord(nested) && typeof nested.id === 'string') return nested.id;
+  return typeof response.id === 'string' ? response.id : undefined;
+};
+
 @Injectable()
 export class AiChatService {
   private readonly logger = new Logger(AiChatService.name);
@@ -45,7 +84,7 @@ export class AiChatService {
     res.set({
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
       'X-Accel-Buffering': 'no',
     });
     res.flushHeaders();
@@ -66,7 +105,9 @@ export class AiChatService {
       } else {
         session = this.sessionRepo.create({
           userId: req.userId,
-          title: req.message.substring(0, 50) + (req.message.length > 50 ? '...' : ''),
+          title:
+            req.message.substring(0, 50) +
+            (req.message.length > 50 ? '...' : ''),
         });
         session = await this.sessionRepo.save(session);
       }
@@ -96,7 +137,10 @@ export class AiChatService {
       const modelName = settings['ai.chatModel'] || 'gemini-3.1-flash';
 
       if (!apiKey) {
-        send({ type: 'error', content: '未配置 AI Chat API Key，请在管理后台 → AI 设置中配置。' });
+        send({
+          type: 'error',
+          content: '未配置 AI Chat API Key，请在管理后台 → AI 设置中配置。',
+        });
         send({ type: 'done', content: '' });
         res.end();
         return;
@@ -107,16 +151,14 @@ export class AiChatService {
       const model = genAI.getGenerativeModel({
         model: modelName,
         systemInstruction: this.buildSystemPrompt(settings),
-        tools: [
-          { google_search: {} } as any,
-        ],
+        tools: [{ google_search: {} } as unknown as Tool],
       });
 
       // Convert history to Gemini format
       const geminiHistory = history
         .filter((m) => m.role !== 'system')
         .map((m) => ({
-          role: m.role === 'assistant' ? 'model' as const : 'user' as const,
+          role: m.role === 'assistant' ? ('model' as const) : ('user' as const),
           parts: [{ text: m.content }],
         }));
 
@@ -128,7 +170,9 @@ export class AiChatService {
       });
 
       // 6. Stream response
-      const messageParts: any[] = [{ text: currentMessage?.parts?.[0]?.text ?? req.message }];
+      const messageParts: Part[] = [
+        { text: currentMessage?.parts?.[0]?.text ?? req.message },
+      ];
 
       if (req.images && req.images.length > 0) {
         for (const base64Image of req.images) {
@@ -158,19 +202,26 @@ export class AiChatService {
 
       // 7. Check if response contains task dispatch instructions
       let dispatchedTaskId: string | undefined;
-      const taskMatch = fullResponse.match(/\[DISPATCH_TASK\]([\s\S]*?)\[\/DISPATCH_TASK\]/);
+      const taskMatch = fullResponse.match(
+        /\[DISPATCH_TASK\]([\s\S]*?)\[\/DISPATCH_TASK\]/,
+      );
       if (taskMatch) {
         try {
-          const taskInstruction = JSON.parse(taskMatch[1].trim());
+          const taskInstruction = parseDispatchTaskInstruction(
+            taskMatch[1].trim(),
+          );
+          if (!taskInstruction) {
+            throw new BadRequestException('任务调度指令格式无效');
+          }
           const taskResult = await this.aiService.createTask(
             {
-              type: taskInstruction.type || 'custom',
-              params: taskInstruction.params || {},
+              type: taskInstruction.type,
+              params: taskInstruction.params,
               prompt: taskInstruction.prompt,
             },
             req.userId,
           );
-          const taskId = taskResult?.data?.id || taskResult?.id;
+          const taskId = getTaskIdFromWorkerResponse(taskResult);
           if (taskId) {
             dispatchedTaskId = taskId;
             // Link task to session
@@ -183,41 +234,54 @@ export class AiChatService {
 
             send({ type: 'task_created', content: `任务已创建`, taskId });
           }
-        } catch (err: any) {
-          this.logger.error(`Task dispatch failed: ${err.message}`);
-          send({ type: 'text', content: `\n\n⚠️ 任务创建失败: ${err.message}` });
+        } catch (err: unknown) {
+          const message = errorMessage(err);
+          this.logger.error(`Task dispatch failed: ${message}`);
+          send({
+            type: 'text',
+            content: `\n\n⚠️ 任务创建失败: ${message}`,
+          });
         }
       }
 
       // 8. Save assistant message (strip dispatch tags for display)
-      const cleanResponse = fullResponse.replace(
-        /\[DISPATCH_TASK\][\s\S]*?\[\/DISPATCH_TASK\]/g,
-        '',
-      ).trim();
+      const cleanResponse = fullResponse
+        .replace(/\[DISPATCH_TASK\][\s\S]*?\[\/DISPATCH_TASK\]/g, '')
+        .trim();
       await this.messageRepo.save(
         this.messageRepo.create({
           sessionId: session.id,
           role: 'assistant',
           content: cleanResponse || fullResponse,
-          metadata: taskMatch ? { intent: 'create_task', taskId: dispatchedTaskId } : { intent: 'chat' },
+          metadata: taskMatch
+            ? { intent: 'create_task', taskId: dispatchedTaskId }
+            : { intent: 'chat' },
         }),
       );
 
       // 9. Auto-generate title for new sessions (first message)
       if (!req.sessionId && history.length <= 1) {
-        this.generateTitle(session.id, req.message, cleanResponse, apiKey, modelName).catch(
-          (e) => this.logger.warn(`Title gen failed: ${e}`),
+        this.generateTitle(
+          session.id,
+          req.message,
+          cleanResponse,
+          apiKey,
+          modelName,
+        ).catch((err: unknown) =>
+          this.logger.warn(`Title gen failed: ${errorMessage(err)}`),
         );
       }
 
       send({ type: 'done', content: '', sessionId: session.id });
-    } catch (err: any) {
-      this.logger.error(`Chat stream error: ${err.message}`);
+    } catch (err: unknown) {
+      const message = errorMessage(err);
+      this.logger.error(`Chat stream error: ${message}`);
       // User-friendly error messages
-      let userMsg = `AI 服务出错: ${err.message}`;
-      if (err.message?.includes('429') || err.message?.includes('quota')) {
-        userMsg = 'AI 模型调用配额已耗尽，请稍后再试，或到后台切换模型（如 gemini-3.1-pro-preview）。';
-      } else if (err.message?.includes('404')) {
+      let userMsg = `AI 服务出错: ${message}`;
+      if (hasErrorText(err, '429') || hasErrorText(err, 'quota')) {
+        userMsg =
+          'AI 模型调用配额已耗尽，请稍后再试，或到后台切换模型（如 gemini-3.1-pro-preview）。';
+      } else if (hasErrorText(err, '404')) {
         userMsg = '当前选择的 AI 模型不可用，请到后台 AI 设置中切换模型。';
       }
       send({ type: 'error', content: userMsg });
@@ -265,7 +329,7 @@ export class AiChatService {
     userId: number,
     role: 'assistant' | 'system',
     content: string,
-    metadata?: any,
+    metadata?: Record<string, unknown>,
   ) {
     const session = await this.sessionRepo.findOne({
       where: { id: sessionId, userId },
@@ -280,11 +344,11 @@ export class AiChatService {
       content,
       metadata,
     });
-    
+
     // Update session timestamp
     session.updatedAt = new Date();
     await this.sessionRepo.save(session);
-    
+
     return this.messageRepo.save(message);
   }
 

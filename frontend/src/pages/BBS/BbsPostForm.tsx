@@ -5,7 +5,7 @@ import { ArrowLeftOutlined, SaveOutlined, ImportOutlined, SettingOutlined } from
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import api, { filesAPI, bbsAPI } from '../../services/api';
 import TurndownService from 'turndown';
-// @ts-ignore
+// @ts-expect-error turndown-plugin-gfm does not ship TypeScript declarations.
 import { gfm } from 'turndown-plugin-gfm';
 import * as mammoth from 'mammoth';
 

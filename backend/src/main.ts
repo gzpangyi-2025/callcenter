@@ -29,7 +29,10 @@ const directCloudHosts = [
   '.myqcloud.com',
 ];
 
-function appendNoProxyHosts(current: string | undefined, hosts: string[]): string {
+function appendNoProxyHosts(
+  current: string | undefined,
+  hosts: string[],
+): string {
   const values = (current || '')
     .split(',')
     .map((item) => item.trim())
@@ -74,7 +77,12 @@ process.env.NO_PROXY = mergedNoProxy;
 process.env.no_proxy = mergedNoProxy;
 
 // 开启全局代理：自动读取环境中的 HTTP_PROXY / HTTPS_PROXY，不硬编码端口
-if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy || process.env.https_proxy) {
+if (
+  process.env.HTTP_PROXY ||
+  process.env.HTTPS_PROXY ||
+  process.env.http_proxy ||
+  process.env.https_proxy
+) {
   const envProxy = new EnvHttpProxyAgent();
   setGlobalDispatcher(envProxy);
   logger.log('🌐 Proxy Agent dynamically configured for global fetch.');

@@ -58,8 +58,10 @@ export class RoomService {
 
   canAccessTicketRoom(userInfo: RoomUserInfo, ticket: Ticket): boolean {
     const { role, userId } = userInfo;
-    
-    this.logger.log(`[RoomService] canAccessTicketRoom -> userId: ${userId}, role: ${role}, ticketId: ${ticket.id}, ticketStatus: ${ticket.status}, assigneeId: ${ticket.assigneeId}`);
+
+    this.logger.log(
+      `[RoomService] canAccessTicketRoom -> userId: ${userId}, role: ${role}, ticketId: ${ticket.id}, ticketStatus: ${ticket.status}, assigneeId: ${ticket.assigneeId}`,
+    );
 
     if (role === 'external') {
       return (
@@ -73,7 +75,7 @@ export class RoomService {
 
     const isDirectedPending =
       ticket.status === TicketStatus.PENDING && !!ticket.assigneeId;
-    
+
     this.logger.log(`[RoomService] isDirectedPending: ${isDirectedPending}`);
     return !isDirectedPending;
   }

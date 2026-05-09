@@ -71,7 +71,10 @@ describe('AiController', () => {
       const req = { user: mockUser, ip: '127.0.0.1' } as any;
       const body = { type: 'test-type', params: {} };
 
-      (aiService.createTask as jest.Mock).mockResolvedValue({ code: 0, data: { id: 'task-1' } });
+      (aiService.createTask as jest.Mock).mockResolvedValue({
+        code: 0,
+        data: { id: 'task-1' },
+      });
 
       const result = await controller.createTask(body, req);
 
@@ -86,12 +89,19 @@ describe('AiController', () => {
       const mockUser = { id: 1, role: { name: 'user' } };
       const req = { user: mockUser } as any;
 
-      (aiService.listTasks as jest.Mock).mockResolvedValue({ code: 0, data: [] });
+      (aiService.listTasks as jest.Mock).mockResolvedValue({
+        code: 0,
+        data: [],
+      });
 
       const result = await controller.listTasks(req, '1', '10');
 
       expect(result.code).toBe(0);
-      expect(aiService.listTasks).toHaveBeenCalledWith({ page: 1, limit: 10, userId: 1 });
+      expect(aiService.listTasks).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+        userId: 1,
+      });
     });
   });
 

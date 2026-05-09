@@ -30,6 +30,32 @@ import { User } from '../../entities/user.entity';
 
 import { IsString, IsObject, IsOptional } from 'class-validator';
 
+interface AiTaskListItem extends Record<string, unknown> {
+  userId?: number;
+  creatorName?: string;
+}
+
+interface AiTaskListResponse extends Record<string, unknown> {
+  data: AiTaskListItem[];
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const unwrapWorkerData = (value: unknown): unknown =>
+  isRecord(value) && 'data' in value ? value.data : value;
+
+const isAiTaskListResponse = (value: unknown): value is AiTaskListResponse =>
+  isRecord(value) && Array.isArray(value.data) && value.data.every(isRecord);
+
+const uniqueNumericUserIds = (tasks: AiTaskListItem[]): number[] => [
+  ...new Set(
+    tasks
+      .map((task) => task.userId)
+      .filter((userId): userId is number => typeof userId === 'number'),
+  ),
+];
+
 export class CreateAiTaskDto {
   @IsOptional()
   @IsString()
@@ -83,12 +109,15 @@ export class AiController {
 
   /** GET /api/ai/upload-url — 获取直接上传附件到 Worker COS 的预签名 URL */
   @Get('upload-url')
-  async getUploadUrl(@Query('taskId') taskId: string, @Query('filename') filename: string) {
+  async getUploadUrl(
+    @Query('taskId') taskId: string,
+    @Query('filename') filename: string,
+  ) {
     if (!taskId || !filename) {
       return { success: false, message: 'taskId and filename are required' };
     }
     const result = await this.aiService.getUploadUrl(taskId, filename);
-    return { code: 0, data: result?.data ?? result };
+    return { code: 0, data: unwrapWorkerData(result) };
   }
 
   /** POST /api/ai/tasks — 提交新 AI 任务 */
@@ -99,7 +128,7 @@ export class AiController {
   ) {
     const result = await this.aiService.createTask(body, req.user.id);
     // 审计日志
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.AI_TASK,
       action: body.parentTaskId ? 'modify_task' : 'create_task',
       userId: req.user.id,
@@ -122,8 +151,7 @@ export class AiController {
     @Query('status') status?: string,
     @Query('all') all?: string,
   ) {
-    const roleObj = req.user.role as any;
-    const isAdmin = roleObj?.name === 'admin';
+    const isAdmin = req.user.role.name === 'admin';
     const showAll = isAdmin && all === '1';
 
     const result = await this.aiService.listTasks({
@@ -134,13 +162,21 @@ export class AiController {
     });
 
     // Enrich with creator names when admin views all
-    if (showAll && result?.data?.length > 0) {
-      const userIds = [...new Set(result.data.map((t: any) => t.userId).filter(Boolean))];
+    if (showAll && isAiTaskListResponse(result) && result.data.length > 0) {
+      const userIds = uniqueNumericUserIds(result.data);
       if (userIds.length > 0) {
-        const users = await this.userRepo.find({ where: { id: In(userIds) }, select: ['id', 'username', 'realName', 'displayName'] });
-        const userMap = new Map(users.map(u => [u.id, u.realName || u.displayName || u.username]));
+        const users = await this.userRepo.find({
+          where: { id: In(userIds) },
+          select: ['id', 'username', 'realName', 'displayName'],
+        });
+        const userMap = new Map(
+          users.map((u) => [u.id, u.realName || u.displayName || u.username]),
+        );
         for (const task of result.data) {
-          task.creatorName = task.userId ? userMap.get(task.userId) ?? `用户#${task.userId}` : '-';
+          task.creatorName =
+            typeof task.userId === 'number'
+              ? (userMap.get(task.userId) ?? `用户#${task.userId}`)
+              : '-';
         }
       }
     }
@@ -158,7 +194,7 @@ export class AiController {
   @Post('tasks/:id/cancel')
   async cancelTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const result = await this.aiService.cancelTask(id);
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.AI_TASK,
       action: 'cancel_task',
       userId: req.user.id,
@@ -174,7 +210,7 @@ export class AiController {
   @Delete('tasks/:id')
   async deleteTask(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     const result = await this.aiService.deleteTask(id);
-    this.auditService.log({
+    void this.auditService.log({
       type: AuditType.AI_TASK,
       action: 'delete_task',
       userId: req.user.id,
@@ -253,7 +289,12 @@ export class AiController {
     @Res() res: express.Response,
   ) {
     return this.aiChatService.chatStream(
-      { sessionId: body.sessionId, message: body.message, images: body.images, userId: req.user.id },
+      {
+        sessionId: body.sessionId,
+        message: body.message,
+        images: body.images,
+        userId: req.user.id,
+      },
       res,
     );
   }
@@ -279,10 +320,21 @@ export class AiController {
   @Post('chat/sessions/:id/messages')
   async injectMessage(
     @Param('id') id: string,
-    @Body() body: { role: 'assistant' | 'system'; content: string; metadata?: any },
+    @Body()
+    body: {
+      role: 'assistant' | 'system';
+      content: string;
+      metadata?: Record<string, unknown>;
+    },
     @Req() req: AuthenticatedRequest,
   ) {
-    const message = await this.aiChatService.injectMessage(id, req.user.id, body.role, body.content, body.metadata);
+    const message = await this.aiChatService.injectMessage(
+      id,
+      req.user.id,
+      body.role,
+      body.content,
+      body.metadata,
+    );
     return { code: 0, data: message };
   }
 

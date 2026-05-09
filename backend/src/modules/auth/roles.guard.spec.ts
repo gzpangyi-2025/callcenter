@@ -33,7 +33,7 @@ describe('RolesGuard', () => {
     const mockContext = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
     expect(guard.canActivate(mockContext)).toBe(true);
   });
 
@@ -45,7 +45,7 @@ describe('RolesGuard', () => {
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({}),
       }),
-    } as any;
+    } as unknown as ExecutionContext;
     expect(guard.canActivate(mockContext)).toBe(false);
   });
 
@@ -59,7 +59,7 @@ describe('RolesGuard', () => {
           user: { role: { name: 'user' } },
         }),
       }),
-    } as any;
+    } as unknown as ExecutionContext;
     expect(guard.canActivate(mockContext)).toBe(false);
   });
 
@@ -73,7 +73,7 @@ describe('RolesGuard', () => {
           user: { role: { name: 'admin' } },
         }),
       }),
-    } as any;
+    } as unknown as ExecutionContext;
     expect(guard.canActivate(mockContext)).toBe(true);
   });
 
@@ -87,7 +87,7 @@ describe('RolesGuard', () => {
           user: { role: 'admin' },
         }),
       }),
-    } as any;
+    } as unknown as ExecutionContext;
     expect(guard.canActivate(mockContext)).toBe(true);
   });
 });

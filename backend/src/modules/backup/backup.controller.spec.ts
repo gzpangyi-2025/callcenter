@@ -43,9 +43,17 @@ describe('BackupController', () => {
   });
 
   it('should create backup', async () => {
-    (backupService.createBackup as jest.Mock).mockResolvedValue({ success: true });
-    expect(await controller.createBackup({ includeImages: true })).toEqual({ success: true });
-    expect(backupService.createBackup).toHaveBeenCalledWith({ includeImages: true, includeFiles: true, includeAuditLogs: false });
+    (backupService.createBackup as jest.Mock).mockResolvedValue({
+      success: true,
+    });
+    expect(await controller.createBackup({ includeImages: true })).toEqual({
+      success: true,
+    });
+    expect(backupService.createBackup).toHaveBeenCalledWith({
+      includeImages: true,
+      includeFiles: true,
+      includeAuditLogs: false,
+    });
   });
 
   it('should list backups', async () => {
@@ -57,16 +65,20 @@ describe('BackupController', () => {
     it('should throw if file not found', () => {
       (backupService.getBackupPath as jest.Mock).mockReturnValue(null);
       const res = {} as Response;
-      expect(() => controller.downloadBackup('b1.zip', res)).toThrow(NotFoundException);
+      expect(() => controller.downloadBackup('b1.zip', res)).toThrow(
+        NotFoundException,
+      );
     });
 
     it('should send file if exists', () => {
-      (backupService.getBackupPath as jest.Mock).mockReturnValue('/path/to/b1.zip');
+      (backupService.getBackupPath as jest.Mock).mockReturnValue(
+        '/path/to/b1.zip',
+      );
       const res = {
         setHeader: jest.fn(),
         sendFile: jest.fn(),
       } as unknown as Response;
-      
+
       controller.downloadBackup('b1.zip', res);
       expect(res.setHeader).toHaveBeenCalledTimes(2);
       expect(res.sendFile).toHaveBeenCalledWith('/path/to/b1.zip');
@@ -80,7 +92,9 @@ describe('BackupController', () => {
     });
 
     it('should call service if file uploaded', async () => {
-      (backupService.restoreBackup as jest.Mock).mockResolvedValue({ success: true });
+      (backupService.restoreBackup as jest.Mock).mockResolvedValue({
+        success: true,
+      });
       const file = { path: '/tmp/test.zip' } as any;
       expect(await controller.restoreBackup(file)).toEqual({ success: true });
       expect(backupService.restoreBackup).toHaveBeenCalledWith('/tmp/test.zip');
@@ -93,20 +107,29 @@ describe('BackupController', () => {
   });
 
   it('should clean local orphans', async () => {
-    (backupService.cleanOrphanFiles as jest.Mock).mockResolvedValue({ deletedCount: 5, freedSize: 1024 * 1024 });
+    (backupService.cleanOrphanFiles as jest.Mock).mockResolvedValue({
+      deletedCount: 5,
+      freedSize: 1024 * 1024,
+    });
     const result = await controller.cleanOrphans();
     expect(result.code).toBe(0);
     expect(result.message).toContain('清理 5 个孤儿文件，释放 1.00 MB');
   });
 
   it('should get cos orphans', async () => {
-    (backupService.getCosOrphanFiles as jest.Mock).mockResolvedValue({ count: 2, files: ['f1', 'f2'] });
+    (backupService.getCosOrphanFiles as jest.Mock).mockResolvedValue({
+      count: 2,
+      files: ['f1', 'f2'],
+    });
     const result = await controller.getCosOrphans();
     expect(result.data.orphanCount).toBe(2);
   });
 
   it('should clean cos orphans', async () => {
-    (backupService.cleanCosOrphanFiles as jest.Mock).mockResolvedValue({ deletedCount: 3, failedCount: 1 });
+    (backupService.cleanCosOrphanFiles as jest.Mock).mockResolvedValue({
+      deletedCount: 3,
+      failedCount: 1,
+    });
     const result = await controller.cleanCosOrphans();
     expect(result.message).toContain('删除 3 个云端孤儿文件，失败 1 个');
   });

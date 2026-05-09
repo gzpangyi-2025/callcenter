@@ -16,16 +16,67 @@ import {
   HeadingLevel,
   AlignmentType,
   ShadingType,
+  FileChild,
 } from 'docx';
-import axios from 'axios';
 import sizeOf from 'image-size';
 import archiver from 'archiver';
+import type { Response } from 'express';
 
 import { KnowledgeDoc } from '../../entities/knowledge-doc.entity';
-import { Ticket } from '../../entities/ticket.entity';
-import { Message } from '../../entities/message.entity';
+import { Ticket, TicketStatus } from '../../entities/ticket.entity';
+import { Message, MessageType } from '../../entities/message.entity';
 import { SettingsService } from '../settings/settings.service';
 import { FilesService } from '../files/files.service';
+
+const errorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isUnknownArray = (value: unknown): value is unknown[] =>
+  Array.isArray(value);
+
+const imageDataFromPart = (part: unknown): string | undefined => {
+  if (!isRecord(part)) return undefined;
+
+  const inlineData = part.inlineData;
+  if (isRecord(inlineData) && typeof inlineData.data === 'string') {
+    return inlineData.data;
+  }
+
+  const snakeInlineData = part.inline_data;
+  if (isRecord(snakeInlineData) && typeof snakeInlineData.data === 'string') {
+    return snakeInlineData.data;
+  }
+
+  return undefined;
+};
+
+const extractGeneratedImageBase64 = (
+  data: unknown,
+  isGeminiModel: boolean,
+): string | undefined => {
+  if (!isRecord(data)) return undefined;
+
+  if (isGeminiModel) {
+    const candidates = data.candidates;
+    if (!isUnknownArray(candidates)) return undefined;
+    const firstCandidate = candidates[0];
+    if (!isRecord(firstCandidate)) return undefined;
+    const content = firstCandidate.content;
+    if (!isRecord(content) || !Array.isArray(content.parts)) return undefined;
+    return content.parts.map(imageDataFromPart).find(Boolean);
+  }
+
+  const predictions = data.predictions;
+  if (!isUnknownArray(predictions)) return undefined;
+  const firstPrediction = predictions[0];
+  if (!isRecord(firstPrediction)) return undefined;
+  return typeof firstPrediction.bytesBase64Encoded === 'string'
+    ? firstPrediction.bytesBase64Encoded
+    : undefined;
+};
 
 @Injectable()
 export class KnowledgeService {
@@ -52,7 +103,7 @@ export class KnowledgeService {
     });
 
     if (!ticket) throw new NotFoundException('工单不存在');
-    if (ticket.status !== 'closed')
+    if (ticket.status !== TicketStatus.CLOSED)
       throw new BadRequestException('仅能为已关闭的工单生成知识文档');
 
     const messages = await this.messageRepository.find({
@@ -66,7 +117,8 @@ export class KnowledgeService {
     const visionApiKey = settings['ai.visionApiKey'];
     let systemPrompt = settings['ai.systemPrompt'];
     const imageApiKey = settings['ai.imageApiKey'];
-    const imageModel = settings['ai.imageModel'] || 'gemini-3.1-flash-image-preview';
+    const imageModel =
+      settings['ai.imageModel'] || 'gemini-3.1-flash-image-preview';
 
     if (!visionApiKey)
       throw new BadRequestException('未配置 AI 文本模型 (Gemini) API Key');
@@ -187,7 +239,12 @@ engineer: ${ticket.assignee?.displayName || '未知'}
 
           // 尝试提取解决方案部分的文本作为画图上下文
           const solutionIndex = text.indexOf('解决方案');
-          const solutionContext = text.substring(solutionIndex > -1 ? solutionIndex : 0, (solutionIndex > -1 ? solutionIndex : 0) + 350).replace(/\n/g, ' ');
+          const solutionContext = text
+            .substring(
+              solutionIndex > -1 ? solutionIndex : 0,
+              (solutionIndex > -1 ? solutionIndex : 0) + 350,
+            )
+            .replace(/\n/g, ' ');
 
           const flowImgPrompt = `请绘制一张专业的排错流程图或修复步骤执行图，展示解决该IT故障的具体技术操作路径。
 强烈要求：绝对不要画成通用的“工单分发处理流程”！必须画出具体的排查步骤和修复动作。
@@ -198,7 +255,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
           this.logger.log(`Generating images for ticket ${ticket.ticketNo}...`);
 
           const [analysisImgUrl, flowImgUrl] = await Promise.all([
-            this.generateKnowledgeImage(analysisImgPrompt, imageApiKey, imageModel),
+            this.generateKnowledgeImage(
+              analysisImgPrompt,
+              imageApiKey,
+              imageModel,
+            ),
             this.generateKnowledgeImage(flowImgPrompt, imageApiKey, imageModel),
           ]);
 
@@ -210,7 +271,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
             '[FLOW_IMAGE_PLACEHOLDER]',
             `![解决方案流程图](${flowImgUrl})`,
           );
-        } catch (imgError: any) {
+        } catch (imgError: unknown) {
           this.logger.error(
             'Image generation failed, falling back to placeholders',
             imgError,
@@ -246,7 +307,8 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         if (titleMatch) parsedTitle = titleMatch[1];
 
         const tagsMatch = metaStr.match(/tags:\s*\[?(.*?)\]?$/m);
-        if (tagsMatch) parsedTags = tagsMatch[1].replace(/[\[\]]/g, '');
+        if (tagsMatch)
+          parsedTags = tagsMatch[1].replaceAll('[', '').replaceAll(']', '');
 
         const catMatch = metaStr.match(/category:\s*(.*)/);
         if (catMatch) parsedCategory = catMatch[1];
@@ -264,9 +326,9 @@ engineer: ${ticket.assignee?.displayName || '未知'}
         severity: parsedSeverity,
         generatedBy: 'Gemini 3.1 Pro Draft',
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error('Gemini 解析报错: ', err);
-      throw new BadRequestException('AI 服务调用失败: ' + err.message);
+      throw new BadRequestException('AI 服务调用失败: ' + errorMessage(err));
     }
   }
 
@@ -458,7 +520,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   async exportDocx(id: number): Promise<Buffer> {
     const docInfo = await this.getDocById(id);
 
-    const docChildren: any[] = [
+    const docChildren: FileChild[] = [
       new Paragraph({
         text: docInfo.title,
         heading: HeadingLevel.HEADING_1,
@@ -506,13 +568,11 @@ engineer: ${ticket.assignee?.displayName || '未知'}
           );
 
           if (
-            msg.type === 'image' ||
+            msg.type === MessageType.IMAGE ||
             msg.content.includes('/api/files/static/')
           ) {
             // Extract file URL from markdown syntax ![alt](/api/files/static/uuid.png)
-            const urlMatch = msg.content.match(
-              /\/api\/files\/static\/([^\)]+)/,
-            );
+            const urlMatch = msg.content.match(/\/api\/files\/static\/([^)]+)/);
             if (urlMatch) {
               const filename = urlMatch[1];
               try {
@@ -611,16 +671,25 @@ engineer: ${ticket.assignee?.displayName || '未知'}
     try {
       const isGeminiModel = modelToUse.startsWith('gemini');
       const endpoint = isGeminiModel ? ':generateContent' : ':predict';
-      
-      const payload = isGeminiModel 
+
+      const payload = isGeminiModel
         ? {
             contents: [{ parts: [{ text: prompt }] }],
             safetySettings: [
               { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-              { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
-            ]
+              {
+                category: 'HARM_CATEGORY_HATE_SPEECH',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                threshold: 'BLOCK_NONE',
+              },
+            ],
           }
         : {
             instances: [{ prompt }],
@@ -634,37 +703,32 @@ engineer: ${ticket.assignee?.displayName || '未知'}
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
           signal: AbortSignal.timeout(60000),
-        }
+        },
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `HTTP Error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json();
-      let b64: string | undefined;
-
-      if (isGeminiModel) {
-        // Parse Gemini generateContent response
-        b64 = data?.candidates?.[0]?.content?.parts?.find((p: any) => p.inline_data || p.inlineData)?.inlineData?.data 
-              || data?.candidates?.[0]?.content?.parts?.find((p: any) => p.inline_data || p.inlineData)?.inline_data?.data;
-      } else {
-        // Parse legacy Imagen predict response
-        b64 = data?.predictions?.[0]?.bytesBase64Encoded;
-      }
+      const data: unknown = await response.json();
+      const b64 = extractGeneratedImageBase64(data, isGeminiModel);
 
       if (!b64) {
-        this.logger.warn(`No base64 bytes returned from AI Image generation (${modelToUse}). Response: ${JSON.stringify(data)}`);
+        this.logger.warn(
+          `No base64 bytes returned from AI Image generation (${modelToUse}). Response: ${JSON.stringify(data)}`,
+        );
         return defaultImg;
       }
 
       const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
       const buffer = Buffer.from(b64, 'base64');
       return await this.filesService.uploadToCos(fileName, buffer, 'image/png');
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error(
         'Failed to generate image via Google Google Generative AI API: ' +
-          error.message,
+          errorMessage(error),
       );
       throw error;
     }
@@ -673,7 +737,7 @@ engineer: ${ticket.assignee?.displayName || '未知'}
   /**
    * 一键 ZIP 导出附件与文档
    */
-  async exportZip(id: number, res: any): Promise<void> {
+  async exportZip(id: number, res: Response): Promise<void> {
     const { doc: docInfo, safeName } = await this.getDocAndSafeName(id);
     const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -699,12 +763,10 @@ engineer: ${ticket.assignee?.displayName || '未知'}
       for (const msg of ticket.messages) {
         let internalFilename = '';
         if (msg.fileUrl) {
-          const match = msg.fileUrl.match(/\/api\/files\/static\/([^\?]+)/);
+          const match = msg.fileUrl.match(/\/api\/files\/static\/([^?]+)/);
           if (match) internalFilename = match[1];
         } else if (msg.content && msg.content.includes('/api/files/static/')) {
-          const urlMatch = msg.content.match(
-            /\/api\/files\/static\/([^\)\s]+)/,
-          );
+          const urlMatch = msg.content.match(/\/api\/files\/static\/([^\s)]+)/);
           if (urlMatch) internalFilename = urlMatch[1];
         }
 

@@ -9,7 +9,10 @@ import {
 } from '@nestjs/websockets';
 import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { io as createSocketClient, Socket as WorkerSocket } from 'socket.io-client';
+import {
+  io as createSocketClient,
+  Socket as WorkerSocket,
+} from 'socket.io-client';
 import { ChatService } from './chat.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -94,7 +97,9 @@ type AiTaskSnapshot = {
   },
   namespace: '/chat',
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
+export class ChatGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy
+{
   @WebSocketServer()
   server: Server;
 
@@ -217,7 +222,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const task = await this.getAuthorizedAiTask(client, taskId);
       if (!task) {
-        client.emit('ai:subscriptionError', { taskId, message: '无权订阅该 AI 任务' });
+        client.emit('ai:subscriptionError', {
+          taskId,
+          message: '无权订阅该 AI 任务',
+        });
         return { ok: false, taskId, message: '无权订阅该 AI 任务' };
       }
 
@@ -269,8 +277,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   private ensureAiWorkerSocket(): WorkerSocket {
     if (this.workerSocket) return this.workerSocket;
 
-    const baseUrl = (this.configService.get<string>('CODEX_WORKER_URL') || 'http://43.130.240.106:3100')
-      .replace(/\/+$/, '');
+    const baseUrl = (
+      this.configService.get<string>('CODEX_WORKER_URL') ||
+      'http://43.130.240.106:3100'
+    ).replace(/\/+$/, '');
     const apiKey = this.configService.get<string>('CODEX_WORKER_API_KEY') || '';
 
     const socket = createSocketClient(`${baseUrl}/codex`, {
@@ -363,7 +373,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private async unsubscribeWorkerTaskIfIdle(taskId: string): Promise<void> {
-    const sockets = await this.server.in(this.aiTaskRoom(taskId)).fetchSockets();
+    const sockets = await this.server
+      .in(this.aiTaskRoom(taskId))
+      .fetchSockets();
     if (sockets.length > 0) return;
 
     this.aiWorkerSubscriptions.delete(taskId);
@@ -386,7 +398,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         task = await this.fetchAiTaskSnapshot(taskId);
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        this.logger.warn(`Failed to refresh AI task ${taskId} after ${eventName}: ${message}`);
+        this.logger.warn(
+          `Failed to refresh AI task ${taskId} after ${eventName}: ${message}`,
+        );
       }
     }
 
@@ -398,7 +412,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     });
   }
 
-  private async getAuthorizedAiTask(client: Socket, taskId: string): Promise<AiTaskSnapshot | null> {
+  private async getAuthorizedAiTask(
+    client: Socket,
+    taskId: string,
+  ): Promise<AiTaskSnapshot | null> {
     const authClient = client as AuthenticatedSocket;
     if (!authClient.userId || authClient.role === 'external') return null;
 
@@ -436,10 +453,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   private unwrapAiResponse(response: unknown): AiTaskSnapshot | null {
     if (!response || typeof response !== 'object') return null;
     const value = response as { data?: unknown };
-    const data = value.data && typeof value.data === 'object'
-      ? (value.data as { data?: unknown }).data ?? value.data
-      : response;
-    return data && typeof data === 'object' ? data as AiTaskSnapshot : null;
+    const data =
+      value.data && typeof value.data === 'object'
+        ? ((value.data as { data?: unknown }).data ?? value.data)
+        : response;
+    return data && typeof data === 'object' ? (data as AiTaskSnapshot) : null;
   }
 
   private getPayloadTaskId(payload: AiWorkerEventPayload): string | null {
@@ -731,7 +749,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       .then((sockets) => {
         for (const s of sockets) {
           if (
-            String((s as unknown as AuthenticatedRemoteSocket).userId) === String(targetUserId)
+            String((s as unknown as AuthenticatedRemoteSocket).userId) ===
+            String(targetUserId)
           ) {
             s.leave(roomName);
           }
@@ -872,8 +891,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const roomName = this.getTicketRoomName(data.ticketId);
       const roomSockets = await this.server.in(roomName).fetchSockets();
       const isInRoom = roomSockets.some(
-        (s) =>
-          (s as unknown as AuthenticatedRemoteSocket).id === client.id,
+        (s) => (s as unknown as AuthenticatedRemoteSocket).id === client.id,
       );
       if (!isInRoom) {
         client.emit('roomLocked', {
@@ -884,10 +902,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
     }
 
-    if (
-      !data.content &&
-      !data.fileUrl
-    ) {
+    if (!data.content && !data.fileUrl) {
       client.emit('error', '消息内容不能为空');
       return;
     }
@@ -1057,9 +1072,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       '发送屏幕共享信令至',
       'screenShare:offer',
       {
-      ticketId: data.ticketId,
-      sdp: data.sdp,
-      from: fromId,
+        ticketId: data.ticketId,
+        sdp: data.sdp,
+        from: fromId,
       },
     );
   }

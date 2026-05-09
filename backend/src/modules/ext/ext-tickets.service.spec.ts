@@ -3,7 +3,7 @@ import { ExtTicketsService, PushTicketDto } from './ext-tickets.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Ticket } from '../../entities/ticket.entity';
 import { User } from '../../entities/user.entity';
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('ExtTicketsService', () => {
   let service: ExtTicketsService;
@@ -56,18 +56,24 @@ describe('ExtTicketsService', () => {
 
     it('should throw BadRequestException if missing required fields', async () => {
       const invalidDto = { ...dto, title: '' };
-      await expect(service.createTicketFromOMM(invalidDto)).rejects.toThrow(BadRequestException);
+      await expect(service.createTicketFromOMM(invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw BadRequestException if creator is not found', async () => {
       mockUserRepository.findOne.mockResolvedValueOnce(null); // Creator lookup fails
-      await expect(service.createTicketFromOMM(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.createTicketFromOMM(dto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw BadRequestException if assignee is not found', async () => {
       mockUserRepository.findOne.mockResolvedValueOnce({ id: 1 }); // Creator found
       mockUserRepository.findOne.mockResolvedValueOnce(null); // Assignee lookup fails
-      await expect(service.createTicketFromOMM(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.createTicketFromOMM(dto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should create and return a new ticket on success', async () => {
@@ -77,7 +83,11 @@ describe('ExtTicketsService', () => {
       mockTicketRepository.findOne.mockResolvedValueOnce(null); // existingTicket
 
       mockTicketRepository.create.mockReturnValue({ id: 10, ...dto });
-      mockTicketRepository.save.mockResolvedValue({ id: 10, ticketNo: 'TK202611119999', ...dto });
+      mockTicketRepository.save.mockResolvedValue({
+        id: 10,
+        ticketNo: 'TK202611119999',
+        ...dto,
+      });
 
       const result = await service.createTicketFromOMM(dto);
 
@@ -92,17 +102,21 @@ describe('ExtTicketsService', () => {
         .mockResolvedValueOnce({ id: 1, employeeId: 'E001' }) // creator
         .mockResolvedValueOnce({ id: 2, employeeId: 'E002' }); // assignee
 
-      mockTicketRepository.findOne.mockResolvedValueOnce({ 
-        id: 1, 
-        serviceNo: dto.serviceNo, 
-        creatorId: 2, 
-        participants: [] 
+      mockTicketRepository.findOne.mockResolvedValueOnce({
+        id: 1,
+        serviceNo: dto.serviceNo,
+        creatorId: 2,
+        participants: [],
       });
 
-      mockTicketRepository.save.mockResolvedValue({ id: 1, ticketNo: 'TK202611119999', ...dto });
+      mockTicketRepository.save.mockResolvedValue({
+        id: 1,
+        ticketNo: 'TK202611119999',
+        ...dto,
+      });
 
       const result = await service.createTicketFromOMM(dto);
-      
+
       expect(result.id).toBe(1);
       expect(mockTicketRepository.save).toHaveBeenCalled();
     });
@@ -111,7 +125,9 @@ describe('ExtTicketsService', () => {
   describe('getTicketStatus', () => {
     it('should throw NotFoundException if ticket not found', async () => {
       mockTicketRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.getTicketStatus('NONEXISTENT')).rejects.toThrow(NotFoundException);
+      await expect(service.getTicketStatus('NONEXISTENT')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should return ticket status on success', async () => {
@@ -128,7 +144,10 @@ describe('ExtTicketsService', () => {
 
       const result = await service.getTicketStatus('OMM001');
       expect(result.ticketNo).toBe('TK001');
-      expect(result.assignee).toEqual({ realName: 'Assignee', employeeId: 'E002' });
+      expect(result.assignee).toEqual({
+        realName: 'Assignee',
+        employeeId: 'E002',
+      });
     });
   });
 });

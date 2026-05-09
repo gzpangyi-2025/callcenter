@@ -10,6 +10,8 @@ import {
   ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined,
   LoadingOutlined, InboxOutlined, DeleteOutlined,
 } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+import type { UploadChangeParam, UploadFile } from 'antd/es/upload/interface';
 import { aiAPI } from '../../services/api';
 import axios from 'axios';
 import { useAuthStore, type User } from '../../stores/authStore';
@@ -19,6 +21,18 @@ import AiChatPanel from './components/AiChatPanel';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/zh-cn';
+import type {
+  AiCreateTaskPayload,
+  AiListParams,
+  AiTask,
+  AiTaskFile,
+  AiTaskListData,
+  AiTaskStatus,
+  AiTemplate,
+  AiTemplateVariable,
+  AiUploadUrl,
+  ApiResponse,
+} from '../../types/api';
 
 dayjs.extend(relativeTime);
 dayjs.locale('zh-cn');
@@ -26,7 +40,41 @@ dayjs.locale('zh-cn');
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
-type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused';
+type TaskStatus = AiTaskStatus;
+type UploadedAttachment = { name: string; url: string; size: number };
+type TaskPatch = Partial<AiTask>;
+
+interface CreateTaskFormValues {
+  type: string;
+  rawPrompt?: string;
+  reviewMode?: 'auto' | 'review';
+  [key: `param_${string}`]: unknown;
+}
+
+interface ModifyTaskFormValues {
+  prompt: string;
+}
+
+interface AiTaskProgressPayload {
+  taskId?: string;
+  progress?: number;
+  currentStep?: string | null;
+}
+
+interface AiTaskUpdatedPayload {
+  task?: AiTask;
+}
+
+interface AiTaskTerminalPayload {
+  taskId?: string;
+  task?: AiTask;
+  outputFiles?: AiTaskFile[];
+  error?: string;
+  agentMessage?: string | null;
+}
+
+type AiFileReadyPayload = AiTaskFile & { taskId?: string };
+type LocalUploadFile = UploadFile & File;
 
 const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: React.ReactNode }> = {
   pending:   { label: '排队中', color: 'blue',    icon: <ClockCircleOutlined /> },
@@ -37,16 +85,60 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: Re
   cancelled: { label: '已取消', color: 'default', icon: <StopOutlined /> },
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
+  if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
+    return value.data as T;
+  }
+  return value as T;
+};
+
+const normalizeTaskList = (value: ApiResponse<AiTaskListData> | AiTaskListData): { list: AiTask[]; total: number } => {
+  const payload = unwrapApiData(value);
+  if (Array.isArray(payload)) return { list: payload, total: payload.length };
+  if ('items' in payload && Array.isArray(payload.items)) {
+    return { list: payload.items, total: payload.total };
+  }
+  if ('data' in payload && Array.isArray(payload.data)) {
+    return { list: payload.data, total: payload.total ?? payload.data.length };
+  }
+  return { list: [], total: 0 };
+};
+
+const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
+  const payload = unwrapApiData(value);
+  if (Array.isArray(payload)) return payload;
+  if (isRecord(payload) && Array.isArray(payload.data)) return payload.data as AiTaskFile[];
+  return [];
+};
+
+const normalizeTemplates = (value: ApiResponse<AiTemplate[]> | AiTemplate[]): AiTemplate[] => {
+  const payload = unwrapApiData(value);
+  return Array.isArray(payload) ? payload : [];
+};
+
+const normalizeUploadUrl = (value: ApiResponse<AiUploadUrl> | AiUploadUrl): AiUploadUrl | null => {
+  const payload = unwrapApiData(value);
+  return payload?.url ? payload : null;
+};
+
+const templateOptionToSelectOption = (option: NonNullable<AiTemplateVariable['options']>[number]) =>
+  typeof option === 'string' ? { label: option, value: option } : option;
+
+const getErrorMessage = (err: unknown) => err instanceof Error ? err.message : '未知错误';
+
 const AiPage: React.FC = () => {
   const user = useAuthStore(s => s.user) as User | null;
   const { socket, connected } = useSocketStore();
   const isAdmin = user?.role?.name === 'admin';
 
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<AiTask[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<string | undefined>();
+  const [status, setStatus] = useState<TaskStatus | undefined>();
   const [showAll, setShowAll] = useState(false); // 管理员查看全部
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [batchDeleting, setBatchDeleting] = useState(false);
@@ -55,25 +147,25 @@ const AiPage: React.FC = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [draftTaskId, setDraftTaskId] = useState<string>('');
   const [creating, setCreating] = useState(false);
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [templates, setTemplates] = useState<AiTemplate[]>([]);
   const [form] = Form.useForm();
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<AiTemplate | null>(null);
   const [useRawPrompt, setUseRawPrompt] = useState(false);
 
   const [detailOpen, setDetailOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<any>(null);
-  const [taskFiles, setTaskFiles] = useState<any[]>([]);
+  const [selectedTask, setSelectedTask] = useState<AiTask | null>(null);
+  const [taskFiles, setTaskFiles] = useState<AiTaskFile[]>([]);
   const [filesLoading, setFilesLoading] = useState(false);
 
   const selectedTaskIdRef = useRef<string | null>(null);
   const subscribedTaskIdsRef = useRef<Set<string>>(new Set());
   const taskFilesRequestSeqRef = useRef(0);
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({});
-  const [uploadedAttachments, setUploadedAttachments] = useState<Array<{ name: string; url: string; size: number }>>([]);
+  const [uploadedAttachments, setUploadedAttachments] = useState<UploadedAttachment[]>([]);
   const [uploadingCount, setUploadingCount] = useState(0);
 
   const [modifyOpen, setModifyOpen] = useState(false);
-  const [modifyTarget, setModifyTarget] = useState<any>(null);
+  const [modifyTarget, setModifyTarget] = useState<AiTask | null>(null);
   const [modifyForm] = Form.useForm();
 
   // Text file preview state
@@ -183,18 +275,13 @@ const AiPage: React.FC = () => {
   ) => {
     if (!options.silent) setLoading(true);
     try {
-      const params: any = { page: p, limit: 20, status: s };
+      const params: AiListParams = { page: p, limit: 20, status: s };
       if (isAdmin && all) params.all = '1';
-      const res: any = await aiAPI.listTasks(params);
+      const res = await aiAPI.listTasks(params);
       console.debug('[AI] listTasks raw response:', res);
-      const payload = res?.data;
-      if (!payload) return;
-      const list = Array.isArray(payload) ? payload
-        : Array.isArray(payload?.data) ? payload.data
-        : Array.isArray(payload?.items) ? payload.items
-        : [];
+      const { list, total: nextTotal } = normalizeTaskList(res);
       setTasks(list);
-      setTotal(payload?.total ?? list.length);
+      setTotal(nextTotal);
       if (!options.silent) setSelectedRowKeys([]);
     } catch (err) {
       console.error('[AI] fetchTasks error:', err);
@@ -219,8 +306,8 @@ const AiPage: React.FC = () => {
 
   const fetchTemplates = useCallback(async () => {
     try {
-      const res: any = await aiAPI.getTemplates();
-      if (res?.data) setTemplates(res.data);
+      const res = await aiAPI.getTemplates();
+      setTemplates(normalizeTemplates(res));
     } catch {}
   }, []);
 
@@ -232,10 +319,10 @@ const AiPage: React.FC = () => {
 
   // ── Create task ──────────────────────────────────────────────────────────
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: CreateTaskFormValues) => {
     setCreating(true);
     try {
-      const payload: any = {
+      const payload: AiCreateTaskPayload = {
         id: draftTaskId,
         type: values.type,
         params: {},
@@ -284,14 +371,15 @@ const AiPage: React.FC = () => {
 
   // ── Modify task ──────────────────────────────────────────────────────────
 
-  const handleModifySubmit = async (values: any) => {
+  const handleModifySubmit = async (values: ModifyTaskFormValues) => {
+    if (!modifyTarget) return;
     setCreating(true);
     try {
       await aiAPI.createTask({
         type: 'modify_task',
         prompt: values.prompt,
         parentTaskId: modifyTarget.id,
-        params: modifyTarget.params || {},
+        params: modifyTarget.params ?? {},
       });
       message.success('增量修改任务已提交，正在排队执行');
       setModifyOpen(false);
@@ -371,11 +459,9 @@ const AiPage: React.FC = () => {
     const requestSeq = ++taskFilesRequestSeqRef.current;
     setFilesLoading(true);
     try {
-      const res: any = await aiAPI.getTaskFiles(taskId);
+      const res = await aiAPI.getTaskFiles(taskId);
       console.debug('[AI] getTaskFiles raw response:', res);
-      const files = Array.isArray(res?.data) ? res.data
-        : Array.isArray(res?.data?.data) ? res.data.data
-        : [];
+      const files = normalizeTaskFiles(res);
       if (requestSeq === taskFilesRequestSeqRef.current && selectedTaskIdRef.current === taskId) {
         setTaskFiles(files);
       }
@@ -390,7 +476,7 @@ const AiPage: React.FC = () => {
     }
   }, []);
 
-  const applyTaskPatch = useCallback((taskId: string, patch: Record<string, any>) => {
+  const applyTaskPatch = useCallback((taskId: string, patch: TaskPatch) => {
     setTasks(prev => prev.flatMap(task => {
       if (task.id !== taskId) return [task];
       const updated = { ...task, ...patch };
@@ -398,10 +484,10 @@ const AiPage: React.FC = () => {
       return [updated];
     }));
 
-    setSelectedTask((prev: any) => prev?.id === taskId ? { ...prev, ...patch } : prev);
+    setSelectedTask(prev => prev?.id === taskId ? { ...prev, ...patch } : prev);
   }, [status]);
 
-  const applyTaskSnapshot = useCallback((task: any) => {
+  const applyTaskSnapshot = useCallback((task: AiTask) => {
     if (!task?.id) return;
 
     setTasks(prev => {
@@ -419,10 +505,10 @@ const AiPage: React.FC = () => {
       return found ? next : [task, ...next];
     });
 
-    setSelectedTask((prev: any) => prev?.id === task.id ? { ...prev, ...task } : prev);
+    setSelectedTask(prev => prev?.id === task.id ? { ...prev, ...task } : prev);
   }, [status]);
 
-  const handleViewDetail = async (task: any) => {
+  const handleViewDetail = async (task: AiTask) => {
     selectedTaskIdRef.current = task.id;
     taskFilesRequestSeqRef.current += 1;
     setSelectedTask(task);
@@ -445,9 +531,9 @@ const AiPage: React.FC = () => {
       return;
     }
 
-    const handleProgress = (payload: any) => {
+    const handleProgress = (payload: AiTaskProgressPayload) => {
       if (!payload?.taskId) return;
-      const patch: Record<string, any> = {
+      const patch: TaskPatch = {
         status: 'running',
         currentStep: payload.currentStep ?? null,
       };
@@ -455,7 +541,7 @@ const AiPage: React.FC = () => {
       applyTaskPatch(payload.taskId, patch);
     };
 
-    const handleTaskUpdated = (payload: any) => {
+    const handleTaskUpdated = (payload: AiTaskUpdatedPayload) => {
       const task = payload?.task;
       if (!task?.id) return;
 
@@ -468,7 +554,7 @@ const AiPage: React.FC = () => {
       }
     };
 
-    const handleTerminal = (payload: any, fallback: Record<string, any>) => {
+    const handleTerminal = (payload: AiTaskTerminalPayload, fallback: TaskPatch) => {
       const taskId = payload?.taskId || payload?.task?.id;
       if (!taskId) return;
 
@@ -478,27 +564,28 @@ const AiPage: React.FC = () => {
         applyTaskPatch(taskId, fallback);
       }
 
-      if (['completed', 'paused'].includes(fallback.status) && selectedTaskIdRef.current === taskId) {
+      const fallbackStatus = fallback.status;
+      if ((fallbackStatus === 'completed' || fallbackStatus === 'paused') && selectedTaskIdRef.current === taskId) {
         fetchTaskFiles(taskId);
       }
 
       fetchTasks(page, status, showAll, { silent: true });
     };
 
-    const handleCompleted = (payload: any) => {
+    const handleCompleted = (payload: AiTaskTerminalPayload) => {
       handleTerminal(payload, { status: 'completed', progress: 100, outputFiles: payload?.outputFiles ?? [] });
     };
-    const handleFailed = (payload: any) => {
+    const handleFailed = (payload: AiTaskTerminalPayload) => {
       handleTerminal(payload, { status: 'failed', error: payload?.error || '执行失败' });
     };
-    const handlePaused = (payload: any) => {
+    const handlePaused = (payload: AiTaskTerminalPayload) => {
       handleTerminal(payload, {
         status: 'paused',
         progress: 50,
         lastAgentMessage: payload?.agentMessage ?? null,
       });
     };
-    const handleFileReady = (payload: any) => {
+    const handleFileReady = (payload: AiFileReadyPayload) => {
       if (!payload?.taskId || selectedTaskIdRef.current !== payload.taskId) return;
       setFilesLoading(false);
       setTaskFiles(prev => {
@@ -506,7 +593,7 @@ const AiPage: React.FC = () => {
         return [...prev, payload];
       });
     };
-    const handleSubscriptionError = (payload: any) => {
+    const handleSubscriptionError = (payload: unknown) => {
       console.warn('[AI] task subscription failed:', payload);
     };
     const handleConnect = () => {
@@ -613,7 +700,7 @@ const AiPage: React.FC = () => {
 
   // ── Table columns ─────────────────────────────────────────────────────────
 
-  const columns = [
+  const columns: ColumnsType<AiTask> = [
     {
       title: '任务类型',
       dataIndex: 'type',
@@ -653,7 +740,7 @@ const AiPage: React.FC = () => {
       dataIndex: 'progress',
       key: 'progress',
       width: 130,
-      render: (p: number, record: any) => {
+      render: (p: number | undefined, record) => {
         if (record.status === 'completed') return <Progress percent={100} size="small" status="success" />;
         if (record.status === 'failed') return <Progress percent={p || 0} size="small" status="exception" />;
         if (record.status === 'running') return <Progress percent={p || 10} size="small" status="active" />;
@@ -675,9 +762,9 @@ const AiPage: React.FC = () => {
       dataIndex: 'outputFiles',
       key: 'fileSize',
       width: 90,
-      render: (files: any[] | null) => {
+      render: (files: AiTaskFile[] | null | undefined) => {
         if (!files || files.length === 0) return <Text type="secondary" style={{ fontSize: 12 }}>-</Text>;
-        const totalBytes = files.reduce((sum: number, f: any) => sum + (f.size || 0), 0);
+        const totalBytes = files.reduce((sum, f) => sum + (f.size || 0), 0);
         const display = totalBytes < 1024 ? `${totalBytes} B`
           : totalBytes < 1024 * 1024 ? `${(totalBytes / 1024).toFixed(0)} KB`
           : `${(totalBytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -706,7 +793,7 @@ const AiPage: React.FC = () => {
       key: 'actions',
       width: 160,
       fixed: 'right' as const,
-      render: (_: any, record: any) => (
+      render: (_value, record) => (
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <Button
             size="small"
@@ -762,6 +849,17 @@ const AiPage: React.FC = () => {
     completed: tasks.filter(t => t.status === 'completed').length,
     failed: tasks.filter(t => t.status === 'failed').length,
   };
+  const statCards: Array<{
+    title: string;
+    value: number;
+    icon: React.ReactElement<{ style?: React.CSSProperties }>;
+    color: string;
+  }> = [
+    { title: '本页任务', value: stats.total, icon: <ThunderboltOutlined />, color: '#818cf8' },
+    { title: '执行中', value: stats.running, icon: <LoadingOutlined />, color: '#f59e0b' },
+    { title: '已完成', value: stats.completed, icon: <CheckCircleOutlined />, color: '#10b981' },
+    { title: '失败', value: stats.failed, icon: <ExclamationCircleOutlined />, color: '#ef4444' },
+  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -833,18 +931,13 @@ const AiPage: React.FC = () => {
 
       {/* Stats Cards */}
       <Row gutter={16} style={{ marginBottom: 16 }}>
-        {[
-          { title: '本页任务', value: stats.total, icon: <ThunderboltOutlined />, color: '#818cf8' },
-          { title: '执行中', value: stats.running, icon: <LoadingOutlined />, color: '#f59e0b' },
-          { title: '已完成', value: stats.completed, icon: <CheckCircleOutlined />, color: '#10b981' },
-          { title: '失败', value: stats.failed, icon: <ExclamationCircleOutlined />, color: '#ef4444' },
-        ].map(s => (
+        {statCards.map(s => (
           <Col key={s.title} xs={12} sm={6}>
             <Card size="small" style={{ borderRadius: 12, textAlign: 'center' }}>
               <Statistic
                 title={s.title}
                 value={s.value}
-                prefix={React.cloneElement(s.icon as any, { style: { color: s.color } })}
+                prefix={React.cloneElement(s.icon, { style: { color: s.color } })}
                 valueStyle={{ color: s.color, fontWeight: 700 }}
               />
             </Card>
@@ -912,7 +1005,7 @@ const AiPage: React.FC = () => {
           rowSelection={{
             selectedRowKeys,
             onChange: keys => setSelectedRowKeys(keys),
-            getCheckboxProps: (record: any) => ({
+            getCheckboxProps: (record) => ({
               disabled: !['completed', 'failed', 'cancelled'].includes(record.status),
             }),
           }}
@@ -976,7 +1069,7 @@ const AiPage: React.FC = () => {
           </Form.Item>
 
           {/* Render template variables dynamically */}
-          {selectedTemplate?.variables?.map((v: any) => (
+          {selectedTemplate?.variables?.map((v) => (
             <Form.Item
               key={v.name}
               name={`param_${v.name}`}
@@ -986,7 +1079,7 @@ const AiPage: React.FC = () => {
               {v.type === 'select' ? (
                 <Select
                   placeholder={v.placeholder}
-                  options={(v.options || []).map((o: string) => ({ label: o, value: o }))}
+                  options={(v.options || []).map(templateOptionToSelectOption)}
                 />
               ) : v.multiline ? (
                 <TextArea rows={4} placeholder={v.placeholder || v.description} />
@@ -1034,8 +1127,8 @@ const AiPage: React.FC = () => {
                 fileList={[]}
                 showUploadList={false}
                 beforeUpload={() => false}
-                onChange={async (info) => {
-                  const file = info.file as any;
+                onChange={async (info: UploadChangeParam<UploadFile>) => {
+                  const file = info.file as LocalUploadFile;
                   if (file.status) return; // Skip antd-triggered events
                   setUploadingCount(c => c + 1);
                   try {
@@ -1047,23 +1140,23 @@ const AiPage: React.FC = () => {
                     }
 
                     // 1. Get presigned upload URL from worker (proxied via callcenter backend)
-                    const res: any = await aiAPI.getUploadUrl(currentTaskId, file.name);
-                    if (!res?.data?.url) throw new Error('无法获取上传凭证');
+                    const uploadUrl = normalizeUploadUrl(await aiAPI.getUploadUrl(currentTaskId, file.name));
+                    if (!uploadUrl?.url) throw new Error('无法获取上传凭证');
 
                     // 2. Direct PUT upload to Worker COS bucket
-                    await axios.put(res.data.url, file, {
+                    await axios.put(uploadUrl.url, file, {
                       headers: {
                         'Content-Type': file.type || 'application/octet-stream'
                       }
                     });
 
                     // 3. Record the resulting COS URL (it's the url without the query parameters)
-                    const finalUrl = res.data.url.split('?')[0];
+                    const finalUrl = uploadUrl.url.split('?')[0];
 
                     setUploadedAttachments(prev => [...prev, { name: file.name, url: finalUrl, size: file.size }]);
                     message.success(`附件 ${file.name} 上传成功`);
-                  } catch (err: any) {
-                    message.error(`上传失败: ${err.message || '未知错误'}`);
+                  } catch (err: unknown) {
+                    message.error(`上传失败: ${getErrorMessage(err)}`);
                   } finally {
                     setUploadingCount(c => c - 1);
                   }
@@ -1232,14 +1325,14 @@ const AiPage: React.FC = () => {
                       <Empty description="暂无产物文件" image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     ) : (
                       (() => {
-                        const coreFiles: any[] = [];
-                        const processFiles: any[] = [];
+                        const coreFiles: AiTaskFile[] = [];
+                        const processFiles: AiTaskFile[] = [];
                         let hiddenCount = 0;
 
                         // Junk extensions to hide completely
                         const junkExts = new Set(['.py', '.pyc', '.js', '.cjs', '.mjs', '.ts', '.so', '.h', '.c', '.cpp', '.lock', '.sh', '.bat', '.yml', '.yaml', '.toml', '.cfg']);
 
-                        taskFiles.forEach((f: any) => {
+                        taskFiles.forEach((f) => {
                           const fullName = f.name || f.key || '';
                           const ext = fullName.includes('.') ? fullName.substring(fullName.lastIndexOf('.')).toLowerCase() : '';
                           
@@ -1274,7 +1367,7 @@ const AiPage: React.FC = () => {
                           }
                         });
 
-                        const renderFileItem = (f: any, i: number, isCore: boolean) => {
+                        const renderFileItem = (f: AiTaskFile, i: number, isCore: boolean) => {
                           const fullName = f.name || f.key || `文件 ${i + 1}`;
                           const displayName = fullName.includes('/') ? fullName.split('/').pop()! : fullName;
                           const fileKey = `${selectedTask.id}/${fullName}`;

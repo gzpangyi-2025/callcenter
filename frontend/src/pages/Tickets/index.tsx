@@ -8,17 +8,40 @@ import {
   UnorderedListOutlined, CheckOutlined,
   FilterOutlined, DeleteOutlined, LockOutlined, DesktopOutlined
 } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+import type { FilterDropdownProps } from 'antd/es/table/interface';
 import { RequirePermission } from '../../components/RequirePermission';
 import { ticketsAPI, usersAPI, categoryAPI } from '../../services/api';
-import type { Ticket } from '../../types/ticket';
+import type { CategoryNode, FilterAggregateItem, TicketAggregates } from '../../types/api';
+import type { CreateTicketDto, Ticket, TicketQueryParams, TicketStatus } from '../../types/ticket';
 import { useSocketStore } from '../../stores/socketStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import { Resizable } from 'react-resizable';
+import type { ResizeCallbackData } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
+interface ResizableTitleProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
+  width?: number;
+  onResize?: (e: React.SyntheticEvent, data: ResizeCallbackData) => void;
+}
 
-const ResizableTitle = (props: any) => {
+type ViewMode = 'list' | 'card';
+type AssigneeOption = { value: number; label: string };
+type TableFilterKey = 'type' | 'customerName' | 'creator' | 'assignee';
+type FilterKeyValue = string | number;
+
+interface CreateTicketFormValues extends CreateTicketDto {
+  categoryPath?: string[];
+}
+
+interface ResizableColumn {
+  dataIndex?: keyof Ticket | string;
+  key?: React.Key;
+  width?: number;
+}
+
+const ResizableTitle: React.FC<ResizableTitleProps> = (props) => {
   const { onResize, width, ...restProps } = props;
   if (!width) return <th {...restProps} />;
   return (
@@ -60,8 +83,11 @@ const typeMap: Record<string, string> = {
 
 const PAGE_SIZE = 20; // 虚拟列表每次加载20条
 
+const categorySearchFilter = (input: string, path: CategoryNode[]) =>
+  path.some((opt) => opt.label.toLowerCase().includes(input.toLowerCase()));
+
 const TicketList: React.FC = () => {
-  const [viewMode, setViewMode] = useState<string>('list');
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -69,7 +95,7 @@ const TicketList: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [keyword, setKeyword] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [statusFilter, setStatusFilter] = useState<TicketStatus | undefined>();
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -96,26 +122,53 @@ const TicketList: React.FC = () => {
   });
   const [createForm] = Form.useForm();
   const navigate = useNavigate();
-  const [assigneeOptions, setAssigneeOptions] = useState<any[]>([]);
+  const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>([]);
   const [assigneeSearching, setAssigneeSearching] = useState(false);
-  const [categoryTree, setCategoryTree] = useState<any[]>([]);
-  const [tableFilters, setTableFilters] = useState<Record<string, any>>({});
-  const [aggregates, setAggregates] = useState<{
-    categories: any[], customers: any[], creators: any[], assignees: any[]
-  }>({ categories: [], customers: [], creators: [], assignees: [] });
+  const [categoryTree, setCategoryTree] = useState<CategoryNode[]>([]);
+  const [tableFilters, setTableFilters] = useState<Partial<Record<TableFilterKey, FilterKeyValue[]>>>({});
+  const [aggregates, setAggregates] = useState<TicketAggregates>({ categories: [], customers: [], creators: [], assignees: [] });
   const [filterSearchText, setFilterSearchText] = useState<Record<string, string>>({});
 
-  let searchTimer: any = null;
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const getFirstFilterValue = useCallback((field: TableFilterKey): FilterKeyValue | undefined => {
+    const values = tableFilters[field];
+    return values?.[0];
+  }, [tableFilters]);
+
+  const isAdminUser = typeof user?.role === 'object' && user.role?.name === 'admin';
+  const canEnterTicket = useCallback((ticket: Ticket) => {
+    const isLocked = ticket.isRoomLocked;
+    const userId = Number(user?.id);
+    return !isLocked
+      || Number(ticket.creatorId) === userId
+      || Number(ticket.assigneeId) === userId
+      || (ticket.participants || []).some((p) => Number(p.id) === userId)
+      || isAdminUser;
+  }, [isAdminUser, user?.id]);
+
+  const buildQueryParams = useCallback((targetPage: number): TicketQueryParams => ({
+    page: targetPage,
+    pageSize: PAGE_SIZE,
+    status: statusFilter,
+    keyword: keyword || undefined,
+    category1: categoryFilter?.[0] || (getFirstFilterValue('type') as string | undefined),
+    category2: categoryFilter?.[1] || undefined,
+    category3: categoryFilter?.[2] || undefined,
+    customerName: getFirstFilterValue('customerName') as string | undefined,
+    creatorId: getFirstFilterValue('creator') as number | undefined,
+    assigneeId: getFirstFilterValue('assignee') as number | undefined,
+  }), [categoryFilter, getFirstFilterValue, keyword, statusFilter]);
 
   const handleAssigneeSearch = (value: string) => {
-    if (searchTimer) clearTimeout(searchTimer);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
     if (!value || value.length < 1) { setAssigneeOptions([]); return; }
-    searchTimer = setTimeout(async () => {
+    searchTimerRef.current = setTimeout(async () => {
       setAssigneeSearching(true);
       try {
-        const res: any = await usersAPI.search(value);
+        const res = await usersAPI.search(value);
         if (res.code === 0) {
-          setAssigneeOptions(res.data.map((u: any) => ({
+          setAssigneeOptions(res.data.map((u) => ({
             value: u.id,
             label: `${u.realName || u.displayName || u.username} (${u.username})`,
           })));
@@ -124,12 +177,12 @@ const TicketList: React.FC = () => {
     }, 300);
   };
 
-  const getFilterDropdown = (field: string, placeholder: string) => ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
-    const list = aggregates[field as keyof typeof aggregates] || [];
+  const getFilterDropdown = (field: keyof TicketAggregates, placeholder: string) => ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => {
+    const list = aggregates[field] || [];
     const searchText = filterSearchText[field] || '';
     const filteredList = list
-      .filter((item: any) => item.label?.toString().toLowerCase().includes(searchText.toLowerCase()))
-      .sort((a: any, b: any) => (b.count || 0) - (a.count || 0));
+      .filter((item: FilterAggregateItem) => item.label?.toString().toLowerCase().includes(searchText.toLowerCase()))
+      .sort((a, b) => (b.count || 0) - (a.count || 0));
 
     return (
       <div style={{ padding: 8, width: 240 }} onKeyDown={(e) => e.stopPropagation()}>
@@ -143,14 +196,14 @@ const TicketList: React.FC = () => {
           autoFocus
         />
         <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 8, display: 'flex', flexDirection: 'column' }}>
-          {filteredList.map((item: any) => {
+          {filteredList.map((item) => {
             const isSelected = selectedKeys.includes(item.value);
             return (
               <div 
                 key={item.value} 
                 style={{ padding: '6px 8px', display: 'flex', alignItems: 'center', cursor: 'pointer', borderRadius: 4, background: isSelected ? 'var(--bg-hover)' : 'transparent' }}
                 onClick={() => {
-                  const newKeys = isSelected ? selectedKeys.filter((k: any) => k !== item.value) : [...selectedKeys, item.value];
+                  const newKeys = isSelected ? selectedKeys.filter((k) => k !== item.value) : [...selectedKeys, item.value];
                   setSelectedKeys(newKeys);
                 }}
               >
@@ -165,7 +218,7 @@ const TicketList: React.FC = () => {
           {filteredList.length === 0 && <div style={{ padding: 8, color: 'var(--text-color-secondary)', textAlign: 'center' }}>无匹配数据</div>}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
-          <Button onClick={() => { clearFilters(); confirm(); }} size="small" style={{ width: 90 }}>清除筛选</Button>
+          <Button onClick={() => { clearFilters?.(); confirm(); }} size="small" style={{ width: 90 }}>清除筛选</Button>
           <Button type="primary" onClick={() => confirm()} size="small" style={{ width: 90 }}>确定</Button>
         </div>
       </div>
@@ -192,20 +245,9 @@ const TicketList: React.FC = () => {
     setLoading(true);
     setPage(1);
     try {
-      const params = {
-        page: 1,
-        pageSize: PAGE_SIZE,
-        status: statusFilter as any,
-        keyword: keyword || undefined,
-        category1: categoryFilter?.[0] || tableFilters.type?.[0] || undefined,
-        category2: categoryFilter?.[1] || undefined,
-        category3: categoryFilter?.[2] || undefined,
-        customerName: tableFilters.customerName?.[0] || undefined,
-        creatorId: tableFilters.creator?.[0] || undefined,
-        assigneeId: tableFilters.assignee?.[0] || undefined,
-      };
+      const params = buildQueryParams(1);
       
-      const [res, aggRes]: any = await Promise.all([
+      const [res, aggRes] = await Promise.all([
         ticketsAPI.getAll(params),
         ticketsAPI.getAggregates(params)
       ]);
@@ -223,25 +265,14 @@ const TicketList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, keyword, categoryFilter, tableFilters]);
+  }, [buildQueryParams]);
 
   // 加载更多（追加）
   const loadMore = useCallback(async (nextPage: number) => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
     try {
-      const res: any = await ticketsAPI.getAll({
-        page: nextPage,
-        pageSize: PAGE_SIZE,
-        status: statusFilter as any,
-        keyword: keyword || undefined,
-        category1: categoryFilter?.[0] || tableFilters.type?.[0] || undefined,
-        category2: categoryFilter?.[1] || undefined,
-        category3: categoryFilter?.[2] || undefined,
-        customerName: tableFilters.customerName?.[0] || undefined,
-        creatorId: tableFilters.creator?.[0] || undefined,
-        assigneeId: tableFilters.assignee?.[0] || undefined,
-      });
+      const res = await ticketsAPI.getAll(buildQueryParams(nextPage));
       if (res.code === 0) {
         const newItems = res.data.items || [];
         setTickets(prev => [...prev, ...newItems]);
@@ -252,7 +283,7 @@ const TicketList: React.FC = () => {
     } catch {} finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore, statusFilter, keyword, categoryFilter, tableFilters]);
+  }, [buildQueryParams, hasMore, loadingMore]);
 
   useEffect(() => {
     loadTickets();
@@ -288,7 +319,7 @@ const TicketList: React.FC = () => {
 
   // 加载工单分类树
   useEffect(() => {
-    categoryAPI.getTree().then((res: any) => {
+    categoryAPI.getTree().then((res) => {
       if (res.code === 0 && res.data?.length > 0) {
         setCategoryTree(res.data);
       }
@@ -300,37 +331,37 @@ const TicketList: React.FC = () => {
     loadTickets();
   };
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: CreateTicketFormValues) => {
     try {
       // 将 Cascader 的 categoryPath 转为 category1/2/3
-      const submitData = { ...values };
-      if (values.categoryPath && values.categoryPath.length > 0) {
-        submitData.category1 = values.categoryPath[0] || '';
-        submitData.category2 = values.categoryPath[1] || '';
-        submitData.category3 = values.categoryPath[2] || '';
+      const { categoryPath, ...ticketValues } = values;
+      const submitData: CreateTicketDto = { ...ticketValues };
+      if (categoryPath && categoryPath.length > 0) {
+        submitData.category1 = categoryPath[0] || '';
+        submitData.category2 = categoryPath[1] || '';
+        submitData.category3 = categoryPath[2] || '';
         submitData.type = 'other'; // 保持旧字段兼容
       }
-      delete submitData.categoryPath;
-      const res: any = await ticketsAPI.create(submitData);
+      const res = await ticketsAPI.create(submitData);
       if (res.code === 0) {
         message.success('工单创建成功');
         setCreateModalOpen(false);
         createForm.resetFields();
         loadTickets();
       }
-    } catch (err: any) {
+    } catch {
 //       message.error(err.response?.data?.message || '创建失败'); // Removed by global interceptor refactor
     }
   };
 
   const handleAssign = async (id: number) => {
     try {
-      const res: any = await ticketsAPI.assign(id);
+      const res = await ticketsAPI.assign(id);
       if (res.code === 0) {
         message.success('接单成功');
         loadTickets();
       }
-    } catch (err: any) {
+    } catch {
 //       message.error(err.response?.data?.message || '接单失败'); // Removed by global interceptor refactor
     }
   };
@@ -339,23 +370,23 @@ const TicketList: React.FC = () => {
     if (selectedRowKeys.length === 0) return;
     setBatchDeleting(true);
     try {
-      const res: any = await ticketsAPI.batchDelete(selectedRowKeys as number[]);
+      const res = await ticketsAPI.batchDelete(selectedRowKeys.map(Number));
       if (res.code === 0) {
         message.success(res.message || '批量删除成功');
         setSelectedRowKeys([]);
         loadTickets();
       }
-    } catch (err: any) {
+    } catch {
 //       message.error(err.response?.data?.message || '批量删除发生错误'); // Removed by global interceptor refactor
     } finally {
       setBatchDeleting(false);
     }
   };
 
-  const columns = [
+  const columns: ColumnsType<Ticket> = [
     {
       title: '工单号', dataIndex: 'ticketNo', width: colWidths.ticketNo,
-      render: (text: string, record: any) => (
+      render: (text: string, record) => (
         <div>
           <span style={{ color: 'var(--primary-light)', fontWeight: 500 }}>{text}</span>
           {record.serviceNo && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{record.serviceNo}</div>}
@@ -364,7 +395,7 @@ const TicketList: React.FC = () => {
     },
     { 
       title: '标题', dataIndex: 'title', width: colWidths.title, ellipsis: { showTitle: false },
-      render: (text: string, record: any) => (
+      render: (text: string, record) => (
         <Tooltip placement="topLeft" title={text}>
           <span>
             {record.isRoomLocked && <LockOutlined style={{ color: '#ef4444', marginRight: 6, fontSize: 12 }} />}
@@ -377,7 +408,7 @@ const TicketList: React.FC = () => {
     {
       title: '分类', dataIndex: 'type', width: colWidths.type,
       filterDropdown: getFilterDropdown('categories', '搜索分类'),
-      render: (_type: string, record: any) => {
+      render: (_type: string, record) => {
         if (record.category1) {
           const color = record.category1 === '硬件设备' ? 'volcano' : 'geekblue';
           const label = record.category2 ? `${record.category1} · ${record.category2}` : record.category1;
@@ -404,12 +435,12 @@ const TicketList: React.FC = () => {
     {
       title: '创建人', dataIndex: 'creator', width: colWidths.creator,
       filterDropdown: getFilterDropdown('creators', '搜索创建人'),
-      render: (c: any) => c ? <span>{c.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({c.username})</span></span> : '-',
+      render: (c: Ticket['creator']) => c ? <span>{c.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({c.username})</span></span> : '-',
     },
     {
       title: '当前接单人', dataIndex: 'assignee', width: colWidths.assignee,
       filterDropdown: getFilterDropdown('assignees', '搜索接单人'),
-      render: (a: any) => a ? <span>{a.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({a.username})</span></span> : '-',
+      render: (a: Ticket['assignee']) => a ? <span>{a.realName || '未知'} <span style={{fontSize: 12, color: 'var(--text-color-secondary)'}}>({a.username})</span></span> : '-',
     },
     {
       title: '创建时间', dataIndex: 'createdAt', width: colWidths.createdAt,
@@ -417,7 +448,7 @@ const TicketList: React.FC = () => {
     },
     {
       title: '操作', key: 'action', width: colWidths.action, fixed: 'right' as const,
-      render: (_: any, record: any) => (
+      render: (_value, record) => (
         <Space onClick={(e) => e.stopPropagation()}>
           {record.status === 'pending' && (
             <Button type="link" size="small" icon={<CheckOutlined />}
@@ -430,15 +461,18 @@ const TicketList: React.FC = () => {
     },
   ];
 
-  const resizableColumns = columns.map((col: any) => ({
+  const resizableColumns = columns.map((col) => ({
     ...col,
-    onHeaderCell: (column: any) => ({
-      width: column.width,
-      onResize: (_: any, { size }: any) => {
-        setColWidths(prev => ({ ...prev, [column.dataIndex || column.key]: size.width }));
+    onHeaderCell: (column: unknown) => {
+      const resizeColumn = column as ResizableColumn;
+      return {
+      width: resizeColumn.width,
+      onResize: (_: React.SyntheticEvent, { size }: ResizeCallbackData) => {
+        setColWidths(prev => ({ ...prev, [String(resizeColumn.dataIndex || resizeColumn.key)]: size.width }));
       },
-    }),
-  }));
+    };
+    },
+  })) as ColumnsType<Ticket>;
 
   const scrollToTop = useCallback(() => {
     const container = containerRef.current;
@@ -567,7 +601,7 @@ const TicketList: React.FC = () => {
                   value={categoryFilter}
                   onChange={(v) => { setCategoryFilter((v as string[]) || []); setPage(1); }}
                   style={{ flex: 1.5 }}
-                  showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                  showSearch={{ filter: categorySearchFilter }}
                 />
                 <Select placeholder="状态筛选" allowClear style={{ flex: 1 }}
                   value={statusFilter} onChange={(v) => { setStatusFilter(v); setPage(1); }}>
@@ -609,7 +643,7 @@ const TicketList: React.FC = () => {
                     value={categoryFilter}
                     onChange={(v) => { setCategoryFilter((v as string[]) || []); setPage(1); }}
                     style={{ width: 180 }}
-                    showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                    showSearch={{ filter: categorySearchFilter }}
                   />
                   <Select placeholder="状态筛选" allowClear style={{ width: 110 }}
                     value={statusFilter} onChange={(v) => { setStatusFilter(v); setPage(1); }}>
@@ -623,7 +657,7 @@ const TicketList: React.FC = () => {
               </Col>
               <Col>
                 <Space size={8}>
-                  <Segmented value={viewMode} onChange={(v) => setViewMode(v as string)}
+                  <Segmented value={viewMode} onChange={(v) => setViewMode(v as ViewMode)}
                     options={[
                       { value: 'list', icon: <UnorderedListOutlined /> },
                       { value: 'card', icon: <AppstoreOutlined /> },
@@ -652,7 +686,7 @@ const TicketList: React.FC = () => {
             <Table 
               components={{ header: { cell: ResizableTitle } }}
               size="small"
-              columns={resizableColumns as any} 
+              columns={resizableColumns} 
               dataSource={tickets} 
               rowKey="id"
               loading={loading}
@@ -665,12 +699,7 @@ const TicketList: React.FC = () => {
               }}
               onRow={(record) => {
                 const isLocked = record.isRoomLocked;
-                const userId = Number(user?.id);
-                const isAuthorized = !isLocked
-                  || Number(record.creatorId) === userId
-                  || Number(record.assigneeId) === userId
-                  || (record.participants || []).some((p: any) => Number(p.id) === userId)
-                  || (user?.role as any)?.name === 'admin';
+                const isAuthorized = canEnterTicket(record);
                 return {
                   onClick: () => {
                     if (!isAuthorized) {
@@ -683,7 +712,12 @@ const TicketList: React.FC = () => {
                 };
               }}
               onChange={(_pagination, filters) => {
-                setTableFilters(filters);
+                setTableFilters({
+                  type: (filters.type ?? undefined) as FilterKeyValue[] | undefined,
+                  customerName: (filters.customerName ?? undefined) as FilterKeyValue[] | undefined,
+                  creator: (filters.creator ?? undefined) as FilterKeyValue[] | undefined,
+                  assignee: (filters.assignee ?? undefined) as FilterKeyValue[] | undefined,
+                });
               }}
               pagination={false}
             />
@@ -722,12 +756,7 @@ const TicketList: React.FC = () => {
               <Col xs={24} sm={12} lg={8} xl={6} key={ticket.id}>
                   {(() => {
                     const isLocked = ticket.isRoomLocked;
-                    const userId = Number(user?.id);
-                    const isAuthorized = !isLocked
-                      || Number(ticket.creatorId) === userId
-                      || Number(ticket.assigneeId) === userId
-                      || (ticket.participants || []).some((p: any) => Number(p.id) === userId)
-                      || (user?.role as any)?.name === 'admin';
+                    const isAuthorized = canEnterTicket(ticket);
                     return (
                   <div className="ticket-card" style={{ opacity: isLocked && !isAuthorized ? 0.6 : 1, cursor: isAuthorized ? 'pointer' : 'not-allowed', position: 'relative' }}
                     onClick={() => {
@@ -815,7 +844,7 @@ const TicketList: React.FC = () => {
                   <Cascader
                     options={categoryTree}
                     placeholder="支持类型 / 技术方向 / 品牌"
-                    showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                    showSearch={{ filter: categorySearchFilter }}
                     changeOnSelect
                   />
                 </Form.Item>

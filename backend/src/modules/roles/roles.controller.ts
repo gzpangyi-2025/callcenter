@@ -36,7 +36,12 @@ export class RolesController {
   @Post()
   @Permissions('admin:access')
   async createRole(
-    @Body() body: { name: string; description?: string; permissionIds?: number[] },
+    @Body()
+    body: {
+      name: string;
+      description?: string;
+      permissionIds?: number[];
+    },
   ) {
     const data = await this.rolesService.createRole(body);
     return { code: 0, message: '角色创建成功', data };
@@ -62,4 +67,3 @@ export class RolesController {
     return { code: 0, message: '角色删除成功', data };
   }
 }
-

@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket } from '../../entities/ticket.entity';
+import { MessageType } from '../../entities/message.entity';
 import {
   Document,
   Paragraph,
@@ -21,11 +22,28 @@ import {
   TableCell,
   WidthType,
   BorderStyle,
+  FileChild,
+  IImageOptions,
 } from 'docx';
 import sizeOf from 'image-size';
 import archiver from 'archiver';
+import type { Response } from 'express';
 
 import { FilesService } from '../files/files.service';
+
+const toDocxImageType = (
+  imageType: string | undefined,
+): 'jpg' | 'png' | 'gif' | 'bmp' => {
+  if (
+    imageType === 'jpg' ||
+    imageType === 'png' ||
+    imageType === 'gif' ||
+    imageType === 'bmp'
+  ) {
+    return imageType;
+  }
+  return 'png';
+};
 
 @Injectable()
 export class TicketsExportService {
@@ -41,7 +59,7 @@ export class TicketsExportService {
     ticketId: number,
     userId: number,
     userRole: string,
-    res: any,
+    res: Response,
   ): Promise<void> {
     const ticket = await this.ticketRepository.findOne({
       where: { id: ticketId },
@@ -105,7 +123,7 @@ export class TicketsExportService {
     archive.append(md, { name: `${safeName}.md` });
 
     // 2. 生成 DOCX 聊天记录
-    const docChildren: any[] = [
+    const docChildren: FileChild[] = [
       new Paragraph({
         text: `工单 ${ticket.ticketNo} 聊天记录`,
         heading: HeadingLevel.HEADING_1,
@@ -181,10 +199,10 @@ export class TicketsExportService {
       // 尝试提取并嵌入图片
       let imageEmbedded = false;
       if (
-        msg.type === 'image' ||
+        msg.type === MessageType.IMAGE ||
         (msg.content && msg.content.includes('/api/files/static/'))
       ) {
-        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
+        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\s)]+)/);
         if (urlMatch) {
           const filename = urlMatch[1];
           try {
@@ -258,10 +276,10 @@ export class TicketsExportService {
       if (msg.isRecalled) continue;
       let internalFilename = '';
       if (msg.fileUrl) {
-        const match = msg.fileUrl.match(/\/api\/files\/static\/([^\?]+)/);
+        const match = msg.fileUrl.match(/\/api\/files\/static\/([^?]+)/);
         if (match) internalFilename = match[1];
       } else if (msg.content && msg.content.includes('/api/files/static/')) {
-        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
+        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\s)]+)/);
         if (urlMatch) internalFilename = urlMatch[1];
       }
       if (internalFilename) {
@@ -287,7 +305,7 @@ export class TicketsExportService {
     ticketId: number,
     userId: number,
     userRole: string,
-    res: any,
+    res: Response,
   ): Promise<void> {
     const ticket = await this.ticketRepository.findOne({
       where: { id: ticketId },
@@ -382,7 +400,7 @@ export class TicketsExportService {
       });
 
     // ── 构建章节 ──
-    const docChildren: any[] = [];
+    const docChildren: FileChild[] = [];
 
     // 封面标题
     docChildren.push(new Paragraph({ text: '' }));
@@ -605,10 +623,10 @@ export class TicketsExportService {
       // 尝试嵌入图片
       let imageEmbedded = false;
       if (
-        msg.type === 'image' ||
+        msg.type === MessageType.IMAGE ||
         (msg.content && msg.content.includes('/api/files/static/'))
       ) {
-        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\)\s]+)/);
+        const urlMatch = msg.content.match(/\/api\/files\/static\/([^\s)]+)/);
         if (urlMatch) {
           const filename = urlMatch[1];
           try {
@@ -640,17 +658,17 @@ export class TicketsExportService {
             const configW = isSwapped ? visualH : visualW;
             const configH = isSwapped ? visualW : visualH;
 
-            const imgType =
-              dimensions.type === 'jpg' ? 'jpeg' : dimensions.type || 'png';
+            const imgType = toDocxImageType(dimensions.type);
 
-            const imgConfig: any = {
+            const imgConfig: IImageOptions = {
               data: imgBuffer,
-              transformation: { width: configW, height: configH },
+              transformation: {
+                width: configW,
+                height: configH,
+                ...(rotation !== 0 ? { rotation } : {}),
+              },
               type: imgType,
             };
-            if (rotation !== 0) {
-              imgConfig.transformation.rotation = rotation;
-            }
 
             docChildren.push(
               new Paragraph({

@@ -372,7 +372,10 @@ export class ReportService {
   /**
    * 矩阵统计：工单类型与人员的汇总交叉统计 (如指定 Category2 或 Category3 的提单和接单排行)
    */
-  private static readonly ALLOWED_CATEGORY_COLUMNS = ['category2', 'category3'] as const;
+  private static readonly ALLOWED_CATEGORY_COLUMNS = [
+    'category2',
+    'category3',
+  ] as const;
 
   private validateCategoryColumn(col: string): void {
     if (!ReportService.ALLOWED_CATEGORY_COLUMNS.includes(col as any)) {

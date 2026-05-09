@@ -8,10 +8,8 @@ import { settingsAPI } from '../../../services/api';
 // Mock the API service
 vi.mock('../../../services/api', () => ({
   settingsAPI: {
-    getWorkerConfig: vi.fn(),
-    updateWorkerConfig: vi.fn(),
-    getWorkerStatus: vi.fn(),
-    restartWorker: vi.fn(),
+    getCodexConfig: vi.fn(),
+    saveCodexConfig: vi.fn(),
   },
 }));
 
@@ -33,20 +31,22 @@ Object.defineProperty(window, 'matchMedia', {
 describe('CodexConfigTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (settingsAPI.getWorkerConfig as jest.Mock).mockResolvedValue({
+    vi.mocked(settingsAPI.getCodexConfig).mockResolvedValue({
+      code: 0,
       data: {
         storageProvider: 'tencent',
+        cosSecretId: 'AKID-test',
+        cosSecretKey: 'secret-key',
+        cosBucket: 'callcenter-test',
+        cosRegion: 'ap-guangzhou',
         concurrency: 2,
         maxResumeAttempts: 3,
       },
     });
-    (settingsAPI.getWorkerStatus as jest.Mock).mockResolvedValue({
+    vi.mocked(settingsAPI.saveCodexConfig).mockResolvedValue({
+      code: 0,
       data: {
-        status: 'online',
-        uptime: '1h',
-        cpu: '0%',
-        memory: '100MB',
-        restarts: 0,
+        restartRequired: false,
       },
     });
   });
@@ -81,5 +81,25 @@ describe('CodexConfigTab', () => {
 
     // Verify Tencent fields are hidden
     expect(screen.queryByPlaceholderText('输入腾讯云 API 密钥的 SecretId')).not.toBeInTheDocument();
+  });
+
+  it('submits updated concurrency values', async () => {
+    render(<CodexConfigTab />);
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('输入腾讯云 API 密钥的 SecretId')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /保存 AI 协作配置/ }));
+
+    await waitFor(() => {
+      expect(settingsAPI.saveCodexConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concurrency: 2,
+          maxResumeAttempts: 3,
+          storageProvider: 'tencent',
+        }),
+      );
+    });
   });
 });

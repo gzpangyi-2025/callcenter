@@ -47,29 +47,40 @@ describe('SettingsController', () => {
 
   it('should save AI settings', async () => {
     await controller.saveAi({ visionModel: 'v1' });
-    expect(settingsService.saveMany).toHaveBeenCalledWith(expect.objectContaining({ 'ai.visionModel': 'v1' }));
+    expect(settingsService.saveMany).toHaveBeenCalledWith(
+      expect.objectContaining({ 'ai.visionModel': 'v1' }),
+    );
   });
 
   it('should save Biz settings', async () => {
     await controller.saveBiz({ companyName: 'Corp' });
-    expect(settingsService.saveMany).toHaveBeenCalledWith(expect.objectContaining({ 'biz.companyName': 'Corp' }));
+    expect(settingsService.saveMany).toHaveBeenCalledWith(
+      expect.objectContaining({ 'biz.companyName': 'Corp' }),
+    );
   });
 
   it('should upload Logo', async () => {
     const file = { filename: 'logo.png' } as any;
     const result = await controller.uploadLogo(file);
     expect(result.code).toBe(0);
-    expect(settingsService.set).toHaveBeenCalledWith('biz.logoUrl', '/uploads/logo/logo.png');
+    expect(settingsService.set).toHaveBeenCalledWith(
+      'biz.logoUrl',
+      '/uploads/logo/logo.png',
+    );
   });
 
   it('should save Security settings', async () => {
     await controller.saveSecurity({ shareExpiration: '7d' });
-    expect(settingsService.saveMany).toHaveBeenCalledWith(expect.objectContaining({ 'security.shareExpiration': '7d' }));
+    expect(settingsService.saveMany).toHaveBeenCalledWith(
+      expect.objectContaining({ 'security.shareExpiration': '7d' }),
+    );
   });
 
   describe('getWebRtcConfig', () => {
     it('should return auto config', async () => {
-      (settingsService.getAll as jest.Mock).mockResolvedValue({ 'webrtc.mode': 'auto' });
+      (settingsService.getAll as jest.Mock).mockResolvedValue({
+        'webrtc.mode': 'auto',
+      });
       const result = await controller.getWebRtcConfig();
       expect(result.data.length).toBeGreaterThan(0);
     });
@@ -87,15 +98,18 @@ describe('SettingsController', () => {
 
   it('should save WebRTC settings', async () => {
     await controller.saveWebRtc({ mode: 'auto' });
-    expect(settingsService.saveMany).toHaveBeenCalledWith(expect.objectContaining({ 'webrtc.mode': 'auto' }));
+    expect(settingsService.saveMany).toHaveBeenCalledWith(
+      expect.objectContaining({ 'webrtc.mode': 'auto' }),
+    );
   });
-
-
 
   describe('saveCodexConfig', () => {
     it('should save to DB and push config to Worker successfully', async () => {
       (axios.post as jest.Mock).mockResolvedValue({ data: { success: true } });
-      const result = await controller.saveCodexConfig({ concurrency: 4, maxResumeAttempts: 5 });
+      const result = await controller.saveCodexConfig({
+        concurrency: 4,
+        maxResumeAttempts: 5,
+      });
       expect(settingsService.saveMany).toHaveBeenCalledWith({
         'codex.concurrency': '4',
         'codex.maxResumeAttempts': '5',

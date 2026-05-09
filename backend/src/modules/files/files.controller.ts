@@ -7,7 +7,6 @@ import {
   UseGuards,
   BadRequestException,
   ForbiddenException,
-  Param,
   Query,
   Res,
   Req,
@@ -113,10 +112,10 @@ const INLINE_MIME_BY_EXTENSION: Record<string, string> = {
 function sanitizeFilename(filename: string): string {
   // 允许使用正斜杠，但严禁目录穿越 (..) 和绝对路径 (/)
   return filename
-    .replace(/\\/g, '/')          // Windows 反斜杠转正斜杠
-    .replace(/\.\.+/g, '')        // 移除连续的 .. 防御路径穿越
-    .replace(/^\/+/g, '')         // 移除开头的 / 防御绝对路径
-    .replace(/\/\/+/g, '/');      // 合并连续的 /
+    .replace(/\\/g, '/') // Windows 反斜杠转正斜杠
+    .replace(/\.\.+/g, '') // 移除连续的 .. 防御路径穿越
+    .replace(/^\/+/g, '') // 移除开头的 / 防御绝对路径
+    .replace(/\/\/+/g, '/'); // 合并连续的 /
 }
 
 function getExtension(filename: string): string {
@@ -222,14 +221,20 @@ export class FilesController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('upload-credentials')
-  async getUploadCredentials(@Query('filename') filename: string, @Query('module') moduleName?: string) {
+  async getUploadCredentials(
+    @Query('filename') filename: string,
+    @Query('module') moduleName?: string,
+  ) {
     if (!filename) {
       throw new BadRequestException('请提供文件名');
     }
     assertAllowedUpload(filename);
-    const prefix = moduleName ? `callcenter/${moduleName}` : 'callcenter/others';
+    const prefix = moduleName
+      ? `callcenter/${moduleName}`
+      : 'callcenter/others';
     const uniqueName = `${prefix}/${uuidv4()}${extname(filename)}`;
-    const result = await this.filesService.generateUploadCredentials(uniqueName);
+    const result =
+      await this.filesService.generateUploadCredentials(uniqueName);
     return {
       code: 0,
       data: result,
@@ -291,7 +296,9 @@ export class FilesController {
     }
     assertAllowedUpload(file.originalname, file.mimetype);
 
-    const prefix = moduleName ? `callcenter/${moduleName}` : 'callcenter/others';
+    const prefix = moduleName
+      ? `callcenter/${moduleName}`
+      : 'callcenter/others';
     const uniqueName = `${prefix}/${uuidv4()}${extname(file.originalname)}`;
 
     await this.filesService.uploadToCos(uniqueName, file.buffer, file.mimetype);

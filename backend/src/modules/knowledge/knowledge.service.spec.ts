@@ -8,18 +8,23 @@ import { SettingsService } from '../settings/settings.service';
 import { FilesService } from '../files/files.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
+type MockRepository = Record<string, jest.Mock>;
+type MockService = Record<string, jest.Mock>;
+
 describe('KnowledgeService', () => {
   let service: KnowledgeService;
-  let mockKnowledgeRepo: any;
-  let mockTicketRepo: any;
-  let mockMessageRepo: any;
-  let mockSettingsService: any;
-  let mockFilesService: any;
+  let mockKnowledgeRepo: MockRepository;
+  let mockTicketRepo: MockRepository;
+  let mockMessageRepo: MockRepository;
+  let mockSettingsService: MockService;
+  let mockFilesService: MockService;
 
   beforeEach(async () => {
     mockKnowledgeRepo = {
       create: jest.fn().mockImplementation((dto) => dto),
-      save: jest.fn().mockImplementation((entity) => Promise.resolve({ ...entity, id: 1 })),
+      save: jest
+        .fn()
+        .mockImplementation((entity) => Promise.resolve({ ...entity, id: 1 })),
       findOne: jest.fn(),
       findAndCount: jest.fn().mockResolvedValue([[{ id: 1, ticketId: 1 }], 1]),
       delete: jest.fn().mockResolvedValue(undefined),
@@ -48,7 +53,10 @@ describe('KnowledgeService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KnowledgeService,
-        { provide: getRepositoryToken(KnowledgeDoc), useValue: mockKnowledgeRepo },
+        {
+          provide: getRepositoryToken(KnowledgeDoc),
+          useValue: mockKnowledgeRepo,
+        },
         { provide: getRepositoryToken(Ticket), useValue: mockTicketRepo },
         { provide: getRepositoryToken(Message), useValue: mockMessageRepo },
         { provide: SettingsService, useValue: mockSettingsService },
@@ -99,8 +107,16 @@ describe('KnowledgeService', () => {
 
   describe('getDocAndSafeName', () => {
     it('should return doc and safe name', async () => {
-      mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, ticketId: 1, title: 'Test Doc' });
-      mockTicketRepo.findOne.mockResolvedValue({ id: 1, ticketNo: 'TK-1', title: 'Ticket Title' });
+      mockKnowledgeRepo.findOne.mockResolvedValue({
+        id: 1,
+        ticketId: 1,
+        title: 'Test Doc',
+      });
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: 1,
+        ticketNo: 'TK-1',
+        title: 'Ticket Title',
+      });
       const result = await service.getDocAndSafeName(1);
       expect(result.doc).toBeDefined();
       expect(result.safeName).toBe('TK-1_Ticket Title');
@@ -135,7 +151,9 @@ describe('KnowledgeService', () => {
 
     it('should throw NotFoundException if ticket missing', async () => {
       mockTicketRepo.findOne.mockResolvedValue(null);
-      await expect(service.exportChatHistory(999, 'admin')).rejects.toThrow(NotFoundException);
+      await expect(service.exportChatHistory(999, 'admin')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -143,7 +161,12 @@ describe('KnowledgeService', () => {
     it('should update knowledge doc', async () => {
       mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, content: 'old' });
       mockKnowledgeRepo.save.mockImplementation(async (doc) => doc);
-      const result = await service.updateKnowledge(1, 'new content', 'new title', 'tag1');
+      const result = await service.updateKnowledge(
+        1,
+        'new content',
+        'new title',
+        'tag1',
+      );
       expect(result.content).toBe('new content');
       expect(result.title).toBe('new title');
     });
@@ -159,28 +182,43 @@ describe('KnowledgeService', () => {
   describe('generateKnowledge', () => {
     it('should throw NotFoundException if ticket not found', async () => {
       mockTicketRepo.findOne.mockResolvedValue(null);
-      await expect(service.generateKnowledge(999)).rejects.toThrow(NotFoundException);
+      await expect(service.generateKnowledge(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw BadRequestException if ticket not closed', async () => {
       mockTicketRepo.findOne.mockResolvedValue({
-        id: 1, status: 'in_progress', ticketNo: 'TK-1',
+        id: 1,
+        status: 'in_progress',
+        ticketNo: 'TK-1',
       });
-      await expect(service.generateKnowledge(1)).rejects.toThrow(BadRequestException);
+      await expect(service.generateKnowledge(1)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw BadRequestException if no AI API key', async () => {
       mockTicketRepo.findOne.mockResolvedValue({
-        id: 1, status: 'closed', ticketNo: 'TK-1',
+        id: 1,
+        status: 'closed',
+        ticketNo: 'TK-1',
       });
       mockSettingsService.getAll.mockResolvedValue({});
-      await expect(service.generateKnowledge(1)).rejects.toThrow(BadRequestException);
+      await expect(service.generateKnowledge(1)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
   describe('updateKnowledge (without optional params)', () => {
     it('should update content only when title/tags not provided', async () => {
-      mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, title: 'Old', content: 'old', tags: 't' });
+      mockKnowledgeRepo.findOne.mockResolvedValue({
+        id: 1,
+        title: 'Old',
+        content: 'old',
+        tags: 't',
+      });
       mockKnowledgeRepo.save.mockImplementation(async (doc) => doc);
       const result = await service.updateKnowledge(1, 'new content');
       expect(result.content).toBe('new content');
@@ -190,7 +228,11 @@ describe('KnowledgeService', () => {
 
   describe('getDocAndSafeName (no ticket)', () => {
     it('should fallback to doc title when ticket not found', async () => {
-      mockKnowledgeRepo.findOne.mockResolvedValue({ id: 1, ticketId: 999, title: 'Doc Title' });
+      mockKnowledgeRepo.findOne.mockResolvedValue({
+        id: 1,
+        ticketId: 999,
+        title: 'Doc Title',
+      });
       mockTicketRepo.findOne.mockResolvedValue(null);
       const result = await service.getDocAndSafeName(1);
       expect(result.safeName).toContain('Doc Title');

@@ -23,7 +23,7 @@ describe('AuditService', () => {
     };
 
     auditRepo = {
-      create: jest.fn().mockImplementation(dto => dto),
+      create: jest.fn().mockImplementation((dto) => dto),
       save: jest.fn(),
       createQueryBuilder: jest.fn(() => qbMock),
     };
@@ -31,7 +31,7 @@ describe('AuditService', () => {
     settingRepo = {
       findOne: jest.fn(),
       find: jest.fn().mockResolvedValue([]),
-      create: jest.fn().mockImplementation(dto => dto),
+      create: jest.fn().mockImplementation((dto) => dto),
       save: jest.fn(),
     };
 
@@ -86,10 +86,12 @@ describe('AuditService', () => {
     it('should save settings properly', async () => {
       settingRepo.findOne.mockResolvedValue(null);
       await service.updateSettings({ ai_task: false });
-      expect(settingRepo.save).toHaveBeenCalledWith(expect.objectContaining({
-        key: 'audit.ai_task',
-        value: 'false',
-      }));
+      expect(settingRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: 'audit.ai_task',
+          value: 'false',
+        }),
+      );
     });
   });
 });

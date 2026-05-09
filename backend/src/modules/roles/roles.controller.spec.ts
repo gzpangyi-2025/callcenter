@@ -2,9 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RolesController } from './roles.controller';
 import { RolesService } from './roles.service';
 
+type MockService = Record<string, jest.Mock>;
+
 describe('RolesController', () => {
   let controller: RolesController;
-  let mockRolesService: any;
+  let mockRolesService: MockService;
 
   beforeEach(async () => {
     mockRolesService = {
@@ -73,7 +75,10 @@ describe('RolesController', () => {
       mockRolesService.updateRolePermissions.mockResolvedValue(data);
       const result = await controller.updatePermissions(1, [1, 2]);
       expect(result).toEqual({ code: 0, message: '权限更新成功', data });
-      expect(mockRolesService.updateRolePermissions).toHaveBeenCalledWith(1, [1, 2]);
+      expect(mockRolesService.updateRolePermissions).toHaveBeenCalledWith(
+        1,
+        [1, 2],
+      );
     });
   });
 

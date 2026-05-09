@@ -35,9 +35,18 @@ describe('SearchService', () => {
         SearchService,
         { provide: ElasticsearchService, useValue: esService },
         { provide: getRepositoryToken(Post), useValue: postRepo },
-        { provide: getRepositoryToken(Ticket), useValue: { find: jest.fn().mockResolvedValue([]) } },
-        { provide: getRepositoryToken(Message), useValue: { find: jest.fn().mockResolvedValue([]) } },
-        { provide: getRepositoryToken(KnowledgeDoc), useValue: { find: jest.fn().mockResolvedValue([]) } },
+        {
+          provide: getRepositoryToken(Ticket),
+          useValue: { find: jest.fn().mockResolvedValue([]) },
+        },
+        {
+          provide: getRepositoryToken(Message),
+          useValue: { find: jest.fn().mockResolvedValue([]) },
+        },
+        {
+          provide: getRepositoryToken(KnowledgeDoc),
+          useValue: { find: jest.fn().mockResolvedValue([]) },
+        },
       ],
     }).compile();
 
@@ -58,13 +67,21 @@ describe('SearchService', () => {
 
   describe('indexPost', () => {
     it('should index a post successfully', async () => {
-      const post = { id: 1, title: 'test', content: 'test content', tags: ['a'], author: { realName: 'testUser' } } as any;
+      const post = {
+        id: 1,
+        title: 'test',
+        content: 'test content',
+        tags: ['a'],
+        author: { realName: 'testUser' },
+      } as any;
       await service.indexPost(post);
-      expect(esService.index).toHaveBeenCalledWith(expect.objectContaining({
-        index: 'callcenter-posts',
-        id: '1',
-        body: expect.objectContaining({ title: 'test', type: 'post' }),
-      }));
+      expect(esService.index).toHaveBeenCalledWith(
+        expect.objectContaining({
+          index: 'callcenter-posts',
+          id: '1',
+          body: expect.objectContaining({ title: 'test', type: 'post' }),
+        }),
+      );
     });
   });
 
@@ -73,15 +90,25 @@ describe('SearchService', () => {
       esService.search.mockResolvedValue({
         hits: {
           total: { value: 1, relation: 'eq' },
-          hits: [{ _id: '1', _index: 'callcenter-posts', _source: { title: 'test' } }],
+          hits: [
+            {
+              _id: '1',
+              _index: 'callcenter-posts',
+              _source: { title: 'test' },
+            },
+          ],
         },
       });
 
       const result = await service.search('test', 'post');
       expect(result.total).toBe(1);
       expect(result.items).toHaveLength(1);
-      expect(result.items[0]).toEqual(expect.objectContaining({ id: '1', title: 'test' }));
-      expect(esService.search).toHaveBeenCalledWith(expect.objectContaining({ index: 'callcenter-posts' }));
+      expect(result.items[0]).toEqual(
+        expect.objectContaining({ id: '1', title: 'test' }),
+      );
+      expect(esService.search).toHaveBeenCalledWith(
+        expect.objectContaining({ index: 'callcenter-posts' }),
+      );
     });
   });
 

@@ -14,7 +14,7 @@ describe('CategoryService', () => {
     repo = {
       clear: jest.fn(),
       save: jest.fn(),
-      create: jest.fn().mockImplementation(dto => dto),
+      create: jest.fn().mockImplementation((dto) => dto),
       find: jest.fn(),
     };
 
@@ -65,7 +65,7 @@ describe('CategoryService', () => {
 
       const tree = await service.getTree();
       expect(tree).toHaveLength(2);
-      const itNode = tree.find(t => t.value === 'IT');
+      const itNode = tree.find((t) => t.value === 'IT');
       expect(itNode.children).toHaveLength(2);
     });
   });

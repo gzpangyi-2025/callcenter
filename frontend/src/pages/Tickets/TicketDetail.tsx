@@ -18,7 +18,53 @@ import { useScreenShare } from '../../hooks/useScreenShare';
 import { useVoiceChat } from '../../hooks/useVoiceChat';
 import type { Ticket } from '../../types/ticket';
 
+interface ChatSender {
+  id?: number;
+  username?: string;
+  realName?: string;
+  displayName?: string;
+}
 
+interface ChatMessage {
+  id: number;
+  content: string;
+  type: string;
+  sender?: ChatSender | null;
+  senderName?: string;
+  createdAt: string;
+  isRecalled?: boolean;
+  fileUrl?: string | null;
+  fileName?: string | null;
+  fileSize?: number | null;
+}
+
+interface MessageHistoryPayload {
+  items?: ChatMessage[];
+}
+
+interface RoomUser {
+  id: number;
+  name: string;
+  role?: string;
+}
+
+interface RoomUsersPayload {
+  room?: string;
+  users?: RoomUser[];
+}
+
+interface TicketEventPayload {
+  data?: Pick<Ticket, 'id'>;
+}
+
+interface RoomStatePayload {
+  ticketId?: number;
+  locked?: boolean;
+  externalDisabled?: boolean;
+  message?: string;
+}
+
+type KnowledgeDraft = Record<string, unknown> | null;
 
 const statusDotColor: Record<string, string> = {
   pending: '#f59e0b',
@@ -32,15 +78,15 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
   const id = externalTicketId || params.id;
   const navigate = useNavigate();
   const [ticket, setTicket] = useState<Ticket | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [infoDrawerOpen, setInfoDrawerOpen] = useState(false);
-  const [myTickets, setMyTickets] = useState<any[]>([]);
+  const [myTickets, setMyTickets] = useState<Ticket[]>([]);
   const [uploading, setUploading] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
-  const [roomUsers, setRoomUsers] = useState<any[]>([]);
+  const [roomUsers, setRoomUsers] = useState<RoomUser[]>([]);
   const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
 
   // 房间锁定状态
@@ -61,14 +107,15 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
   const [lockDisableExternal, setLockDisableExternal] = useState(false);
   
   // AI 草稿状态
-  const [draftKnowledge, setDraftKnowledge] = useState<any>(null);
+  const [draftKnowledge, setDraftKnowledge] = useState<KnowledgeDraft>(null);
   const [draftContent, setDraftContent] = useState('');
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
   const { user } = useAuthStore();
   const { socket, unreadMap, setCurrentTicket, clearUnread } = useSocketStore();
-  const canInvite = ticket && user && (ticket.creatorId === user.id || ticket.assigneeId === user.id || user.role?.name === 'admin');
+  const isAdminUser = typeof user?.role === 'object' && user.role?.name === 'admin';
+  const canInvite = ticket && user && (ticket.creatorId === user.id || ticket.assigneeId === user.id || isAdminUser);
 
   // 屏幕共享
   const screenShare = useScreenShare(socket, id ? Number(id) : null, user?.id ?? null);
@@ -158,7 +205,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
   // 负责加载工单详情（包括 participants）
   const loadTicket = useCallback(async () => {
     try {
-      const res: any = await ticketsAPI.getById(Number(id));
+      const res = await ticketsAPI.getById(Number(id));
       if (res.code === 0) setTicket(res.data);
     } catch {
       message.error('加载工单失败');
@@ -176,13 +223,13 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
         ticketsAPI.myAssigned(),
         ticketsAPI.myParticipated(),
       ]);
-      let items: any[] = [];
-      if ((createdRes as any).code === 0) items = items.concat((createdRes as any).data || []);
-      if ((assignedRes as any).code === 0) items = items.concat((assignedRes as any).data || []);
-      if ((participatedRes as any).code === 0) items = items.concat((participatedRes as any).data || []);
+      let items: Ticket[] = [];
+      if (createdRes.code === 0) items = items.concat(createdRes.data || []);
+      if (assignedRes.code === 0) items = items.concat(assignedRes.data || []);
+      if (participatedRes.code === 0) items = items.concat(participatedRes.data || []);
       
       const uniqueItems = Array.from(new Map(items.map(item => [item.id, item])).values());
-      const activeItems = uniqueItems.filter((t: any) => t.status !== 'closed');
+      const activeItems = uniqueItems.filter((t) => t.status !== 'closed');
       setMyTickets(activeItems);
     } catch { /* ignore */ }
   }, [user]);
@@ -251,12 +298,12 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
 
     socket.emit('joinRoom', { ticketId });
 
-    const handleHistory = (data: any) => {
+    const handleHistory = (data: MessageHistoryPayload) => {
       setMessages(data.items || []);
       setHasMoreHistory((data.items || []).length === 200); // 假设后端 pageSize=200
       setInitialChatLoading(false);
     };
-    const handleMoreHistoryLoaded = (data: any) => {
+    const handleMoreHistoryLoaded = (data: MessageHistoryPayload) => {
       setLoadingHistory(false);
       const items = data.items || [];
       if (items.length > 0) {
@@ -267,18 +314,18 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
         isLoadingHistoryRef.current = false;
       }
     };
-    const handleNewMessage = (msg: any) => {
+    const handleNewMessage = (msg: ChatMessage) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
     };
-    const handleRoomUsers = (data: any) => {
+    const handleRoomUsers = (data: RoomUsersPayload) => {
       if (data.room === `ticket_${ticketId}`) {
         setRoomUsers(data.users || []);
       }
     };
-    const handleTicketEvent = (event: any) => {
+    const handleTicketEvent = (event: TicketEventPayload) => {
       if (event.data?.id === ticketId) {
         // 收到当前工单的更新事件后，重新从服务器加载完整数据（包含 participants）
         loadTicket();
@@ -314,13 +361,13 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
     socket.on('recallError', handleRecallError);
 
     // 房间锁定事件
-    const handleRoomLockChanged = (data: any) => {
+    const handleRoomLockChanged = (data: RoomStatePayload) => {
       if (data.ticketId === ticketId) {
-        setIsRoomLocked(data.locked);
-        setIsExternalDisabled(data.externalDisabled);
+        setIsRoomLocked(Boolean(data.locked));
+        setIsExternalDisabled(Boolean(data.externalDisabled));
       }
     };
-    const handleRoomLockedKick = (data: any) => {
+    const handleRoomLockedKick = (data: RoomStatePayload) => {
       if (data.ticketId === ticketId) {
         if (externalTicketId) {
           setIsExternalKicked(true);
@@ -330,7 +377,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
         }
       }
     };
-    const handleRoomKicked = (data: any) => {
+    const handleRoomKicked = (data: RoomStatePayload) => {
       if (data.ticketId === ticketId) {
         if (externalTicketId) {
           setIsExternalKicked(true);
@@ -341,9 +388,9 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
       }
     };
 
-    const handleSocketError = (err: any) => {
+    const handleSocketError = (err: unknown) => {
       console.error('[Socket Error]', err);
-      message.error(typeof err === 'string' ? err : err?.message || '连接聊天室失败');
+      message.error(typeof err === 'string' ? err : err instanceof Error ? err.message : '连接聊天室失败');
       setInitialChatLoading(false);
     };
 
@@ -495,7 +542,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
     setUploading(true);
     const hide = message.loading(`正在上传 ${file.name}...`, 0);
     try {
-      const res: any = await filesAPI.upload(file, 'tickets');
+      const res = await filesAPI.upload(file, 'tickets');
       hide();
       if (res.code === 0 && socket) {
         const isImage = file.type.startsWith('image/');
@@ -537,7 +584,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
   // ==================== 标签栏 ====================
   const tabsBar = !externalTicketId && myTickets.length > 0 && (
     <div className="ticket-tabs-bar">
-      {myTickets.map((t: any) => {
+      {myTickets.map((t) => {
         const isActive = t.id === currentTicketId;
         const unread = unreadMap[t.id] || 0;
         
@@ -609,7 +656,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
     setExportingChat(true);
     try {
       const res = await api.get(`/tickets/${ticket.id}/export-chat-zip`, { responseType: 'blob' });
-      const blob = new Blob([res as any], { type: 'application/zip' });
+      const blob = new Blob([res as unknown as BlobPart], { type: 'application/zip' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -617,7 +664,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
       a.click();
       URL.revokeObjectURL(url);
       message.success('聊天记录导出成功');
-    } catch (err: any) {
+    } catch {
     } finally {
       setExportingChat(false);
     }

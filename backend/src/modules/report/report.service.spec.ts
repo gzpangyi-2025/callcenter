@@ -90,7 +90,9 @@ describe('ReportService', () => {
       userRepo.createQueryBuilder.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         whereInIds: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue([{ id: 1, username: 'test', realName: 'Test' }]),
+        getMany: jest
+          .fn()
+          .mockResolvedValue([{ id: 1, username: 'test', realName: 'Test' }]),
       });
 
       const result = await service.getByPerson(10);
@@ -142,13 +144,17 @@ describe('ReportService', () => {
     it('should accept valid column category2', async () => {
       const qb = mockQb();
       ticketRepo.createQueryBuilder.mockReturnValue(qb);
-      await expect(service.getCrossMatrix('Network', 'category2')).resolves.toBeDefined();
+      await expect(
+        service.getCrossMatrix('Network', 'category2'),
+      ).resolves.toBeDefined();
     });
 
     it('should accept valid column category3', async () => {
       const qb = mockQb();
       ticketRepo.createQueryBuilder.mockReturnValue(qb);
-      await expect(service.getCrossMatrix('IBM', 'category3')).resolves.toBeDefined();
+      await expect(
+        service.getCrossMatrix('IBM', 'category3'),
+      ).resolves.toBeDefined();
     });
 
     it('should reject invalid column name', async () => {

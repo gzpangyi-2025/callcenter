@@ -1,9 +1,51 @@
 import axios from 'axios';
+import type {
+  AxiosError,
+  AxiosProgressEvent,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { message } from 'antd';
 import COS from 'cos-js-sdk-v5';
-import type { ApiResponse, PaginatedData } from '../types/api';
+import type {
+  AiChatMessagePayload,
+  AiChatSession,
+  AiCreateTaskPayload,
+  AiHealth,
+  AiListParams,
+  AiTask,
+  AiTaskFile,
+  AiTaskListData,
+  AiTemplate,
+  AiUploadUrl,
+  ApiResponse,
+  AuthTokenPayload,
+  BbsNotification,
+  CategoryNode,
+  FileUploadResult,
+  PaginatedData,
+  ReportCategoryLevel,
+  ReportCategoryStats,
+  ReportCrossMatrix,
+  ReportCustomerDrillParams,
+  ReportCustomerStats,
+  ReportDimension,
+  ReportFilterParams,
+  ReportPersonDrillParams,
+  ReportPersonStats,
+  ReportStatItem,
+  ReportSummary,
+  ReportTimeSeriesItem,
+  TicketAggregates,
+  TicketBatchSummary,
+  UploadCredentials,
+} from '../types/api';
 import type { User, UpdateUserInfoParam } from '../types/user';
 import type { Ticket, CreateTicketDto, UpdateTicketDto, TicketQueryParams, TicketBadgeSummary } from '../types/ticket';
+
+interface ApiRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+  _silent?: boolean;
+}
 
 const api = axios.create({
   baseURL: '/api',
@@ -23,13 +65,17 @@ api.interceptors.request.use((config) => {
 // 响应拦截器 - 处理token过期自动刷新及全局错误
 api.interceptors.response.use(
   (response) => response.data,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError<ApiResponse<unknown>>) => {
+    const originalRequest = error.config as ApiRequestConfig | undefined;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+        const res = await axios.post<ApiResponse<AuthTokenPayload>>(
+          '/api/auth/refresh',
+          {},
+          { withCredentials: true },
+        );
         const { accessToken } = res.data.data;
         localStorage.setItem('accessToken', accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -62,25 +108,25 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (data: { username: string; password: string }): Promise<ApiResponse<any>> =>
+  login: (data: { username: string; password: string }): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> =>
     api.post('/auth/login', data),
-  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }): Promise<ApiResponse<any>> =>
+  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> =>
     api.post('/auth/register', data),
   logout: (): Promise<ApiResponse<void>> => api.post('/auth/logout'),
   getMe: (): Promise<ApiResponse<User>> => api.get('/auth/me'),
-  refresh: (): Promise<ApiResponse<any>> => api.post('/auth/refresh'),
-  externalLogin: (ticketToken: string, nickname: string): Promise<ApiResponse<any>> => api.post('/auth/external/login', { ticketToken, nickname }),
-  bbsExternalLogin: (token: string): Promise<ApiResponse<any>> => api.post('/auth/external/bbs-login', { token }),
+  refresh: (): Promise<ApiResponse<AuthTokenPayload>> => api.post('/auth/refresh'),
+  externalLogin: (ticketToken: string, nickname: string): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> => api.post('/auth/external/login', { ticketToken, nickname }),
+  bbsExternalLogin: (token: string): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> => api.post('/auth/external/bbs-login', { token }),
 };
 
 // Tickets API
 export const ticketsAPI = {
   create: (data: CreateTicketDto): Promise<ApiResponse<Ticket>> => api.post('/tickets', data),
   getAll: (params?: TicketQueryParams): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/tickets', { params }),
-  getAggregates: (params?: TicketQueryParams): Promise<ApiResponse<any>> => api.get('/tickets/aggregates', { params }),
+  getAggregates: (params?: TicketQueryParams): Promise<ApiResponse<TicketAggregates>> => api.get('/tickets/aggregates', { params }),
   getById: (id: number): Promise<ApiResponse<Ticket>> => api.get(`/tickets/${id}`),
   getMyBadges: (): Promise<ApiResponse<TicketBadgeSummary>> => api.get('/tickets/my/badges'),
-  getBatchSummary: (ids: number[]): Promise<ApiResponse<any[]>> => api.post('/tickets/batch/summary', { ids }),
+  getBatchSummary: (ids: number[]): Promise<ApiResponse<TicketBatchSummary[]>> => api.post('/tickets/batch/summary', { ids }),
   readTicket: (id: number): Promise<ApiResponse<void>> => api.post(`/tickets/${id}/read`),
   getByNo: (ticketNo: string): Promise<ApiResponse<Ticket>> => api.get(`/tickets/no/${ticketNo}`),
   update: (id: number, data: UpdateTicketDto): Promise<ApiResponse<Ticket>> => api.put(`/tickets/${id}`, data),
@@ -98,12 +144,13 @@ export const ticketsAPI = {
 
 // Files API
 export const filesAPI = {
-  upload: async (file: File, moduleName?: string): Promise<ApiResponse<any>> => {
+  upload: async (file: File, moduleName?: string): Promise<ApiResponse<FileUploadResult>> => {
     try {
-      const { data: credResult } = await api.get('/files/upload-credentials', { 
+      const credentialResponse = await api.get('/files/upload-credentials', { 
         params: { filename: file.name, ...(moduleName ? { module: moduleName } : {}) } 
-      });
-      const { provider, credentials, startTime, expiredTime, bucket, region, key } = credResult;
+      }) as unknown as ApiResponse<UploadCredentials>;
+      const credResult = credentialResponse.data;
+      const { provider } = credResult;
 
       if (provider === 'local') {
         const formData = new FormData();
@@ -122,7 +169,7 @@ export const filesAPI = {
         });
         
         return await api.post('/files/confirm', {
-          key,
+          key: credResult.key,
           originalName: file.name,
           size: file.size,
           mimetype: file.type || 'application/octet-stream',
@@ -132,20 +179,20 @@ export const filesAPI = {
       const cos = new COS({
         getAuthorization: (_options, callback) => {
           callback({
-            TmpSecretId: credentials.tmpSecretId,
-            TmpSecretKey: credentials.tmpSecretKey,
-            SecurityToken: credentials.sessionToken,
-            StartTime: startTime,
-            ExpiredTime: expiredTime,
+            TmpSecretId: credResult.credentials.tmpSecretId,
+            TmpSecretKey: credResult.credentials.tmpSecretKey,
+            SecurityToken: credResult.credentials.sessionToken,
+            StartTime: credResult.startTime,
+            ExpiredTime: credResult.expiredTime,
           });
         }
       });
 
       await new Promise((resolve, reject) => {
         cos.sliceUploadFile({
-          Bucket: bucket,
-          Region: region,
-          Key: key,
+          Bucket: credResult.bucket,
+          Region: credResult.region,
+          Key: credResult.key,
           Body: file,
           ContentType: file.type || 'application/octet-stream',
         }, function(err, data) {
@@ -155,7 +202,7 @@ export const filesAPI = {
       });
 
       return await api.post('/files/confirm', {
-        key,
+          key: credResult.key,
         originalName: file.name,
         size: file.size,
         mimetype: file.type || 'application/octet-stream',
@@ -190,16 +237,16 @@ export const usersAPI = {
 
 // Roles API
 export const rolesAPI = {
-  getAll: (): Promise<ApiResponse<any[]>> => api.get('/roles'),
-  getPermissions: (): Promise<ApiResponse<any[]>> => api.get('/roles/permissions'),
+  getAll: (): Promise<ApiResponse<unknown[]>> => api.get('/roles'),
+  getPermissions: (): Promise<ApiResponse<unknown[]>> => api.get('/roles/permissions'),
   updatePermissions: (id: number, permissionIds: number[]): Promise<ApiResponse<void>> => api.post(`/roles/${id}/permissions`, { permissionIds }),
-  create: (data: { name: string; description?: string; permissionIds?: number[] }): Promise<ApiResponse<any>> => api.post('/roles', data),
+  create: (data: { name: string; description?: string; permissionIds?: number[] }): Promise<ApiResponse<unknown>> => api.post('/roles', data),
   deleteRole: (id: number): Promise<ApiResponse<void>> => api.delete(`/roles/${id}`),
 };
 
 // Settings API
 export const settingsAPI = {
-  getAll: (): Promise<ApiResponse<any>> => api.get('/settings'),
+  getAll: (): Promise<ApiResponse<Record<string, string>>> => api.get('/settings'),
   saveAi: (data: {
     visionModel?: string; visionApiKey?: string;
     systemPrompt?: string; imageModel?: string; imageApiKey?: string;
@@ -214,67 +261,67 @@ export const settingsAPI = {
     provider?: string; cosSecretId?: string; cosSecretKey?: string;
     cosBucket?: string; cosRegion?: string;
   }): Promise<ApiResponse<void>> => api.post('/settings/storage', data),
-  getMigrationStats: (): Promise<ApiResponse<any>> => api.get('/files/migration-stats'),
+  getMigrationStats: (): Promise<ApiResponse<unknown>> => api.get('/files/migration-stats'),
   migrateStorage: (): Promise<ApiResponse<void>> => api.post('/files/migrate'),
 
-  uploadLogo: (file: File): Promise<ApiResponse<any>> => {
+  uploadLogo: (file: File): Promise<ApiResponse<FileUploadResult>> => {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/settings/logo', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
   },
-  getWebRtcConfig: (): Promise<ApiResponse<any>> => api.get('/settings/webrtc-config'),
+  getWebRtcConfig: (): Promise<ApiResponse<Record<string, unknown>>> => api.get('/settings/webrtc-config'),
   saveWebRtc: (data: {
     mode?: string; customStun?: string;
     customTurn?: string; turnUsername?: string; turnPassword?: string;
     screenShareMaxViewers?: number; voiceMaxParticipants?: number;
   }): Promise<ApiResponse<void>> => api.post('/settings/webrtc', data),
-  saveCodexConfig: (data: { concurrency?: number; maxResumeAttempts?: number }): Promise<ApiResponse<any>> =>
+  saveCodexConfig: (data: { concurrency?: number; maxResumeAttempts?: number }): Promise<ApiResponse<Record<string, unknown>>> =>
     api.post('/settings/codex', data),
-  getCodexConfig: (): Promise<ApiResponse<any>> => api.get('/settings/codex'),
+  getCodexConfig: (): Promise<ApiResponse<Record<string, unknown>>> => api.get('/settings/codex'),
 };
 
 // Knowledge API
 export const knowledgeAPI = {
-  generateDraft: (ticketId: number): Promise<ApiResponse<any>> => api.post(`/knowledge/tickets/${ticketId}/generate`, {}, { timeout: 120000 }),
-  saveKnowledge: (data: { ticketId: number; title: string; content: string; tags?: string; category?: string; severity?: string; analysisImgUrl?: string; flowImgUrl?: string; }): Promise<ApiResponse<any>> => api.post('/knowledge', data, { timeout: 60000 }),
-  exportChatHistory: (ticketId: number): Promise<ApiResponse<any>> => api.post(`/knowledge/tickets/${ticketId}/export-chat`),
-  updateKnowledge: (id: number, data: { title?: string; content: string; tags?: string }): Promise<ApiResponse<any>> => api.put(`/knowledge/${id}`, data),
-  search: (q: string, page: number = 1, docType?: string): Promise<ApiResponse<PaginatedData<any>>> => api.get('/knowledge', { params: { q, page, docType } }),
-  getOne: (id: number): Promise<ApiResponse<any>> => api.get(`/knowledge/${id}`),
-  getByTicket: (ticketId: number): Promise<ApiResponse<any[]>> => api.get(`/knowledge/ticket/${ticketId}`),
+  generateDraft: (ticketId: number): Promise<ApiResponse<Record<string, unknown>>> => api.post(`/knowledge/tickets/${ticketId}/generate`, {}, { timeout: 120000 }),
+  saveKnowledge: (data: { ticketId: number; title: string; content: string; tags?: string; category?: string; severity?: string; analysisImgUrl?: string; flowImgUrl?: string; }): Promise<ApiResponse<Record<string, unknown>>> => api.post('/knowledge', data, { timeout: 60000 }),
+  exportChatHistory: (ticketId: number): Promise<ApiResponse<Record<string, unknown>>> => api.post(`/knowledge/tickets/${ticketId}/export-chat`),
+  updateKnowledge: (id: number, data: { title?: string; content: string; tags?: string }): Promise<ApiResponse<Record<string, unknown>>> => api.put(`/knowledge/${id}`, data),
+  search: (q: string, page: number = 1, docType?: string): Promise<ApiResponse<PaginatedData<Record<string, unknown>>>> => api.get('/knowledge', { params: { q, page, docType } }),
+  getOne: (id: number): Promise<ApiResponse<Record<string, unknown>>> => api.get(`/knowledge/${id}`),
+  getByTicket: (ticketId: number): Promise<ApiResponse<Array<Record<string, unknown>>>> => api.get(`/knowledge/ticket/${ticketId}`),
   deleteOne: (id: number): Promise<ApiResponse<void>> => api.delete(`/knowledge/${id}`),
 };
 
 // Report API
 export const reportAPI = {
-  getSummary: (params?: any): Promise<ApiResponse<any>> => api.get('/report/summary', { params }),
-  getCategoryStats: (params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category', { params }),
-  getCategory2Stats: (category1: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category2', { params: { ...params, category1 } }),
-  getCategory3Stats: (category2: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-category3', { params: { ...params, category2 } }),
-  getByPerson: (limit?: number, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-person', { params: { ...params, limit } }),
-  getByCustomer: (params?: any): Promise<ApiResponse<any[]>> => api.get('/report/by-customer', { params }),
-  getTimeSeries: (dimension?: string, params?: any): Promise<ApiResponse<any[]>> => api.get('/report/time-series', { params: { ...params, dimension } }),
-  getCrossMatrix: (categoryName: string, level: string, limit: number = 8, params?: any): Promise<ApiResponse<any>> => api.get('/report/cross-matrix', { params: { ...params, categoryName, level, limit } }),
-  drillTypePerson: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/type-person', { params }),
-  drillPersonTickets: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/person-tickets', { params }),
-  drillCustomerTickets: (params: any): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/customer-tickets', { params }),
-  exportXlsx: (params?: any): Promise<Blob> => api.get('/report/export-xlsx', { params, responseType: 'blob' }),
+  getSummary: (params?: ReportFilterParams): Promise<ApiResponse<ReportSummary>> => api.get('/report/summary', { params }),
+  getCategoryStats: (params?: ReportFilterParams): Promise<ApiResponse<ReportCategoryStats>> => api.get('/report/by-category', { params }),
+  getCategory2Stats: (category1: string, params?: ReportFilterParams): Promise<ApiResponse<ReportStatItem[]>> => api.get('/report/by-category2', { params: { ...params, category1 } }),
+  getCategory3Stats: (category2: string, params?: ReportFilterParams): Promise<ApiResponse<ReportStatItem[]>> => api.get('/report/by-category3', { params: { ...params, category2 } }),
+  getByPerson: (limit?: number, params?: ReportFilterParams): Promise<ApiResponse<ReportPersonStats>> => api.get('/report/by-person', { params: { ...params, limit } }),
+  getByCustomer: (params?: ReportFilterParams): Promise<ApiResponse<ReportCustomerStats[]>> => api.get('/report/by-customer', { params }),
+  getTimeSeries: (dimension?: ReportDimension, params?: ReportFilterParams): Promise<ApiResponse<ReportTimeSeriesItem[]>> => api.get('/report/time-series', { params: { ...params, dimension } }),
+  getCrossMatrix: (categoryName: string, level: ReportCategoryLevel, limit: number = 8, params?: ReportFilterParams): Promise<ApiResponse<ReportCrossMatrix>> => api.get('/report/cross-matrix', { params: { ...params, categoryName, level, limit } }),
+  drillTypePerson: (params: ReportPersonDrillParams): Promise<ApiResponse<PaginatedData<Ticket>>> => api.get('/report/drill/type-person', { params }),
+  drillPersonTickets: (params: ReportPersonDrillParams): Promise<ApiResponse<PaginatedData<Ticket> | Ticket[]>> => api.get('/report/drill/person-tickets', { params }),
+  drillCustomerTickets: (params: ReportCustomerDrillParams): Promise<ApiResponse<PaginatedData<Ticket> | Ticket[]>> => api.get('/report/drill/customer-tickets', { params }),
+  exportXlsx: (params?: ReportFilterParams): Promise<Blob> => api.get('/report/export-xlsx', { params, responseType: 'blob' }),
 };
 
 // Category API
 export const categoryAPI = {
-  importExcel: (formData: FormData): Promise<ApiResponse<any>> => api.post('/category/import', formData, {
+  importExcel: (formData: FormData): Promise<ApiResponse<unknown>> => api.post('/category/import', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  getTree: (): Promise<ApiResponse<any[]>> => api.get('/category/tree'),
-  getAll: (): Promise<ApiResponse<any[]>> => api.get('/category/all'),
+  getTree: (): Promise<ApiResponse<CategoryNode[]>> => api.get('/category/tree'),
+  getAll: (): Promise<ApiResponse<CategoryNode[]>> => api.get('/category/all'),
 };
 
 // Audit API
 export const auditAPI = {
-  getLogs: (params?: any): Promise<ApiResponse<PaginatedData<any>>> => api.get('/audit/logs', { params }),
+  getLogs: (params?: Record<string, unknown>): Promise<ApiResponse<PaginatedData<Record<string, unknown>>>> => api.get('/audit/logs', { params }),
   deleteLogs: (data: { type?: string; startDate?: string; endDate?: string }): Promise<ApiResponse<void>> =>
     api.delete('/audit/logs', { data }),
   getSettings: (): Promise<ApiResponse<Record<string, boolean>>> => api.get('/audit/settings'),
@@ -284,17 +331,17 @@ export const auditAPI = {
 // BBS API
 export const bbsAPI = {
   // 板块
-  getSections: (): Promise<ApiResponse<any[]>> => api.get('/bbs/sections'),
-  createSection: (data: any): Promise<ApiResponse<any>> => api.post('/bbs/sections', data),
-  updateSection: (id: number, data: any): Promise<ApiResponse<any>> => api.put(`/bbs/sections/${id}`, data),
+  getSections: (): Promise<ApiResponse<Array<Record<string, unknown>>>> => api.get('/bbs/sections'),
+  createSection: (data: Record<string, unknown>): Promise<ApiResponse<Record<string, unknown>>> => api.post('/bbs/sections', data),
+  updateSection: (id: number, data: Record<string, unknown>): Promise<ApiResponse<Record<string, unknown>>> => api.put(`/bbs/sections/${id}`, data),
   deleteSection: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/sections/${id}`),
   // 预设标签
-  getTags: (): Promise<ApiResponse<any[]>> => api.get('/bbs/tags'),
-  createTag: (data: any): Promise<ApiResponse<any>> => api.post('/bbs/tags', data),
+  getTags: (): Promise<ApiResponse<Array<Record<string, unknown>>>> => api.get('/bbs/tags'),
+  createTag: (data: Record<string, unknown>): Promise<ApiResponse<Record<string, unknown>>> => api.post('/bbs/tags', data),
   deleteTag: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/tags/${id}`),
 
   // Subscription/Notification
-  getNotifications: (): Promise<ApiResponse<any[]>> => api.get('/bbs/notifications'),
+  getNotifications: (): Promise<ApiResponse<BbsNotification[]>> => api.get('/bbs/notifications'),
   subscribe: (id: number): Promise<ApiResponse<void>> => api.post(`/bbs/posts/${id}/subscribe`),
   unsubscribe: (id: number): Promise<ApiResponse<void>> => api.delete(`/bbs/posts/${id}/subscribe`),
   getSubscriptionStatus: (id: number): Promise<ApiResponse<{ subscribed: boolean }>> => api.get(`/bbs/posts/${id}/subscribe`),
@@ -307,16 +354,30 @@ export const bbsAPI = {
 };
 
 export const searchAPI = {
-  search: (params: { q: string; type?: string; page?: number; pageSize?: number }): Promise<ApiResponse<PaginatedData<any>>> => api.get('/search', { params }),
+  search: (params: { q: string; type?: string; page?: number; pageSize?: number }): Promise<ApiResponse<PaginatedData<Record<string, unknown>>>> => api.get('/search', { params }),
   syncAll: (): Promise<ApiResponse<void>> => api.post('/search/sync'),
 };
 
 // Backup API
+export interface BackupStats {
+  totalBackups?: number;
+  totalSize?: number;
+  latestBackup?: string;
+  [key: string]: unknown;
+}
+
+export interface BackupFile {
+  filename: string;
+  size?: number;
+  createdAt?: string;
+  [key: string]: unknown;
+}
+
 export const backupAPI = {
-  getStats: (): Promise<ApiResponse<any>> => api.get('/backup/stats'),
-  create: (options: { includeImages?: boolean; includeFiles?: boolean; includeAuditLogs?: boolean }): Promise<ApiResponse<any>> =>
+  getStats: (): Promise<ApiResponse<BackupStats>> => api.get('/backup/stats'),
+  create: (options: { includeImages?: boolean; includeFiles?: boolean; includeAuditLogs?: boolean }): Promise<ApiResponse<BackupFile>> =>
     api.post('/backup/create', options, { timeout: 300000 }), // 5 min timeout for large backups
-  list: (): Promise<ApiResponse<any[]>> => api.get('/backup/list'),
+  list: (): Promise<ApiResponse<BackupFile[]>> => api.get('/backup/list'),
   download: (filename: string): void => {
     const token = localStorage.getItem('accessToken');
     // Use window.open for direct file download
@@ -328,7 +389,7 @@ export const backupAPI = {
     return api.post('/backup/restore', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 600000, // 10 min timeout for large restores
-      onUploadProgress: (e: any) => {
+      onUploadProgress: (e: AxiosProgressEvent) => {
         if (onProgress && e.total) {
           onProgress(Math.round((e.loaded * 100) / e.total));
         }
@@ -336,8 +397,8 @@ export const backupAPI = {
     });
   },
   delete: (filename: string): Promise<ApiResponse<void>> => api.delete(`/backup/${encodeURIComponent(filename)}`),
-  cleanOrphans: (): Promise<ApiResponse<any>> => api.post('/backup/clean-orphans', {}, { timeout: 120000 }),
-  getCosOrphans: (): Promise<ApiResponse<any>> => api.get('/backup/cos-orphans', { timeout: 120000 }),
+  cleanOrphans: (): Promise<ApiResponse<unknown>> => api.post('/backup/clean-orphans', {}, { timeout: 120000 }),
+  getCosOrphans: (): Promise<ApiResponse<unknown>> => api.get('/backup/cos-orphans', { timeout: 120000 }),
   cleanCosOrphans: (): Promise<ApiResponse<void>> => api.post('/backup/clean-cos-orphans', {}, { timeout: 120000 }),
 };
 
@@ -346,62 +407,50 @@ export const infraAPI = {
   getEnv: (): Promise<ApiResponse<Record<string, string>>> => api.get('/infra/env'),
   saveEnv: (data: Record<string, string>): Promise<ApiResponse<void>> => api.post('/infra/env', data),
   restart: (): Promise<ApiResponse<void>> => api.post('/infra/restart'),
-  testEs: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-es', data),
-  testRedis: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-redis', data),
-  testMysql: (data: any): Promise<ApiResponse<any>> => api.post('/infra/test-mysql', data),
+  testEs: (data: Record<string, unknown>): Promise<ApiResponse<unknown>> => api.post('/infra/test-es', data),
+  testRedis: (data: Record<string, unknown>): Promise<ApiResponse<unknown>> => api.post('/infra/test-redis', data),
+  testMysql: (data: Record<string, unknown>): Promise<ApiResponse<unknown>> => api.post('/infra/test-mysql', data),
   rebuildIndex: (): Promise<ApiResponse<void>> => api.post('/infra/rebuild-index', {}, { timeout: 300000 }),
 };
 
 // AI / Codex Worker API (proxied through CallCenter backend)
 export const aiAPI = {
   /** 获取 Codex Worker 健康状态 */
-  health: (): Promise<any> => api.get('/ai/health'),
+  health: (): Promise<ApiResponse<AiHealth> | AiHealth> => api.get('/ai/health'),
 
   /** 获取可用任务模板列表 */
-  getTemplates: (): Promise<any> => api.get('/ai/templates'),
+  getTemplates: (): Promise<ApiResponse<AiTemplate[]> | AiTemplate[]> => api.get('/ai/templates'),
 
   /** 获取直接上传附件到 Worker COS 的预签名 URL */
-  getUploadUrl: (taskId: string, filename: string): Promise<any> => 
+  getUploadUrl: (taskId: string, filename: string): Promise<ApiResponse<AiUploadUrl> | AiUploadUrl> => 
     api.get('/ai/upload-url', { params: { taskId, filename } }),
 
   /** 提交新 AI 任务 */
-  createTask: (data: {
-    id?: string;
-    type: string;
-    params: Record<string, unknown>;
-    prompt?: string;
-    parentTaskId?: string;
-    attachments?: Array<{ name: string; url: string; size: number }>;
-  }): Promise<any> => api.post('/ai/tasks', data),
+  createTask: (data: AiCreateTaskPayload): Promise<ApiResponse<AiTask> | AiTask> => api.post('/ai/tasks', data),
 
   /** 任务列表（带分页/状态过滤） */
-  listTasks: (params?: {
-    page?: number;
-    limit?: number;
-    status?: string;
-    all?: string;
-  }): Promise<any> => api.get('/ai/tasks', {
+  listTasks: (params?: AiListParams): Promise<ApiResponse<AiTaskListData> | AiTaskListData> => api.get('/ai/tasks', {
     params: { ...params, _t: Date.now() },
     headers: { 'Cache-Control': 'no-cache' },
   }),
 
   /** 获取任务详情 */
-  getTask: (id: string): Promise<any> => api.get(`/ai/tasks/${id}`),
+  getTask: (id: string): Promise<ApiResponse<AiTask> | AiTask> => api.get(`/ai/tasks/${id}`),
 
   /** 取消任务 */
-  cancelTask: (id: string): Promise<any> => api.post(`/ai/tasks/${id}/cancel`),
+  cancelTask: (id: string): Promise<ApiResponse<AiTask> | AiTask> => api.post(`/ai/tasks/${id}/cancel`),
 
   /** 删除任务（含COS文件清理） */
-  deleteTask: (id: string): Promise<any> => api.delete(`/ai/tasks/${id}`),
+  deleteTask: (id: string): Promise<ApiResponse<void> | void> => api.delete(`/ai/tasks/${id}`),
 
   /** 恢复暂停的任务（提交审阅确认） */
-  resumeTask: (id: string, input: string): Promise<any> => api.post(`/ai/tasks/${id}/resume`, { input }),
+  resumeTask: (id: string, input: string): Promise<ApiResponse<AiTask> | AiTask> => api.post(`/ai/tasks/${id}/resume`, { input }),
 
   /** 获取任务产物下载链接 */
-  getTaskFiles: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/files`),
+  getTaskFiles: (id: string): Promise<ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }> => api.get(`/ai/tasks/${id}/files`),
 
   /** 获取已完成任务的预览文件（slides、图片等） */
-  getTaskPreviews: (id: string): Promise<any> => api.get(`/ai/tasks/${id}/previews`),
+  getTaskPreviews: (id: string): Promise<ApiResponse<AiTaskFile[]> | AiTaskFile[]> => api.get(`/ai/tasks/${id}/previews`),
 
   // ── Chat (Gemini Flash) ──────────────────────────────────────────────────
 
@@ -419,17 +468,17 @@ export const aiAPI = {
   },
 
   /** 会话列表 */
-  chatSessions: (): Promise<any> => api.get('/ai/chat/sessions'),
+  chatSessions: (): Promise<ApiResponse<AiChatSession[]>> => api.get('/ai/chat/sessions'),
 
   /** 会话详情（含消息） */
-  chatSessionDetail: (id: string): Promise<any> => api.get(`/ai/chat/sessions/${id}`),
+  chatSessionDetail: (id: string): Promise<ApiResponse<AiChatSession & { messages?: unknown[] }>> => api.get(`/ai/chat/sessions/${id}`),
 
   /** 注入消息到会话（如任务反馈） */
-  injectChatMessage: (id: string, data: { role: 'assistant' | 'system'; content: string; metadata?: any }): Promise<any> =>
+  injectChatMessage: (id: string, data: AiChatMessagePayload): Promise<ApiResponse<unknown>> =>
     api.post(`/ai/chat/sessions/${id}/messages`, data),
 
   /** 删除会话 */
-  deleteChatSession: (id: string): Promise<any> => api.delete(`/ai/chat/sessions/${id}`),
+  deleteChatSession: (id: string): Promise<ApiResponse<void>> => api.delete(`/ai/chat/sessions/${id}`),
 };
 
 export default api;

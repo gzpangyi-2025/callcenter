@@ -47,7 +47,7 @@ describe('SettingsService', () => {
     it('should save multiple settings and refresh cache', async () => {
       repo.find.mockResolvedValue([
         { key: 'k1', value: 'v1' },
-        { key: 'k2', value: 'v2' }
+        { key: 'k2', value: 'v2' },
       ]);
       await service.saveMany({ k1: 'v1', k2: 'v2' });
       expect(repo.save).toHaveBeenCalledTimes(2);

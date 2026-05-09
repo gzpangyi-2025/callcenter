@@ -59,7 +59,11 @@ export class RolesService {
     const saved = await this.roleRepository.save(role);
 
     // 广播角色列表变更
-    this.chatGateway.server.emit('rolesUpdated', { type: 'created', roleId: saved.id, roleName: saved.name });
+    this.chatGateway.server.emit('rolesUpdated', {
+      type: 'created',
+      roleId: saved.id,
+      roleName: saved.name,
+    });
 
     return saved;
   }
@@ -85,7 +89,11 @@ export class RolesService {
     await this.roleRepository.remove(role);
 
     // 广播角色列表变更
-    this.chatGateway.server.emit('rolesUpdated', { type: 'deleted', roleId, roleName: role.name });
+    this.chatGateway.server.emit('rolesUpdated', {
+      type: 'deleted',
+      roleId,
+      roleName: role.name,
+    });
 
     return { success: true };
   }

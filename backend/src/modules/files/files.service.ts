@@ -4,8 +4,8 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import COS = require('cos-nodejs-sdk-v5');
-import STS = require('qcloud-cos-sts');
+import COS from 'cos-nodejs-sdk-v5';
+import * as STS from 'qcloud-cos-sts';
 import { SettingsService } from '../settings/settings.service';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -18,8 +18,21 @@ import {
   ListObjectsV2Command,
   HeadObjectCommand,
 } from '@aws-sdk/client-s3';
+import type { ListObjectsV2CommandOutput } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Readable } from 'stream';
+
+const errorMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err);
+
+const toError = (err: unknown): Error =>
+  err instanceof Error ? err : new Error(errorMessage(err));
+
+const toBufferChunk = (chunk: Buffer | string | Uint8Array): Buffer =>
+  Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+
+const isReadable = (value: unknown): value is Readable =>
+  value instanceof Readable;
 
 const PROXY_ENV_KEYS = [
   'HTTP_PROXY',
@@ -86,19 +99,38 @@ export class FilesService {
   }
 
   private async getStorageConfig() {
-    const provider = (await this.settingsService.get('storage.provider')) || 'local';
-    const secretId = (await this.settingsService.get('storage.cos.secretId')) || '';
-    const secretKey = (await this.settingsService.get('storage.cos.secretKey')) || '';
+    const provider =
+      (await this.settingsService.get('storage.provider')) || 'local';
+    const secretId =
+      (await this.settingsService.get('storage.cos.secretId')) || '';
+    const secretKey =
+      (await this.settingsService.get('storage.cos.secretKey')) || '';
     const bucket = (await this.settingsService.get('storage.cos.bucket')) || '';
     const region = (await this.settingsService.get('storage.cos.region')) || '';
 
-    const s3Endpoint = (await this.settingsService.get('storage.s3.endpoint')) || '';
-    const s3AccessKey = (await this.settingsService.get('storage.s3.accessKey')) || '';
-    const s3SecretKey = (await this.settingsService.get('storage.s3.secretKey')) || '';
-    const s3Bucket = (await this.settingsService.get('storage.s3.bucket')) || '';
-    const s3Region = (await this.settingsService.get('storage.s3.region')) || '';
+    const s3Endpoint =
+      (await this.settingsService.get('storage.s3.endpoint')) || '';
+    const s3AccessKey =
+      (await this.settingsService.get('storage.s3.accessKey')) || '';
+    const s3SecretKey =
+      (await this.settingsService.get('storage.s3.secretKey')) || '';
+    const s3Bucket =
+      (await this.settingsService.get('storage.s3.bucket')) || '';
+    const s3Region =
+      (await this.settingsService.get('storage.s3.region')) || '';
 
-    return { provider, secretId, secretKey, bucket, region, s3Endpoint, s3AccessKey, s3SecretKey, s3Bucket, s3Region };
+    return {
+      provider,
+      secretId,
+      secretKey,
+      bucket,
+      region,
+      s3Endpoint,
+      s3AccessKey,
+      s3SecretKey,
+      s3Bucket,
+      s3Region,
+    };
   }
 
   private async getCosInstance() {
@@ -109,8 +141,8 @@ export class FilesService {
     if (this._cosInstance && this._lastCosConfigStr === configStr) {
       return {
         cos: this._cosInstance,
-        bucket: config.bucket as string,
-        region: config.region as string,
+        bucket: config.bucket,
+        region: config.region,
       };
     }
 
@@ -119,15 +151,15 @@ export class FilesService {
     }
 
     this._cosInstance = new COS({
-      SecretId: config.secretId as string,
-      SecretKey: config.secretKey as string,
+      SecretId: config.secretId,
+      SecretKey: config.secretKey,
     });
     this._lastCosConfigStr = configStr;
 
     return {
       cos: this._cosInstance,
-      bucket: config.bucket as string,
-      region: config.region as string,
+      bucket: config.bucket,
+      region: config.region,
     };
   }
 
@@ -137,7 +169,7 @@ export class FilesService {
 
     const configStr = `${config.s3Endpoint}:${config.s3AccessKey}:${config.s3SecretKey}:${config.s3Region}`;
     if (this._s3Instance && this._lastS3ConfigStr === configStr) {
-      return { s3: this._s3Instance, bucket: config.s3Bucket as string };
+      return { s3: this._s3Instance, bucket: config.s3Bucket };
     }
 
     if (!config.s3AccessKey || !config.s3SecretKey || !config.s3Endpoint) {
@@ -145,17 +177,17 @@ export class FilesService {
     }
 
     this._s3Instance = new S3Client({
-      region: (config.s3Region as string) || 'us-east-1',
-      endpoint: config.s3Endpoint as string,
+      region: config.s3Region || 'us-east-1',
+      endpoint: config.s3Endpoint,
       credentials: {
-        accessKeyId: config.s3AccessKey as string,
-        secretAccessKey: config.s3SecretKey as string,
+        accessKeyId: config.s3AccessKey,
+        secretAccessKey: config.s3SecretKey,
       },
       forcePathStyle: true,
     });
     this._lastS3ConfigStr = configStr;
 
-    return { s3: this._s3Instance, bucket: config.s3Bucket as string };
+    return { s3: this._s3Instance, bucket: config.s3Bucket };
   }
 
   async uploadToCos(
@@ -171,8 +203,8 @@ export class FilesService {
         fs.mkdirSync(path.dirname(localPath), { recursive: true });
         fs.writeFileSync(localPath, buffer);
         return `/api/files/static/${filename}`;
-      } catch (err: any) {
-        this.logger.error(`Local upload error: ${err.message}`, err);
+      } catch (err: unknown) {
+        this.logger.error(`Local upload error: ${errorMessage(err)}`, err);
         throw new InternalServerErrorException('文件保存到本地失败');
       }
     } else if (config.provider === 's3') {
@@ -188,8 +220,8 @@ export class FilesService {
           }),
         );
         return `/api/files/static/${filename}`;
-      } catch (err: any) {
-        this.logger.error(`S3 upload error: ${err.message}`, err);
+      } catch (err: unknown) {
+        this.logger.error(`S3 upload error: ${errorMessage(err)}`, err);
         throw new InternalServerErrorException('文件上传到云存储失败');
       }
     } else {
@@ -206,7 +238,7 @@ export class FilesService {
           },
           (err, _data) => {
             if (err) {
-              this.logger.error(`COS upload error: ${err.message}`, err);
+              this.logger.error(`COS upload error: ${errorMessage(err)}`, err);
               reject(new InternalServerErrorException('文件上传到云存储失败'));
             } else {
               resolve(`/api/files/static/${filename}`);
@@ -235,11 +267,15 @@ export class FilesService {
         const command = new GetObjectCommand({
           Bucket: s3Context.bucket,
           Key: filename,
-          ResponseContentDisposition: originalName ? `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(originalName)}` : undefined,
+          ResponseContentDisposition: originalName
+            ? `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(originalName)}`
+            : undefined,
         });
         return await getSignedUrl(s3Context.s3, command, { expiresIn: 3600 });
-      } catch (e: any) {
-        this.logger.error(`Error generating S3 presigned URL: ${e.message}`);
+      } catch (err: unknown) {
+        this.logger.error(
+          `Error generating S3 presigned URL: ${errorMessage(err)}`,
+        );
         throw new InternalServerErrorException('无法获取文件链接');
       }
     }
@@ -264,8 +300,8 @@ export class FilesService {
 
       const url = cosContext.cos.getObjectUrl(params);
       return url;
-    } catch (e: any) {
-      this.logger.error(`Error generating presigned URL: ${e.message}`);
+    } catch (err: unknown) {
+      this.logger.error(`Error generating presigned URL: ${errorMessage(err)}`);
       throw new InternalServerErrorException('无法获取文件链接');
     }
   }
@@ -284,19 +320,26 @@ export class FilesService {
       const s3Context = await this.getS3Instance();
       if (!s3Context) throw new InternalServerErrorException('S3 配置异常');
       try {
-        const responseData = await s3Context.s3.send(new GetObjectCommand({
-          Bucket: s3Context.bucket,
-          Key: filename,
-        }));
-        const stream = responseData.Body as Readable;
+        const responseData = await s3Context.s3.send(
+          new GetObjectCommand({
+            Bucket: s3Context.bucket,
+            Key: filename,
+          }),
+        );
+        const stream = responseData.Body;
+        if (!isReadable(stream)) {
+          throw new InternalServerErrorException('S3 文件流格式异常');
+        }
         return new Promise((resolve, reject) => {
-          const chunks: any[] = [];
-          stream.on('data', (chunk) => chunks.push(chunk));
+          const chunks: Buffer[] = [];
+          stream.on('data', (chunk: Buffer | string | Uint8Array) =>
+            chunks.push(toBufferChunk(chunk)),
+          );
           stream.on('error', reject);
           stream.on('end', () => resolve(Buffer.concat(chunks)));
         });
-      } catch (e: any) {
-        this.logger.error(`Error fetching file from S3: ${e.message}`);
+      } catch (err: unknown) {
+        this.logger.error(`Error fetching file from S3: ${errorMessage(err)}`);
         throw new InternalServerErrorException('文件拉取失败');
       }
     }
@@ -311,10 +354,12 @@ export class FilesService {
           Region: cosContext.region,
           Key: filename,
           DataType: 'buffer',
-        } as any,
+        } as COS.GetObjectParams & { DataType: 'buffer' },
         (err, data) => {
           if (err) {
-            this.logger.error(`Error fetching file from COS: ${err.message}`);
+            this.logger.error(
+              `Error fetching file from COS: ${errorMessage(err)}`,
+            );
             reject(new InternalServerErrorException('文件拉取失败'));
           } else {
             resolve(data.Body);
@@ -340,13 +385,15 @@ export class FilesService {
       const s3Context = await this.getS3Instance();
       if (!s3Context) return;
       try {
-        await s3Context.s3.send(new DeleteObjectCommand({
-          Bucket: s3Context.bucket,
-          Key: filename,
-        }));
+        await s3Context.s3.send(
+          new DeleteObjectCommand({
+            Bucket: s3Context.bucket,
+            Key: filename,
+          }),
+        );
         this.logger.log(`S3 delete success: ${filename}`);
-      } catch (e: any) {
-        this.logger.error(`S3 delete error: ${e.message}`, e);
+      } catch (err: unknown) {
+        this.logger.error(`S3 delete error: ${errorMessage(err)}`, err);
       }
       return;
     }
@@ -365,7 +412,7 @@ export class FilesService {
         },
         (err, _data) => {
           if (err) {
-            this.logger.error(`COS delete error: ${err.message}`, err);
+            this.logger.error(`COS delete error: ${errorMessage(err)}`, err);
             resolve(); // 吞掉错误
           } else {
             this.logger.log(`COS delete success: ${filename}`);
@@ -415,19 +462,29 @@ export class FilesService {
       return { imageCount, imageSize, fileCount, fileSize, provider: 'local' };
     } else if (config.provider === 's3') {
       const s3Context = await this.getS3Instance();
-      if (!s3Context) return { imageCount: 0, imageSize: 0, fileCount: 0, fileSize: 0, provider: 's3' };
+      if (!s3Context)
+        return {
+          imageCount: 0,
+          imageSize: 0,
+          fileCount: 0,
+          fileSize: 0,
+          provider: 's3',
+        };
 
       let isTruncated = true;
       let continuationToken: string | undefined = undefined;
 
       while (isTruncated) {
         try {
-          const responseData: any = await s3Context.s3.send(new ListObjectsV2Command({
-            Bucket: s3Context.bucket,
-            ContinuationToken: continuationToken,
-            MaxKeys: 1000,
-          }));
-          
+          const responseData: ListObjectsV2CommandOutput =
+            await s3Context.s3.send(
+              new ListObjectsV2Command({
+                Bucket: s3Context.bucket,
+                ContinuationToken: continuationToken,
+                MaxKeys: 1000,
+              }),
+            );
+
           for (const item of responseData.Contents || []) {
             const size = item.Size || 0;
             const ext = path.extname(item.Key || '').toLowerCase();
@@ -441,8 +498,8 @@ export class FilesService {
           }
           isTruncated = responseData.IsTruncated ?? false;
           continuationToken = responseData.NextContinuationToken;
-        } catch (e: any) {
-          this.logger.error('Failed to get S3 bucket stats', e);
+        } catch (err: unknown) {
+          this.logger.error('Failed to get S3 bucket stats', err);
           break;
         }
       }
@@ -463,17 +520,19 @@ export class FilesService {
 
       while (isTruncated) {
         try {
-          const data: any = await new Promise((resolve, reject) => {
-            cosContext.cos.getBucket(
-              {
-                Bucket: cosContext.bucket,
-                Region: cosContext.region,
-                Marker: marker,
-                MaxKeys: 1000,
-              },
-              (err, data) => (err ? reject(err) : resolve(data)),
-            );
-          });
+          const data = await new Promise<COS.GetBucketResult>(
+            (resolve, reject) => {
+              cosContext.cos.getBucket(
+                {
+                  Bucket: cosContext.bucket,
+                  Region: cosContext.region,
+                  Marker: marker,
+                  MaxKeys: 1000,
+                },
+                (err, data) => (err ? reject(toError(err)) : resolve(data)),
+              );
+            },
+          );
 
           for (const item of data.Contents || []) {
             const size = parseInt(item.Size, 10) || 0;
@@ -511,18 +570,21 @@ export class FilesService {
       let continuationToken: string | undefined = undefined;
       while (isTruncated) {
         try {
-          const responseData: any = await s3Context.s3.send(new ListObjectsV2Command({
-            Bucket: s3Context.bucket,
-            ContinuationToken: continuationToken,
-            MaxKeys: 1000,
-          }));
+          const responseData: ListObjectsV2CommandOutput =
+            await s3Context.s3.send(
+              new ListObjectsV2Command({
+                Bucket: s3Context.bucket,
+                ContinuationToken: continuationToken,
+                MaxKeys: 1000,
+              }),
+            );
           for (const item of responseData.Contents || []) {
             if (item.Key) allKeys.push(item.Key);
           }
           isTruncated = responseData.IsTruncated ?? false;
           continuationToken = responseData.NextContinuationToken;
-        } catch (e: any) {
-          this.logger.error('Failed to list S3 bucket', e);
+        } catch (err: unknown) {
+          this.logger.error('Failed to list S3 bucket', err);
           break;
         }
       }
@@ -537,17 +599,19 @@ export class FilesService {
 
     while (isTruncated) {
       try {
-        const data: any = await new Promise((resolve, reject) => {
-          cosContext.cos.getBucket(
-            {
-              Bucket: cosContext.bucket,
-              Region: cosContext.region,
-              Marker: marker,
-              MaxKeys: 1000,
-            },
-            (err, data) => (err ? reject(err) : resolve(data)),
-          );
-        });
+        const data = await new Promise<COS.GetBucketResult>(
+          (resolve, reject) => {
+            cosContext.cos.getBucket(
+              {
+                Bucket: cosContext.bucket,
+                Region: cosContext.region,
+                Marker: marker,
+                MaxKeys: 1000,
+              },
+              (err, data) => (err ? reject(toError(err)) : resolve(data)),
+            );
+          },
+        );
         for (const item of data.Contents || []) {
           allKeys.push(item.Key);
         }
@@ -580,16 +644,21 @@ export class FilesService {
       for (let i = 0; i < keys.length; i += chunkSize) {
         const chunk = keys.slice(i, i + chunkSize);
         try {
-          const responseData = await s3Context.s3.send(new DeleteObjectsCommand({
-            Bucket: s3Context.bucket,
-            Delete: {
-              Objects: chunk.map(k => ({ Key: k })),
-            }
-          }));
+          const responseData = await s3Context.s3.send(
+            new DeleteObjectsCommand({
+              Bucket: s3Context.bucket,
+              Delete: {
+                Objects: chunk.map((k) => ({ Key: k })),
+              },
+            }),
+          );
           deleted += (responseData.Deleted || []).length;
           failed += (responseData.Errors || []).length;
-        } catch (e: any) {
-          this.logger.error(`S3 batch delete failed for chunk starting at ${i}`, e);
+        } catch (err: unknown) {
+          this.logger.error(
+            `S3 batch delete failed for chunk starting at ${i}`,
+            err,
+          );
           failed += chunk.length;
         }
       }
@@ -611,7 +680,7 @@ export class FilesService {
             },
             (err, data) => {
               if (err) {
-                reject(err);
+                reject(toError(err));
                 return;
               }
               deleted += (data.Deleted || []).length;
@@ -645,24 +714,37 @@ export class FilesService {
           Bucket: s3Context.bucket,
           Key: filename,
         });
-        const presignedUrl = await getSignedUrl(s3Context.s3, command, { expiresIn: 1800 });
+        const presignedUrl = await getSignedUrl(s3Context.s3, command, {
+          expiresIn: 1800,
+        });
         return {
           provider: 's3',
           presignedUrl,
           key: filename,
         };
-      } catch (e: any) {
-        this.logger.error(`Error generating S3 presigned PUT URL: ${e.message}`, e);
+      } catch (err: unknown) {
+        this.logger.error(
+          `Error generating S3 presigned PUT URL: ${errorMessage(err)}`,
+          err,
+        );
         throw new InternalServerErrorException('获取上传凭证失败');
       }
     }
 
-    if (!config.secretId || !config.secretKey || !config.bucket || !config.region) {
+    if (
+      !config.secretId ||
+      !config.secretKey ||
+      !config.bucket ||
+      !config.region
+    ) {
       throw new InternalServerErrorException('COS 配置异常');
     }
 
     // 解析 appId
-    const shortBucketName = config.bucket.substr(0, config.bucket.lastIndexOf('-'));
+    const _shortBucketName = config.bucket.substr(
+      0,
+      config.bucket.lastIndexOf('-'),
+    );
     const appId = config.bucket.substr(config.bucket.lastIndexOf('-') + 1);
 
     const policy = {
@@ -697,10 +779,10 @@ export class FilesService {
             durationSeconds: 1800, // 30 mins
             proxy: '',
           },
-          (err: any, credential: any) => {
+          (err, credential) => {
             releaseProxyBypass();
             if (err) {
-              this.logger.error(`STS Error: ${err.message}`, err);
+              this.logger.error(`STS Error: ${errorMessage(err)}`, err);
               reject(new InternalServerErrorException('获取上传凭证失败'));
             } else {
               resolve({
@@ -717,7 +799,7 @@ export class FilesService {
         );
       } catch (err) {
         releaseProxyBypass();
-        reject(err);
+        reject(toError(err));
       }
     });
   }
@@ -725,7 +807,12 @@ export class FilesService {
   /**
    * 确认 COS/S3 直传文件
    */
-  async confirmUpload(key: string, originalName: string, size: number, mimetype: string) {
+  async confirmUpload(
+    key: string,
+    originalName: string,
+    size: number,
+    mimetype: string,
+  ) {
     const config = await this.getStorageConfig();
     if (config.provider === 'local') {
       throw new BadRequestException('本地存储不支持直传确认');
@@ -735,10 +822,12 @@ export class FilesService {
       const s3Context = await this.getS3Instance();
       if (!s3Context) throw new InternalServerErrorException('S3 配置异常');
       try {
-        await s3Context.s3.send(new HeadObjectCommand({
-          Bucket: s3Context.bucket,
-          Key: key,
-        }));
+        await s3Context.s3.send(
+          new HeadObjectCommand({
+            Bucket: s3Context.bucket,
+            Key: key,
+          }),
+        );
         return {
           url: `/api/files/static/${key}`,
           originalName: originalName,
@@ -746,8 +835,8 @@ export class FilesService {
           size: size,
           mimetype: mimetype,
         };
-      } catch (e: any) {
-        this.logger.error(`S3 HeadObject Error: ${e.message}`, e);
+      } catch (err: unknown) {
+        this.logger.error(`S3 HeadObject Error: ${errorMessage(err)}`, err);
         throw new BadRequestException('未在云端找到该文件，上传可能未完成');
       }
     }
@@ -762,10 +851,15 @@ export class FilesService {
           Region: cosContext.region,
           Key: key,
         },
-        (err: any, _data: any) => {
+        (err) => {
           if (err) {
-            this.logger.error(`COS HeadObject Error: ${err.message}`, err);
-            reject(new BadRequestException('未在云端找到该文件，上传可能未完成'));
+            this.logger.error(
+              `COS HeadObject Error: ${errorMessage(err)}`,
+              err,
+            );
+            reject(
+              new BadRequestException('未在云端找到该文件，上传可能未完成'),
+            );
           } else {
             resolve({
               url: `/api/files/static/${key}`,

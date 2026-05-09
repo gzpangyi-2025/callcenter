@@ -6,7 +6,6 @@ import { AiChatMessage } from '../../entities/ai-chat-message.entity';
 import { SettingsService } from '../settings/settings.service';
 import { AiService } from './ai.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 jest.mock('@google/generative-ai');
 
@@ -21,7 +20,9 @@ describe('AiChatService', () => {
     sessionRepo = {
       findOne: jest.fn(),
       create: jest.fn().mockImplementation((dto) => dto),
-      save: jest.fn().mockImplementation((dto) => ({ ...dto, id: 'session-1' })),
+      save: jest
+        .fn()
+        .mockImplementation((dto) => ({ ...dto, id: 'session-1' })),
       find: jest.fn(),
       remove: jest.fn(),
     };
@@ -77,7 +78,9 @@ describe('AiChatService', () => {
       sessionRepo.find.mockResolvedValue([{ id: 'session-1' }]);
       const sessions = await service.listSessions(1);
       expect(sessions).toEqual([{ id: 'session-1' }]);
-      expect(sessionRepo.find).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: 1 } }));
+      expect(sessionRepo.find).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: 1 } }),
+      );
     });
   });
 
@@ -93,7 +96,9 @@ describe('AiChatService', () => {
 
     it('should throw if session not found', async () => {
       sessionRepo.findOne.mockResolvedValue(null);
-      await expect(service.getSession('nonexistent', 1)).rejects.toThrow(BadRequestException);
+      await expect(service.getSession('nonexistent', 1)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -112,16 +117,22 @@ describe('AiChatService', () => {
 
       await service.injectMessage('session-1', 1, 'system', 'test msg');
 
-      expect(sessionRepo.save).toHaveBeenCalledWith(expect.objectContaining({ id: 'session-1' }));
-      expect(messageRepo.save).toHaveBeenCalledWith(expect.objectContaining({
-        role: 'system',
-        content: 'test msg',
-      }));
+      expect(sessionRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'session-1' }),
+      );
+      expect(messageRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          role: 'system',
+          content: 'test msg',
+        }),
+      );
     });
 
     it('should throw NotFoundException if session not found', async () => {
       sessionRepo.findOne.mockResolvedValue(null);
-      await expect(service.injectMessage('session-1', 1, 'system', 'test msg')).rejects.toThrow(NotFoundException);
+      await expect(
+        service.injectMessage('session-1', 1, 'system', 'test msg'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

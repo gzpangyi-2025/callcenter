@@ -9,7 +9,6 @@ jest.mock('axios');
 
 describe('AiService', () => {
   let service: AiService;
-  let configService: ConfigService;
   let mockAxiosInstance: any;
 
   beforeEach(async () => {
@@ -26,7 +25,11 @@ describe('AiService', () => {
         {
           provide: ConfigService,
           useValue: {
-            get: jest.fn().mockImplementation((key: string, defaultValue: any) => defaultValue),
+            get: jest
+              .fn()
+              .mockImplementation(
+                (key: string, defaultValue: any) => defaultValue,
+              ),
           },
         },
         {
@@ -37,7 +40,6 @@ describe('AiService', () => {
     }).compile();
 
     service = module.get<AiService>(AiService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   afterEach(() => {
@@ -50,12 +52,20 @@ describe('AiService', () => {
       mockAxiosInstance.post.mockResolvedValue({ data: { id: 'task-1' } });
       const result = await service.createTask(dto, 1);
       expect(result).toEqual({ id: 'task-1' });
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/tasks', { ...dto, userId: 1 });
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/tasks', {
+        ...dto,
+        userId: 1,
+      });
     });
 
     it('should throw ServiceUnavailableException on network error', async () => {
-      mockAxiosInstance.post.mockRejectedValue({ code: 'ECONNREFUSED', message: 'Connection refused' });
-      await expect(service.createTask({ type: 'test', params: {} }, 1)).rejects.toThrow(ServiceUnavailableException);
+      mockAxiosInstance.post.mockRejectedValue({
+        code: 'ECONNREFUSED',
+        message: 'Connection refused',
+      });
+      await expect(
+        service.createTask({ type: 'test', params: {} }, 1),
+      ).rejects.toThrow(ServiceUnavailableException);
     });
   });
 
@@ -68,7 +78,9 @@ describe('AiService', () => {
 
     it('should throw NotFoundException on 404', async () => {
       mockAxiosInstance.get.mockRejectedValue({ response: { status: 404 } });
-      await expect(service.getTask('nonexistent')).rejects.toThrow(NotFoundException);
+      await expect(service.getTask('nonexistent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -91,9 +103,13 @@ describe('AiService', () => {
 
     it('should throw NotFoundException if file not in list', async () => {
       mockAxiosInstance.get.mockResolvedValue({
-        data: [{ name: 'other.png', url: 'http://cos.url/other.png', size: 100 }],
+        data: [
+          { name: 'other.png', url: 'http://cos.url/other.png', size: 100 },
+        ],
       });
-      await expect(service.getDirectDownloadUrl('task-1', 'test.png')).rejects.toThrow(NotFoundException);
+      await expect(
+        service.getDirectDownloadUrl('task-1', 'test.png'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

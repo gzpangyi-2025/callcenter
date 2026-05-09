@@ -3,6 +3,14 @@ import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 import { EXTERNAL_ACCESS_KEY, PERMISSIONS_KEY } from './permissions.decorator';
 
+type MockUser =
+  | {
+      id: number;
+      username?: string;
+      role: { name: string } | null;
+    }
+  | undefined;
+
 describe('PermissionsGuard', () => {
   let guard: PermissionsGuard;
   let reflector: Reflector;
@@ -13,7 +21,7 @@ describe('PermissionsGuard', () => {
   });
 
   const createMockContext = (
-    user: any,
+    user: MockUser,
     permissions?: string[],
     externalAccess?: string[],
   ): ExecutionContext => {
@@ -25,7 +33,7 @@ describe('PermissionsGuard', () => {
 
     return {
       getHandler: () => jest.fn(),
-      getClass: () => jest.fn() as any,
+      getClass: () => jest.fn(),
       switchToHttp: () => ({
         getRequest: () => ({ user }),
         getResponse: jest.fn(),
@@ -90,9 +98,11 @@ describe('PermissionsGuard', () => {
   });
 
   it('should allow external users for an explicitly marked bbs route', () => {
-    const context = createMockContext({ id: -1, role: { name: 'external' } }, [
-      'bbs:read',
-    ], ['bbs']);
+    const context = createMockContext(
+      { id: -1, role: { name: 'external' } },
+      ['bbs:read'],
+      ['bbs'],
+    );
     expect(guard.canActivate(context)).toBe(true);
   });
 

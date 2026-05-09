@@ -13,13 +13,34 @@ export class InfraService {
 
   /** 允许通过 API 修改的 .env 键白名单 */
   private static readonly ALLOWED_ENV_KEYS = new Set([
-    'DB_HOST', 'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD', 'DB_DATABASE',
-    'REDIS_HOST', 'REDIS_PORT', 'REDIS_PASSWORD',
-    'ELASTICSEARCH_NODE', 'ELASTICSEARCH_USERNAME', 'ELASTICSEARCH_PASSWORD',
-    'JWT_SECRET', 'JWT_EXPIRES_IN',
-    'STORAGE_TYPE', 'COS_SECRET_ID', 'COS_SECRET_KEY', 'COS_BUCKET', 'COS_REGION', 'COS_DOMAIN',
-    'S3_ACCESS_KEY', 'S3_SECRET_KEY', 'S3_BUCKET', 'S3_ENDPOINT', 'S3_REGION', 'S3_DOMAIN',
-    'OPENAI_API_KEY', 'OPENAI_BASE_URL', 'CODEX_API_KEY',
+    'DB_HOST',
+    'DB_PORT',
+    'DB_USERNAME',
+    'DB_PASSWORD',
+    'DB_DATABASE',
+    'REDIS_HOST',
+    'REDIS_PORT',
+    'REDIS_PASSWORD',
+    'ELASTICSEARCH_NODE',
+    'ELASTICSEARCH_USERNAME',
+    'ELASTICSEARCH_PASSWORD',
+    'JWT_SECRET',
+    'JWT_EXPIRES_IN',
+    'STORAGE_TYPE',
+    'COS_SECRET_ID',
+    'COS_SECRET_KEY',
+    'COS_BUCKET',
+    'COS_REGION',
+    'COS_DOMAIN',
+    'S3_ACCESS_KEY',
+    'S3_SECRET_KEY',
+    'S3_BUCKET',
+    'S3_ENDPOINT',
+    'S3_REGION',
+    'S3_DOMAIN',
+    'OPENAI_API_KEY',
+    'OPENAI_BASE_URL',
+    'CODEX_API_KEY',
   ]);
 
   /** 重启限流：上次重启时间 */
@@ -106,7 +127,9 @@ export class InfraService {
     const now = Date.now();
     const elapsed = now - this.lastRestartTime;
     if (elapsed < InfraService.RESTART_COOLDOWN_MS) {
-      const waitSec = Math.ceil((InfraService.RESTART_COOLDOWN_MS - elapsed) / 1000);
+      const waitSec = Math.ceil(
+        (InfraService.RESTART_COOLDOWN_MS - elapsed) / 1000,
+      );
       throw new BadRequestException(`操作过于频繁，请 ${waitSec} 秒后再试`);
     }
     this.lastRestartTime = now;

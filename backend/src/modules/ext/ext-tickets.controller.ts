@@ -13,7 +13,7 @@ export class ExtTicketsController {
     return {
       code: 0,
       message: '工单创建成功',
-      data
+      data,
     };
   }
 
@@ -22,7 +22,7 @@ export class ExtTicketsController {
     const data = await this.extTicketsService.getTicketStatus(serviceNo);
     return {
       code: 0,
-      data
+      data,
     };
   }
 }

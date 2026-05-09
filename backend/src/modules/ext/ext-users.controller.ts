@@ -18,7 +18,7 @@ export class ExtUsersController {
     return {
       code: 0,
       message: '同步成功',
-      data
+      data,
     };
   }
 }

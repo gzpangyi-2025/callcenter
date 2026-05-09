@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket, TicketStatus, TicketType } from '../../entities/ticket.entity';
@@ -61,60 +65,101 @@ export class ExtTicketsService {
   ) {}
 
   async createTicketFromOMM(dto: PushTicketDto) {
-    if (!dto.title || !dto.description || !dto.serviceNo || !dto.creatorEmployeeId || !dto.assigneeEmployeeId) {
+    if (
+      !dto.title ||
+      !dto.description ||
+      !dto.serviceNo ||
+      !dto.creatorEmployeeId ||
+      !dto.assigneeEmployeeId
+    ) {
       throw new BadRequestException('Missing required fields');
     }
 
     // Lookup users by employeeId
-    const creator = await this.userRepository.findOne({ where: { employeeId: dto.creatorEmployeeId } });
+    const creator = await this.userRepository.findOne({
+      where: { employeeId: dto.creatorEmployeeId },
+    });
     if (!creator) {
-      throw new BadRequestException(`Creator with employeeId ${dto.creatorEmployeeId} not found`);
+      throw new BadRequestException(
+        `Creator with employeeId ${dto.creatorEmployeeId} not found`,
+      );
     }
 
-    const assignee = await this.userRepository.findOne({ where: { employeeId: dto.assigneeEmployeeId } });
+    const assignee = await this.userRepository.findOne({
+      where: { employeeId: dto.assigneeEmployeeId },
+    });
     if (!assignee) {
-      throw new BadRequestException(`Assignee with employeeId ${dto.assigneeEmployeeId} not found`);
+      throw new BadRequestException(
+        `Assignee with employeeId ${dto.assigneeEmployeeId} not found`,
+      );
     }
 
     // Check for duplicate serviceNo (UPSERT logic)
-    const existingTicket = await this.ticketRepository.findOne({ 
+    const existingTicket = await this.ticketRepository.findOne({
       where: { serviceNo: dto.serviceNo },
-      relations: ['participants']
+      relations: ['participants'],
     });
 
     if (existingTicket) {
       // Update existing ticket
       let changed = false;
-      if (dto.title && existingTicket.title !== dto.title) { existingTicket.title = dto.title; changed = true; }
-      if (dto.description && existingTicket.description !== dto.description) { existingTicket.description = dto.description; changed = true; }
-      if (dto.customerName && existingTicket.customerName !== dto.customerName) { existingTicket.customerName = dto.customerName; changed = true; }
-      if (dto.type && existingTicket.type !== dto.type) { existingTicket.type = dto.type as TicketType; changed = true; }
-      if (dto.category1 && existingTicket.category1 !== dto.category1) { existingTicket.category1 = dto.category1; changed = true; }
-      if (dto.category2 && existingTicket.category2 !== dto.category2) { existingTicket.category2 = dto.category2; changed = true; }
-      if (dto.category3 && existingTicket.category3 !== dto.category3) { existingTicket.category3 = dto.category3; changed = true; }
-      
+      if (dto.title && existingTicket.title !== dto.title) {
+        existingTicket.title = dto.title;
+        changed = true;
+      }
+      if (dto.description && existingTicket.description !== dto.description) {
+        existingTicket.description = dto.description;
+        changed = true;
+      }
+      if (
+        dto.customerName &&
+        existingTicket.customerName !== dto.customerName
+      ) {
+        existingTicket.customerName = dto.customerName;
+        changed = true;
+      }
+      if (dto.type && existingTicket.type !== dto.type) {
+        existingTicket.type = dto.type as TicketType;
+        changed = true;
+      }
+      if (dto.category1 && existingTicket.category1 !== dto.category1) {
+        existingTicket.category1 = dto.category1;
+        changed = true;
+      }
+      if (dto.category2 && existingTicket.category2 !== dto.category2) {
+        existingTicket.category2 = dto.category2;
+        changed = true;
+      }
+      if (dto.category3 && existingTicket.category3 !== dto.category3) {
+        existingTicket.category3 = dto.category3;
+        changed = true;
+      }
+
       // Update Creator
       if (existingTicket.creatorId !== creator.id) {
         existingTicket.creatorId = creator.id;
-        if (!existingTicket.participants.some(p => p.id === creator.id)) {
+        if (!existingTicket.participants.some((p) => p.id === creator.id)) {
           existingTicket.participants.push(creator);
         }
         changed = true;
       }
-      
+
       // Update Assignee
       if (existingTicket.assigneeId !== assignee.id) {
         existingTicket.assigneeId = assignee.id;
-        
+
         // Ensure new assignee is in participants
-        if (!existingTicket.participants.some(p => p.id === assignee.id)) {
+        if (!existingTicket.participants.some((p) => p.id === assignee.id)) {
           existingTicket.participants.push(assignee);
         }
         changed = true;
       }
 
       // Update status if provided and valid
-      if (dto.status && Object.values(TicketStatus).includes(dto.status as TicketStatus)) {
+      if (
+        dto.status &&
+        Object.values(TicketStatus).includes(dto.status as TicketStatus)
+      ) {
         if (existingTicket.status !== dto.status) {
           existingTicket.status = dto.status as TicketStatus;
           changed = true;
@@ -134,7 +179,7 @@ export class ExtTicketsService {
         serviceNo: savedTicket.serviceNo,
         customerName: savedTicket.customerName,
         createdAt: savedTicket.createdAt,
-        updated: changed
+        updated: changed,
       };
     }
 
@@ -151,7 +196,7 @@ export class ExtTicketsService {
       creatorId: creator.id,
       assigneeId: assignee.id,
       status: TicketStatus.IN_PROGRESS,
-      type: dto.type as TicketType || TicketType.OTHER,
+      type: (dto.type as TicketType) || TicketType.OTHER,
       category1: dto.category1,
       category2: dto.category2,
       category3: dto.category3,
@@ -168,18 +213,20 @@ export class ExtTicketsService {
       serviceNo: savedTicket.serviceNo,
       customerName: savedTicket.customerName,
       createdAt: savedTicket.createdAt,
-      updated: false
+      updated: false,
     };
   }
 
   async getTicketStatus(serviceNo: string) {
-    const ticket = await this.ticketRepository.findOne({ 
+    const ticket = await this.ticketRepository.findOne({
       where: { serviceNo },
-      relations: ['assignee']
+      relations: ['assignee'],
     });
 
     if (!ticket) {
-      throw new NotFoundException(`Ticket with serviceNo ${serviceNo} not found`);
+      throw new NotFoundException(
+        `Ticket with serviceNo ${serviceNo} not found`,
+      );
     }
 
     return {
@@ -187,7 +234,12 @@ export class ExtTicketsService {
       ticketNo: ticket.ticketNo,
       serviceNo: ticket.serviceNo,
       status: ticket.status,
-      assignee: ticket.assignee ? { realName: ticket.assignee.realName, employeeId: ticket.assignee.employeeId } : null,
+      assignee: ticket.assignee
+        ? {
+            realName: ticket.assignee.realName,
+            employeeId: ticket.assignee.employeeId,
+          }
+        : null,
       createdAt: ticket.createdAt,
       assignedAt: ticket.assignedAt,
     };

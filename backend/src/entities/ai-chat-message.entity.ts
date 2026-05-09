@@ -1,6 +1,10 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, ManyToOne, JoinColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { AiChatSession } from './ai-chat-session.entity';
 
@@ -12,7 +16,11 @@ export class AiChatMessage {
   @Column({ type: 'uuid' })
   sessionId: string;
 
-  @Column({ type: 'enum', enum: ['user', 'assistant', 'system'], default: 'user' })
+  @Column({
+    type: 'enum',
+    enum: ['user', 'assistant', 'system'],
+    default: 'user',
+  })
   role: 'user' | 'assistant' | 'system';
 
   @Column({ type: 'text' })

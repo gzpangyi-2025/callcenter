@@ -22,7 +22,12 @@ describe('ChatGateway', () => {
 
   beforeEach(async () => {
     mockChatService = {
-      createMessage: jest.fn().mockResolvedValue({ id: 1, content: 'msg', type: 'text', sender: { id: 1 } }),
+      createMessage: jest.fn().mockResolvedValue({
+        id: 1,
+        content: 'msg',
+        type: 'text',
+        sender: { id: 1 },
+      }),
       getHistory: jest.fn().mockResolvedValue({ messages: [], total: 0 }),
       getMessagesByTicket: jest.fn().mockResolvedValue([]),
     };
@@ -50,10 +55,27 @@ describe('ChatGateway', () => {
         ChatGateway,
         { provide: ChatService, useValue: mockChatService },
         { provide: JwtService, useValue: mockJwtService },
-        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('secret') } },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn().mockReturnValue('secret') },
+        },
         { provide: SettingsService, useValue: {} },
-        { provide: ScreenShareService, useValue: { handleDisconnect: jest.fn(), getActiveSharer: jest.fn().mockReturnValue(null), stopShare: jest.fn() } },
-        { provide: VoiceService, useValue: { handleDisconnect: jest.fn(), getParticipants: jest.fn().mockReturnValue(new Map()), leaveVoice: jest.fn() } },
+        {
+          provide: ScreenShareService,
+          useValue: {
+            handleDisconnect: jest.fn(),
+            getActiveSharer: jest.fn().mockReturnValue(null),
+            stopShare: jest.fn(),
+          },
+        },
+        {
+          provide: VoiceService,
+          useValue: {
+            handleDisconnect: jest.fn(),
+            getParticipants: jest.fn().mockReturnValue(new Map()),
+            leaveVoice: jest.fn(),
+          },
+        },
         { provide: RoomService, useValue: mockRoomService },
         { provide: AiService, useValue: { getTask: jest.fn() } },
         { provide: getRepositoryToken(User), useValue: mockUserRepo },
@@ -64,19 +86,21 @@ describe('ChatGateway', () => {
     gateway = module.get<ChatGateway>(ChatGateway);
     gateway.server = {
       to: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnValue({ fetchSockets: jest.fn().mockResolvedValue([]) }),
+      in: jest
+        .fn()
+        .mockReturnValue({ fetchSockets: jest.fn().mockResolvedValue([]) }),
       emit: jest.fn(),
     } as any;
   });
 
   describe('handleConnection', () => {
     it('should authenticate and join user room for valid token', async () => {
-      const client = { 
-        handshake: { auth: { token: 'valid' } }, 
+      const client = {
+        handshake: { auth: { token: 'valid' } },
         disconnect: jest.fn(),
-        join: jest.fn()
+        join: jest.fn(),
       } as any;
-      
+
       mockJwtService.verify.mockReturnValue({ sub: 1, role: 'tech' });
       mockUserRepo.findOne.mockResolvedValue({ id: 1, isActive: true });
 
@@ -91,10 +115,10 @@ describe('ChatGateway', () => {
     it('should join room successfully', async () => {
       const client = { userId: 1, join: jest.fn(), emit: jest.fn() } as any;
       mockTicketRepo.findOne.mockResolvedValue({
-        id: 1, 
-        status: TicketStatus.PENDING, 
+        id: 1,
+        status: TicketStatus.PENDING,
         creatorId: 1,
-        participants: []
+        participants: [],
       });
 
       await gateway.handleJoinRoom(client, { ticketId: 1 });
@@ -117,9 +141,20 @@ describe('ChatGateway', () => {
   describe('handleSendMessage', () => {
     it('should send message and broadcast', async () => {
       const client = { userId: 1, emit: jest.fn(), id: 'socket1' } as any;
-      mockTicketRepo.findOne.mockResolvedValue({ id: 1, status: TicketStatus.IN_PROGRESS, creatorId: 1, assigneeId: null, participants: [], isRoomLocked: false });
+      mockTicketRepo.findOne.mockResolvedValue({
+        id: 1,
+        status: TicketStatus.IN_PROGRESS,
+        creatorId: 1,
+        assigneeId: null,
+        participants: [],
+        isRoomLocked: false,
+      });
 
-      await gateway.handleSendMessage(client, { ticketId: 1, type: 'text', content: 'hello' });
+      await gateway.handleSendMessage(client, {
+        ticketId: 1,
+        type: 'text',
+        content: 'hello',
+      });
 
       expect(mockChatService.createMessage).toHaveBeenCalled();
       expect(gateway.server.to).toHaveBeenCalledWith('ticket_1');
@@ -129,7 +164,7 @@ describe('ChatGateway', () => {
   describe('handleLeaveRoom', () => {
     it('should leave room', async () => {
       const client = { userId: 1, leave: jest.fn(), emit: jest.fn() } as any;
-      
+
       await gateway.handleLeaveRoom(client, { ticketId: 1 });
 
       expect(client.leave).toHaveBeenCalledWith('ticket_1');
