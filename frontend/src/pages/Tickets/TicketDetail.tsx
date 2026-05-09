@@ -341,9 +341,16 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
       }
     };
 
+    const handleSocketError = (err: any) => {
+      console.error('[Socket Error]', err);
+      message.error(typeof err === 'string' ? err : err?.message || '连接聊天室失败');
+      setInitialChatLoading(false);
+    };
+
     socket.on('roomLockChanged', handleRoomLockChanged);
     socket.on('roomLocked', handleRoomLockedKick);
     socket.on('roomKicked', handleRoomKicked);
+    socket.on('error', handleSocketError);
 
     return () => {
       socket.emit('leaveRoom', { ticketId });
@@ -358,6 +365,7 @@ const TicketDetail: React.FC<{ externalTicketId?: string }> = ({ externalTicketI
       socket.off('roomLockChanged', handleRoomLockChanged);
       socket.off('roomLocked', handleRoomLockedKick);
       socket.off('roomKicked', handleRoomKicked);
+      socket.off('error', handleSocketError);
     };
   }, [socket, id, loadTicket, loadMyTickets]);
 
