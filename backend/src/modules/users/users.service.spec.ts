@@ -73,7 +73,19 @@ describe('UsersService', () => {
       const result = await service.findAll();
       expect(result).toEqual(users);
       expect(mockUserRepository.find).toHaveBeenCalledWith({
-        select: ['id', 'username', 'email', 'displayName', 'realName', 'phone', 'isActive', 'createdAt'],
+        select: [
+          'id',
+          'username',
+          'email',
+          'displayName',
+          'realName',
+          'employeeId',
+          'department',
+          'position',
+          'phone',
+          'isActive',
+          'createdAt',
+        ],
         relations: ['role'],
         order: { id: 'ASC' },
       });
