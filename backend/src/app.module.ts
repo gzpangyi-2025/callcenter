@@ -35,6 +35,7 @@ import { SearchModule } from './modules/search/search.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { InfraModule } from './modules/infrastructure/infra.module';
 import { AiModule } from './modules/ai/ai.module';
+import { ExtModule } from './modules/ext/ext.module';
 
 @Module({
   imports: [
@@ -97,6 +98,7 @@ import { AiModule } from './modules/ai/ai.module';
     BackupModule,
     InfraModule,
     AiModule,
+    ExtModule,
   ],
 })
 export class AppModule {}

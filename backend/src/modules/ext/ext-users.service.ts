@@ -1,0 +1,87 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../../entities/user.entity';
+import * as bcrypt from 'bcryptjs';
+
+export class SyncUserDto {
+  employeeId: string;
+  realName: string;
+  email?: string;
+  phone?: string;
+  department?: string;
+  position?: string;
+}
+
+@Injectable()
+export class ExtUsersService {
+  private readonly logger = new Logger(ExtUsersService.name);
+
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async syncUsers(users: SyncUserDto[]) {
+    let inserted = 0;
+    let updated = 0;
+
+    // Use a transaction to ensure atomic bulk upsert or do it sequentially if few.
+    // For simplicity and safety against deadlocks, we do it iteratively here,
+    // but in a real massive sync, a query runner or raw bulk upsert is better.
+    const defaultPasswordHash = await bcrypt.hash('trustfar123', 10);
+
+    for (const dto of users) {
+      if (!dto.employeeId) continue;
+
+      const existingUser = await this.userRepository.findOne({ where: { employeeId: dto.employeeId } });
+
+      if (existingUser) {
+        // Update
+        let changed = false;
+        if (dto.realName && existingUser.realName !== dto.realName) { existingUser.realName = dto.realName; changed = true; }
+        if (dto.email && existingUser.email !== dto.email) { existingUser.email = dto.email; changed = true; }
+        if (dto.phone && existingUser.phone !== dto.phone) { existingUser.phone = dto.phone; changed = true; }
+        if (dto.department && existingUser.department !== dto.department) { existingUser.department = dto.department; changed = true; }
+        if (dto.position && existingUser.position !== dto.position) { existingUser.position = dto.position; changed = true; }
+        
+        if (changed) {
+          await this.userRepository.save(existingUser);
+          updated++;
+        }
+      } else {
+        // Insert
+        // Since username is unique, we use employeeId as username by default for synced users
+        const newUser = this.userRepository.create({
+          username: `user_${dto.employeeId}`,
+          employeeId: dto.employeeId,
+          realName: dto.realName,
+          displayName: dto.realName,
+          email: dto.email,
+          phone: dto.phone,
+          department: dto.department,
+          position: dto.position,
+          password: defaultPasswordHash,
+          roleId: 2, // Assuming 2 is a normal user, you may need to fetch the default role
+          isActive: true,
+        });
+        
+        // Handle possible email/username collision gracefully
+        try {
+          await this.userRepository.save(newUser);
+          inserted++;
+        } catch (err) {
+          this.logger.error(`Failed to insert user ${dto.employeeId}: ${err.message}`);
+        }
+      }
+    }
+
+    this.logger.log(`User sync completed. Inserted: ${inserted}, Updated: ${updated}`);
+
+    return {
+      total: users.length,
+      inserted,
+      updated
+    };
+  }
+}
