@@ -34,16 +34,12 @@ describe('ExtUsersService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should skip users without employeeId', async () => {
+  it('should throw BadRequestException for users without employeeId', async () => {
     const users: SyncUserDto[] = [
-      { employeeId: '', realName: 'No ID User' }
+      { employeeId: '', realName: 'No ID User' } as any
     ];
 
-    const result = await service.syncUsers(users);
-
-    expect(result.inserted).toBe(0);
-    expect(result.updated).toBe(0);
-    expect(mockUserRepository.findOne).not.toHaveBeenCalled();
+    await expect(service.syncUsers(users)).rejects.toThrow(BadRequestException);
   });
 
   it('should insert a new user if employeeId is not found', async () => {
@@ -52,7 +48,7 @@ describe('ExtUsersService', () => {
     mockUserRepository.save.mockResolvedValue({ id: 1 });
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E001', realName: 'New User', department: 'IT' }
+      { employeeId: 'E001', realName: 'New User', department: 'IT', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
     ];
 
     const result = await service.syncUsers(users);
@@ -75,7 +71,7 @@ describe('ExtUsersService', () => {
     mockUserRepository.save.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E002', realName: 'New Name', department: 'HR' }
+      { employeeId: 'E002', realName: 'New Name', department: 'HR', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
     ];
 
     const result = await service.syncUsers(users);
@@ -91,12 +87,16 @@ describe('ExtUsersService', () => {
       id: 3,
       employeeId: 'E003',
       realName: 'Same Name',
-      department: 'Finance'
+      department: 'Finance',
+      email: 'a@a.com',
+      phone: '123',
+      position: 'A',
+      isActive: true
     };
     mockUserRepository.findOne.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E003', realName: 'Same Name', department: 'Finance' }
+      { employeeId: 'E003', realName: 'Same Name', department: 'Finance', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
     ];
 
     const result = await service.syncUsers(users);

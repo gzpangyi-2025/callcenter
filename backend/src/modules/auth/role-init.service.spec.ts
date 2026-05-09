@@ -58,8 +58,8 @@ describe('RoleInitService', () => {
     let roleFindOneCallCount = 0;
     mockRoleRepo.findOne.mockImplementation(async () => {
       roleFindOneCallCount++;
-      if (roleFindOneCallCount === 6) {
-        // The 6th call is looking for the 'admin' role to attach to the admin user
+      if (roleFindOneCallCount === 8) {
+        // The 8th call is looking for the 'admin' role to attach to the admin user
         return { id: 1, name: 'admin' };
       }
       return null;
@@ -70,7 +70,7 @@ describe('RoleInitService', () => {
 
     await service.onModuleInit();
 
-    expect(mockRoleRepo.save).toHaveBeenCalledTimes(5);
+    expect(mockRoleRepo.save).toHaveBeenCalledTimes(7);
     expect(mockPermRepo.save).toHaveBeenCalledTimes(20);
     expect(mockUserRepo.save).toHaveBeenCalledTimes(1);
     expect(mockUserRepo.save).toHaveBeenCalledWith(expect.objectContaining({ username: 'admin', password: 'hashedPassword' }));

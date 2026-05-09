@@ -59,29 +59,22 @@ describe('ExtTicketsService', () => {
       await expect(service.createTicketFromOMM(invalidDto)).rejects.toThrow(BadRequestException);
     });
 
-    it('should throw ConflictException if serviceNo already exists', async () => {
-      mockTicketRepository.findOne.mockResolvedValueOnce({ id: 1 });
-      await expect(service.createTicketFromOMM(dto)).rejects.toThrow(ConflictException);
-    });
-
     it('should throw BadRequestException if creator is not found', async () => {
-      mockTicketRepository.findOne.mockResolvedValueOnce(null);
       mockUserRepository.findOne.mockResolvedValueOnce(null); // Creator lookup fails
       await expect(service.createTicketFromOMM(dto)).rejects.toThrow(BadRequestException);
     });
 
     it('should throw BadRequestException if assignee is not found', async () => {
-      mockTicketRepository.findOne.mockResolvedValueOnce(null);
       mockUserRepository.findOne.mockResolvedValueOnce({ id: 1 }); // Creator found
       mockUserRepository.findOne.mockResolvedValueOnce(null); // Assignee lookup fails
       await expect(service.createTicketFromOMM(dto)).rejects.toThrow(BadRequestException);
     });
 
     it('should create and return a new ticket on success', async () => {
-      mockTicketRepository.findOne.mockResolvedValueOnce(null);
       mockUserRepository.findOne
         .mockResolvedValueOnce({ id: 1, employeeId: 'E001' }) // creator
         .mockResolvedValueOnce({ id: 2, employeeId: 'E002' }); // assignee
+      mockTicketRepository.findOne.mockResolvedValueOnce(null); // existingTicket
 
       mockTicketRepository.create.mockReturnValue({ id: 10, ...dto });
       mockTicketRepository.save.mockResolvedValue({ id: 10, ticketNo: 'TK202611119999', ...dto });
@@ -91,6 +84,26 @@ describe('ExtTicketsService', () => {
       expect(result.id).toBe(10);
       expect(result.ticketNo).toBe('TK202611119999');
       expect(mockTicketRepository.create).toHaveBeenCalled();
+      expect(mockTicketRepository.save).toHaveBeenCalled();
+    });
+
+    it('should update existing ticket if serviceNo exists', async () => {
+      mockUserRepository.findOne
+        .mockResolvedValueOnce({ id: 1, employeeId: 'E001' }) // creator
+        .mockResolvedValueOnce({ id: 2, employeeId: 'E002' }); // assignee
+
+      mockTicketRepository.findOne.mockResolvedValueOnce({ 
+        id: 1, 
+        serviceNo: dto.serviceNo, 
+        creatorId: 2, 
+        participants: [] 
+      });
+
+      mockTicketRepository.save.mockResolvedValue({ id: 1, ticketNo: 'TK202611119999', ...dto });
+
+      const result = await service.createTicketFromOMM(dto);
+      
+      expect(result.id).toBe(1);
       expect(mockTicketRepository.save).toHaveBeenCalled();
     });
   });
