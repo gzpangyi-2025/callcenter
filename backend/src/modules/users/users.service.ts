@@ -28,6 +28,9 @@ export class UsersService {
         'email',
         'displayName',
         'realName',
+        'employeeId',
+        'department',
+        'position',
         'phone',
         'isActive',
         'createdAt',
@@ -79,6 +82,9 @@ export class UsersService {
   async updateUser(
     userId: number,
     data: {
+      employeeId?: string;
+      department?: string;
+      position?: string;
       displayName?: string;
       realName?: string;
       email?: string;
@@ -88,6 +94,9 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('用户不存在');
 
+    if (data.employeeId !== undefined) user.employeeId = data.employeeId;
+    if (data.department !== undefined) user.department = data.department;
+    if (data.position !== undefined) user.position = data.position;
     if (data.displayName !== undefined) user.displayName = data.displayName;
     if (data.realName !== undefined) user.realName = data.realName;
     if (data.email !== undefined) user.email = data.email;
