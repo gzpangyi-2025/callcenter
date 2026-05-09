@@ -3,6 +3,9 @@ import { create } from 'zustand';
 export interface User {
   id: number;
   username: string;
+  employeeId?: string;
+  department?: string;
+  position?: string;
   displayName?: string;
   realName?: string;
   email?: string;
