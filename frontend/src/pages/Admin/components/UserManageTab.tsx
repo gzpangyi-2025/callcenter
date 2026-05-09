@@ -156,8 +156,7 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
 
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 60, fixed: isMobile ? undefined : 'left' as const },
-    { title: '用户名', dataIndex: 'username', width: 120, ellipsis: true },
-    { title: '中文姓名', dataIndex: 'realName', width: 120, render: (text: string, record: any) => `${text || '未知'} (${record.username})` },
+    { title: '姓名 (账号)', dataIndex: 'realName', width: 150, fixed: isMobile ? undefined : 'left' as const, render: (text: string, record: any) => `${text || '未知'} (${record.username})` },
     { title: '工号', dataIndex: 'employeeId', width: 100, ellipsis: true },
     { title: '部门', dataIndex: 'department', width: 120, ellipsis: true },
     { title: '职位', dataIndex: 'position', width: 100, ellipsis: true },

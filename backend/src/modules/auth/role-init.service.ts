@@ -21,11 +21,13 @@ export class RoleInitService implements OnModuleInit {
 
   async onModuleInit() {
     const rolesToSeed = [
+      { name: 'user', description: '普通用户' },
       { name: 'admin', description: '超级管理员' },
       { name: 'director', description: '技术总监' },
-      { name: 'tech', description: '技术支持工程师(二线)' },
-      { name: 'user', description: '普通用户(一线工程师)' },
-      { name: 'external', description: '外部共享用户' },
+      { name: 'expert', description: '技术专家' },
+      { name: 'external', description: '外部用户' },
+      { name: 'manager', description: '区域经理' },
+      { name: 'region_director', description: '区域总监' },
     ];
 
     for (const roleData of rolesToSeed) {

@@ -162,7 +162,7 @@ export const RoleManageTab: React.FC<RoleManageTabProps> = ({ onRolesChange }) =
             size="small"
             style={{ borderRadius: 12, border: '1px solid var(--border)', background: 'var(--bg-secondary)' }}
             headStyle={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-primary)', borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-            bodyStyle={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '14px 18px' }}
+            bodyStyle={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: 12, padding: '14px 18px' }}
           >
             {(perms as any[]).map((perm) => (
               <Checkbox key={perm.id} value={perm.id} style={{ marginLeft: 0 }}>

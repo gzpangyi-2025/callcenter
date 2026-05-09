@@ -11,7 +11,8 @@ const userSyncTemplate = `[
     "email": "test_a@company.com",
     "phone": "13800138000",
     "department": "技术部",
-    "position": "前端工程师"
+    "position": "前端工程师",
+    "isActive": 1
   }
 ]`;
 
@@ -22,7 +23,8 @@ const ticketPushTemplate = `{
   "customerName": "财务部",
   "creatorEmployeeId": "TEST_001",
   "assigneeEmployeeId": "TEST_001",
-  "type": "network"
+  "type": "network",
+  "status": "in_progress"
 }`;
 
 export const ExtSyncTestTab: React.FC = () => {
