@@ -51,9 +51,13 @@ export class ExtUsersService {
         }
       } else {
         // Insert
-        // Since username is unique, we use employeeId as username by default for synced users
+        // Use email prefix as username if available, otherwise fallback to user_${employeeId}
+        const generatedUsername = dto.email && dto.email.includes('@') 
+          ? dto.email.split('@')[0] 
+          : `user_${dto.employeeId}`;
+
         const newUser = this.userRepository.create({
-          username: `user_${dto.employeeId}`,
+          username: generatedUsername,
           employeeId: dto.employeeId,
           realName: dto.realName,
           displayName: dto.realName,
