@@ -16,6 +16,7 @@ import InfraTab from './components/InfraTab';
 import { WebRtcManageTab } from './components/WebRtcManageTab';
 import { StorageManageTab } from './components/StorageManageTab';
 import CodexConfigTab from './components/CodexConfigTab';
+import { ExtSyncTestTab } from './components/ExtSyncTestTab';
 import { settingsAPI } from '../../services/api';
 
 const AdminPage: React.FC = () => {
@@ -393,6 +394,11 @@ const AdminPage: React.FC = () => {
               key: 'codex',
               label: <span><ApiOutlined /> AI 协作配置</span>,
               children: <CodexConfigTab />
+            },
+            {
+              key: 'extSync',
+              label: <span><ApiOutlined /> 中台联调测试</span>,
+              children: <ExtSyncTestTab />
             }
           ]}
         />
