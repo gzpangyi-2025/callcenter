@@ -22,6 +22,8 @@ import type {
   BbsNotification,
   CategoryNode,
   FileUploadResult,
+  GlobalSearchData,
+  KnowledgeDocument,
   PaginatedData,
   ReportCategoryLevel,
   ReportCategoryStats,
@@ -40,6 +42,7 @@ import type {
   UploadCredentials,
 } from '../types/api';
 import type { User, UpdateUserInfoParam } from '../types/user';
+import type { User as AuthUser } from '../stores/authStore';
 import type { Ticket, CreateTicketDto, UpdateTicketDto, TicketQueryParams, TicketBadgeSummary } from '../types/ticket';
 
 interface ApiRequestConfig extends InternalAxiosRequestConfig {
@@ -108,15 +111,15 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (data: { username: string; password: string }): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> =>
+  login: (data: { username: string; password: string }): Promise<ApiResponse<AuthTokenPayload & { user?: AuthUser }>> =>
     api.post('/auth/login', data),
-  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> =>
+  register: (data: { username: string; password: string; realName: string; email?: string; displayName?: string }): Promise<ApiResponse<AuthTokenPayload & { user?: AuthUser }>> =>
     api.post('/auth/register', data),
   logout: (): Promise<ApiResponse<void>> => api.post('/auth/logout'),
-  getMe: (): Promise<ApiResponse<User>> => api.get('/auth/me'),
+  getMe: (): Promise<ApiResponse<AuthUser>> => api.get('/auth/me'),
   refresh: (): Promise<ApiResponse<AuthTokenPayload>> => api.post('/auth/refresh'),
-  externalLogin: (ticketToken: string, nickname: string): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> => api.post('/auth/external/login', { ticketToken, nickname }),
-  bbsExternalLogin: (token: string): Promise<ApiResponse<AuthTokenPayload & { user?: User }>> => api.post('/auth/external/bbs-login', { token }),
+  externalLogin: (ticketToken: string, nickname: string): Promise<ApiResponse<AuthTokenPayload & { user?: AuthUser }>> => api.post('/auth/external/login', { ticketToken, nickname }),
+  bbsExternalLogin: (token: string): Promise<ApiResponse<AuthTokenPayload & { user?: AuthUser }>> => api.post('/auth/external/bbs-login', { token }),
 };
 
 // Tickets API
@@ -288,9 +291,9 @@ export const knowledgeAPI = {
   saveKnowledge: (data: { ticketId: number; title: string; content: string; tags?: string; category?: string; severity?: string; analysisImgUrl?: string; flowImgUrl?: string; }): Promise<ApiResponse<Record<string, unknown>>> => api.post('/knowledge', data, { timeout: 60000 }),
   exportChatHistory: (ticketId: number): Promise<ApiResponse<Record<string, unknown>>> => api.post(`/knowledge/tickets/${ticketId}/export-chat`),
   updateKnowledge: (id: number, data: { title?: string; content: string; tags?: string }): Promise<ApiResponse<Record<string, unknown>>> => api.put(`/knowledge/${id}`, data),
-  search: (q: string, page: number = 1, docType?: string): Promise<ApiResponse<PaginatedData<Record<string, unknown>>>> => api.get('/knowledge', { params: { q, page, docType } }),
-  getOne: (id: number): Promise<ApiResponse<Record<string, unknown>>> => api.get(`/knowledge/${id}`),
-  getByTicket: (ticketId: number): Promise<ApiResponse<Array<Record<string, unknown>>>> => api.get(`/knowledge/ticket/${ticketId}`),
+  search: (q: string, page: number = 1, docType?: string): Promise<ApiResponse<PaginatedData<KnowledgeDocument>>> => api.get('/knowledge', { params: { q, page, docType } }),
+  getOne: (id: number): Promise<ApiResponse<KnowledgeDocument>> => api.get(`/knowledge/${id}`),
+  getByTicket: (ticketId: number): Promise<ApiResponse<KnowledgeDocument[]>> => api.get(`/knowledge/ticket/${ticketId}`),
   deleteOne: (id: number): Promise<ApiResponse<void>> => api.delete(`/knowledge/${id}`),
 };
 
@@ -354,7 +357,7 @@ export const bbsAPI = {
 };
 
 export const searchAPI = {
-  search: (params: { q: string; type?: string; page?: number; pageSize?: number }): Promise<ApiResponse<PaginatedData<Record<string, unknown>>>> => api.get('/search', { params }),
+  search: (params: { q: string; type?: string; page?: number; pageSize?: number }): Promise<GlobalSearchData> => api.get('/search', { params }),
   syncAll: (): Promise<ApiResponse<void>> => api.post('/search/sync'),
 };
 

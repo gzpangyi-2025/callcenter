@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { aiAPI } from '../../../services/api';
 import ChatInputBar from '../../Tickets/ChatInputBar';
+import type { AiChatSession, AiTask, AiTaskFile, ApiResponse } from '../../../types/api';
 
 const { Text } = Typography;
 
@@ -17,22 +18,72 @@ interface ChatMessage {
   id?: number;
   role: 'user' | 'assistant' | 'system';
   content: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   createdAt?: string;
 }
 
-interface ChatSession {
-  id: string;
-  title: string;
-  updatedAt: string;
-}
+type ChatSession = AiChatSession;
 
 interface Props {
   /** Callback when a task is created from chat */
   onTaskCreated?: (taskId: string) => void;
-  tasks?: any[];
-  onViewTaskDetail?: (task: any) => void;
+  tasks?: AiTask[];
+  onViewTaskDetail?: (task: AiTask) => void;
 }
+
+interface ChatStreamEvent {
+  type?: 'text' | 'task_created' | 'error';
+  sessionId?: string;
+  taskId?: string;
+  content?: string;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
+  if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
+    return value.data as T;
+  }
+  return value as T;
+};
+
+const isChatMessage = (value: unknown): value is ChatMessage =>
+  isRecord(value) &&
+  typeof value.content === 'string' &&
+  (value.role === 'user' || value.role === 'assistant' || value.role === 'system');
+
+const normalizeMessages = (value: unknown): ChatMessage[] =>
+  Array.isArray(value) ? value.filter(isChatMessage) : [];
+
+const isAiTaskFile = (value: unknown): value is AiTaskFile =>
+  isRecord(value) && typeof value.name === 'string';
+
+const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
+  const payload = unwrapApiData(value);
+  if (Array.isArray(payload)) return payload.filter(isAiTaskFile);
+  if (isRecord(payload) && Array.isArray(payload.data)) return payload.data.filter(isAiTaskFile);
+  return [];
+};
+
+const getErrorMessage = (err: unknown) => err instanceof Error ? err.message : '未知错误';
+
+const parseChatStreamEvent = (line: string): ChatStreamEvent | null => {
+  try {
+    const parsed: unknown = JSON.parse(line);
+    if (!isRecord(parsed)) return null;
+    return {
+      type: parsed.type === 'text' || parsed.type === 'task_created' || parsed.type === 'error'
+        ? parsed.type
+        : undefined,
+      sessionId: typeof parsed.sessionId === 'string' ? parsed.sessionId : undefined,
+      taskId: typeof parsed.taskId === 'string' ? parsed.taskId : undefined,
+      content: typeof parsed.content === 'string' ? parsed.content : undefined,
+    };
+  } catch {
+    return null;
+  }
+};
 
 const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDetail }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -61,8 +112,8 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
   const loadSessions = useCallback(async () => {
     setSessionsLoading(true);
     try {
-      const res: any = await aiAPI.chatSessions();
-      setSessions(res?.data ?? []);
+      const res = await aiAPI.chatSessions();
+      setSessions(res.data);
     } catch { /* ignore */ }
     finally { setSessionsLoading(false); }
   }, []);
@@ -75,9 +126,9 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
     setMessages([]);
     setStreaming('');
     try {
-      const res: any = await aiAPI.chatSessionDetail(sessionId);
+      const res = await aiAPI.chatSessionDetail(sessionId);
       if (requestSeq === sessionLoadSeqRef.current && activeSessionIdRef.current === sessionId) {
-        setMessages(res?.data?.messages ?? []);
+        setMessages(normalizeMessages(res.data.messages));
       }
     } catch {
       message.error('加载会话失败');
@@ -104,9 +155,11 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
   useEffect(() => {
     if (!tasks || tasks.length === 0 || !activeSessionId || messages.length === 0) return;
 
-    const messageTaskIds = messages
-      .filter((m) => m.metadata?.intent === 'create_task' && m.metadata?.taskId)
-      .map((m) => m.metadata.taskId);
+    const messageTaskIds = messages.flatMap((m) =>
+      m.metadata?.intent === 'create_task' && typeof m.metadata.taskId === 'string'
+        ? [m.metadata.taskId]
+        : [],
+    );
 
     for (const taskId of messageTaskIds) {
       const task = tasks.find((t) => t.id === taskId);
@@ -119,11 +172,10 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
     }
   }, [tasks, messages, activeSessionId]);
 
-  const injectFeedbackMessage = async (task: any) => {
+  const injectFeedbackMessage = async (task: AiTask) => {
     try {
-      const filesRes: any = await aiAPI.getTaskFiles(task.id);
-      const files = filesRes.data || [];
-      const responseMd = files.find((f: any) => f.name === 'response.md' || f.name.endsWith('response.md'));
+      const files = normalizeTaskFiles(await aiAPI.getTaskFiles(task.id));
+      const responseMd = files.find((f) => f.name === 'response.md' || f.name.endsWith('response.md'));
       let feedbackContent = '';
       if (responseMd && responseMd.url) {
         const res = await fetch(responseMd.url);
@@ -133,13 +185,16 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
       }
 
       const content = `【Codex 执行反馈】\n\n${feedbackContent}`;
-      const injectRes: any = await aiAPI.injectChatMessage(activeSessionId!, {
+      const injectRes = await aiAPI.injectChatMessage(activeSessionId!, {
         role: 'assistant',
         content,
         metadata: { responseForTask: task.id },
       });
       
-      setMessages((prev) => [...prev, injectRes.data]);
+      const injectedMessage = injectRes.data;
+      if (isChatMessage(injectedMessage)) {
+        setMessages((prev) => [...prev, injectedMessage]);
+      }
     } catch (err) {
       console.error('Failed to inject feedback message:', err);
     }
@@ -213,11 +268,12 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
           for (const line of lines) {
             if (!line.startsWith('data: ')) continue;
             try {
-              const data = JSON.parse(line.slice(6));
+              const data = parseChatStreamEvent(line.slice(6));
+              if (!data) continue;
               if (data.sessionId && !sessionAtSend) {
                 newSessionId = data.sessionId;
               }
-              if (data.type === 'text') {
+              if (data.type === 'text' && data.content) {
                 fullText += data.content;
                 if (canUpdateCurrentSession()) setStreaming(fullText);
               } else if (data.type === 'task_created') {
@@ -225,7 +281,7 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
                   onTaskCreated(data.taskId);
                 }
                 message.success(`🚀 AI 任务已创建 (${data.taskId})`);
-              } else if (data.type === 'error') {
+              } else if (data.type === 'error' && data.content) {
                 message.error(data.content);
                 // Show error as an assistant message in the chat
                 errorText = data.content;
@@ -248,8 +304,8 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
         setActiveSessionId(newSessionId);
         loadSessions(); // Refresh session list
       }
-    } catch (err: any) {
-      message.error('发送失败: ' + err.message);
+    } catch (err: unknown) {
+      message.error('发送失败: ' + getErrorMessage(err));
     } finally {
       setSending(false);
     }
@@ -443,11 +499,12 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
                     </pre>
 
                     {/* Task Card Injection */}
-                    {m.metadata?.intent === 'create_task' && m.metadata?.taskId && (
+                    {m.metadata?.intent === 'create_task' && typeof m.metadata.taskId === 'string' && (
                       <div style={{ marginTop: 12, padding: 12, background: 'var(--bg-secondary, #fafafa)', borderRadius: 8, border: '1px solid var(--border, #e5e7eb)' }}>
                         <Text strong style={{ display: 'block', marginBottom: 8 }}><ThunderboltOutlined /> 任务进度</Text>
                         {(() => {
-                          const task = tasks?.find(t => t.id === m.metadata.taskId);
+                          const taskId = typeof m.metadata.taskId === 'string' ? m.metadata.taskId : '';
+                          const task = tasks?.find(t => t.id === taskId);
                           if (!task) return <Text type="secondary">正在拉取任务状态...</Text>;
                           
                           if (task.status === 'pending' || task.status === 'running') {
@@ -469,7 +526,7 @@ const AiChatPanel: React.FC<Props> = ({ onTaskCreated, tasks = [], onViewTaskDet
                             );
                           }
                           if (task.status === 'failed') {
-                            return <Text type="danger" style={{ color: '#ff4d4f' }}>✗ 任务失败: {task.errorMessage}</Text>;
+                            return <Text type="danger" style={{ color: '#ff4d4f' }}>✗ 任务失败: {task.error}</Text>;
                           }
                           return <Text type="secondary">状态: {task.status}</Text>;
                         })()}

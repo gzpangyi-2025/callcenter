@@ -88,15 +88,15 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: Re
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
+export const unwrapAiApiData = <T,>(value: ApiResponse<T> | T): T => {
   if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
     return value.data as T;
   }
   return value as T;
 };
 
-const normalizeTaskList = (value: ApiResponse<AiTaskListData> | AiTaskListData): { list: AiTask[]; total: number } => {
-  const payload = unwrapApiData(value);
+export const normalizeTaskList = (value: ApiResponse<AiTaskListData> | AiTaskListData): { list: AiTask[]; total: number } => {
+  const payload = unwrapAiApiData(value);
   if (Array.isArray(payload)) return { list: payload, total: payload.length };
   if ('items' in payload && Array.isArray(payload.items)) {
     return { list: payload.items, total: payload.total };
@@ -107,21 +107,58 @@ const normalizeTaskList = (value: ApiResponse<AiTaskListData> | AiTaskListData):
   return { list: [], total: 0 };
 };
 
-const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
-  const payload = unwrapApiData(value);
+export const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
+  const payload = unwrapAiApiData(value);
   if (Array.isArray(payload)) return payload;
   if (isRecord(payload) && Array.isArray(payload.data)) return payload.data as AiTaskFile[];
   return [];
 };
 
-const normalizeTemplates = (value: ApiResponse<AiTemplate[]> | AiTemplate[]): AiTemplate[] => {
-  const payload = unwrapApiData(value);
+export const normalizeTemplates = (value: ApiResponse<AiTemplate[]> | AiTemplate[]): AiTemplate[] => {
+  const payload = unwrapAiApiData(value);
   return Array.isArray(payload) ? payload : [];
 };
 
-const normalizeUploadUrl = (value: ApiResponse<AiUploadUrl> | AiUploadUrl): AiUploadUrl | null => {
-  const payload = unwrapApiData(value);
+export const normalizeUploadUrl = (value: ApiResponse<AiUploadUrl> | AiUploadUrl): AiUploadUrl | null => {
+  const payload = unwrapAiApiData(value);
   return payload?.url ? payload : null;
+};
+
+export const buildCreateTaskPayload = (
+  values: CreateTaskFormValues,
+  templates: AiTemplate[],
+  uploadedAttachments: UploadedAttachment[],
+  draftTaskId: string,
+  useRawPrompt: boolean,
+): AiCreateTaskPayload => {
+  const payload: AiCreateTaskPayload = {
+    id: draftTaskId,
+    type: values.type,
+    params: {},
+  };
+
+  if (useRawPrompt) {
+    payload.prompt = values.rawPrompt;
+  } else {
+    const template = templates.find(t => t.name === values.type);
+    if (template?.variables) {
+      for (const v of template.variables) {
+        if (values[`param_${v.name}`] !== undefined) {
+          payload.params[v.name] = values[`param_${v.name}`];
+        }
+      }
+    }
+  }
+
+  if (uploadedAttachments.length > 0) {
+    payload.attachments = uploadedAttachments;
+  }
+
+  if (values.reviewMode) {
+    payload.reviewMode = values.reviewMode;
+  }
+
+  return payload;
 };
 
 const templateOptionToSelectOption = (option: NonNullable<AiTemplateVariable['options']>[number]) =>
@@ -322,36 +359,7 @@ const AiPage: React.FC = () => {
   const handleCreate = async (values: CreateTaskFormValues) => {
     setCreating(true);
     try {
-      const payload: AiCreateTaskPayload = {
-        id: draftTaskId,
-        type: values.type,
-        params: {},
-      };
-
-      // Build payload with template params or raw prompt
-      if (useRawPrompt) {
-        payload.prompt = values.rawPrompt;
-      } else {
-        // Build params from template variables
-        const template = templates.find(t => t.name === values.type);
-        if (template?.variables) {
-          for (const v of template.variables) {
-            if (values[`param_${v.name}`] !== undefined) {
-              payload.params[v.name] = values[`param_${v.name}`];
-            }
-          }
-        }
-      }
-
-      // Include uploaded attachments
-      if (uploadedAttachments.length > 0) {
-        payload.attachments = uploadedAttachments;
-      }
-
-      // Include review mode
-      if (values.reviewMode) {
-        payload.reviewMode = values.reviewMode;
-      }
+      const payload = buildCreateTaskPayload(values, templates, uploadedAttachments, draftTaskId, useRawPrompt);
 
       await aiAPI.createTask(payload);
       message.success('任务已提交，正在排队执行');

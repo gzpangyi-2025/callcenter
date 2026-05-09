@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Drawer, Badge, Modal, Form, Input, message, Popover, List, Spin, Tag, Typography } from 'antd';
+import type { MenuProps } from 'antd';
 import {
   DashboardOutlined, FileTextOutlined,
   UserOutlined, SettingOutlined, LogoutOutlined,
@@ -13,8 +14,55 @@ import { useAuthStore } from '../stores/authStore';
 import { useSocketStore } from '../stores/socketStore';
 import { useThemeStore } from '../stores/themeStore';
 import { authAPI, ticketsAPI, usersAPI, bbsAPI } from '../services/api';
+import type { ApiResponse, BbsNotification, TicketBatchSummary } from '../types/api';
+import type { Ticket } from '../types/ticket';
+import type { UpdateUserInfoParam } from '../types/user';
 
 const { Sider, Header, Content } = Layout;
+
+interface PermissionLike {
+  code?: string;
+  resource?: string;
+  action?: string;
+}
+
+interface ChangePasswordValues {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+type NotificationItem =
+  | (TicketBatchSummary & {
+      type: 'ticket';
+      isNew: boolean;
+      unreadCount: number;
+    })
+  | {
+      id: number | string;
+      title?: string;
+      type: 'bbs';
+      isNew: false;
+      unreadCount: number;
+    };
+
+const emptyTicketSummaries: ApiResponse<TicketBatchSummary[]> = { code: 0, data: [] };
+const emptyBbsNotifications: ApiResponse<BbsNotification[]> = { code: 0, data: [] };
+
+const isPermissionLike = (permission: unknown): permission is PermissionLike =>
+  typeof permission === 'object' && permission !== null;
+
+const permissionCode = (permission: PermissionLike) =>
+  permission.code || `${permission.resource}:${permission.action}`;
+
+const hasPermissionCode = (user: ReturnType<typeof useAuthStore.getState>['user'], requiredCode: string) => {
+  const role = user?.role;
+  if (!role) return false;
+  if (role.name === 'admin' || user?.username === 'admin') return true;
+  return (role.permissions || []).some((permission) =>
+    isPermissionLike(permission) && permissionCode(permission) === requiredCode,
+  );
+};
 
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -31,8 +79,8 @@ const MainLayout: React.FC = () => {
   const { user, clearAuth } = useAuthStore();
   const { profileBadge, socket, setMyTicketIds, unreadMap, newTicketIds, bbsUnreadMap, clearNewTicket, clearUnread } = useSocketStore();
 
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [bbsNotifications, setBbsNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<TicketBatchSummary[]>([]);
+  const [bbsNotifications, setBbsNotifications] = useState<BbsNotification[]>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
 
@@ -42,15 +90,15 @@ const MainLayout: React.FC = () => {
     setNotificationsLoading(true);
     
     const allIds = Array.from(new Set([...Object.keys(unreadMap).map(Number), ...newTicketIds]));
-    const fetchTickets = allIds.length > 0 ? ticketsAPI.getBatchSummary(allIds) : Promise.resolve({ code: 0, data: [] });
+    const fetchTickets = allIds.length > 0 ? ticketsAPI.getBatchSummary(allIds) : Promise.resolve(emptyTicketSummaries);
     const hasBbs = Object.keys(bbsUnreadMap).length > 0;
-    const fetchBbs = hasBbs ? bbsAPI.getNotifications() : Promise.resolve([]);
+    const fetchBbs = hasBbs ? bbsAPI.getNotifications() : Promise.resolve(emptyBbsNotifications);
 
     Promise.all([fetchTickets, fetchBbs])
-      .then(([tRes, bRes]: any[]) => {
+      .then(([tRes, bRes]) => {
         if (isMounted) {
           if (tRes.code === 0) setNotifications(tRes.data);
-          setBbsNotifications(bRes || []);
+          if (bRes.code === 0) setBbsNotifications(bRes.data);
           setNotificationsLoading(false);
         }
       })
@@ -69,10 +117,10 @@ const MainLayout: React.FC = () => {
         ticketsAPI.myAssigned(),
         ticketsAPI.myParticipated(),
       ]);
-      const created = (createdRes as any).code === 0 ? ((createdRes as any).data || []) : [];
-      const assigned = (assignedRes as any).code === 0 ? ((assignedRes as any).data || []) : [];
-      const participated = (participatedRes as any).code === 0 ? ((participatedRes as any).data || []) : [];
-      const allIds = [...new Set([...created, ...assigned, ...participated].map((t: any) => t.id))];
+      const created = createdRes.code === 0 ? createdRes.data : [];
+      const assigned = assignedRes.code === 0 ? assignedRes.data : [];
+      const participated = participatedRes.code === 0 ? participatedRes.data : [];
+      const allIds = [...new Set([...created, ...assigned, ...participated].map((ticket: Ticket) => ticket.id))];
       setMyTicketIds(allIds);
     } catch {}
   }, [setMyTicketIds]);
@@ -115,7 +163,7 @@ const MainLayout: React.FC = () => {
     }
   };
 
-  const menuItems: any[] = [
+  const menuItems: NonNullable<MenuProps['items']> = [
     { key: '/', icon: <DashboardOutlined />, label: '仪表盘' },
     { key: '/tickets', icon: <FileTextOutlined />, label: '工单广场' },
     { key: '/profile',
@@ -140,32 +188,11 @@ const MainLayout: React.FC = () => {
     },
   ];
 
-  const roleObj = user?.role as any;
-  const userPermissions = roleObj?.permissions || [];
-  const hasAdminAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
-    const pCode = p.code || `${p.resource}:${p.action}`;
-    return pCode === 'admin:access';
-  });
-
-  const hasKnowledgeAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
-    const pCode = p.code || `${p.resource}:${p.action}`;
-    return pCode === 'knowledge:read';
-  });
-
-  const hasReportAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
-    const pCode = p.code || `${p.resource}:${p.action}`;
-    return pCode === 'report:read';
-  });
-
-  const hasAiAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
-    const pCode = p.code || `${p.resource}:${p.action}`;
-    return pCode === 'ai:access';
-  });
-
-  const hasBbsAccess = roleObj?.name === 'admin' || userPermissions.some((p: any) => {
-    const pCode = p.code || `${p.resource}:${p.action}`;
-    return pCode === 'bbs:read';
-  });
+  const hasAdminAccess = hasPermissionCode(user, 'admin:access');
+  const hasKnowledgeAccess = hasPermissionCode(user, 'knowledge:read');
+  const hasReportAccess = hasPermissionCode(user, 'report:read');
+  const hasAiAccess = hasPermissionCode(user, 'ai:access');
+  const hasBbsAccess = hasPermissionCode(user, 'bbs:read');
 
   if (hasAiAccess) {
     menuItems.push({ key: '/ai', icon: <RobotOutlined />, label: 'AI 协作' });
@@ -208,13 +235,13 @@ const MainLayout: React.FC = () => {
     if (isMobile) setMobileMenuOpen(false);
   };
 
-  const handleChangePassword = async (values: any) => {
+  const handleChangePassword = async (values: ChangePasswordValues) => {
     if (values.newPassword !== values.confirmPassword) {
       return message.error('两次输入的新密码不一致');
     }
     setPwdSaving(true);
     try {
-      const res: any = await usersAPI.changeMyPassword({
+      const res = await usersAPI.changeMyPassword({
         oldPassword: values.oldPassword,
         newPassword: values.newPassword
       });
@@ -226,12 +253,8 @@ const MainLayout: React.FC = () => {
       } else {
         message.error(res.message || '密码修改失败');
       }
-    } catch (err: any) {
-      if (err.response?.data?.message) {
-//         message.error(err.response.data.message); // Removed by global interceptor refactor
-      } else {
-        message.error('请求失败，请稍后重试');
-      }
+    } catch {
+      message.error('请求失败，请稍后重试');
     } finally {
       setPwdSaving(false);
     }
@@ -256,14 +279,14 @@ const MainLayout: React.FC = () => {
       return <div style={{ padding: 24, textAlign: 'center' }}><Spin /></div>;
     }
 
-    const ticketSource = notifications.map(t => {
+    const ticketSource: NotificationItem[] = notifications.map(t => {
       const isNew = newTicketIds.includes(t.id);
       const unreadCount = unreadMap[t.id] || 0;
       return { ...t, type: 'ticket', isNew, unreadCount };
     });
 
-    const bbsSource = bbsNotifications.map(b => {
-      return { id: b.postId, title: b.post?.title, type: 'bbs', isNew: false, unreadCount: b.unreadCount };
+    const bbsSource: NotificationItem[] = bbsNotifications.map(b => {
+      return { id: b.postId, title: b.post?.title, type: 'bbs', isNew: false, unreadCount: Number(b.unreadCount) };
     });
 
     const dataSource = [...ticketSource, ...bbsSource];
@@ -278,7 +301,7 @@ const MainLayout: React.FC = () => {
         itemLayout="horizontal"
         dataSource={dataSource}
         style={{ width: 320, maxHeight: 400, overflowY: 'auto' }}
-        renderItem={(item: any) => (
+        renderItem={(item) => (
           <List.Item
             style={{ cursor: 'pointer', padding: '12px 16px', transition: 'background 0.3s' }}
             onClick={() => {
@@ -481,21 +504,21 @@ const MainLayout: React.FC = () => {
           form={profileForm}
           layout="vertical"
           style={{ marginTop: 16 }}
-          onFinish={async (values: any) => {
+          onFinish={async (values: UpdateUserInfoParam) => {
             setProfileSaving(true);
             try {
-              const res: any = await usersAPI.updateMe(values);
+              const res = await usersAPI.updateMe(values);
               if (res.code === 0) {
                 message.success('个人信息已更新');
                 setProfileModalOpen(false);
                 // 刷新用户信息到 authStore
-                const meRes: any = await authAPI.getMe();
+                const meRes = await authAPI.getMe();
                 if (meRes.code === 0) {
                   const token = localStorage.getItem('accessToken');
                   if (token) useAuthStore.getState().setAuth(meRes.data, token);
                 }
               }
-            } catch (err: any) {
+            } catch {
 //               message.error(err.response?.data?.message || '更新失败'); // Removed by global interceptor refactor
             } finally {
               setProfileSaving(false);

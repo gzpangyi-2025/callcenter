@@ -31,7 +31,8 @@ interface FileEvent {
   timestamp: number;
 }
 
-type StreamEvent = LogEntry | FileEvent;
+type LogStreamEntry = LogEntry & { _heartbeat?: boolean; _streamEnd?: boolean };
+type StreamEvent = LogStreamEntry | FileEvent;
 
 interface Props {
   taskId: string;
@@ -50,6 +51,38 @@ interface PersistedTask extends AiTask {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
+
+const isLogType = (value: unknown): value is LogEntry['type'] =>
+  value === 'thought' || value === 'action' || value === 'output' || value === 'info' || value === 'error';
+
+const isLogEntry = (value: unknown): value is LogEntry & { _heartbeat?: boolean; _streamEnd?: boolean } =>
+  isRecord(value) &&
+  typeof value.taskId === 'string' &&
+  typeof value.line === 'string' &&
+  isLogType(value.type) &&
+  typeof value.timestamp === 'number';
+
+const isFileEvent = (value: unknown): value is FileEvent =>
+  isRecord(value) &&
+  value.eventType === 'file_ready' &&
+  typeof value.taskId === 'string' &&
+  typeof value.name === 'string' &&
+  (value.category === 'core' || value.category === 'process') &&
+  typeof value.size === 'number' &&
+  typeof value.url === 'string' &&
+  typeof value.mimeType === 'string' &&
+  typeof value.timestamp === 'number';
+
+const parseStreamEvent = (raw: string): StreamEvent | null => {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (isFileEvent(parsed)) return parsed;
+    if (isLogEntry(parsed)) return parsed;
+    return null;
+  } catch {
+    return null;
+  }
+};
 
 const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
   if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
@@ -236,61 +269,59 @@ const TaskLogPanel: React.FC<Props> = ({ taskId, taskStatus }) => {
       reconnectAttemptRef.current = 0; // Reset on successful connect
     };
     es.onmessage = (event) => {
-      try {
-        const data: StreamEvent = JSON.parse(event.data);
-        if (data.taskId && data.taskId !== taskId) return;
+      const data = parseStreamEvent(event.data);
+      if (!data || data.taskId !== taskId) return;
 
-        if ('eventType' in data && data.eventType === 'file_ready') {
-          // File event
-          setFiles((prev) => {
-            // Deduplicate by name
-            if (prev.some(f => f.taskId === data.taskId && f.name === data.name)) return prev;
-            return [...prev, data as FileEvent];
-          });
-        } else {
-          // Log entry — skip heartbeat pings and stream-end markers
-          const entry = data as LogEntry & { _heartbeat?: boolean; _streamEnd?: boolean };
-          if (entry._heartbeat || entry._streamEnd || entry.line === '') return;
-          setLogs((prev) => {
-            const next = [...prev, entry];
-            return next.length > 1000 ? next.slice(-1000) : next;
-          });
+      if (isFileEvent(data)) {
+        // File event
+        setFiles((prev) => {
+          // Deduplicate by name
+          if (prev.some(f => f.taskId === data.taskId && f.name === data.name)) return prev;
+          return [...prev, data];
+        });
+      } else {
+        // Log entry — skip heartbeat pings and stream-end markers
+        const entry = data;
+        if (entry._heartbeat || entry._streamEnd || entry.line === '') return;
+        setLogs((prev) => {
+          const next = [...prev, entry];
+          return next.length > 1000 ? next.slice(-1000) : next;
+        });
 
-          // Try to extract progress info from log lines
-          if (entry.type === 'info' || entry.type === 'output') {
-            const line = entry.line;
-            // Parse step info from progress log entries
-            if (line.includes('准备执行环境') || line.includes('⚙️')) {
-              setCurrentStep('env');
-              setProgress(0);
-            } else if (line.includes('工作目录已创建')) {
-              setCurrentStep('env');
-              setProgress(5);
-            } else if (line.includes('正在下载') && line.includes('附件')) {
-              setCurrentStep('attachments');
-              setProgress(7);
-            } else if (line.includes('已下载') && line.includes('附件')) {
-              setCurrentStep('attachments');
-              setProgress(9);
-            } else if (line.includes('正在调用 Codex') || line.includes('🚀')) {
-              setCurrentStep('codex');
-              setProgress(10);
-            } else if (line.includes('文件就绪') || line.includes('📦') || line.includes('📃')) {
-              // File activity — still in codex stage, bump progress slightly
-              setProgress(prev => Math.min(prev + 1, 80));
-            } else if (line.includes('正在上传产物文件') || line.includes('☁️')) {
-              setCurrentStep('upload');
-              setProgress(85);
-            } else if (line.includes('正在保存结果') || line.includes('💾')) {
-              setCurrentStep('done');
-              setProgress(95);
-            } else if (line.includes('任务完成') || line.includes('✅')) {
-              setCurrentStep('done');
-              setProgress(100);
-            }
+        // Try to extract progress info from log lines
+        if (entry.type === 'info' || entry.type === 'output') {
+          const line = entry.line;
+          // Parse step info from progress log entries
+          if (line.includes('准备执行环境') || line.includes('⚙️')) {
+            setCurrentStep('env');
+            setProgress(0);
+          } else if (line.includes('工作目录已创建')) {
+            setCurrentStep('env');
+            setProgress(5);
+          } else if (line.includes('正在下载') && line.includes('附件')) {
+            setCurrentStep('attachments');
+            setProgress(7);
+          } else if (line.includes('已下载') && line.includes('附件')) {
+            setCurrentStep('attachments');
+            setProgress(9);
+          } else if (line.includes('正在调用 Codex') || line.includes('🚀')) {
+            setCurrentStep('codex');
+            setProgress(10);
+          } else if (line.includes('文件就绪') || line.includes('📦') || line.includes('📃')) {
+            // File activity — still in codex stage, bump progress slightly
+            setProgress(prev => Math.min(prev + 1, 80));
+          } else if (line.includes('正在上传产物文件') || line.includes('☁️')) {
+            setCurrentStep('upload');
+            setProgress(85);
+          } else if (line.includes('正在保存结果') || line.includes('💾')) {
+            setCurrentStep('done');
+            setProgress(95);
+          } else if (line.includes('任务完成') || line.includes('✅')) {
+            setCurrentStep('done');
+            setProgress(100);
           }
         }
-      } catch { /* ignore parse errors */ }
+      }
     };
     es.onerror = () => {
       setConnected(false);

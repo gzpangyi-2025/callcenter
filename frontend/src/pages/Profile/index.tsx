@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, Tag, Button, Empty, Segmented, message, Row, Col, Modal, Form, Input, Select, Badge, Cascader } from 'antd';
 import {
   CheckOutlined, PlusOutlined, FileTextOutlined, CustomerServiceOutlined, TeamOutlined, LoginOutlined,
@@ -8,6 +8,9 @@ import { ticketsAPI, usersAPI, categoryAPI } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 import { useSocketStore } from '../../stores/socketStore';
 import { useNavigate } from 'react-router-dom';
+import type { CategoryNode } from '../../types/api';
+import type { CreateTicketDto, Ticket } from '../../types/ticket';
+import type { User } from '../../types/user';
 
 const { Option } = Select;
 
@@ -23,20 +26,28 @@ const typeMap: Record<string, string> = {
   security: '安全问题', database: '数据库', other: '其他',
 };
 
+type ProfileTab = 'created' | 'assigned' | 'participated';
+type AssigneeOption = { value: number; label: string };
+type CreateTicketFormValues = CreateTicketDto & { categoryPath?: string[] };
+type TabBadge = { total: number; newCount: number; unreadCount: number };
+
+const categorySearchFilter = (input: string, path: CategoryNode[]) =>
+  path.some((opt) => opt.label.toLowerCase().includes(input.toLowerCase()));
+
 const ProfilePage: React.FC = () => {
-  const [tab, setTab] = useState<string>('created');
-  const [createdTickets, setCreatedTickets] = useState<any[]>([]);
-  const [assignedTickets, setAssignedTickets] = useState<any[]>([]);
-  const [participatedTickets, setParticipatedTickets] = useState<any[]>([]);
+  const [tab, setTab] = useState<ProfileTab>('created');
+  const [createdTickets, setCreatedTickets] = useState<Ticket[]>([]);
+  const [assignedTickets, setAssignedTickets] = useState<Ticket[]>([]);
+  const [participatedTickets, setParticipatedTickets] = useState<Ticket[]>([]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createForm] = Form.useForm();
-  const [assigneeOptions, setAssigneeOptions] = useState<any[]>([]);
+  const [assigneeOptions, setAssigneeOptions] = useState<AssigneeOption[]>([]);
   const [assigneeSearching, setAssigneeSearching] = useState(false);
-  const [categoryTree, setCategoryTree] = useState<any[]>([]);
+  const [categoryTree, setCategoryTree] = useState<CategoryNode[]>([]);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const { socket, unreadMap, newTicketIds, clearNewTicket, clearUnread, setMyTicketIds } = useSocketStore();
-  let searchTimer: any = null;
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -45,16 +56,16 @@ const ProfilePage: React.FC = () => {
         ticketsAPI.myAssigned(),
         ticketsAPI.myParticipated(),
       ]);
-      const created = (createdRes as any).code === 0 ? ((createdRes as any).data || []) : [];
-      const assigned = (assignedRes as any).code === 0 ? ((assignedRes as any).data || []) : [];
-      const participated = (participatedRes as any).code === 0 ? ((participatedRes as any).data || []) : [];
+      const created = createdRes.code === 0 ? createdRes.data : [];
+      const assigned = assignedRes.code === 0 ? assignedRes.data : [];
+      const participated = participatedRes.code === 0 ? participatedRes.data : [];
 
       setCreatedTickets(created);
       setAssignedTickets(assigned);
       setParticipatedTickets(participated);
 
       // 将所有相关工单 ID 同步到 socketStore，供全局 badge 计算使用
-      const allIds = [...created, ...assigned, ...participated].map((t: any) => t.id);
+      const allIds = [...created, ...assigned, ...participated].map((t) => t.id);
       setMyTicketIds(allIds);
     } catch {}
   }, [setMyTicketIds]);
@@ -70,7 +81,7 @@ const ProfilePage: React.FC = () => {
 
   // 加载工单分类树
   useEffect(() => {
-    categoryAPI.getTree().then((res: any) => {
+    categoryAPI.getTree().then((res) => {
       if (res.code === 0 && res.data?.length > 0) setCategoryTree(res.data);
     }).catch(() => {});
   }, []);
@@ -80,35 +91,34 @@ const ProfilePage: React.FC = () => {
 
   const handleAssign = async (id: number) => {
     try {
-      const res: any = await ticketsAPI.assign(id);
+      const res = await ticketsAPI.assign(id);
       if (res.code === 0) { message.success('接单成功'); loadData(); }
-} catch (err: any) { /* handled globally */ } // Removed by global interceptor refactor
+} catch { /* handled globally */ } // Removed by global interceptor refactor
   };
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: CreateTicketFormValues) => {
     try {
-      const submitData = { ...values };
-      if (values.categoryPath && values.categoryPath.length > 0) {
-        submitData.category1 = values.categoryPath[0] || '';
-        submitData.category2 = values.categoryPath[1] || '';
-        submitData.category3 = values.categoryPath[2] || '';
+      const { categoryPath, ...submitData } = values;
+      if (categoryPath && categoryPath.length > 0) {
+        submitData.category1 = categoryPath[0] || '';
+        submitData.category2 = categoryPath[1] || '';
+        submitData.category3 = categoryPath[2] || '';
         submitData.type = 'other';
       }
-      delete submitData.categoryPath;
-      const res: any = await ticketsAPI.create(submitData);
+      const res = await ticketsAPI.create(submitData);
       if (res.code === 0) { message.success('工单创建成功'); setCreateModalOpen(false); createForm.resetFields(); loadData(); }
-} catch (err: any) { /* handled globally */ } // Removed by global interceptor refactor
+} catch { /* handled globally */ } // Removed by global interceptor refactor
   };
 
   const handleAssigneeSearch = (value: string) => {
-    if (searchTimer) clearTimeout(searchTimer);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
     if (!value) { setAssigneeOptions([]); return; }
-    searchTimer = setTimeout(async () => {
+    searchTimerRef.current = setTimeout(async () => {
       setAssigneeSearching(true);
       try {
-        const res: any = await usersAPI.search(value);
+        const res = await usersAPI.search(value);
         if (res.code === 0) {
-          setAssigneeOptions(res.data.map((u: any) => ({
+          setAssigneeOptions(res.data.map((u: User) => ({
             value: u.id,
             label: `${u.realName || u.displayName || u.username} (${u.username})`,
           })));
@@ -118,7 +128,7 @@ const ProfilePage: React.FC = () => {
   };
 
   // 计算每个 tab 中未读消息总数和新工单数量
-  const getTabBadge = (tickets: any[]) => {
+  const getTabBadge = (tickets: Ticket[]): TabBadge => {
     const unreadCount = tickets.reduce((sum, t) => sum + (unreadMap[t.id] || 0), 0);
     const newCount = tickets.filter((t) => newTicketIds.includes(t.id)).length;
     return { unreadCount, newCount, total: unreadCount + newCount };
@@ -135,7 +145,7 @@ const ProfilePage: React.FC = () => {
     icon: React.ReactNode,
     label: string,
     count: number,
-    badge: { total: number; newCount: number; unreadCount: number }
+    badge: TabBadge
   ) => (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
       {icon}
@@ -162,7 +172,7 @@ const ProfilePage: React.FC = () => {
     </span>
   );
 
-  const renderTicketCard = (ticket: any) => {
+  const renderTicketCard = (ticket: Ticket) => {
     const unread = unreadMap[ticket.id] || 0;
     const isNew = newTicketIds.includes(ticket.id);
 
@@ -281,7 +291,7 @@ const ProfilePage: React.FC = () => {
 
       <Segmented
         value={tab}
-        onChange={(v) => setTab(v as string)}
+        onChange={(v) => setTab(v as ProfileTab)}
         options={[
           {
             value: 'created',
@@ -329,7 +339,7 @@ const ProfilePage: React.FC = () => {
                   <Cascader
                     options={categoryTree}
                     placeholder="支持类型 / 技术方向 / 品牌"
-                    showSearch={{ filter: (input: string, path: any[]) => path.some((opt: any) => opt.label.toLowerCase().includes(input.toLowerCase())) }}
+                    showSearch={{ filter: categorySearchFilter }}
                     changeOnSelect
                   />
                 </Form.Item>

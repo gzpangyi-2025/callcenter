@@ -5,6 +5,7 @@ import { SearchOutlined, BookOutlined, DeleteOutlined, DownloadOutlined, ClockCi
 import { knowledgeAPI } from '../../services/api';
 import { MarkdownViewer } from '../../components/MarkdownViewer';
 import { RequirePermission } from '../../components/RequirePermission';
+import type { KnowledgeDocument } from '../../types/api';
 
 const { Title, Text } = Typography;
 
@@ -14,19 +15,19 @@ const severityColor: Record<string, string> = {
 
 const KnowledgePage: React.FC = () => {
   const [searchText, setSearchText] = useState('');
-  const [docs, setDocs] = useState<any[]>([]);
+  const [docs, setDocs] = useState<KnowledgeDocument[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [viewDoc, setViewDoc] = useState<any>(null);
+  const [viewDoc, setViewDoc] = useState<KnowledgeDocument | null>(null);
   const [activeTab, setActiveTab] = useState('chat_history');
-  const searchTimeoutRef = useRef<any>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const fetchDocs = async (q: string, p: number, typeStr: string) => {
     setLoading(true);
     try {
-      const res: any = await knowledgeAPI.search(q, p, typeStr);
+      const res = await knowledgeAPI.search(q, p, typeStr);
       if (res.code === 0) {
         setDocs(res.data.items || []);
         setTotal(res.data.total || 0);
@@ -51,7 +52,7 @@ const KnowledgePage: React.FC = () => {
     // 处理全局搜索跳转的特定文档查看
     const viewId = searchParams.get('viewId');
     if (viewId) {
-      knowledgeAPI.getOne(parseInt(viewId, 10)).then((res: any) => {
+      knowledgeAPI.getOne(parseInt(viewId, 10)).then((res) => {
         if (res.code === 0 && res.data) {
           setViewDoc(res.data);
           setActiveTab(res.data.type || initialTab);
@@ -80,10 +81,10 @@ const KnowledgePage: React.FC = () => {
     fetchDocs(searchText, p, activeTab);
   };
 
-  const handleDelete = async (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = async (id: number, e?: React.MouseEvent<HTMLElement>) => {
+    e?.stopPropagation();
     try {
-      const res: any = await knowledgeAPI.deleteOne(id);
+      const res = await knowledgeAPI.deleteOne(id);
       if (res.code === 0) {
         message.success('删除成功');
         fetchDocs(searchText, page, activeTab);
@@ -148,9 +149,9 @@ const KnowledgePage: React.FC = () => {
         }}
         locale={{ emptyText: <Empty description={activeTab === 'ai_doc' ? "暂无相关知识文档，快用 AI 去生成吧" : "暂无已导出的聊天记录"} /> }}
         renderItem={item => {
-          let tagList = [];
+          let tagList: string[] = [];
           if (item.tags) {
-            tagList = item.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t);
+            tagList = item.tags.split(',').map((t) => t.trim()).filter(Boolean);
           }
           return (
             <Card
@@ -167,7 +168,8 @@ const KnowledgePage: React.FC = () => {
                     {item.severity && <Tag color={severityColor[item.severity] || 'default'}>{item.severity}</Tag>}
                     {item.category && (() => {
                       const hwKeywords = ['硬件', 'hardware', '服务器', '磁盘', '交换机', 'UPS', '小型机', '空调', '视频', '负载'];
-                      const isHw = hwKeywords.some(k => item.category.toLowerCase().includes(k.toLowerCase()));
+                      const category = item.category ?? '';
+                      const isHw = hwKeywords.some(k => category.toLowerCase().includes(k.toLowerCase()));
                       return <Tag color={isHw ? 'volcano' : 'geekblue'}>{item.category}</Tag>;
                     })()}
                   </div>
@@ -188,7 +190,7 @@ const KnowledgePage: React.FC = () => {
                     window.location.href = `/tickets/${item.ticketId}`;
                   }}>视图详情</Button>
                   <RequirePermission permissions={['knowledge:manage']}>
-                    <Popconfirm title={`确定要删除这篇${activeTab === 'chat_history' ? '聊天记录' : '知识文档'}吗？`} onConfirm={(e: any) => handleDelete(item.id, e)} onCancel={e => e?.stopPropagation()} okButtonProps={{ danger: true }}>
+                    <Popconfirm title={`确定要删除这篇${activeTab === 'chat_history' ? '聊天记录' : '知识文档'}吗？`} onConfirm={(e) => handleDelete(item.id, e)} onCancel={e => e?.stopPropagation()} okButtonProps={{ danger: true }}>
                       <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={e => e.stopPropagation()}>删除</Button>
                     </Popconfirm>
                   </RequirePermission>
@@ -212,14 +214,14 @@ const KnowledgePage: React.FC = () => {
         width={900}
         footer={[
           <Button key="close" onClick={() => setViewDoc(null)}>关闭</Button>,
-          <Button key="zip" icon={<BookOutlined />} onClick={() => downloadFile(viewDoc?.id, 'zip')} style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}>一键打包关联附件 (ZIP)</Button>,
-          <Button key="docx" icon={<FileWordOutlined />} onClick={() => downloadFile(viewDoc?.id, 'docx')}>下载 DOCX</Button>,
-          <Button key="md" type="primary" icon={<DownloadOutlined />} onClick={() => downloadFile(viewDoc?.id, 'md')}>下载 Markdown原文</Button>
+          <Button key="zip" icon={<BookOutlined />} onClick={() => viewDoc && downloadFile(viewDoc.id, 'zip')} style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}>一键打包关联附件 (ZIP)</Button>,
+          <Button key="docx" icon={<FileWordOutlined />} onClick={() => viewDoc && downloadFile(viewDoc.id, 'docx')}>下载 DOCX</Button>,
+          <Button key="md" type="primary" icon={<DownloadOutlined />} onClick={() => viewDoc && downloadFile(viewDoc.id, 'md')}>下载 Markdown原文</Button>
         ]}
       >
         <div className="markdown-body" style={{ padding: 12, minHeight: 400, maxHeight: '70vh', overflowY: 'auto' }}>
           {viewDoc && (
-            <MarkdownViewer content={viewDoc.content} />
+            <MarkdownViewer content={viewDoc.content ?? ''} />
           )}
         </div>
       </Modal>

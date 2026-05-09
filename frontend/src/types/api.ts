@@ -63,6 +63,8 @@ export interface TicketAggregates {
 
 export interface TicketBatchSummary {
   id: number;
+  title?: string;
+  ticketNo?: string;
   unreadCount?: number;
   latestMessageAt?: string;
   hasActiveScreenShare?: boolean;
@@ -72,6 +74,44 @@ export interface CategoryNode {
   value: string;
   label: string;
   children?: CategoryNode[];
+}
+
+export interface KnowledgeDocument {
+  id: number;
+  title: string;
+  content?: string;
+  type?: 'chat_history' | 'ai_doc' | string;
+  tags?: string | null;
+  severity?: string | null;
+  category?: string | null;
+  ticketId?: number;
+  ticketNo?: string | null;
+  generatedBy?: string | null;
+  createdAt: string;
+}
+
+export type SearchResultType = 'post' | 'ticket' | 'knowledge' | 'message' | string;
+
+export type SearchHighlight = Partial<Record<'title' | 'content' | 'aiSummary', string[]>>;
+
+export interface SearchResultItem {
+  id: string | number;
+  type: SearchResultType;
+  title?: string;
+  content?: string;
+  highlight?: SearchHighlight;
+  authorName?: string;
+  customerName?: string;
+  senderName?: string;
+  createdAt: string;
+  sectionName?: string;
+  ticketId?: string | number;
+}
+
+export interface GlobalSearchData {
+  total: number;
+  items: SearchResultItem[];
+  aggregations?: Record<string, unknown>;
 }
 
 export interface ReportFilterParams {
@@ -265,6 +305,9 @@ export interface AiChatSession {
 export interface BbsNotification {
   postId: number | string;
   unreadCount: number | string;
+  post?: {
+    title?: string;
+  };
 }
 
 export type TicketListData = PaginatedData<Ticket>;

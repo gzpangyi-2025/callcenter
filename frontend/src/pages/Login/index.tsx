@@ -5,6 +5,16 @@ import { authAPI } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+interface LoginFormValues {
+  username: string;
+  password: string;
+}
+
+interface RegisterFormValues extends LoginFormValues {
+  realName: string;
+  email?: string;
+  confirm: string;
+}
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -18,33 +28,33 @@ const LoginPage: React.FC = () => {
     navigate(redirect || '/');
   };
 
-  const onLogin = async (values: { username: string; password: string }) => {
+  const onLogin = async (values: LoginFormValues) => {
     setLoading(true);
     try {
-      const res: any = await authAPI.login(values);
-      if (res.code === 0) {
+      const res = await authAPI.login(values);
+      if (res.code === 0 && res.data.user) {
         setAuth(res.data.user, res.data.accessToken);
         message.success('登录成功');
         handleSuccessRedirect();
       }
-    } catch (err: any) {
+    } catch {
 //       message.error(err.response?.data?.message || '登录失败'); // Removed by global interceptor refactor
     } finally {
       setLoading(false);
     }
   };
 
-  const onRegister = async (values: any) => {
+  const onRegister = async (values: RegisterFormValues) => {
     setLoading(true);
     try {
       const { confirm: _confirm, ...registerData } = values;
-      const res: any = await authAPI.register(registerData);
-      if (res.code === 0) {
+      const res = await authAPI.register(registerData);
+      if (res.code === 0 && res.data.user) {
         setAuth(res.data.user, res.data.accessToken);
         message.success('注册成功');
         handleSuccessRedirect();
       }
-    } catch (err: any) {
+    } catch {
 //       message.error(err.response?.data?.message || '注册失败'); // Removed by global interceptor refactor
     } finally {
       setLoading(false);

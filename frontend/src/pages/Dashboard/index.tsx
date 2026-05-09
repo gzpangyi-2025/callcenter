@@ -7,6 +7,8 @@ import {
 import { ticketsAPI, reportAPI } from '../../services/api';
 import { useSocketStore } from '../../stores/socketStore';
 import { useNavigate } from 'react-router-dom';
+import type { ReportSummary } from '../../types/api';
+import type { Ticket, TicketStatus } from '../../types/ticket';
 
 const statusMap: Record<string, { color: string; text: string }> = {
   pending: { color: 'orange', text: '待接单' },
@@ -43,25 +45,26 @@ const LiveTimer: React.FC<{ since: string }> = ({ since }) => {
 
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState({ total: 0, pending: 0, inProgress: 0, closed: 0 });
-  const [pendingTop5, setPendingTop5] = useState<any[]>([]);
-  const [progressTop5, setProgressTop5] = useState<any[]>([]);
+  const [pendingTop5, setPendingTop5] = useState<Ticket[]>([]);
+  const [progressTop5, setProgressTop5] = useState<Ticket[]>([]);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const { socket } = useSocketStore();
   const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
     try {
-      const [res, sumRes]: any[] = await Promise.all([
+      const [res, sumRes] = await Promise.all([
         ticketsAPI.getAll({ pageSize: 100, isDashboard: true }),
         reportAPI.getSummary()
       ]);
 
       if (sumRes.code === 0) {
+        const summary: ReportSummary = sumRes.data;
         setStats({
-          total: sumRes.data.total || 0,
-          pending: sumRes.data.pending || 0,
-          inProgress: (sumRes.data.in_progress || 0) + (sumRes.data.closing || 0),
-          closed: sumRes.data.closed || 0,
+          total: summary.total || 0,
+          pending: summary.pending || 0,
+          inProgress: (summary.in_progress || 0) + (summary.closing || 0),
+          closed: summary.closed || 0,
         });
       }
 
@@ -70,15 +73,15 @@ const Dashboard: React.FC = () => {
 
         // 待接单 Top5 — 按创建时间降序（最老的在前）
         const pending = allItems
-          .filter((t: any) => t.status === 'pending')
-          .sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+          .filter((t) => t.status === 'pending')
+          .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
           .slice(0, 5);
         setPendingTop5(pending);
 
         // 服务中 Top5 — 按接单时间降序（最老的在前）
         const progress = allItems
-          .filter((t: any) => ['in_progress', 'closing'].includes(t.status))
-          .sort((a: any, b: any) => new Date(a.assignedAt || a.createdAt).getTime() - new Date(b.assignedAt || b.createdAt).getTime())
+          .filter((t) => ['in_progress', 'closing'].includes(t.status))
+          .sort((a, b) => new Date(a.assignedAt || a.createdAt).getTime() - new Date(b.assignedAt || b.createdAt).getTime())
           .slice(0, 5);
         setProgressTop5(progress);
       }
@@ -101,7 +104,7 @@ const Dashboard: React.FC = () => {
     { key: 'closed', title: '已关闭', value: stats.closed, icon: <CheckCircleOutlined />, color: '#10b981' },
   ];
 
-  const renderTicketRow = (ticket: any, timeField: string, showPerson: string) => (
+  const renderTicketRow = (ticket: Ticket, timeField: 'assignedAt' | 'createdAt', showPerson: '接单人' | '创建人') => (
     <div
       key={ticket.id}
       className="ticket-card"
@@ -136,7 +139,7 @@ const Dashboard: React.FC = () => {
     </div>
   );
 
-  const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
+  const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
   const [filteredLoading, setFilteredLoading] = useState(false);
 
   // When activeFilter changes, load matching tickets from backend
@@ -145,18 +148,18 @@ const Dashboard: React.FC = () => {
     const loadFiltered = async () => {
       setFilteredLoading(true);
       try {
-        const statusParam = activeFilter === 'total' ? undefined
+        const statusParam: TicketStatus | undefined = activeFilter === 'total' ? undefined
           : activeFilter === 'in_progress' ? 'in_progress' // backend handles closing separately
-          : activeFilter;
-        const res: any = await ticketsAPI.getAll({
+          : activeFilter as TicketStatus;
+        const res = await ticketsAPI.getAll({
           pageSize: 200,
-          status: statusParam as any,
+          status: statusParam,
         });
         if (res.code === 0) {
           let items = res.data.items || [];
           // For in_progress filter, also include 'closing' status
           if (activeFilter === 'in_progress') {
-            const res2: any = await ticketsAPI.getAll({ pageSize: 200, status: 'closing' });
+            const res2 = await ticketsAPI.getAll({ pageSize: 200, status: 'closing' });
             if (res2.code === 0) items = [...items, ...(res2.data.items || [])];
           }
           setFilteredTickets(items);

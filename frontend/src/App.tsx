@@ -66,7 +66,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       authAPI.getMe()
-        .then((res: any) => {
+        .then((res) => {
           if (res.code === 0) {
             const token = localStorage.getItem('accessToken');
             if (token) setAuth(res.data, token);

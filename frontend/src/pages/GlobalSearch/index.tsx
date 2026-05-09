@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Input, Tag, Spin, List, Tabs, Typography, Space } from 'antd';
 import { FileTextOutlined, FireOutlined, BookOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons';
 import { searchAPI } from '../../services/api';
+import type { GlobalSearchData, SearchHighlight, SearchResultItem } from '../../types/api';
 
 const { Title } = Typography;
 
@@ -13,14 +14,14 @@ export default function GlobalSearch() {
   const type = searchParams.get('type') || 'all';
 
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>({ total: 0, items: [], aggregations: {} });
+  const [data, setData] = useState<GlobalSearchData>({ total: 0, items: [], aggregations: {} });
 
   useEffect(() => {
     if (!q) return;
     const fetchSearch = async () => {
       setLoading(true);
       try {
-        const res: any = await searchAPI.search({ q, type, page: 1, pageSize: 50 });
+        const res = await searchAPI.search({ q, type, page: 1, pageSize: 50 });
         setData(res);
       } catch (err) {
         console.error(err);
@@ -73,9 +74,10 @@ export default function GlobalSearch() {
     });
   };
 
-  const renderHighlight = (highlight: any, field: string, fallback: string) => {
-    if (highlight && highlight[field] && highlight[field].length > 0) {
-      const fragments = highlight[field].join(' ... ');
+  const renderHighlight = (highlight: SearchHighlight | undefined, field: keyof SearchHighlight, fallback: string) => {
+    const fieldFragments = highlight?.[field];
+    if (fieldFragments && fieldFragments.length > 0) {
+      const fragments = fieldFragments.join(' ... ');
       return <span className="search-highlight">{renderHighlightText(fragments)}</span>;
     }
     return fallback;
@@ -114,7 +116,7 @@ export default function GlobalSearch() {
           size="large"
           dataSource={data.items}
           locale={{ emptyText: q ? '没有找到相关内容' : '请输入关键词搜索' }}
-          renderItem={(item: any) => {
+          renderItem={(item: SearchResultItem) => {
             const { icon, color, label } = getIconAndColor(item.type);
             return (
               <List.Item
