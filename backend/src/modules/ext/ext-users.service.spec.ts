@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ExtUsersService, SyncUserDto } from './ext-users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
+import { BadRequestException } from '@nestjs/common';
 
 describe('ExtUsersService', () => {
   let service: ExtUsersService;
@@ -10,6 +11,7 @@ describe('ExtUsersService', () => {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    query: jest.fn().mockResolvedValue([{ id: 1 }]),
   };
 
   beforeEach(async () => {
@@ -48,7 +50,7 @@ describe('ExtUsersService', () => {
     mockUserRepository.save.mockResolvedValue({ id: 1 });
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E001', realName: 'New User', department: 'IT', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
+      { employeeId: 'E001', realName: 'New User', department: 'IT', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
     ];
 
     const result = await service.syncUsers(users);
@@ -71,7 +73,7 @@ describe('ExtUsersService', () => {
     mockUserRepository.save.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E002', realName: 'New Name', department: 'HR', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
+      { employeeId: 'E002', realName: 'New Name', department: 'HR', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
     ];
 
     const result = await service.syncUsers(users);
@@ -96,7 +98,7 @@ describe('ExtUsersService', () => {
     mockUserRepository.findOne.mockResolvedValue(existingUser);
 
     const users: SyncUserDto[] = [
-      { employeeId: 'E003', realName: 'Same Name', department: 'Finance', email: 'a@a.com', phone: '123', position: 'A', isActive: true }
+      { employeeId: 'E003', realName: 'Same Name', department: 'Finance', email: 'a@a.com', phone: '123', position: 'A', isActive: 1 }
     ];
 
     const result = await service.syncUsers(users);
