@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { useAuthStore } from '../../src/store/useAuthStore';
 import Logo from '../../src/components/Logo';
+import { logger } from '../../src/utils/logger';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -38,9 +39,10 @@ export default function LoginScreen() {
       // Navigate to main app
       router.replace('/(tabs)');
       
-    } catch (error: any) {
-      Alert.alert('登录失败', error.message || '请检查您的凭证');
-      console.error(error);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '请检查您的凭证';
+      Alert.alert('登录失败', message);
+      logger.error('Login failed:', error);
     } finally {
       setLoading(false);
     }

@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import api from '../services/api';
+import { logger } from '../utils/logger';
 
 interface User {
   id: number;
   username: string;
   realName?: string;
-  role?: { id: number; name: string; permissions?: string[] } | any;
+  role?: { id: number; name: string; permissions?: string[] };
 }
 
 interface AuthState {
@@ -43,8 +44,15 @@ export const useAuthStore = create<AuthState>((set) => ({
       } else {
         throw new Error(response.data.message || '登录失败');
       }
-    } catch (error: any) {
-      const errorMsg = error.response?.data?.message || error.message || '网络请求失败';
+    } catch (error: unknown) {
+      let errorMsg = '网络请求失败';
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosErr = error as { response?: { data?: { message?: string } } };
+        errorMsg = axiosErr.response?.data?.message || errorMsg;
+      }
       throw new Error(errorMsg);
     }
   },
@@ -52,8 +60,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     try {
       await api.post('/auth/logout');
-    } catch (e) {
-      console.warn('Backend logout failed, proceeding with local clear');
+    } catch {
+      logger.warn('Backend logout failed, proceeding with local clear');
     } finally {
       await SecureStore.deleteItemAsync('user_token');
       await SecureStore.deleteItemAsync('user_data');
@@ -74,7 +82,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         });
       }
     } catch (error) {
-      console.error('Failed to restore auth state', error);
+      logger.error('Failed to restore auth state', error);
     } finally {
       set({ isLoading: false });
     }

@@ -1,8 +1,9 @@
-import axios from 'axios';
+import { create } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { API_BASE_URL } from '../constants/config';
+import { logger } from '../utils/logger';
 
-const api = axios.create({
+const api = create({
   baseURL: API_BASE_URL,
   timeout: 10000,
 });
@@ -16,7 +17,7 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error('Error fetching token from SecureStore', error);
+      logger.error('Error fetching token from SecureStore', error);
     }
     return config;
   },
@@ -29,7 +30,7 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       // Handle unauthorized access (e.g., trigger logout)
-      console.warn('Unauthorized access, please login again.');
+      logger.warn('Unauthorized access, please login again.');
     }
     return Promise.reject(error);
   }

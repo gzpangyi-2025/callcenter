@@ -45,7 +45,7 @@ export const filesService = {
         if (errorData.message) {
           errorMsg = Array.isArray(errorData.message) ? errorData.message.join(', ') : errorData.message;
         }
-      } catch (e) {
+      } catch {
         // Fallback to generic message
       }
       throw new Error(errorMsg);

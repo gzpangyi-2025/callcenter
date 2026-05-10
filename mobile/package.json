@@ -5,10 +5,13 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -20,6 +23,7 @@
     "expo-blur": "~15.0.8",
     "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",
+    "expo-dev-client": "~6.0.21",
     "expo-document-picker": "~14.0.8",
     "expo-file-system": "~19.0.22",
     "expo-font": "~14.0.11",
@@ -40,20 +44,35 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
+    "react-native-image-viewing": "^0.2.2",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-svg": "^15.15.4",
     "react-native-web": "~0.21.0",
+    "react-native-webrtc": "^124.0.7",
     "react-native-worklets": "0.5.1",
     "socket.io-client": "^4.8.3",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@config-plugins/react-native-webrtc": "^14.0.0",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "jest-expo": "~54.0.0",
+    "patch-package": "^8.0.1",
+    "react-test-renderer": "^19.1.0",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/__tests__/**"
+    ]
+  }
 }

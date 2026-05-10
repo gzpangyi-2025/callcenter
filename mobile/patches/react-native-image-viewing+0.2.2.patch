@@ -1,0 +1,231 @@
+diff --git a/node_modules/react-native-image-viewing/dist/ImageViewing.js b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+index 3d7641a..8bd39d2 100644
+--- a/node_modules/react-native-image-viewing/dist/ImageViewing.js
++++ b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+@@ -5,7 +5,7 @@
+  * LICENSE file in the root directory of this source tree.
+  *
+  */
+-import React, { useCallback, useRef, useEffect } from "react";
++import React, { useCallback, useRef, useEffect, useState } from "react";
+ import { Animated, Dimensions, StyleSheet, View, VirtualizedList, Modal, } from "react-native";
+ import ImageItem from "./components/ImageItem/ImageItem";
+ import ImageDefaultHeader from "./components/ImageDefaultHeader";
+@@ -18,6 +18,8 @@ const DEFAULT_BG_COLOR = "#000";
+ const DEFAULT_DELAY_LONG_PRESS = 800;
+ const SCREEN = Dimensions.get("screen");
+ const SCREEN_WIDTH = SCREEN.width;
++const DOUBLE_TAP_DELAY = 280;
++const TAP_SLOP = 15;
+ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClose, onLongPress = () => { }, onImageIndexChange, animationType = DEFAULT_ANIMATION_TYPE, backgroundColor = DEFAULT_BG_COLOR, presentationStyle, swipeToCloseEnabled, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, HeaderComponent, FooterComponent, }) {
+     const imageList = useRef(null);
+     const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
+@@ -34,12 +36,45 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
+         (_b = (_a = imageList) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.setNativeProps({ scrollEnabled: !isScaled });
+         toggleBarsVisible(!isScaled);
+     }, [imageList]);
++    // PATCHED: Global tap-to-close on entire screen
++    const touchRef = useRef({ x: 0, y: 0, time: 0 });
++    const singleTapTimer = useRef(null);
++    const handleTouchStart = useCallback((e) => {
++        if (e.nativeEvent.touches.length > 1) return;
++        touchRef.current = {
++            x: e.nativeEvent.pageX,
++            y: e.nativeEvent.pageY,
++            time: Date.now(),
++        };
++    }, []);
++    // PATCHED: Close signal — tells ImageItem to reset zoom then close
++    const [closeSignal, setCloseSignal] = useState(0);
++    const handleTouchEnd = useCallback((e) => {
++        const { x, y, time } = touchRef.current;
++        const dx = Math.abs(e.nativeEvent.pageX - x);
++        const dy = Math.abs(e.nativeEvent.pageY - y);
++        const dt = Date.now() - time;
++        if (dx > TAP_SLOP || dy > TAP_SLOP || dt > 400) return;
++        if (singleTapTimer.current) {
++            clearTimeout(singleTapTimer.current);
++            singleTapTimer.current = null;
++        } else {
++            singleTapTimer.current = setTimeout(() => {
++                singleTapTimer.current = null;
++                // PATCHED: Send signal to ImageItem instead of closing directly
++                setCloseSignal((prev) => prev + 1);
++            }, DOUBLE_TAP_DELAY);
++        }
++    }, []);
+     if (!visible) {
+         return null;
+     }
+     return (<Modal transparent={presentationStyle === "overFullScreen"} visible={visible} presentationStyle={presentationStyle} animationType={animationType} onRequestClose={onRequestCloseEnhanced} supportedOrientations={["portrait"]} hardwareAccelerated>
+       <StatusBarManager presentationStyle={presentationStyle}/>
+-      <View style={[styles.container, { opacity, backgroundColor }]}>
++      <View style={[styles.container, { opacity, backgroundColor }]}
++        onTouchStart={handleTouchStart}
++        onTouchEnd={handleTouchEnd}
++      >
+         <Animated.View style={[styles.header, { transform: headerTransform }]}>
+           {typeof HeaderComponent !== "undefined" ? (React.createElement(HeaderComponent, {
+         imageIndex: currentImageIndex,
+@@ -49,7 +84,7 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
+         length: SCREEN_WIDTH,
+         offset: SCREEN_WIDTH * index,
+         index,
+-    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
++    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled} closeSignal={closeSignal}/>)} onMomentumScrollEnd={onScroll} 
+     //@ts-ignore
+     keyExtractor={(imageSrc, index) => keyExtractor
+         ? keyExtractor(imageSrc, index)
+diff --git a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
+index 0708505..744f316 100644
+--- a/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
++++ b/node_modules/react-native-image-viewing/dist/components/ImageItem/ImageItem.ios.js
+@@ -5,7 +5,7 @@
+  * LICENSE file in the root directory of this source tree.
+  *
+  */
+-import React, { useCallback, useRef, useState } from "react";
++import React, { useCallback, useEffect, useRef, useState } from "react";
+ import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback, } from "react-native";
+ import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
+ import useImageDimensions from "../../hooks/useImageDimensions";
+@@ -16,7 +16,7 @@ const SWIPE_CLOSE_VELOCITY = 1.55;
+ const SCREEN = Dimensions.get("screen");
+ const SCREEN_WIDTH = SCREEN.width;
+ const SCREEN_HEIGHT = SCREEN.height;
+-const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
++const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, closeSignal = 0, }) => {
+     const scrollViewRef = useRef(null);
+     const [loaded, setLoaded] = useState(false);
+     const [scaled, setScaled] = useState(false);
+@@ -33,18 +33,45 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
+     });
+     const imagesStyles = getImageStyles(imageDimensions, translateValue, scaleValue);
+     const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
++    // PATCHED: Reset ScrollView zoom and position before closing
++    const resetAndClose = useCallback(() => {
++        if (scrollViewRef.current) {
++            const scrollResponder = scrollViewRef.current.getScrollResponder();
++            if (scrollResponder) {
++                scrollResponder.scrollResponderZoomTo({
++                    x: 0,
++                    y: 0,
++                    width: SCREEN_WIDTH,
++                    height: SCREEN_HEIGHT,
++                    animated: false,
++                });
++            }
++            scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: false });
++        }
++        onZoom(false);
++        setScaled(false);
++        setTimeout(onRequestClose, 50);
++    }, [onRequestClose, onZoom]);
++    // PATCHED: Watch closeSignal from ImageViewing (global tap-to-close)
++    const closeSignalRef = useRef(closeSignal);
++    useEffect(() => {
++        if (closeSignal > 0 && closeSignal !== closeSignalRef.current) {
++            closeSignalRef.current = closeSignal;
++            resetAndClose();
++        }
++    }, [closeSignal, resetAndClose]);
+     const onScrollEndDrag = useCallback(({ nativeEvent }) => {
+         var _a, _b, _c, _d;
+         const velocityY = (_c = (_b = (_a = nativeEvent) === null || _a === void 0 ? void 0 : _a.velocity) === null || _b === void 0 ? void 0 : _b.y, (_c !== null && _c !== void 0 ? _c : 0));
+-        const scaled = ((_d = nativeEvent) === null || _d === void 0 ? void 0 : _d.zoomScale) > 1;
+-        onZoom(scaled);
+-        setScaled(scaled);
+-        if (!scaled &&
++        const isScaled = ((_d = nativeEvent) === null || _d === void 0 ? void 0 : _d.zoomScale) > 1;
++        onZoom(isScaled);
++        setScaled(isScaled);
++        if (!isScaled &&
+             swipeToCloseEnabled &&
+             Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY) {
+-            onRequestClose();
++            resetAndClose();
+         }
+-    }, [scaled]);
++    }, [scaled, resetAndClose]);
+     const onScroll = ({ nativeEvent, }) => {
+         var _a, _b, _c, _d;
+         const offsetY = (_c = (_b = (_a = nativeEvent) === null || _a === void 0 ? void 0 : _a.contentOffset) === null || _b === void 0 ? void 0 : _b.y, (_c !== null && _c !== void 0 ? _c : 0));
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/useImageDimensions.js b/node_modules/react-native-image-viewing/dist/hooks/useImageDimensions.js
+index d89a3a1..f9eaa8c 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/useImageDimensions.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/useImageDimensions.js
+@@ -36,7 +36,9 @@ const useImageDimensions = (image) => {
+                 else {
+                     // @ts-ignore
+                     Image.getSizeWithHeaders(source.uri, source.headers, (width, height) => {
+-                        imageDimensionsCache.set(cacheKey, { width, height });
++                        if (width > 0 && height > 0) {
++                            imageDimensionsCache.set(cacheKey, { width, height });
++                        }
+                         resolve({ width, height });
+                     }, () => {
+                         resolve({ width: 0, height: 0 });
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+index 99dcbc7..348daf6 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+@@ -183,23 +183,16 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
+                 let nextTranslateX = x + dx;
+                 let nextTranslateY = y + dy;
+                 if (nextTranslateX > leftBound) {
+-                    nextTranslateX =
+-                        nextTranslateX -
+-                            (nextTranslateX - leftBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateX = leftBound;
+                 }
+                 if (nextTranslateX < rightBound) {
+-                    nextTranslateX =
+-                        nextTranslateX -
+-                            (nextTranslateX - rightBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateX = rightBound;
+                 }
+                 if (nextTranslateY > topBound) {
+-                    nextTranslateY =
+-                        nextTranslateY - (nextTranslateY - topBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateY = topBound;
+                 }
+                 if (nextTranslateY < bottomBound) {
+-                    nextTranslateY =
+-                        nextTranslateY -
+-                            (nextTranslateY - bottomBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateY = bottomBound;
+                 }
+                 if (fitsScreenByWidth()) {
+                     nextTranslateX = x;
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js b/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
+index 37a3376..71befca 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/useZoomPanResponder.js
+@@ -164,23 +164,16 @@ const useZoomPanResponder = ({ initialScale, initialTranslate, onZoom, doubleTap
+                 let nextTranslateX = x + dx;
+                 let nextTranslateY = y + dy;
+                 if (nextTranslateX > leftBound) {
+-                    nextTranslateX =
+-                        nextTranslateX -
+-                            (nextTranslateX - leftBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateX = leftBound;
+                 }
+                 if (nextTranslateX < rightBound) {
+-                    nextTranslateX =
+-                        nextTranslateX -
+-                            (nextTranslateX - rightBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateX = rightBound;
+                 }
+                 if (nextTranslateY > topBound) {
+-                    nextTranslateY =
+-                        nextTranslateY - (nextTranslateY - topBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateY = topBound;
+                 }
+                 if (nextTranslateY < bottomBound) {
+-                    nextTranslateY =
+-                        nextTranslateY -
+-                            (nextTranslateY - bottomBound) * OUT_BOUND_MULTIPLIER;
++                    nextTranslateY = bottomBound;
+                 }
+                 if (fitsScreenByWidth()) {
+                     nextTranslateX = x;

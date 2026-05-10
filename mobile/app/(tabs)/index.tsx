@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Platform } from 'react-native';
 import { useAuthStore } from '../../src/store/useAuthStore';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { reportService, DashboardSummary } from '../../src/services/report';
 import { Ionicons } from '@expo/vector-icons';
+import { reportService, DashboardSummary } from '../../src/services/report';
+import { DashboardCard } from '../../src/components/DashboardCard';
+import { logger } from '../../src/utils/logger';
 
 export default function DashboardScreen() {
   const user = useAuthStore(state => state.user);
@@ -20,7 +21,7 @@ export default function DashboardScreen() {
       const data = await reportService.getDashboardSummary();
       setSummary(data);
     } catch (error) {
-      console.error('Failed to fetch dashboard summary', error);
+      logger.error('Failed to fetch dashboard summary', error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -41,23 +42,11 @@ export default function DashboardScreen() {
     router.replace('/(auth)/login');
   };
 
-  const renderCard = (title: string, value: number | string | undefined, colors: readonly [string, string], iconName: keyof typeof Ionicons.glyphMap, textColor: string) => (
-    <LinearGradient colors={colors} style={styles.card} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-      <View style={styles.cardHeader}>
-        <Text style={[styles.cardTitle, { color: textColor }]}>{title}</Text>
-        <Ionicons name={iconName} size={20} color={textColor} style={{ opacity: 0.8 }} />
-      </View>
-      {loading && !refreshing ? (
-        <ActivityIndicator color={textColor} style={{ marginTop: 10, alignSelf: 'flex-start' }} />
-      ) : (
-        <Text style={[styles.cardValue, { color: textColor }]}>{value !== undefined ? value : '--'}</Text>
-      )}
-    </LinearGradient>
-  );
+  const isCardLoading = loading && !refreshing;
 
   return (
-    <ScrollView 
-      style={styles.container} 
+    <ScrollView
+      style={styles.container}
       contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#00A8D4" />
@@ -75,10 +64,10 @@ export default function DashboardScreen() {
 
       <Text style={styles.sectionTitle}>概览数据</Text>
       <View style={styles.grid}>
-        {renderCard('总工单数', summary?.total, ['#ffffff', '#f4faff'], 'document-text', '#0A2688')}
-        {renderCard('待接单', summary?.pending, ['#ffffff', '#fffaf0'], 'time', '#ea580c')}
-        {renderCard('服务中', summary?.in_progress, ['#ffffff', '#e6f8fb'], 'people', '#00A8D4')}
-        {renderCard('已关闭', summary?.closed, ['#ffffff', '#f0fdf4'], 'checkmark-circle', '#16a34a')}
+        <DashboardCard title="总工单数" value={summary?.total} colors={['#ffffff', '#f4faff']} iconName="document-text" textColor="#0A2688" loading={isCardLoading} />
+        <DashboardCard title="待接单" value={summary?.pending} colors={['#ffffff', '#fffaf0']} iconName="time" textColor="#ea580c" loading={isCardLoading} />
+        <DashboardCard title="服务中" value={summary?.in_progress} colors={['#ffffff', '#e6f8fb']} iconName="people" textColor="#00A8D4" loading={isCardLoading} />
+        <DashboardCard title="已关闭" value={summary?.closed} colors={['#ffffff', '#f0fdf4']} iconName="checkmark-circle" textColor="#16a34a" loading={isCardLoading} />
       </View>
 
       {summary?.avgHours !== undefined && (
@@ -97,7 +86,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F6F8', // Lighter off-white
+    backgroundColor: '#F4F6F8',
   },
   contentContainer: {
     padding: 20,
@@ -112,12 +101,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#0A2688', // Company Dark Blue
+    color: '#0A2688',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#666666', // Company Text Gray
+    color: '#666666',
   },
   logoutButton: {
     backgroundColor: '#fff1f2',
@@ -143,33 +132,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 16,
-  },
-  card: {
-    width: '47%',
-    padding: 16,
-    borderRadius: 20,
-    marginBottom: 16,
-    shadowColor: '#0A2688',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#ffffff',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  cardValue: {
-    fontSize: 32,
-    fontWeight: '800',
   },
   statsBanner: {
     marginTop: 8,
@@ -200,6 +162,6 @@ const styles = StyleSheet.create({
   statsValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#00A8D4', // Company Primary Blue
+    color: '#00A8D4',
   },
 });

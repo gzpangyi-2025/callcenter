@@ -1,6 +1,7 @@
 import api from './api';
+import { TicketStatus } from '../constants/tickets';
 
-export type TicketStatus = 'pending' | 'in_progress' | 'closing' | 'closed';
+export type { TicketStatus };
 
 export interface TicketItem {
   id: number;
