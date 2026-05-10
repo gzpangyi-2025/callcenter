@@ -31,7 +31,7 @@ interface PersistedTask extends AiTask {
 }
 
 const aiApiMock = vi.hoisted(() => ({
-  getTask: vi.fn<(id: string) => Promise<ApiResponse<PersistedTask>>>(),
+  getTask: vi.fn<(id: string) => Promise<ApiResponse<PersistedTask> | { success: true; data: PersistedTask }>>(),
   getTaskFiles: vi.fn<(id: string) => Promise<ApiResponse<AiTaskFile[]>>>(),
 }));
 
@@ -70,6 +70,23 @@ describe('TaskLogPanel', () => {
 
     fireEventClick(screen.getByRole('tab', { name: /原始日志/ }));
     expect(await screen.findByText('任务完成')).toBeInTheDocument();
+  });
+
+  it('loads persisted logs from worker success/data responses', async () => {
+    aiApiMock.getTask.mockResolvedValue({
+      success: true,
+      data: {
+        ...makeAiTask({ id: 'task-log', status: 'completed' }),
+        executionLog: [
+          { line: '历史原始日志', type: 'info', timestamp: 1770000000000 },
+        ],
+      },
+    });
+
+    render(<TaskLogPanel taskId="task-log" taskStatus="completed" />);
+
+    fireEventClick(await screen.findByRole('tab', { name: /原始日志/ }));
+    expect(await screen.findByText('历史原始日志')).toBeInTheDocument();
   });
 
   it('accepts runtime file_ready events from the log stream', async () => {

@@ -88,6 +88,9 @@ const unwrapApiData = <T,>(value: ApiResponse<T> | T): T => {
   if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
     return value.data as T;
   }
+  if (isRecord(value) && value.success === true && 'data' in value) {
+    return value.data as T;
+  }
   return value as T;
 };
 
