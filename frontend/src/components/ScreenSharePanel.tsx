@@ -370,7 +370,7 @@ const ScreenSharePanel: React.FC<ScreenSharePanelProps> = ({
               />
             </Tooltip>
           )}
-          {isViewing && !supportMode && (
+          {(isViewing || isSharing) && !supportMode && (
             <Tooltip title={isExpanded ? '缩小画面' : '放大画面'}>
               <Button
                 type="text"
