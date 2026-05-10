@@ -82,7 +82,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
         }}
       >
         <span>回车</span>
-        <span>换行</span>
+        <span>{enterToNewline ? '换行' : '发送'}</span>
       </Button>
     </Tooltip>
   );
