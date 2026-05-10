@@ -40,6 +40,7 @@ import type {
   TicketAggregates,
   TicketBatchSummary,
   UploadCredentials,
+  WorkerApiResponse,
 } from '../types/api';
 import type { User, UpdateUserInfoParam } from '../types/user';
 import type { User as AuthUser } from '../stores/authStore';
@@ -422,7 +423,7 @@ export const aiAPI = {
   health: (): Promise<ApiResponse<AiHealth> | AiHealth> => api.get('/ai/health'),
 
   /** 获取可用任务模板列表 */
-  getTemplates: (): Promise<ApiResponse<AiTemplate[]> | AiTemplate[]> => api.get('/ai/templates'),
+  getTemplates: (): Promise<ApiResponse<AiTemplate[]> | WorkerApiResponse<AiTemplate[]> | AiTemplate[]> => api.get('/ai/templates'),
 
   /** 获取直接上传附件到 Worker COS 的预签名 URL */
   getUploadUrl: (taskId: string, filename: string): Promise<ApiResponse<AiUploadUrl> | AiUploadUrl> => 

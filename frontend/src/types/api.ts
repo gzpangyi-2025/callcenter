@@ -6,6 +6,12 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
+export interface WorkerApiResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data: T;
+}
+
 export interface PaginatedData<T> {
   items: T[];
   total: number;

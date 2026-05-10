@@ -32,6 +32,7 @@ import type {
   AiTemplateVariable,
   AiUploadUrl,
   ApiResponse,
+  WorkerApiResponse,
 } from '../../types/api';
 
 dayjs.extend(relativeTime);
@@ -88,8 +89,11 @@ const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: Re
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-export const unwrapAiApiData = <T,>(value: ApiResponse<T> | T): T => {
+export const unwrapAiApiData = <T,>(value: ApiResponse<T> | WorkerApiResponse<T> | T): T => {
   if (isRecord(value) && typeof value.code === 'number' && 'data' in value) {
+    return value.data as T;
+  }
+  if (isRecord(value) && value.success === true && 'data' in value) {
     return value.data as T;
   }
   return value as T;
@@ -108,13 +112,15 @@ export const normalizeTaskList = (value: ApiResponse<AiTaskListData> | AiTaskLis
 };
 
 export const normalizeTaskFiles = (value: ApiResponse<AiTaskFile[]> | AiTaskFile[] | { data: AiTaskFile[] }): AiTaskFile[] => {
-  const payload = unwrapAiApiData(value);
+  if (isRecord(value) && !('code' in value) && !('success' in value) && Array.isArray(value.data)) {
+    return value.data as AiTaskFile[];
+  }
+  const payload = unwrapAiApiData<AiTaskFile[]>(value as ApiResponse<AiTaskFile[]> | WorkerApiResponse<AiTaskFile[]> | AiTaskFile[]);
   if (Array.isArray(payload)) return payload;
-  if (isRecord(payload) && Array.isArray(payload.data)) return payload.data as AiTaskFile[];
   return [];
 };
 
-export const normalizeTemplates = (value: ApiResponse<AiTemplate[]> | AiTemplate[]): AiTemplate[] => {
+export const normalizeTemplates = (value: ApiResponse<AiTemplate[]> | WorkerApiResponse<AiTemplate[]> | AiTemplate[]): AiTemplate[] => {
   const payload = unwrapAiApiData(value);
   return Array.isArray(payload) ? payload : [];
 };

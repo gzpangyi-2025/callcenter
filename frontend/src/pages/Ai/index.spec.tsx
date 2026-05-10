@@ -7,6 +7,7 @@ import type {
   AiTemplate,
   AiUploadUrl,
   ApiResponse,
+  WorkerApiResponse,
 } from '../../types/api';
 import { useAuthStore } from '../../stores/authStore';
 import { apiOk, makeAdminUser, makeAiTask } from '../../test-utils/fixtures';
@@ -44,7 +45,7 @@ const socketMock = vi.hoisted(() => {
 
 const aiApiMock = vi.hoisted(() => ({
   health: vi.fn<() => Promise<ApiResponse<AiHealth>>>(),
-  getTemplates: vi.fn<() => Promise<ApiResponse<AiTemplate[]>>>(),
+  getTemplates: vi.fn<() => Promise<ApiResponse<AiTemplate[]> | WorkerApiResponse<AiTemplate[]>>>(),
   listTasks: vi.fn<(params?: Record<string, unknown>) => Promise<ApiResponse<AiTaskListData> | AiTaskListData>>(),
   getTaskFiles: vi.fn<(id: string) => Promise<ApiResponse<AiTaskFile[]>>>(),
   createTask: vi.fn(),
@@ -53,6 +54,8 @@ const aiApiMock = vi.hoisted(() => ({
   resumeTask: vi.fn(),
   getUploadUrl: vi.fn<() => Promise<ApiResponse<AiUploadUrl>>>(),
 }));
+
+const workerOk = <T,>(data: T): WorkerApiResponse<T> => ({ success: true, data });
 
 vi.mock('../../services/api', () => ({
   aiAPI: aiApiMock,
@@ -127,6 +130,7 @@ describe('AI page API boundary helpers', () => {
     expect(normalizeUploadUrl(apiOk(uploadUrl))).toEqual(uploadUrl);
     expect(normalizeUploadUrl({ key: 'missing-url' } as AiUploadUrl)).toBeNull();
     expect(normalizeTemplates(apiOk([template]))).toEqual([template]);
+    expect(normalizeTemplates(workerOk([template]))).toEqual([template]);
     expect(normalizeTaskFiles(apiOk([file]))).toEqual([file]);
   });
 });
