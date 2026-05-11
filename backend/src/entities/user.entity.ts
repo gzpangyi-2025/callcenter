@@ -45,6 +45,9 @@ export class User {
   @Column({ length: 20, nullable: true })
   phone: string;
 
+  @Column({ length: 100, nullable: true })
+  wechatId: string;
+
   @Column({ length: 255, nullable: true })
   avatar: string;
 

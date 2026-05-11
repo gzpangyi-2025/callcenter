@@ -9,6 +9,7 @@ export class SyncUserDto {
   realName: string;
   email: string;
   phone: string;
+  wechatId: string;
   department: string;
   position: string;
   isActive: number; // 1 for enabled, 0 for disabled
@@ -38,6 +39,7 @@ export class ExtUsersService {
         !dto.realName ||
         !dto.email ||
         !dto.phone ||
+        !dto.wechatId ||
         !dto.department ||
         !dto.position ||
         dto.isActive === undefined
@@ -64,6 +66,10 @@ export class ExtUsersService {
         }
         if (dto.phone && existingUser.phone !== dto.phone) {
           existingUser.phone = dto.phone;
+          changed = true;
+        }
+        if (dto.wechatId !== undefined && existingUser.wechatId !== dto.wechatId) {
+          existingUser.wechatId = dto.wechatId;
           changed = true;
         }
         if (dto.department && existingUser.department !== dto.department) {
@@ -109,6 +115,7 @@ export class ExtUsersService {
           displayName: dto.realName,
           email: dto.email,
           phone: dto.phone,
+          wechatId: dto.wechatId,
           department: dto.department,
           position: dto.position,
           password: defaultPasswordHash,

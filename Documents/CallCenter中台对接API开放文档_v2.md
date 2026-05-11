@@ -62,6 +62,7 @@ Authorization: Bearer 1c43f8a0ea1b72b4511d42c584e977e5cea21ba0cce67fcea7a65c0799
 | `realName` | String | 是 | 员工真实姓名 | `"张三"` |
 | `email` | String | 是 | 员工邮箱（首选作为用户名生成来源） | `"zhangsan@trustfar.cn"` |
 | `phone` | String | 是 | 手机号码 | `"13800138000"` |
+| `wechatId` | String | 是 | 微信ID/企业微信账号 | `"zhangsan_wx"` |
 | `department` | String | 是 | 所属部门 | `"研发中心"` |
 | `position` | String | 是 | 岗位职位 | `"高级后端工程师"` |
 | `isActive` | Number | 是 | 账号状态：`1` 为启用，`0` 为禁用。 | `1` |
@@ -75,6 +76,7 @@ Authorization: Bearer 1c43f8a0ea1b72b4511d42c584e977e5cea21ba0cce67fcea7a65c0799
     "realName": "测试员工A",
     "email": "testA@trustfar.cn",
     "phone": "13800138001",
+    "wechatId": "testA_wx",
     "department": "技术支持部",
     "position": "一线客服",
     "isActive": 1
@@ -84,6 +86,7 @@ Authorization: Bearer 1c43f8a0ea1b72b4511d42c584e977e5cea21ba0cce67fcea7a65c0799
     "realName": "测试员工B",
     "email": "testB@trustfar.cn",
     "phone": "13912345678",
+    "wechatId": "testB_wx",
     "department": "技术支持部",
     "position": "二线研发",
     "isActive": 0

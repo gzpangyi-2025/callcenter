@@ -10,6 +10,7 @@ const userSyncTemplate = `[
     "realName": "测试员工A",
     "email": "test_a@company.com",
     "phone": "13800138000",
+    "wechatId": "test_wx_001",
     "department": "技术部",
     "position": "前端工程师",
     "isActive": 1

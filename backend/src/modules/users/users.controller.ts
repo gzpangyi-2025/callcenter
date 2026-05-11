@@ -95,6 +95,7 @@ export class UsersController {
       realName?: string;
       email?: string;
       phone?: string;
+      wechatId?: string;
     },
   ) {
     const data = await this.usersService.updateUser(id, body);

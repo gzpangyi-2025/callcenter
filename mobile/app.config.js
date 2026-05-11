@@ -12,10 +12,10 @@ const config = {
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.anonymous.mobile',
+    bundleIdentifier: 'com.yipang.callcenter',
   },
   android: {
-    package: 'com.anonymous.mobile',
+    package: 'com.yipang.callcenter',
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/images/android-icon-foreground.png',

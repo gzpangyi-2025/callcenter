@@ -103,6 +103,7 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
       realName: user.realName || '',
       email: user.email || '',
       phone: user.phone || '',
+      wechatId: user.wechatId || '',
     });
     setEditModalOpen(true);
   };
@@ -158,6 +159,7 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
     { title: 'ID', dataIndex: 'id', width: 60, fixed: isMobile ? undefined : 'left' as const },
     { title: '姓名 (账号)', dataIndex: 'realName', width: 150, fixed: isMobile ? undefined : 'left' as const, render: (text: string, record: any) => `${text || '未知'} (${record.username})` },
     { title: '工号', dataIndex: 'employeeId', width: 100, ellipsis: true },
+    { title: '微信ID', dataIndex: 'wechatId', width: 120, ellipsis: true },
     { title: '部门', dataIndex: 'department', width: 120, ellipsis: true },
     { title: '职位', dataIndex: 'position', width: 100, ellipsis: true },
     {
@@ -311,6 +313,9 @@ export const UserManageTab: React.FC<UserManageTabProps> = ({ externalRoles }) =
           </Form.Item>
           <Form.Item name="phone" label="电话">
             <Input placeholder="联系电话" />
+          </Form.Item>
+          <Form.Item name="wechatId" label="微信ID">
+            <Input placeholder="企业微信账号/个人微信号" />
           </Form.Item>
         </Form>
       </Modal>

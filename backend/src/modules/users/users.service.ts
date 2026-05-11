@@ -32,6 +32,7 @@ export class UsersService {
         'department',
         'position',
         'phone',
+        'wechatId',
         'isActive',
         'createdAt',
       ],
@@ -89,6 +90,7 @@ export class UsersService {
       realName?: string;
       email?: string;
       phone?: string;
+      wechatId?: string;
     },
   ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -101,6 +103,7 @@ export class UsersService {
     if (data.realName !== undefined) user.realName = data.realName;
     if (data.email !== undefined) user.email = data.email;
     if (data.phone !== undefined) user.phone = data.phone;
+    if (data.wechatId !== undefined) user.wechatId = data.wechatId;
 
     return this.userRepository.save(user);
   }

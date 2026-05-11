@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-LOCAL_DIR="/Users/yipang/Documents/Antigravity/callcenter"
+LOCAL_DIR="/Users/yipang/Antigravity/callcenter"
 REMOTE_DIR="/var/www/callcenter"
 BACKEND_SERVICE="callcenter-backend"
 
