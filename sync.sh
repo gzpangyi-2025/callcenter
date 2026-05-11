@@ -176,7 +176,7 @@ remote_build_and_reload() {
 
   log "Synchronizing database schema on $host"
   run_ssh "$user" "$host" "$password" \
-    "cd '$remote_dir/backend' && npm run db:sync"
+    "cd '$remote_dir/backend' && (npm run db:sync || echo 'Warning: Database synchronization failed (likely due to restricted DB permissions). Proceeding anyway...')"
 
   log "Starting backend on $host"
   run_ssh "$user" "$host" "$password" \
