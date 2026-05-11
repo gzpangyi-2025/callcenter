@@ -97,6 +97,7 @@ describe('UsersService', () => {
           'department',
           'position',
           'phone',
+          'wechatId',
           'isActive',
           'createdAt',
         ],

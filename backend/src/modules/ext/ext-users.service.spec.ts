@@ -60,6 +60,7 @@ describe('ExtUsersService', () => {
         department: 'IT',
         email: 'a@a.com',
         phone: '123',
+        wechatId: 'wx001',
         position: 'A',
         isActive: 1,
       },
@@ -81,6 +82,7 @@ describe('ExtUsersService', () => {
       id: 2,
       employeeId: 'E002',
       realName: 'Old Name',
+      wechatId: 'wx002',
       department: 'HR',
     };
     mockUserRepository.findOne.mockResolvedValue(existingUser);
@@ -93,6 +95,7 @@ describe('ExtUsersService', () => {
         department: 'HR',
         email: 'a@a.com',
         phone: '123',
+        wechatId: 'wx002',
         position: 'A',
         isActive: 1,
       },
@@ -114,6 +117,7 @@ describe('ExtUsersService', () => {
       department: 'Finance',
       email: 'a@a.com',
       phone: '123',
+      wechatId: 'wx003',
       position: 'A',
       isActive: true,
     };
@@ -126,6 +130,7 @@ describe('ExtUsersService', () => {
         department: 'Finance',
         email: 'a@a.com',
         phone: '123',
+        wechatId: 'wx003',
         position: 'A',
         isActive: 1,
       },
